@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0B0A0A">
+<title>Armaratris</title>
+<link id="favicon" rel="icon" href="skin/armara/logo.png">
+<link rel="stylesheet" href="css/game.css">
+</head>
+<body>
+<div id="app" class="app">
+  <header class="title">
+    <img id="titleLogo" class="mark" alt="">
+    <h1 id="title" data-str="title">ARMARATRIS</h1>
+    <p class="tagline" id="tagline"></p>
+  </header>
+
+  <main class="stage">
+    <aside class="panel panel-left">
+      <section class="box box-hold">
+        <h2 data-str="hold">HOLD</h2>
+        <canvas id="hold" width="96" height="96" aria-label="Held piece"></canvas>
+      </section>
+      <section class="stats">
+        <div class="stat"><h2 data-str="score">SCORE</h2><output id="score">0</output></div>
+        <div class="stat"><h2 data-str="level">LEVEL</h2><output id="level">1</output></div>
+        <div class="stat"><h2 data-str="lines">LINES</h2><output id="lines">0</output></div>
+        <div class="stat stat-best"><h2 data-str="best">BEST</h2><output id="best">0</output></div>
+      </section>
+    </aside>
+
+    <div class="wellwrap" id="wellwrap">
+      <canvas id="well" aria-label="Playfield"></canvas>
+      <div class="overlay" id="overlay">
+        <p class="overlay-title" id="overlayTitle"></p>
+        <p class="overlay-body" id="overlayBody"></p>
+        <button class="overlay-btn" id="overlayBtn" type="button"></button>
+      </div>
+    </div>
+
+    <aside class="panel panel-right">
+      <section class="box box-next">
+        <h2 data-str="next">NEXT</h2>
+        <canvas id="next" width="96" height="264" aria-label="Next pieces"></canvas>
+      </section>
+      <section class="brand">
+        <img id="brandLogo" alt="">
+        <div class="wordmark" id="wordmark"></div>
+      </section>
+      <button id="mute" class="icon" type="button" aria-label="Toggle sound" aria-pressed="false">♪</button>
+    </aside>
+  </main>
+
+  <nav class="touch" id="touch" aria-label="Touch controls">
+    <button type="button" data-btn="left" aria-label="Move left">◀</button>
+    <button type="button" data-btn="rotate" aria-label="Rotate">⟳</button>
+    <button type="button" data-btn="drop" aria-label="Drop (hold for soft drop)">⬇</button>
+    <button type="button" data-btn="right" aria-label="Move right">▶</button>
+  </nav>
+</div>
+
+<script src="js/engine.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/skin.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/input.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
