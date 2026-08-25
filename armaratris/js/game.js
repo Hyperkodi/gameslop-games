@@ -17,6 +17,7 @@
       buttons: [{ btn: "left", press: "left", repeat: true }, { btn: "rotate", tap: "rotateCW" }, { btn: "drop", tap: "hardDrop", hold: "softDropOn", release: "softDropOff" }, { btn: "right", press: "right", repeat: true }],
     },
     startsOnAnyAction: true,
+    ignoreWhileReady: ["softDropOn", "softDropOff"],
   };
   global.addEventListener("DOMContentLoaded", function () { K.createShell(G.config); });
 })(typeof window !== "undefined" ? window : globalThis);

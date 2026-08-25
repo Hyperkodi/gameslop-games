@@ -1,6 +1,20 @@
 /* Shared boot + game loop. Fixed 60 Hz timestep so seed + inputLog reproduces a game.
    Generalized from games/armaratris/js/main.js: every game supplies a cfg (see spec §3.6) and
-   calls GameSlopKit.createShell(cfg) on DOMContentLoaded. */
+   calls GameSlopKit.createShell(cfg) on DOMContentLoaded.
+
+   cfg shape (see spec §3.6 for the full picture):
+   {
+     game,                          // id used in localStorage keys and the bridge payload
+     skinDir,                       // default "skin/"
+     createEngine, createRenderer,
+     sounds, events, onEvent, drawExtras, stats,
+     input: { keys, repeatKeys, gestures, buttons },
+     startsOnAnyAction,             // any action (not listed in ignoreWhileReady) starts the game while "ready"
+     ignoreWhileReady,              // array of action names to silently drop while "ready" instead of
+                                     // starting the game (e.g. held-input actions like "softDropOn"/"leftOn"
+                                     // that a stray touch/keyboard event could fire before the player's
+                                     // first real move); default []
+   } */
 (function (global) {
   "use strict";
   const K = global.GameSlopKit = global.GameSlopKit || {};
@@ -8,10 +22,6 @@
   const MAX_STEPS_PER_FRAME = 8;
 
   function $(id) { return document.getElementById(id); }
-
-  // Actions ending in On/Off are held-input state changes (softDropOn, leftOn, fireOff, ...),
-  // not discrete intents — a stray one (e.g. from a touch drag) should not start the game.
-  function isDiscreteAction(action) { return !/(On|Off)$/.test(action); }
 
   function bestKey(game, skin) { return "gameslop:" + game + ":" + skin + ":best"; }
   function readBest(game, skin) { try { return Number(localStorage.getItem(bestKey(game, skin))) || 0; } catch (e) { return 0; } }
@@ -116,7 +126,8 @@
       keys: inputCfg.keys, repeatKeys: inputCfg.repeatKeys, gestures: inputCfg.gestures, buttons: inputCfg.buttons,
       onAction: function (action) {
         if (engine.state.status === "ready") {
-          if (cfg.startsOnAnyAction && isDiscreteAction(action)) start();
+          const ignored = (cfg.ignoreWhileReady || []).indexOf(action) !== -1;
+          if (cfg.startsOnAnyAction && !ignored) start();
           return;
         }
         if (engine.state.status !== "playing") return;
