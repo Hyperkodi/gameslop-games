@@ -1,3 +1,7 @@
+/* Shared layout for every GameSlop kit game: title, side panels, framed well, overlays, touch bar.
+   From games/armaratris/css/game.css — identical rules, generalized: panels/boxes collapse when
+   empty (games that skip hold/next-style boxes), the touch bar accepts 1-5 buttons, and no rule
+   here sizes any canvas (each renderer sizes its own well/side canvases in JS). */
 :root {
   /* Fallbacks only — skin.js overwrites every one of these at load. */
   --c-bg: #0B0A0A; --c-bg2: #151210; --c-marble: #E9E2D3; --c-gold: #C9A24A; --c-goldDeep: #8A6A23;
@@ -46,6 +50,7 @@ body {
   min-height: 0;
 }
 .panel { display: flex; flex-direction: column; gap: 14px; }
+.panel:empty, .box:empty { display: none; }
 .box, .stats { border: 1px solid var(--c-goldDeep); background: var(--c-bg2); padding: 10px 12px 12px; }
 .box h2, .stat h2 {
   margin: 0 0 8px; font-family: var(--font-display); font-weight: 700; font-size: 11px; letter-spacing: .28em; color: var(--c-gold);
@@ -117,10 +122,10 @@ body {
   .stat output { font-size: 16px; }
   .brand { display: none; }
   #mute { width: 32px; height: 32px; font-size: 14px; align-self: flex-start; }
-  .touch { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .touch { display: grid; grid-template-columns: repeat(auto-fit, minmax(56px, 1fr)); }
 }
 @media (pointer: coarse) and (min-width: 760px) {
-  .touch { display: grid; grid-template-columns: repeat(4, minmax(80px, 160px)); justify-content: center; }
+  .touch { display: grid; grid-template-columns: repeat(auto-fit, minmax(56px, 1fr)); justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
