@@ -6,6 +6,7 @@ Armara-branded Tetris. Static — open `index.html`.
 - Controls: ← → move · ↑ / X rotate · Z rotate CCW · ↓ soft drop · Space hard drop · C / Shift hold · P pause · M mute. Touch: drag to move, tap to rotate, flick down to drop, swipe up to hold.
 - Tests: `node --test` (run from `Armaratris/`; `node --test tests/` fails on Node 24 — pass no path)
 - Screenshots taken while verifying this game live in `docs/armaratris-screenshots/` (repo root), not shipped inside `Armaratris/`.
+- Music: optional `music` (file in the skin folder, looped) and `musicVolume` (0–1) keys in `skin.json`; Armara ships `music.mp3` ("Pixel Paradise").
 - New sponsor: copy `skin/armara/` to `skin/<name>/`, edit `skin.json`, replace `logo.png`, then regenerate `skin.js` from `skin/<name>/` with:
   ```bash
   node -e '

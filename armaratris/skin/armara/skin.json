@@ -3,6 +3,8 @@
   "title": "ARMARATRIS",
   "tagline": "SOVEREIGN AI OPERATING SYSTEM",
   "logo": "logo.png",
+  "music": "music.mp3",
+  "musicVolume": 0.35,
   "fonts": {
     "display": "Cinzel",
     "body": "Cormorant Garamond",
@@ -23,13 +25,42 @@
     "ghost": "#C9A24A"
   },
   "tiles": {
-    "I": { "base": "#E9E2D3", "hi": "#FFFFFF", "lo": "#A99F8C" },
-    "O": { "base": "#C9A24A", "hi": "#F1D890", "lo": "#7E6120" },
-    "T": { "base": "#7A5230", "hi": "#B98A5E", "lo": "#3F2914" },
-    "S": { "base": "#6E7F6A", "hi": "#A7B8A2", "lo": "#3B473A" },
-    "Z": { "base": "#B76E5A", "hi": "#E7A48E", "lo": "#66392C" },
-    "J": { "base": "#2B2622", "hi": "#6B5E52", "lo": "#000000", "edge": "#C9A24A" },
-    "L": { "base": "#A8893E", "hi": "#E4C97C", "lo": "#5F4B1C" }
+    "I": {
+      "base": "#E9E2D3",
+      "hi": "#FFFFFF",
+      "lo": "#A99F8C"
+    },
+    "O": {
+      "base": "#C9A24A",
+      "hi": "#F1D890",
+      "lo": "#7E6120"
+    },
+    "T": {
+      "base": "#7A5230",
+      "hi": "#B98A5E",
+      "lo": "#3F2914"
+    },
+    "S": {
+      "base": "#6E7F6A",
+      "hi": "#A7B8A2",
+      "lo": "#3B473A"
+    },
+    "Z": {
+      "base": "#B76E5A",
+      "hi": "#E7A48E",
+      "lo": "#66392C"
+    },
+    "J": {
+      "base": "#2B2622",
+      "hi": "#6B5E52",
+      "lo": "#000000",
+      "edge": "#C9A24A"
+    },
+    "L": {
+      "base": "#A8893E",
+      "hi": "#E4C97C",
+      "lo": "#5F4B1C"
+    }
   },
   "watermarkAlpha": 0.06,
   "strings": {

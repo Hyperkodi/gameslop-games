@@ -23,6 +23,13 @@
     const engine = A.createEngine({ seed: parseSeed(params.get("seed")) });
     if (params.get("debug") === "1") global.__armaratris = { engine: engine };
     const audio = A.createAudio();
+    // Looping background music from the skin (optional). Started on the first play gesture,
+    // follows the mute toggle, pauses while the tab is hidden.
+    const music = skin.music ? new Audio(skin.base + skin.music) : null;
+    let musicStarted = false;
+    if (music) { music.loop = true; music.preload = "auto"; music.volume = skin.musicVolume == null ? 0.35 : skin.musicVolume; }
+    function musicPlay() { if (music && !audio.muted) { musicStarted = true; music.play().catch(function () { /* autoplay blocked until a gesture */ }); } }
+    function musicPause() { if (music) music.pause(); }
     const wrap = $("wellwrap");
     const renderer = A.createRenderer({ skin: skin, wellCanvas: $("well"), holdCanvas: $("hold"), nextCanvas: $("next"), wrapEl: wrap });
     renderer.paintGround();
@@ -76,7 +83,7 @@
 
     function start() {
       const st = engine.state.status;
-      if (st === "ready") { audio.unlock(); handleEvents(engine.dispatch("start")); hideOverlay(); }
+      if (st === "ready") { audio.unlock(); musicPlay(); handleEvents(engine.dispatch("start")); hideOverlay(); }
       else if (st === "over") { engine.reset(parseSeed(params.get("seed"))); refreshStats(); renderer.drawHold(null); renderer.drawNext(engine.state.queue); handleEvents(engine.dispatch("start")); hideOverlay(); }
       else if (st === "paused") { engine.dispatch("resume"); hideOverlay(); }
     }
@@ -84,7 +91,10 @@
       if (engine.state.status === "playing") { engine.dispatch("pause"); showOverlay(skin.strings.paused, "", skin.strings.resume); }
       else if (engine.state.status === "paused") start();
     }
-    function toggleMute() { const m = audio.toggle(); ui.mute.setAttribute("aria-pressed", String(m)); }
+    function toggleMute() {
+      const m = audio.toggle(); ui.mute.setAttribute("aria-pressed", String(m));
+      if (m) musicPause(); else if (musicStarted) musicPlay();
+    }
 
     const input = A.createInput({
       wellEl: wrap, touchEl: $("touch"), cellSize: function () { return renderer.cell; },
@@ -104,7 +114,10 @@
     ui.overlay.addEventListener("pointerdown", function (e) { e.stopPropagation(); if (e.target !== ui.oBtn) start(); });
     ui.mute.addEventListener("click", toggleMute);
     global.addEventListener("resize", function () { renderer.resize(); renderer.drawHold(engine.state.hold); renderer.drawNext(engine.state.queue); });
-    document.addEventListener("visibilitychange", function () { if (document.hidden && engine.state.status === "playing") pause(); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) { if (engine.state.status === "playing") pause(); musicPause(); }
+      else if (musicStarted) musicPlay();
+    });
 
     // initial paint
     refreshStats();
