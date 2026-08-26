@@ -18,6 +18,7 @@
       buttons: [{ btn: "flap", tap: "flap" }],
     },
     startsOnAnyAction: true,
+    forwardStartAction: true,
     ignoreWhileReady: [],
   };
   global.addEventListener("DOMContentLoaded", function () { K.createShell(G.config); });

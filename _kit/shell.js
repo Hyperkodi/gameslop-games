@@ -14,6 +14,11 @@
                                      // starting the game (e.g. held-input actions like "softDropOn"/"leftOn"
                                      // that a stray touch/keyboard event could fire before the player's
                                      // first real move); default []
+     forwardStartAction,            // boolean, default false. When the action that starts the game from
+                                     // "ready" is also the game's primary action (flap/launch/fire), the
+                                     // player's first press would otherwise only start the game and be
+                                     // swallowed. If true, immediately re-dispatch that same action right
+                                     // after start() so it also takes effect on the first press.
    } */
 (function (global) {
   "use strict";
@@ -127,7 +132,10 @@
       onAction: function (action) {
         if (engine.state.status === "ready") {
           const ignored = (cfg.ignoreWhileReady || []).indexOf(action) !== -1;
-          if (cfg.startsOnAnyAction && !ignored) start();
+          if (cfg.startsOnAnyAction && !ignored) {
+            start();
+            if (cfg.forwardStartAction) handleEvents(engine.dispatch(action));
+          }
           return;
         }
         if (engine.state.status !== "playing") return;

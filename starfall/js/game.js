@@ -30,6 +30,7 @@
       ],
     },
     startsOnAnyAction: true,
+    forwardStartAction: true,
     ignoreWhileReady: ["leftOff", "rightOff", "fireOff"],
   };
   global.addEventListener("DOMContentLoaded", function () { K.createShell(G.config); });

@@ -29,6 +29,7 @@
       ],
     },
     startsOnAnyAction: true,
+    forwardStartAction: true,
     ignoreWhileReady: ["leftOff", "rightOff"],
   };
   global.addEventListener("DOMContentLoaded", function () { K.createShell(G.config); });
