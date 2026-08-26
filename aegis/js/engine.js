@@ -6,22 +6,22 @@
   const R = typeof require === "function" ? require("../../_kit/rng.js") : global.GameSlopKit;
   const G = global.Game = global.Game || {};
 
-  const WORLD_W = 100;
-  const WORLD_H = 120;
+  const WORLD_W = 160;
+  const WORLD_H = 100;
   const START_GOLD = 160;
   const START_INTEGRITY = 20;
   const LAST_WAVE = 12;
   const EPSILON = 1e-9;
 
   const PATH = [
-    { x: -5, y: 14 }, { x: 28, y: 14 }, { x: 28, y: 42 }, { x: 74, y: 42 },
-    { x: 74, y: 70 }, { x: 38, y: 70 }, { x: 38, y: 101 }, { x: 105, y: 101 },
+    { x: -8, y: 18 }, { x: 42, y: 18 }, { x: 42, y: 48 }, { x: 88, y: 48 },
+    { x: 88, y: 76 }, { x: 132, y: 76 }, { x: 132, y: 44 }, { x: 168, y: 44 },
   ];
 
   const PADS = [
-    { x: 14, y: 29 }, { x: 43, y: 18 }, { x: 58, y: 29 }, { x: 88, y: 27 },
-    { x: 56, y: 55 }, { x: 89, y: 57 }, { x: 19, y: 59 }, { x: 20, y: 84 },
-    { x: 56, y: 86 }, { x: 78, y: 88 },
+    { x: 18, y: 34 }, { x: 61, y: 17 }, { x: 61, y: 64 }, { x: 76, y: 31 },
+    { x: 104, y: 32 }, { x: 105, y: 61 }, { x: 106, y: 90 }, { x: 148, y: 88 },
+    { x: 148, y: 61 }, { x: 148, y: 27 },
   ];
 
   const TOWER_STATS = {
@@ -200,6 +200,7 @@
         pad: state.selectedPad,
         type: type,
         level: 1,
+        invested: cost,
         cooldownMs: 0,
       };
       state.gold -= cost;
@@ -217,7 +218,21 @@
       if (state.gold < cost) return denied("insufficient-gold", command);
       state.gold -= cost;
       tower.level++;
+      tower.invested += cost;
       return [{ type: "upgrade", towerId: tower.id, pad: tower.pad, towerType: tower.type, level: tower.level, cost: cost }];
+    }
+
+    function sell(command) {
+      const tower = towerAtPad(state.selectedPad);
+      if (!tower) return denied("empty-pad", command);
+      const invested = tower.invested;
+      const refund = Math.floor(invested * 0.70);
+      state.towers = state.towers.filter(function (candidate) { return candidate.id !== tower.id; });
+      state.gold += refund;
+      return [{
+        type: "sell", towerId: tower.id, pad: tower.pad, towerType: tower.type,
+        level: tower.level, invested: invested, refund: refund,
+      }];
     }
 
     function startWave(command) {
@@ -504,6 +519,7 @@
         return build(action.slice("build:".length), action);
       }
       if (action === "upgrade") return upgrade(action);
+      if (action === "sell") return sell(action);
       if (action === "wave") return startWave(action);
       return [];
     }

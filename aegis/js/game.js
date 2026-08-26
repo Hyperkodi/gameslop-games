@@ -10,6 +10,28 @@
     return rendererRef.hitTest(point, engineRef.state);
   }
 
+  function wireAegisChrome() {
+    const commandRoot = document.getElementById("touch");
+    if (commandRoot) {
+      // The command deck floats over the canvas. Let its mapped button listeners run, then stop
+      // their pointer events from also becoming battlefield taps on #wellwrap.
+      commandRoot.addEventListener("pointerdown", function (event) {
+        event.stopPropagation();
+      });
+    }
+
+    const pauseButton = document.getElementById("pauseButton");
+    if (pauseButton) {
+      pauseButton.addEventListener("click", function () {
+        // Keyboard pause is the shared shell's public system-input path; using it here preserves
+        // the standard pause overlay and the contextual-panel close-before-pause hook.
+        global.dispatchEvent(new KeyboardEvent("keydown", {
+          key: "p", code: "KeyP", bubbles: true, cancelable: true,
+        }));
+      });
+    }
+  }
+
   function endOverlay(state, skin) {
     if (state.outcome === "victory") {
       return {
@@ -42,6 +64,7 @@
     sounds: {
       build: [[330, 0.06, "triangle", 0.055, 0], [494, 0.09, "triangle", 0.06, 0.05]],
       upgrade: [[392, 0.07, "triangle", 0.055, 0], [523, 0.07, "triangle", 0.06, 0.06], [659, 0.1, "triangle", 0.065, 0.12]],
+      sell: [[523, 0.06, "triangle", 0.05, 0], [330, 0.1, "triangle", 0.055, 0.05]],
       attack: [[760, 0.035, "square", 0.025, 0, -180]],
       kill: [[220, 0.06, "sawtooth", 0.04, 0, -80]],
       leak: [[196, 0.13, "sawtooth", 0.07, 0], [147, 0.16, "sawtooth", 0.06, 0.08]],
@@ -52,7 +75,7 @@
       breach: [[110, 0.12, "sawtooth", 0.07, 0, -30]],
     },
     events: {
-      build: "build", upgrade: "upgrade", attack: "attack", fire: "attack", kill: "kill",
+      build: "build", upgrade: "upgrade", sell: "sell", attack: "attack", fire: "attack", kill: "kill",
       leak: "leak", wave: "wave", waveclear: "waveclear", denied: "denied",
       victory: "victory", breach: "breach",
     },
@@ -73,7 +96,7 @@
         Digit1: "build:sentinel", Numpad1: "build:sentinel",
         Digit2: "build:chronos", Numpad2: "build:chronos",
         Digit3: "build:siege", Numpad3: "build:siege",
-        KeyU: "upgrade", Space: "wave",
+        KeyU: "upgrade", KeyS: "sell", Space: "wave",
       },
       gestures: { tapAt: tapAction },
       buttons: [
@@ -81,6 +104,7 @@
         { btn: "chronos", tap: "build:chronos" },
         { btn: "siege", tap: "build:siege" },
         { btn: "upgrade", tap: "upgrade" },
+        { btn: "sell", tap: "sell" },
         { btn: "wave", tap: "wave" },
       ],
     },
@@ -89,5 +113,8 @@
     forwardStartAction: false,
   };
 
-  global.addEventListener("DOMContentLoaded", function () { K.createShell(G.config); });
+  global.addEventListener("DOMContentLoaded", function () {
+    wireAegisChrome();
+    K.createShell(G.config);
+  });
 })(typeof window !== "undefined" ? window : globalThis);

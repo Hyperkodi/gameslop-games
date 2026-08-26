@@ -11,79 +11,102 @@ window.GameSlopKit.skins.armara = {
   "fonts": {
     "display": "Cinzel",
     "body": "Cormorant Garamond",
-    "googleFonts": "family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;600"
+    "googleFonts": "family=Cinzel:wght@400;700;900&family=Cormorant+Garamond:wght@400;600;700"
   },
   "palette": {
-    "bg": "#0B0A0A",
-    "bg2": "#151210",
-    "marble": "#E9E2D3",
-    "gold": "#C9A24A",
-    "goldDeep": "#8A6A23",
-    "bronze": "#7A5230",
-    "ink": "#EFE8D8",
-    "muted": "#9A8E78",
-    "well": "#0E0D0C",
-    "grid": "#1E1A15",
-    "frame": "#C9A24A",
-    "ghost": "#C9A24A"
+    "bg": "#07111A",
+    "bg2": "#10212C",
+    "marble": "#FFF3D1",
+    "gold": "#F7C948",
+    "goldDeep": "#A87316",
+    "bronze": "#FF7A4A",
+    "ink": "#FFF9EA",
+    "muted": "#C8C9C2",
+    "well": "#16323D",
+    "grid": "#2B5360",
+    "frame": "#F7C948",
+    "ghost": "#27D7FF"
   },
   "background": {
     "image": "shell-bg.png",
     "position": "center",
-    "overlay": 0.72
+    "overlay": 0.58
   },
   "art": {
-    "battlefield": "battlefield.png",
-    "sentinelL1": "sentinel-l1.png",
-    "sentinelL2": "sentinel-l2.png",
-    "sentinelL3": "sentinel-l3.png",
-    "chronosL1": "chronos-l1.png",
-    "chronosL2": "chronos-l2.png",
-    "chronosL3": "chronos-l3.png",
-    "siegeL1": "siege-l1.png",
-    "siegeL2": "siege-l2.png",
-    "siegeL3": "siege-l3.png",
-    "enemyScout": "enemy-scout.png",
-    "enemyRaider": "enemy-raider.png",
-    "enemyGuardian": "enemy-guardian.png",
-    "enemyTitan": "enemy-titan.png",
+    "battlefieldV2": "battlefield-v2.png",
+    "enemyScoutAtlas": "enemy-scout-atlas.png",
+    "enemyRaiderAtlas": "enemy-raider-atlas.png",
+    "enemyGuardianAtlas": "enemy-guardian-atlas.png",
+    "enemyTitanAtlas": "enemy-titan-atlas.png",
+    "sentinelBaseAtlas": "sentinel-base-atlas.png",
+    "chronosBaseAtlas": "chronos-base-atlas.png",
+    "siegeBaseAtlas": "siege-base-atlas.png",
+    "sentinelTopAtlas": "sentinel-top-atlas.png",
+    "chronosTopAtlas": "chronos-top-atlas.png",
+    "siegeTopAtlas": "siege-top-atlas.png",
+    "towerCardAtlas": "tower-card-atlas.png",
     "gate": "gate.png",
     "breach": "breach.png"
   },
   "towers": {
     "sentinel": {
       "label": "SENTINEL",
+      "role": "Fast, focused damage for single targets.",
       "cost": 40,
-      "tone": { "base": "#C9A24A", "hi": "#F1D890", "lo": "#7E6120", "edge": "#EFE8D8" }
+      "tone": { "base": "#27D7FF", "hi": "#E9FCFF", "lo": "#087EA8", "edge": "#FFF3D1" }
     },
     "chronos": {
       "label": "CHRONOS",
+      "role": "Slows enemies and controls crowded lanes.",
       "cost": 55,
-      "tone": { "base": "#E9E2D3", "hi": "#FFF7E7", "lo": "#A99F8C", "edge": "#C9A24A" }
+      "tone": { "base": "#B56CFF", "hi": "#ECDDFF", "lo": "#5E2E9D", "edge": "#63E7FF" }
     },
     "siege": {
       "label": "SIEGE",
+      "role": "Heavy splash damage against grouped enemies.",
       "cost": 75,
-      "tone": { "base": "#7A5230", "hi": "#B98A5E", "lo": "#3F2914", "edge": "#C9A24A" }
+      "tone": { "base": "#FF7A4A", "hi": "#FFC16B", "lo": "#A7372B", "edge": "#FFE1B2" }
     }
   },
   "enemies": {
-    "scout": { "base": "#B76E5A", "hi": "#E7A48E", "lo": "#66392C", "edge": "#C65F42" },
-    "raider": { "base": "#7A5230", "hi": "#B98A5E", "lo": "#3F2914", "edge": "#B76E5A" },
-    "guardian": { "base": "#2B2622", "hi": "#6B5E52", "lo": "#000000", "edge": "#B76E5A" },
-    "titan": { "base": "#151210", "hi": "#7A5230", "lo": "#000000", "edge": "#C65F42" }
+    "scout": { "base": "#FF4D7A", "hi": "#FFB1C7", "lo": "#8B1741", "edge": "#FFE0E9" },
+    "raider": { "base": "#E83258", "hi": "#FF8DA9", "lo": "#72162F", "edge": "#FFD1DD" },
+    "guardian": { "base": "#B62B72", "hi": "#FF70B5", "lo": "#28162B", "edge": "#FFBADB" },
+    "titan": { "base": "#7B1F57", "hi": "#FF3C88", "lo": "#160F24", "edge": "#FF9BC8" }
   },
-  "watermarkAlpha": 0.035,
+  "effects": {
+    "outline": "#071622",
+    "sentinel": "#27D7FF",
+    "chronos": "#B56CFF",
+    "siege": "#FF7A4A",
+    "enemy": "#FF3C78",
+    "health": "#70F0A8",
+    "danger": "#FF365D",
+    "path": "#D9BE7A",
+    "pathEdge": "#5C4422"
+  },
+  "watermarkAlpha": 0.025,
   "strings": {
     "score": "SCORE",
     "wave": "WAVE",
     "integrity": "INTEGRITY",
     "aether": "AETHER",
     "best": "BEST",
-    "status": "COMMAND",
+    "status": "COMMAND DECK",
     "planning": "PLANNING",
     "combat": "WAVE",
     "nextWave": "NEXT WAVE",
+    "startWave": "START WAVE",
+    "pause": "PAUSE",
+    "sound": "SOUND",
+    "storeTitle": "BUILD A DEFENSE",
+    "inspectorTitle": "TOWER COMMAND",
+    "build": "BUILD",
+    "upgrade": "UPGRADE",
+    "sell": "SELL",
+    "maxLevel": "MAX LEVEL",
+    "available": "AVAILABLE",
+    "aetherShortfall": "MORE AETHER REQUIRED",
     "start": "PRESS ENTER OR TAP TO BEGIN\nSELECT A PAD · BUILD DEFENSES · LAUNCH THE WAVE",
     "paused": "TIME SUSPENDED",
     "resume": "RESUME DEFENSE",

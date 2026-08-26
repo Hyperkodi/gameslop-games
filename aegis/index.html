@@ -3,60 +3,185 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<meta name="theme-color" content="#0B0A0A">
+<meta name="theme-color" content="#07111A">
 <title>Armara Aegis</title>
 <link id="favicon" rel="icon" href="skin/armara/logo.png">
 <link rel="stylesheet" href="../_kit/kit.css">
+<link rel="stylesheet" href="css/aegis.css">
 </head>
 <body>
 <div id="app" class="app aegis-app">
-  <header class="title">
+  <header class="title aegis-title">
     <img id="titleLogo" class="mark" alt="">
-    <h1 id="title" data-str="title">ARMARA AEGIS</h1>
-    <p class="tagline" id="tagline">HOLD THE ETERNAL GATE</p>
+    <div class="aegis-title-copy">
+      <h1 id="title" data-str="title">ARMARA AEGIS</h1>
+      <p class="tagline" id="tagline">HOLD THE ETERNAL GATE</p>
+    </div>
   </header>
 
-  <main class="stage">
-    <aside class="panel panel-left" aria-label="Defense status">
-      <section class="stats">
-        <div class="stat"><h2 data-str="score">SCORE</h2><output id="score">0</output></div>
-        <div class="stat"><h2 data-str="wave">WAVE</h2><output id="wave">0</output></div>
-        <div class="stat"><h2 data-str="integrity">INTEGRITY</h2><output id="integrity">20</output></div>
-        <div class="stat"><h2 data-str="aether">AETHER</h2><output id="aether">160</output></div>
-        <div class="stat stat-best"><h2 data-str="best">BEST</h2><output id="best">0</output></div>
-      </section>
-    </aside>
+  <main class="stage aegis-stage">
+    <div class="wellwrap aegis-wellwrap" id="wellwrap">
+      <canvas id="well" tabindex="0" aria-label="Armara Aegis landscape tower-defense battlefield" aria-describedby="controlsHelp statusText"></canvas>
 
-    <div class="wellwrap" id="wellwrap">
-      <canvas id="well" aria-label="Armara Aegis tower-defense battlefield" aria-describedby="controlsHelp statusText"></canvas>
+      <div class="aegis-command-root" id="touch">
+        <section class="aegis-hud" id="aegisHud" aria-label="Battle status">
+          <div class="hud-economy" id="aetherChip">
+            <img class="hud-hourglass" src="skin/armara/logo.png" alt="">
+            <span class="hud-label" data-str="aether">AETHER</span>
+            <output class="hud-value" id="aether">160</output>
+            <output class="aether-feedback" id="aetherFeedback" aria-live="polite"></output>
+          </div>
+
+          <div class="hud-readouts" aria-label="Defense status">
+            <div class="hud-stat">
+              <span class="hud-label" data-str="integrity">INTEGRITY</span>
+              <output class="hud-stat-value" id="integrity">20</output>
+            </div>
+            <div class="hud-stat">
+              <span class="hud-label" data-str="wave">WAVE</span>
+              <span class="hud-stat-line"><output class="hud-stat-value" id="wave">0</output><span aria-hidden="true">/12</span></span>
+            </div>
+            <div class="hud-stat hud-stat-secondary">
+              <span class="hud-label" data-str="score">SCORE</span>
+              <output class="hud-stat-value" id="score">0</output>
+            </div>
+            <div class="hud-stat hud-stat-secondary">
+              <span class="hud-label" data-str="best">BEST</span>
+              <output class="hud-stat-value" id="best">0</output>
+            </div>
+          </div>
+
+          <div class="hud-controls" aria-label="Game controls">
+            <button class="hud-button hud-button-wave" id="waveButton" type="button" data-btn="wave" aria-label="Start wave 1" aria-keyshortcuts="Space">
+              <span class="hud-button-kicker">NEXT</span>
+              <span id="waveButtonLabel">START WAVE 1</span>
+            </button>
+            <button class="hud-button" id="pauseButton" type="button" data-system="pause" aria-label="Pause game" aria-keyshortcuts="P Escape">
+              <span class="hud-button-symbol" aria-hidden="true">Ⅱ</span>
+              <span id="pauseButtonLabel">PAUSE</span>
+            </button>
+            <button class="hud-button" id="mute" type="button" aria-label="Toggle sound" aria-pressed="false" aria-keyshortcuts="M">
+              <span class="hud-button-symbol" aria-hidden="true">♪</span>
+              <span id="muteLabel">SOUND</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="context-panel" id="commandPanel" role="dialog" aria-modal="false" aria-labelledby="panelTitle" aria-describedby="panelFeedback" tabindex="-1" hidden>
+          <div class="sheet-handle" aria-hidden="true"></div>
+          <header class="context-panel-header">
+            <div>
+              <p class="panel-kicker">COMMAND DECK</p>
+              <h2 id="panelTitle">BUILD A DEFENSE</h2>
+              <p class="panel-subtitle" id="panelSubtitle">PAD 1</p>
+            </div>
+            <button class="panel-close" id="panelClose" type="button" data-panel-action="close" aria-label="Close command deck">CLOSE <span aria-hidden="true">×</span></button>
+          </header>
+
+          <p class="panel-feedback" id="panelFeedback" aria-live="polite"></p>
+
+          <div class="build-panel" id="buildPanel" data-panel-view="build">
+            <div class="tower-card-grid">
+              <article class="tower-card tower-card-sentinel" data-tower-card="sentinel">
+                <div class="tower-card-portrait" data-card-portrait="sentinel" role="img" aria-label="Sentinel tower"></div>
+                <div class="tower-card-copy">
+                  <h3>SENTINEL</h3>
+                  <p class="tower-role" data-tower-field="role">Fast, focused damage for single targets.</p>
+                  <dl class="tower-stats">
+                    <div><dt>DAMAGE</dt><dd data-tower-field="damage">8</dd></div>
+                    <div><dt>ATTACKS/SEC</dt><dd data-tower-field="rate">2.22</dd></div>
+                    <div><dt>RANGE</dt><dd data-tower-field="range">22</dd></div>
+                  </dl>
+                  <p class="tower-special" data-tower-field="special">FOCUS FIRE</p>
+                  <button class="build-button" id="buildSentinel" type="button" data-btn="sentinel" data-cost="40" aria-label="Build Sentinel for 40 Aether" aria-keyshortcuts="1">
+                    <span data-build-label>BUILD</span><span class="build-price"><span data-build-price>40</span> AETHER</span>
+                  </button>
+                  <p class="affordability" data-affordability>AVAILABLE</p>
+                  <span class="sr-only" data-tower-field="cost">40</span>
+                </div>
+              </article>
+
+              <article class="tower-card tower-card-chronos" data-tower-card="chronos">
+                <div class="tower-card-portrait" data-card-portrait="chronos" role="img" aria-label="Chronos tower"></div>
+                <div class="tower-card-copy">
+                  <h3>CHRONOS</h3>
+                  <p class="tower-role" data-tower-field="role">Slows enemies and controls crowded lanes.</p>
+                  <dl class="tower-stats">
+                    <div><dt>DAMAGE</dt><dd data-tower-field="damage">3</dd></div>
+                    <div><dt>ATTACKS/SEC</dt><dd data-tower-field="rate">1.25</dd></div>
+                    <div><dt>RANGE</dt><dd data-tower-field="range">20</dd></div>
+                  </dl>
+                  <p class="tower-special" data-tower-field="special">35% SLOW · 1.5 SEC</p>
+                  <button class="build-button" id="buildChronos" type="button" data-btn="chronos" data-cost="55" aria-label="Build Chronos for 55 Aether" aria-keyshortcuts="2">
+                    <span data-build-label>BUILD</span><span class="build-price"><span data-build-price>55</span> AETHER</span>
+                  </button>
+                  <p class="affordability" data-affordability>AVAILABLE</p>
+                  <span class="sr-only" data-tower-field="cost">55</span>
+                </div>
+              </article>
+
+              <article class="tower-card tower-card-siege" data-tower-card="siege">
+                <div class="tower-card-portrait" data-card-portrait="siege" role="img" aria-label="Siege tower"></div>
+                <div class="tower-card-copy">
+                  <h3>SIEGE</h3>
+                  <p class="tower-role" data-tower-field="role">Heavy splash damage against grouped enemies.</p>
+                  <dl class="tower-stats">
+                    <div><dt>DAMAGE</dt><dd data-tower-field="damage">18</dd></div>
+                    <div><dt>ATTACKS/SEC</dt><dd data-tower-field="rate">0.74</dd></div>
+                    <div><dt>RANGE</dt><dd data-tower-field="range">24</dd></div>
+                  </dl>
+                  <p class="tower-special" data-tower-field="special">5 SPLASH RADIUS</p>
+                  <button class="build-button" id="buildSiege" type="button" data-btn="siege" data-cost="75" aria-label="Build Siege for 75 Aether" aria-keyshortcuts="3">
+                    <span data-build-label>BUILD</span><span class="build-price"><span data-build-price>75</span> AETHER</span>
+                  </button>
+                  <p class="affordability" data-affordability>AVAILABLE</p>
+                  <span class="sr-only" data-tower-field="cost">75</span>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <div class="inspector-panel" id="inspectorPanel" data-panel-view="inspector" hidden>
+            <div class="inspector-identity">
+              <div class="inspector-portrait" id="inspectorPortrait" role="img" aria-label="Selected tower"></div>
+              <div>
+                <p class="inspector-level" id="inspectorLevel">LEVEL 1</p>
+                <h3 id="inspectorName">SENTINEL</h3>
+                <p class="inspector-role" id="inspectorRole">Fast, focused damage for single targets.</p>
+              </div>
+            </div>
+
+            <div class="inspector-comparison" aria-label="Current and next-level statistics">
+              <div class="comparison-heading"><span>STAT</span><span>CURRENT</span><span>NEXT</span></div>
+              <div><span>DAMAGE</span><strong id="inspectorDamage">8</strong><strong id="inspectorNextDamage">12</strong></div>
+              <div><span>ATTACKS/SEC</span><strong id="inspectorRate">2.22</strong><strong id="inspectorNextRate">2.44</strong></div>
+              <div><span>RANGE</span><strong id="inspectorRange">22</strong><strong id="inspectorNextRange">24</strong></div>
+              <div><span>SPECIAL</span><strong id="inspectorSpecial">FOCUS FIRE</strong><strong id="inspectorNextSpecial">FOCUS FIRE</strong></div>
+            </div>
+
+            <div class="inspector-actions">
+              <button class="upgrade-button" id="upgradeButton" type="button" data-btn="upgrade" aria-label="Upgrade selected tower" aria-keyshortcuts="U">
+                <span>UPGRADE</span><span class="action-price"><span id="upgradePrice">35</span> AETHER</span>
+              </button>
+              <p class="max-level" id="upgradeMax" hidden>MAX LEVEL</p>
+              <button class="sell-button" id="sellButton" type="button" data-btn="sell" aria-label="Sell selected tower" aria-keyshortcuts="S">
+                <span>SELL</span><span class="action-price"><span id="sellRefund">28</span> AETHER REFUND</span>
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+
       <div class="overlay" id="overlay">
         <p class="overlay-title" id="overlayTitle"></p>
         <p class="overlay-body" id="overlayBody"></p>
         <button class="overlay-btn" id="overlayBtn" type="button"></button>
       </div>
     </div>
-
-    <aside class="panel panel-right">
-      <section class="brand">
-        <img id="brandLogo" alt="">
-        <div class="wordmark" id="wordmark"></div>
-      </section>
-      <section class="box command-status">
-        <h2 data-str="status">COMMAND</h2>
-        <p id="statusText" aria-live="polite">Planning. Empty pad 1; Sentinel selected.</p>
-        <p id="controlsHelp" class="command-help">Select a pad, then build. Arrow keys cycle pads; 1–3 build; U upgrades; Space launches a wave.</p>
-      </section>
-      <button id="mute" class="icon" type="button" aria-label="Toggle sound" aria-pressed="false">♪</button>
-    </aside>
   </main>
 
-  <nav class="touch command-bar" id="touch" aria-label="Defense commands">
-    <button type="button" data-btn="sentinel" data-cost="40" aria-label="Build Sentinel, fast damage, 40 aether" title="Sentinel — fast damage · 40 aether" aria-keyshortcuts="1" aria-pressed="true"></button>
-    <button type="button" data-btn="chronos" data-cost="55" aria-label="Build Chronos, slowing support, 55 aether" title="Chronos — slowing support · 55 aether" aria-keyshortcuts="2" aria-pressed="false"></button>
-    <button type="button" data-btn="siege" data-cost="75" aria-label="Build Siege, splash damage, 75 aether" title="Siege — splash damage · 75 aether" aria-keyshortcuts="3" aria-pressed="false"></button>
-    <button type="button" data-btn="upgrade" aria-label="Upgrade selected tower" title="Upgrade selected tower" aria-keyshortcuts="U"></button>
-    <button type="button" data-btn="wave" aria-label="Launch next wave" title="Launch next wave" aria-keyshortcuts="Space"></button>
-  </nav>
+  <p id="statusText" class="sr-only" aria-live="polite">Planning. Select a construction pad to open the command deck.</p>
+  <p id="controlsHelp" class="sr-only">Select a pad, then choose a labelled tower card. Arrow keys cycle pads; 1 through 3 build; U upgrades; S sells; Space starts a wave; P pauses; M toggles sound.</p>
   <output id="outcome" hidden></output>
 </div>
 

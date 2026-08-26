@@ -16,6 +16,21 @@ function withoutLog(state) {
   return copy;
 }
 
+test("landscape geometry matches the approved 160 by 100 battlefield", () => {
+  assert.equal(E.WORLD_W, 160);
+  assert.equal(E.WORLD_H, 100);
+  assert.deepEqual(E.PATH, [
+    { x: -8, y: 18 }, { x: 42, y: 18 }, { x: 42, y: 48 }, { x: 88, y: 48 },
+    { x: 88, y: 76 }, { x: 132, y: 76 }, { x: 132, y: 44 }, { x: 168, y: 44 },
+  ]);
+  assert.deepEqual(E.PADS, [
+    { x: 18, y: 34 }, { x: 61, y: 17 }, { x: 61, y: 64 }, { x: 76, y: 31 },
+    { x: 104, y: 32 }, { x: 105, y: 61 }, { x: 106, y: 90 }, { x: 148, y: 88 },
+    { x: 148, y: 61 }, { x: 148, y: 27 },
+  ]);
+  assert.equal(E.PATH_LENGTH, 266);
+});
+
 test("initial state matches the Aegis reset contract", () => {
   const e = E.createEngine({ seed: 123 });
   assert.equal(e.state.status, "ready");
@@ -123,6 +138,55 @@ test("upgrades apply exact level stats and costs, then cap at level three", () =
   assert.equal(e.dispatch("upgrade")[0].reason, "empty-pad");
 });
 
+test("selling level one, two, and three towers refunds seventy percent of total investment", () => {
+  const scenarios = [
+    { type: "sentinel", upgrades: 0, invested: 40, refund: 28 },
+    { type: "sentinel", upgrades: 1, invested: 75, refund: 52 },
+    { type: "siege", upgrades: 2, invested: 225, refund: 157 },
+  ];
+
+  for (const scenario of scenarios) {
+    const e = playing();
+    e.setGold(1000);
+    e.dispatch("build:" + scenario.type);
+    for (let i = 0; i < scenario.upgrades; i++) e.dispatch("upgrade");
+    const tower = e.state.towers[0];
+    const goldBeforeSale = e.state.gold;
+    assert.equal(tower.invested, scenario.invested);
+    assert.deepEqual(e.dispatch("sell"), [{
+      type: "sell",
+      towerId: tower.id,
+      pad: tower.pad,
+      towerType: scenario.type,
+      level: scenario.upgrades + 1,
+      invested: scenario.invested,
+      refund: scenario.refund,
+    }]);
+    assert.equal(e.state.gold, goldBeforeSale + scenario.refund);
+    assert.deepEqual(e.state.towers, []);
+  }
+});
+
+test("selling an empty pad is denied without gameplay mutation", () => {
+  const e = playing();
+  const before = withoutLog(e.state);
+  assert.deepEqual(e.dispatch("sell"), [{ type: "denied", reason: "empty-pad", command: "sell" }]);
+  assert.deepEqual(withoutLog(e.state), before);
+});
+
+test("a sold tower is removed and its refund can only be collected once", () => {
+  const e = playing();
+  e.dispatch("build:chronos");
+  const goldBeforeSale = e.state.gold;
+  assert.equal(e.dispatch("sell")[0].refund, 38);
+  assert.equal(e.state.gold, goldBeforeSale + 38);
+  assert.deepEqual(e.state.towers, []);
+  const goldAfterSale = e.state.gold;
+  assert.deepEqual(e.dispatch("sell"), [{ type: "denied", reason: "empty-pad", command: "sell" }]);
+  assert.equal(e.state.gold, goldAfterSale);
+  assert.deepEqual(e.state.towers, []);
+});
+
 test("authored wave rosters are exact and their seeded shuffle is reproducible", () => {
   function queue(seed) {
     const e = playing(seed);
@@ -162,11 +226,11 @@ test("spawn timing catches up after a large tick without duplicates", () => {
 
 test("enemy movement follows waypoints without overshoot and slow changes exact distance", () => {
   const e = playing();
-  const enemy = e.addEnemy("scout", { progress: 30 });
-  assert.deepEqual([enemy.x, enemy.y], [25, 14]);
+  const enemy = e.addEnemy("scout", { progress: 47 });
+  assert.deepEqual([enemy.x, enemy.y], [39, 18]);
   e.tick(1000);
-  assert.ok(Math.abs(enemy.progress - 39) < 1e-9);
-  assert.deepEqual([enemy.x, enemy.y], [28, 20]);
+  assert.ok(Math.abs(enemy.progress - 56) < 1e-9);
+  assert.deepEqual([enemy.x, enemy.y], [42, 24]);
   const before = enemy.progress;
   enemy.slowPct = 0.35;
   enemy.slowMs = 500;
@@ -183,9 +247,9 @@ test("targeting chooses greatest progress in range and lowest id on a tie", () =
   e.dispatch("selectPad:1");
   e.dispatch("build:sentinel");
   const tower = e.state.towers[0];
-  const a = e.addEnemy("raider", { progress: 40 });
-  const b = e.addEnemy("raider", { progress: 42 });
-  const c = e.addEnemy("raider", { progress: 42 });
+  const a = e.addEnemy("raider", { progress: 48 });
+  const b = e.addEnemy("raider", { progress: 50 });
+  const c = e.addEnemy("raider", { progress: 50 });
   const far = e.addEnemy("raider", { progress: 180 });
   assert.equal(e.findTarget(tower).id, b.id);
   assert.ok(b.id < c.id);
@@ -217,7 +281,7 @@ test("Chronos keeps the strongest live slow and refreshes only equal or stronger
   e.setGold(500);
   e.dispatch("selectPad:1");
   e.dispatch("build:chronos");
-  const enemy = e.addEnemy("raider", { detached: true, x: 43, y: 19, hp: 200 });
+  const enemy = e.addEnemy("raider", { detached: true, x: E.PADS[1].x, y: E.PADS[1].y + 1, hp: 200 });
   e.tick(1);
   assert.equal(enemy.hp, 197);
   assert.equal(enemy.slowPct, 0.35);
@@ -242,9 +306,9 @@ test("Siege splash hits all and only enemies inside its target-centered radius",
   e.setGold(500);
   e.dispatch("selectPad:1");
   e.dispatch("build:siege");
-  const target = e.addEnemy("guardian", { detached: true, x: 43, y: 19, hp: 100, progress: 10 });
-  const inside = e.addEnemy("guardian", { detached: true, x: 47.9, y: 19, hp: 100, progress: 9 });
-  const outside = e.addEnemy("guardian", { detached: true, x: 48.1, y: 19, hp: 100, progress: 8 });
+  const target = e.addEnemy("guardian", { detached: true, x: E.PADS[1].x, y: E.PADS[1].y + 1, hp: 100, progress: 10 });
+  const inside = e.addEnemy("guardian", { detached: true, x: E.PADS[1].x + 4.9, y: E.PADS[1].y + 1, hp: 100, progress: 9 });
+  const outside = e.addEnemy("guardian", { detached: true, x: E.PADS[1].x + 5.1, y: E.PADS[1].y + 1, hp: 100, progress: 8 });
   const events = e.tick(1);
   const attack = events.find((x) => x.type === "attack");
   assert.deepEqual(attack.hitIds, [target.id, inside.id]);
@@ -259,7 +323,7 @@ test("kills pay once while leaks pay nothing and zero integrity orders defeat ev
   e.dispatch("selectPad:1");
   e.dispatch("build:sentinel");
   const goldAfterBuild = e.state.gold;
-  e.addEnemy("scout", { detached: true, x: 43, y: 19, hp: 1, progress: 2 });
+  e.addEnemy("scout", { detached: true, x: E.PADS[1].x, y: E.PADS[1].y + 1, hp: 1, progress: 2 });
   let events = e.tick(1);
   assert.equal(events.filter((x) => x.type === "kill").length, 1);
   assert.equal(e.state.gold, goldAfterBuild + 6);
@@ -295,7 +359,7 @@ test("wave clear and wave twelve victory score exactly, and seed plus input log 
 
   function scripted(seed, replayLog) {
     const e = E.createEngine({ seed });
-    const script = replayLog || [[0, "start"], [0, "build:sentinel"], [0, "nextPad"], [0, "build:chronos"], [0, "wave"], [90, "selectPad:2"], [90, "build:siege"], [180, "selectPad:0"], [180, "upgrade"]];
+    const script = replayLog || [[0, "start"], [0, "build:sentinel"], [0, "nextPad"], [0, "build:chronos"], [0, "wave"], [90, "selectPad:2"], [90, "build:siege"], [180, "selectPad:0"], [180, "upgrade"], [220, "sell"]];
     let at = 0;
     for (let i = 0; i < 360; i++) {
       while (at < script.length && script[at][0] === e.state.tick) {

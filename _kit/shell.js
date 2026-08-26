@@ -20,6 +20,9 @@
                                      // player's first press would otherwise only start the game and be
                                      // swallowed. If true, immediately re-dispatch that same action right
                                      // after start() so it also takes effect on the first press.
+     // A renderer may optionally expose capturePrevious(state), pausesSimulation(), and
+     // closePanel(), and may consume draw(state, extras, {alpha, stepMs, now}). These hooks are
+     // presentation-only; engines retain the same fixed-step and input-log contracts.
    } */
 (function (global) {
   "use strict";
@@ -155,7 +158,12 @@
       },
       onSystem: function (name) {
         if (name === "start") start();
-        else if (name === "pause") pause();
+        else if (name === "pause") {
+          // Contextual game surfaces (for example a tower inspector) get first refusal on
+          // Escape/P. Closing management resumes its presentation pause without changing the
+          // engine's explicit playing/paused state or showing the standard pause overlay.
+          if (!(renderer.closePanel && renderer.closePanel())) pause();
+        }
         else if (name === "mute") toggleMute();
       },
     });
@@ -178,12 +186,20 @@
     function frame(now) {
       let dt = now - last; last = now;
       if (dt > 250) dt = 250;
-      acc += dt;
       input.update(dt);
+      const presentationPaused = !!(renderer.pausesSimulation && renderer.pausesSimulation());
       let steps = 0;
-      while (acc >= STEP && steps < MAX_STEPS_PER_FRAME) {
-        handleEvents(engine.tick(STEP));
-        acc -= STEP; steps++;
+      if (presentationPaused) {
+        // Do not bank combat time while a contextual management surface is open. Inputs and
+        // rendering continue, so build/upgrade/sell actions remain immediately responsive.
+        acc = 0;
+      } else {
+        acc += dt;
+        while (acc >= STEP && steps < MAX_STEPS_PER_FRAME) {
+          if (renderer.capturePrevious) renderer.capturePrevious(engine.state);
+          handleEvents(engine.tick(STEP));
+          acc -= STEP; steps++;
+        }
       }
       if (steps === MAX_STEPS_PER_FRAME) acc = 0;
       // Some engines accrue points silently inside tick() (e.g. Tetris soft-drop) without an
@@ -191,7 +207,11 @@
       // live while playing; cheap compared to the draw call below.
       if (engine.state.status === "playing") refreshStats();
       const extras = cfg.drawExtras ? cfg.drawExtras(engine) : undefined;
-      renderer.draw(engine.state, extras);
+      renderer.draw(engine.state, extras, {
+        alpha: presentationPaused ? 0 : Math.max(0, Math.min(1, acc / STEP)),
+        stepMs: STEP,
+        now: now,
+      });
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
