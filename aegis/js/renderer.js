@@ -198,6 +198,45 @@
       segments.push({ a: a, b: b, start: pathLength, length: length, angle: Math.atan2(b.y - a.y, b.x - a.x) });
       pathLength += length;
     }
+    function makeRouteStonework(compact) {
+      const spacing = compact ? 9 : 6.2, inset = compact ? 4.5 : 3.4, faceHalf = 4.05;
+      const courseEdges = compact ? [-faceHalf, faceHalf] : [-faceHalf, -1.35, 1.35, faceHalf];
+      const courses = [], joints = [], chips = [];
+      function line(segment, distanceA, offsetA, distanceB, offsetB) {
+        const tx = Math.cos(segment.angle), ty = Math.sin(segment.angle), nx = -ty, ny = tx;
+        return [
+          segment.a.x + tx * distanceA + nx * offsetA,
+          segment.a.y + ty * distanceA + ny * offsetA,
+          segment.a.x + tx * distanceB + nx * offsetB,
+          segment.a.y + ty * distanceB + ny * offsetB,
+        ];
+      }
+      segments.forEach(function (segment, segmentIndex) {
+        if (segment.length <= inset * 2) return;
+        if (!compact) {
+          courses.push(line(segment, inset, -1.35, segment.length - inset, -1.35));
+          courses.push(line(segment, inset, 1.35, segment.length - inset, 1.35));
+        }
+        for (let row = 0; row < courseEdges.length - 1; row++) {
+          const low = courseEdges[row] + 0.08, high = courseEdges[row + 1] - 0.08;
+          const phase = spacing * (0.3 + ((segmentIndex * 2 + row) % 3) / 3);
+          for (let distance = inset + phase; distance < segment.length - inset; distance += spacing) {
+            joints.push(line(segment, distance, low, distance, high));
+          }
+        }
+        if (!compact) {
+          for (let distance = inset + spacing * 1.45; distance < segment.length - inset; distance += spacing * 3) {
+            const offset = ((segmentIndex + Math.round(distance / spacing)) % 3 - 1) * 1.75;
+            const first = line(segment, distance, offset, distance + 0.7, offset + 0.34);
+            const second = line(segment, distance + 0.7, offset + 0.34, distance + 1.25, offset + 0.08);
+            chips.push([first[0], first[1], first[2], first[3], second[2], second[3]]);
+          }
+        }
+      });
+      return { courses: courses, joints: joints, chips: chips };
+    }
+    const detailedRouteStonework = makeRouteStonework(false);
+    const compactRouteStonework = makeRouteStonework(true);
 
     const artKeys = Object.keys(skin.art || {});
     if (document.body) document.body.dataset.artReady = artKeys.length ? "0" : "1";
@@ -330,12 +369,41 @@
       K.drawWatermark(ctx, skin, width, height, 0.26);
     }
     function drawRoute(ctx, scale) {
-      ctx.save(); ctx.lineCap = "round"; ctx.lineJoin = "round";
-      traceRoute(ctx, scale); ctx.strokeStyle = fx.outline || "rgba(5,10,18,.86)"; ctx.globalAlpha = 0.9; ctx.lineWidth = 12.5 * scale; ctx.stroke();
-      traceRoute(ctx, scale); ctx.strokeStyle = fx.pathEdge || "rgba(218,205,176,.82)"; ctx.globalAlpha = 0.88; ctx.lineWidth = 10.2 * scale; ctx.stroke();
-      traceRoute(ctx, scale); ctx.strokeStyle = "rgba(88,83,82,.92)"; ctx.lineWidth = 8.6 * scale; ctx.stroke();
-      traceRoute(ctx, scale); ctx.strokeStyle = fx.path || "rgba(235,214,151,.46)"; ctx.globalAlpha = 0.58; ctx.lineWidth = Math.max(1.5, 0.42 * scale);
-      ctx.setLineDash([2.2 * scale, 2.4 * scale]); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.lineCap = "square"; ctx.lineJoin = "round";
+      traceRoute(ctx, scale); ctx.strokeStyle = fx.outline || "#071622"; ctx.globalAlpha = 0.92; ctx.lineWidth = 13.2 * scale; ctx.stroke();
+      traceRoute(ctx, scale); ctx.strokeStyle = fx.pathCurb || "#D8BE78"; ctx.globalAlpha = 0.92; ctx.lineWidth = 11.4 * scale; ctx.stroke();
+      traceRoute(ctx, scale); ctx.strokeStyle = fx.pathEdge || "#5B432B"; ctx.globalAlpha = 0.96; ctx.lineWidth = 10.1 * scale; ctx.stroke();
+      traceRoute(ctx, scale); ctx.strokeStyle = fx.path || "#B9A06F"; ctx.globalAlpha = 0.98; ctx.lineWidth = 9.1 * scale; ctx.stroke();
+      traceRoute(ctx, scale); ctx.strokeStyle = K.hexToRgba(fx.pathHighlight || "#FFEFC6", 0.12); ctx.lineWidth = 8.5 * scale; ctx.stroke();
+
+      // Staggered mortar joints turn the route into a worn ashlar causeway instead of a
+      // modern traffic lane. The pattern is derived from segment/row indexes so it never
+      // shimmers between frames, and it simplifies automatically at small canvas scales.
+      const compact = scale < 3;
+      const stonework = compact ? compactRouteStonework : detailedRouteStonework;
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = K.hexToRgba(fx.pathJoint || "#37281C", compact ? 0.24 : 0.38);
+      ctx.lineWidth = Math.max(1, 0.18 * scale);
+      ctx.lineCap = "round";
+      function strokeLines(lines) {
+        ctx.beginPath();
+        lines.forEach(function (line) {
+          ctx.moveTo(line[0] * scale, line[1] * scale); ctx.lineTo(line[2] * scale, line[3] * scale);
+        });
+        ctx.stroke();
+      }
+      if (stonework.courses.length) strokeLines(stonework.courses);
+      strokeLines(stonework.joints);
+      if (stonework.chips.length) {
+        ctx.strokeStyle = K.hexToRgba(fx.pathHighlight || "#FFEFC6", 0.2);
+        ctx.lineWidth = Math.max(1, 0.11 * scale);
+        ctx.beginPath();
+        stonework.chips.forEach(function (chip) {
+          ctx.moveTo(chip[0] * scale, chip[1] * scale); ctx.lineTo(chip[2] * scale, chip[3] * scale); ctx.lineTo(chip[4] * scale, chip[5] * scale);
+        });
+        ctx.stroke();
+      }
+      ctx.restore();
     }
     function drawBreach(ctx, scale) {
       const x = 2 * scale, y = 18 * scale;

@@ -82,8 +82,11 @@ window.GameSlopKit.skins.armara = {
     "enemy": "#FF3C78",
     "health": "#70F0A8",
     "danger": "#FF365D",
-    "path": "#D9BE7A",
-    "pathEdge": "#5C4422"
+    "path": "#B9A06F",
+    "pathCurb": "#D8BE78",
+    "pathEdge": "#5B432B",
+    "pathHighlight": "#FFEFC6",
+    "pathJoint": "#37281C"
   },
   "watermarkAlpha": 0.025,
   "strings": {
