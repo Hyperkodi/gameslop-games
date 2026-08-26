@@ -104,7 +104,19 @@ bash tools/publish-games.sh
 This splits `games/` out of the monorepo history onto a `games-mirror` branch and force-pushes it
 to `https://github.com/Hyperkodi/gameslop-games.git:main`. Pass a different remote URL as `$1` to
 publish elsewhere. Run it from the monorepo after committing hub/game changes; GitHub Pages (once
-enabled, `main` branch, `/` root) picks up the new commit automatically.
+enabled, `main` branch, `/` root) picks up the new commit automatically. `games/.nojekyll` rides
+along in the subtree split — without it, GitHub Pages runs the Jekyll build, which drops any
+directory starting with `_` (including `_kit/`) and the whole site breaks.
+
+**Verify the publish landed** once Pages has rebuilt (can take a minute or two):
+
+```bash
+curl -sI https://hyperkodi.github.io/gameslop-games/_kit/shell.js   # expect: HTTP/2 200
+node tools/cdp-shot.js "https://hyperkodi.github.io/gameslop-games/serpent/?debug=1" \
+  1280 800 /tmp/serpent-live.png --script driver.js
+# driver.js: module.exports = async (cdp, evaluate) => evaluate("document.body.dataset.ready");
+# expect the resolved value "1"
+```
 
 ## URLs
 
