@@ -47,10 +47,11 @@
       drawWatermark(ctx, w, h);
 
       const p = state.pickup;
-      if (skin.logoImage) {
-        K.drawLogo(ctx, skin.logoImage, p.x * s + s / 2, p.y * s + s / 2, s * 0.8, 1);
-      } else {
+      if (p) {
         K.drawTile(ctx, p.x * s, p.y * s, s, sprites.pickup);
+        if (skin.logoImage) {
+          K.drawLogo(ctx, skin.logoImage, p.x * s + s / 2, p.y * s + s / 2, s * 0.9, 1);
+        }
       }
 
       const snake = state.snake;
