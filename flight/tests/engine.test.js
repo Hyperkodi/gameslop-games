@@ -19,12 +19,17 @@ test("flap sets vy to -52 and emits flap; ceiling clamps", () => {
   e.setBird({ y: 3.5, vy: -52 }); e.tick(50); assert.equal(e.state.bird.y, 3);
 });
 test("columns spawn at 1.0 s then every 1.9 s, scroll at 38 u/s, gap centre within [28,72]", () => {
-  const e = playing(); e.setBird({ y: 50, vy: 0 });
-  e.tick(999); assert.equal(e.state.columns.length, 0);
-  e.tick(1); assert.equal(e.state.columns.length, 1); assert.ok(Math.abs(e.state.columns[0].x - 72.5) < 1e-6);
-  e.setBird({ y: e.state.columns[0].gapY, vy: 0 }); // keep the bird alive inside the gap line
-  e.tick(1000); assert.ok(Math.abs(e.state.columns[0].x - (72.5 - 38)) < 1e-6);
-  e.tick(900); assert.equal(e.state.columns.length, 2);
+  const e = playing();
+  const hover = (n) => { for (let i = 0; i < n; i++) { const c = e.state.columns[0]; e.setBird({ y: c ? c.gapY : 50, vy: 0 }); e.tick(DT); } };
+  hover(59);                                                   // ~983 ms: nothing yet
+  assert.equal(e.state.columns.length, 0);
+  hover(2);                                                    // crosses 1000 ms: first column at the right edge
+  assert.equal(e.state.columns.length, 1); assert.ok(Math.abs(e.state.columns[0].x - 72.5) < 1.5);
+  const x0 = e.state.columns[0].x;
+  hover(60);                                                   // +1000 ms at 38 u/s
+  assert.ok(Math.abs((x0 - e.state.columns[0].x) - 38) < 1e-6);
+  hover(55);                                                   // past 2900 ms: second column
+  assert.equal(e.state.columns.length, 2);
   e.state.columns.forEach((c) => assert.ok(c.gapY >= 28 && c.gapY <= 72));
 });
 test("passing a column scores once; speed ramps 4% per 10 points, capped at 1.4x", () => {

@@ -16,14 +16,6 @@
   const FIRST_SPAWN_MS = 1000, SPAWN_INTERVAL_MS = 1900;
   const FLOOR_Y = 96, FLOOR_LIMIT = FLOOR_Y - BIRD_R; // 93 — bird centre at/above this dies
 
-  // The shell always drives tick() with a fixed 1000/60 ms step (spec §3.6): this cap only
-  // engages for a directly-scripted, unrealistically large dt (as the engine test's spawn-timing
-  // test does, to fast-forward the environment clock) — it keeps a single huge tick() call from
-  // free-falling the bird clean through the floor in one unphysical leap, the same "no tunneling"
-  // rationale Breaker's ball sub-stepping uses. The environment clock (elapsed/spawn/scroll) always
-  // advances by the full, uncapped dt regardless.
-  const MAX_BIRD_DT_MS = 250;
-
   function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
   function speedForScore(score) {
@@ -77,18 +69,16 @@
 
       state.speed = speedForScore(state.score);
 
-      // Bird physics: gravity integrates over a dt capped at MAX_BIRD_DT_MS (see comment above);
-      // the environment clock below always uses the full, uncapped dt.
+      // Bird physics: gravity integrates over the full dt (spec §4.4) — no internal cap.
       const bird = state.bird;
-      const dtBirdS = Math.min(dt, MAX_BIRD_DT_MS) / 1000;
-      bird.vy = Math.min(TERMINAL_VY, bird.vy + GRAVITY * dtBirdS);
-      bird.y += bird.vy * dtBirdS;
+      const dtS = dt / 1000;
+      bird.vy = Math.min(TERMINAL_VY, bird.vy + GRAVITY * dtS);
+      bird.y += bird.vy * dtS;
       if (bird.y < bird.r) { bird.y = bird.r; bird.vy = Math.max(bird.vy, 0); }
 
-      // Environment clock: elapsed + column scroll/spawn use the full, real dt.
-      const dtEnvS = dt / 1000;
+      // Environment clock: elapsed + column scroll/spawn, also over the full dt.
       state.elapsed += dt;
-      for (let i = 0; i < state.columns.length; i++) state.columns[i].x -= state.speed * dtEnvS;
+      for (let i = 0; i < state.columns.length; i++) state.columns[i].x -= state.speed * dtS;
       state.columns = state.columns.filter(function (c) { return c.x + c.w >= 0; });
       if (state.elapsed >= nextSpawnAt) spawnColumn();
 
