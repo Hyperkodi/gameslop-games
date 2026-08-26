@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0B0A0A">
+<title>Armara Aegis</title>
+<link id="favicon" rel="icon" href="skin/armara/logo.png">
+<link rel="stylesheet" href="../_kit/kit.css">
+</head>
+<body>
+<div id="app" class="app aegis-app">
+  <header class="title">
+    <img id="titleLogo" class="mark" alt="">
+    <h1 id="title" data-str="title">ARMARA AEGIS</h1>
+    <p class="tagline" id="tagline">HOLD THE ETERNAL GATE</p>
+  </header>
+
+  <main class="stage">
+    <aside class="panel panel-left" aria-label="Defense status">
+      <section class="stats">
+        <div class="stat"><h2 data-str="score">SCORE</h2><output id="score">0</output></div>
+        <div class="stat"><h2 data-str="wave">WAVE</h2><output id="wave">0</output></div>
+        <div class="stat"><h2 data-str="integrity">INTEGRITY</h2><output id="integrity">20</output></div>
+        <div class="stat"><h2 data-str="aether">AETHER</h2><output id="aether">160</output></div>
+        <div class="stat stat-best"><h2 data-str="best">BEST</h2><output id="best">0</output></div>
+      </section>
+    </aside>
+
+    <div class="wellwrap" id="wellwrap">
+      <canvas id="well" aria-label="Armara Aegis tower-defense battlefield" aria-describedby="controlsHelp statusText"></canvas>
+      <div class="overlay" id="overlay">
+        <p class="overlay-title" id="overlayTitle"></p>
+        <p class="overlay-body" id="overlayBody"></p>
+        <button class="overlay-btn" id="overlayBtn" type="button"></button>
+      </div>
+    </div>
+
+    <aside class="panel panel-right">
+      <section class="brand">
+        <img id="brandLogo" alt="">
+        <div class="wordmark" id="wordmark"></div>
+      </section>
+      <section class="box command-status">
+        <h2 data-str="status">COMMAND</h2>
+        <p id="statusText" aria-live="polite">Planning. Empty pad 1; Sentinel selected.</p>
+        <p id="controlsHelp" class="command-help">Select a pad, then build. Arrow keys cycle pads; 1–3 build; U upgrades; Space launches a wave.</p>
+      </section>
+      <button id="mute" class="icon" type="button" aria-label="Toggle sound" aria-pressed="false">♪</button>
+    </aside>
+  </main>
+
+  <nav class="touch command-bar" id="touch" aria-label="Defense commands">
+    <button type="button" data-btn="sentinel" data-cost="40" aria-label="Build Sentinel, fast damage, 40 aether" title="Sentinel — fast damage · 40 aether" aria-keyshortcuts="1" aria-pressed="true"></button>
+    <button type="button" data-btn="chronos" data-cost="55" aria-label="Build Chronos, slowing support, 55 aether" title="Chronos — slowing support · 55 aether" aria-keyshortcuts="2" aria-pressed="false"></button>
+    <button type="button" data-btn="siege" data-cost="75" aria-label="Build Siege, splash damage, 75 aether" title="Siege — splash damage · 75 aether" aria-keyshortcuts="3" aria-pressed="false"></button>
+    <button type="button" data-btn="upgrade" aria-label="Upgrade selected tower" title="Upgrade selected tower" aria-keyshortcuts="U"></button>
+    <button type="button" data-btn="wave" aria-label="Launch next wave" title="Launch next wave" aria-keyshortcuts="Space"></button>
+  </nav>
+  <output id="outcome" hidden></output>
+</div>
+
+<script src="../_kit/rng.js"></script>
+<script src="../_kit/draw.js"></script>
+<script src="../_kit/skin.js"></script>
+<script src="../_kit/audio.js"></script>
+<script src="../_kit/input.js"></script>
+<script src="../_kit/shell.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/renderer.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

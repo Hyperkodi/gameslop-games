@@ -152,7 +152,19 @@
           const dx = e.clientX - g.x0, dy = e.clientY - g.y0;
           const vel = dy / Math.max(1, dt);
           if (!g.moved && dt < TAP_MS && Math.abs(dx) < TAP_DIST && Math.abs(dy) < TAP_DIST) {
-            if (G.tap) act(G.tap);
+            if (typeof G.tapAt === "function") {
+              const pointerEl = o.pointerEl || o.wellEl;
+              const rect = pointerEl && pointerEl.getBoundingClientRect ? pointerEl.getBoundingClientRect() : null;
+              if (rect) {
+                const width = rect.width || 1, height = rect.height || 1;
+                const point = {
+                  x: Math.max(0, Math.min(1, (e.clientX - rect.left) / width)),
+                  y: Math.max(0, Math.min(1, (e.clientY - rect.top) / height)),
+                };
+                const action = G.tapAt(point);
+                if (action !== null && action !== undefined) act(action);
+              }
+            } else if (G.tap) act(G.tap);
           } else if (G.swipeDownFast && !g.slowOn && dy > HARD_DROP_MIN_PX && vel > HARD_DROP_MIN_VEL && Math.abs(dx) < Math.abs(dy)) {
             act(G.swipeDownFast);
           } else if (G.swipeUp && dy < -HARD_DROP_MIN_PX && Math.abs(dx) < Math.abs(dy)) {

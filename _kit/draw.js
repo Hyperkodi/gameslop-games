@@ -88,8 +88,11 @@
 
   // The seamless 512px marble ground tile from Armaratris' renderer: soft cloudy patches +
   // veins, each shape drawn at all nine wrap offsets so the tile repeats without a seam.
-  // Painted once per page onto document.body.
-  function paintGround(palette) {
+  // Accepts the legacy palette argument or a full skin. A skin may add a presentation-only
+  // background image beneath a dark readability wash; the procedural tile remains the fallback.
+  function paintGround(skinOrPalette) {
+    const skin = skinOrPalette && skinOrPalette.palette ? skinOrPalette : null;
+    const palette = skin ? skin.palette : skinOrPalette;
     const size = 512;
     const wrap = [-size, 0, size]; // draw every shape 9x so it tiles seamlessly across edges
     const c = document.createElement("canvas"); c.width = size; c.height = size;
@@ -135,8 +138,26 @@
       }
     }
     ctx.globalAlpha = 1;
-    document.body.style.backgroundImage = "url(" + c.toDataURL("image/png") + ")";
-    document.body.style.backgroundSize = size + "px " + size + "px";
+    const tile = "url(" + c.toDataURL("image/png") + ")";
+    const background = skin && skin.background && skin.background.image ? skin.background : null;
+    if (background) {
+      let overlay = Number(background.overlay);
+      if (!Number.isFinite(overlay)) overlay = 0.72;
+      overlay = Math.max(0, Math.min(1, overlay));
+      const imageUrl = (skin.base || "") + background.image;
+      const escapedUrl = imageUrl.replace(/(["\\])/g, "\\$1");
+      const wash = hexToRgba(palette.bg, overlay);
+      document.body.style.backgroundImage =
+        "linear-gradient(" + wash + ", " + wash + "), url(\"" + escapedUrl + "\"), " + tile;
+      document.body.style.backgroundSize = "cover, cover, " + size + "px " + size + "px";
+      document.body.style.backgroundPosition = "center, " + (background.position || "center") + ", 0 0";
+      document.body.style.backgroundRepeat = "no-repeat, no-repeat, repeat";
+    } else {
+      document.body.style.backgroundImage = tile;
+      document.body.style.backgroundSize = size + "px " + size + "px";
+      document.body.style.backgroundPosition = "0 0";
+      document.body.style.backgroundRepeat = "repeat";
+    }
   }
 
   Object.assign(K, {

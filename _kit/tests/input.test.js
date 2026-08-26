@@ -39,6 +39,30 @@ test("swipe4: first axis to cross 24px wins, once per gesture; tap fires tap act
   assert.deepEqual(out, ["right", "flap"]);
 });
 
+test("tapAt receives normalized, clamped pointer coordinates and emits only its semantic action", () => {
+  const d = fakeDom(); const K = load(); const out = [], points = [];
+  const pointerEl = { getBoundingClientRect: () => ({ left: 100, top: 200, width: 400, height: 200 }) };
+  K.createInput({
+    wellEl: d.el, pointerEl, touchEl: null, cellSize: () => 24,
+    gestures: { tapAt: (point) => { points.push(point); return points.length === 1 ? "selectPad:4" : null; } },
+    onAction: (a) => out.push(a),
+  });
+  const p = (type, x, y, id = 1) => d.handlers[type]({ pointerId: id, pointerType: "touch", button: 0, clientX: x, clientY: y, target: { closest: () => null }, preventDefault() {} });
+
+  p("pointerdown", 200, 250); d.tick(50); p("pointerup", 200, 250);
+  assert.deepEqual(points[0], { x: 0.25, y: 0.25 });
+  assert.deepEqual(out, ["selectPad:4"]);
+
+  p("pointerdown", 50, 450); d.tick(50); p("pointerup", 50, 450);
+  assert.deepEqual(points[1], { x: 0, y: 1 });
+  assert.deepEqual(out, ["selectPad:4"]);
+
+  p("pointerdown", 200, 250); p("pointermove", 230, 250); p("pointerup", 230, 250);
+  p("pointerdown", 200, 250); p("pointercancel", 200, 250);
+  assert.equal(points.length, 2);
+  assert.deepEqual(out, ["selectPad:4"]);
+});
+
 test("dragHold emits On when past deadzone and Off on return/lift", () => {
   const d = fakeDom(); const K = load(); const out = [];
   K.createInput({ wellEl: d.el, touchEl: null, cellSize: () => 24, gestures: { dragHold: { left: "leftOn", right: "rightOn", deadzone: 8 } }, onAction: (a) => out.push(a) });

@@ -13,6 +13,16 @@
   --frame-w: 14px;
 }
 * { box-sizing: border-box; }
+.sr-only {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  padding: 0 !important; margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
 html, body { height: 100%; margin: 0; }
 body {
   background-color: var(--c-bg);
@@ -65,6 +75,9 @@ body {
 .brand { display: flex; flex-direction: column; align-items: center; gap: 6px; padding-top: 6px; }
 .brand img { width: 64px; height: 64px; object-fit: contain; opacity: .9; }
 .brand .wordmark { font-family: var(--font-display); font-weight: 700; letter-spacing: .3em; font-size: 12px; color: var(--c-gold); }
+.command-status { width: 100%; max-width: 172px; }
+.command-status p { margin: 0; font-size: 11px; line-height: 1.45; color: var(--c-ink); overflow-wrap: anywhere; }
+.command-status .command-help { margin-top: 9px; font-size: 10px; color: var(--c-muted); }
 .icon {
   align-self: center; width: 40px; height: 40px; border: 1px solid var(--c-goldDeep); background: var(--c-bg2);
   color: var(--c-gold); font-size: 18px; cursor: pointer; border-radius: 2px;
@@ -100,6 +113,20 @@ body {
   position: relative; height: 56px; background: var(--c-bg2); color: var(--c-gold); border: 1px solid var(--c-goldDeep); border-radius: 4px;
 }
 .touch button:active { background: var(--c-goldDeep); color: var(--c-bg); }
+.touch.command-bar {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(48px, 1fr));
+  width: min(100%, 620px);
+  margin: 0 auto;
+}
+.touch.command-bar button { min-width: 48px; min-height: 48px; }
+.touch.command-bar button[aria-pressed="true"], .touch.command-bar button.is-selected {
+  color: var(--c-bg);
+  background: var(--c-gold);
+  border-color: var(--c-marble);
+  box-shadow: inset 0 0 0 1px var(--c-bg), 0 0 16px color-mix(in srgb, var(--c-gold) 30%, transparent);
+}
+.touch.command-bar button:disabled { opacity: .42; cursor: not-allowed; }
 
 /* Icons: each [data-btn] button gets a currentColor SVG icon on ::before, masked in via
    mask-image (so it tints with the button's own color, including the :active state above).
@@ -147,6 +174,26 @@ body {
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' fill-rule='evenodd' d='M3 12A9 9 0 1 0 21 12A9 9 0 1 0 3 12ZM6 12A6 6 0 1 0 18 12A6 6 0 1 0 6 12ZM9 12A3 3 0 1 0 15 12A3 3 0 1 0 9 12Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' fill-rule='evenodd' d='M3 12A9 9 0 1 0 21 12A9 9 0 1 0 3 12ZM6 12A6 6 0 1 0 18 12A6 6 0 1 0 6 12ZM9 12A3 3 0 1 0 15 12A3 3 0 1 0 9 12Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
 }
+.touch button[data-btn="sentinel"]::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' fill-rule='evenodd' d='M12 2 20 5v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5l8-3Zm0 3L7 7v4c0 3.4 2 6.6 5 8 3-1.4 5-4.6 5-8V7l-5-2Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' fill-rule='evenodd' d='M12 2 20 5v6c0 5-3.4 9.5-8 11-4.6-1.5-8-6-8-11V5l8-3Zm0 3L7 7v4c0 3.4 2 6.6 5 8 3-1.4 5-4.6 5-8V7l-5-2Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+}
+.touch button[data-btn="chronos"]::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M7 2h10v3c0 3-2 5-4 7 2 2 4 4 4 7v3H7v-3c0-3 2-5 4-7-2-2-4-4-4-7V2Zm3 3c0 2 1 3.2 2 4.3C13 8.2 14 7 14 5h-4Zm2 9.7c-1 1.1-2 2.3-2 4.3h4c0-2-1-3.2-2-4.3Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M7 2h10v3c0 3-2 5-4 7 2 2 4 4 4 7v3H7v-3c0-3 2-5 4-7-2-2-4-4-4-7V2Zm3 3c0 2 1 3.2 2 4.3C13 8.2 14 7 14 5h-4Zm2 9.7c-1 1.1-2 2.3-2 4.3h4c0-2-1-3.2-2-4.3Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+}
+.touch button[data-btn="siege"]::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M4 18h16v3H4v-3Zm2-2h4l7-7-2-2-9 9Zm11-13a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M4 18h16v3H4v-3Zm2-2h4l7-7-2-2-9 9Zm11-13a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+}
+.touch button[data-btn="upgrade"]::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='m12 3 6 6h-4v5h-4V9H6l6-6ZM5 17h14v4H5v-4Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='m12 3 6 6h-4v5h-4V9H6l6-6ZM5 17h14v4H5v-4Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+}
+.touch button[data-btn="wave"]::before {
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M5 3h2v18H5V3Zm3 1c4-2 7 2 11 0v10c-4 2-7-2-11 0V4Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M5 3h2v18H5V3Zm3 1c4-2 7 2 11 0v10c-4 2-7-2-11 0V4Z'/%3E%3C/svg%3E") center / auto 60% no-repeat;
+}
 
 /* Mobile: stats strip on top, well fills, buttons at the bottom */
 @media (max-width: 759px) {
@@ -168,6 +215,18 @@ body {
   .stat-best { display: none; }
   .stat output { font-size: 16px; }
   .brand { display: none; }
+  .command-status { display: contents; }
+  .command-status > :not([aria-live]) { display: none; }
+  .command-status [aria-live] {
+    position: absolute !important;
+    width: 1px !important; height: 1px !important;
+    padding: 0 !important; margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
   #mute { width: 32px; height: 32px; font-size: 14px; align-self: flex-start; }
   .touch { display: grid; grid-template-columns: repeat(auto-fit, minmax(56px, 1fr)); }
 }

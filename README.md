@@ -1,6 +1,6 @@
 # Armara Arcade
 
-Six browser games — Armaratris, Serpent, Breaker, 2048, Flight, Starfall — sharing one kit
+Six browser games — Armaratris, Serpent, Breaker, Aegis, Flight, Starfall — sharing one kit
 (`_kit/`: `rng.js`, `draw.js`, `skin.js`, `audio.js`, `input.js`, `shell.js`, `kit.css`). Static,
 no build step, no server-side code. `index.html` is the arcade hub.
 
@@ -27,13 +27,16 @@ cd games/_kit && node --test
 cd games/armaratris && node --test
 cd games/serpent && node --test
 cd games/breaker && node --test
-cd games/2048 && node --test
+cd games/aegis && node --test
 cd games/flight && node --test
 cd games/starfall && node --test
 ```
 
 Run from inside each folder (not `node --test games/<id>/tests/` — passing a path fails on
 Node 24; passing none discovers `tests/` from the cwd).
+
+Current expected total: 98 tests — kit 12, Armaratris 35, Serpent 11, Breaker 9, Aegis 15,
+Flight 7, and Starfall 9.
 
 ## Add a game
 
@@ -43,17 +46,21 @@ Every game lives at `games/<id>/` with exactly:
    `"wordmark": "ARMARA"`, replace `strings` labels with the new game's stat labels (keep
    `best,start,paused,resume,gameOver,restart`), replace `tiles` with the game's `sprites`
    (tones drawn from the shared palette: gold, bronze, marble, obsidian, deep gold — each a
-   `{base,hi,lo,edge?}` triple). Generate `skin.js` from `skin.json` with the one-liner in
-   `armaratris/README.md`; copy `logo.png` (identical across every game — same sponsor mark).
+   `{base,hi,lo,edge?}` triple). Games may also declare optional `background` and `art` assets;
+   keep their filenames in the skin manifest so another sponsor can replace them without touching
+   game logic. Generate `skin.js` from `skin.json` with the one-liner in `armaratris/README.md`;
+   copy `logo.png` (identical across every game — same sponsor mark).
 2. **`js/engine.js`** — pure, `require`-able, attaches `window.Game.createEngine` and exports
    `module.exports = { createEngine, ...constants }`. Uses `GameSlopKit.mulberry32/fnv1a` in the
    browser, `require("../../_kit/rng.js")` in Node.
 3. **`tests/engine.test.js`** — write first, watch it fail, implement, watch it pass.
 4. **`js/renderer.js`** — `Game.createRenderer({skin, wellCanvas, wrapEl})` →
    `{ resize(), draw(state, extras), cell }`, using `GameSlopKit.drawTile/drawBevelRect/
-   setupCanvas/hexToRgba/drawLogo`.
+   setupCanvas/hexToRgba/drawLogo`; presentation art must have a procedural fallback.
 5. **`js/game.js`** — `Game.config` for `GameSlopKit.createShell` (game id, sounds, events, stats,
-   input map, `startsOnAnyAction: true`) plus the `DOMContentLoaded` call.
+   input map, a game-appropriate `startsOnAnyAction` value, and optional `endOverlay`) plus the
+   `DOMContentLoaded` call. Coordinate-driven games can map a normalized `gestures.tapAt(point)` to a stable semantic
+   action string; only that string should reach the deterministic engine.
 6. **`index.html`** — title/tagline/logo header, stats panel, framed well, brand + mute button,
    `#touch` nav. Script order: `_kit/rng.js`, `_kit/draw.js`, `_kit/skin.js`, `_kit/audio.js`,
    `_kit/input.js`, `_kit/shell.js`, then `js/engine.js`, `js/renderer.js`, `js/game.js`.
@@ -63,11 +70,15 @@ Every game lives at `games/<id>/` with exactly:
 8. Add the game's card to `index.html` (mark, title, one-line description, `PLAY` link to
    `<id>/`) and its folder to this README's test list.
 
+Use `aegis/` as the worked example for normalized pad selection, a five-command control bar,
+skin-owned artwork, and distinct victory/defeat overlay copy.
+
 ## Skin format
 
 Each game folder has `skin/<name>/skin.json` (+ generated `skin.js` twin for `file://` use):
-`name`, `title`, `tagline`, `logo` (image filename), optional `music` (looped audio filename) and
-`musicVolume` (0–1), `fonts` (`display`/`body` family names + `googleFonts` query string),
+`name`, `title`, `tagline`, `logo` (image filename), optional `music` (looped audio filename),
+`musicVolume` (0–1), optional `background` (`image`, `position`, `overlay`) and `art` filename map,
+`fonts` (`display`/`body` family names + `googleFonts` query string),
 `palette` (`bg,bg2,marble,gold,goldDeep,bronze,ink,muted,well,grid,frame,ghost`), a game-specific
 `tiles`/`sprites` map, `watermarkAlpha`, and `strings` (UI copy, including per-game overlay text).
 `_kit/skin.js` turns this into CSS custom properties (`--c-*`, `--font-*`), loads Google Fonts,
@@ -112,8 +123,8 @@ directory starting with `_` (including `_kit/`) and the whole site breaks.
 
 ```bash
 curl -sI https://hyperkodi.github.io/gameslop-games/_kit/shell.js   # expect: HTTP/2 200
-node tools/cdp-shot.js "https://hyperkodi.github.io/gameslop-games/serpent/?debug=1" \
-  1280 800 /tmp/serpent-live.png --script driver.js
+node tools/cdp-shot.js "https://hyperkodi.github.io/gameslop-games/aegis/?debug=1" \
+  1280 800 /tmp/aegis-live.png --script driver.js
 # driver.js: module.exports = async (cdp, evaluate) => evaluate("document.body.dataset.ready");
 # expect the resolved value "1"
 ```
@@ -124,7 +135,7 @@ node tools/cdp-shot.js "https://hyperkodi.github.io/gameslop-games/serpent/?debu
 - Armaratris: https://hyperkodi.github.io/gameslop-games/armaratris/
 - Serpent: https://hyperkodi.github.io/gameslop-games/serpent/
 - Breaker: https://hyperkodi.github.io/gameslop-games/breaker/
-- 2048: https://hyperkodi.github.io/gameslop-games/2048/
+- Aegis: https://hyperkodi.github.io/gameslop-games/aegis/
 - Flight: https://hyperkodi.github.io/gameslop-games/flight/
 - Starfall: https://hyperkodi.github.io/gameslop-games/starfall/
 

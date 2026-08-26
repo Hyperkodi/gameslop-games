@@ -8,6 +8,7 @@
      skinDir,                       // default "skin/"
      createEngine, createRenderer,
      sounds, events, onEvent, drawExtras, stats,
+     endOverlay,                    // optional (state, skin) -> {title, body, button} for custom endings
      input: { keys, repeatKeys, gestures, buttons },
      startsOnAnyAction,             // any action (not listed in ignoreWhileReady) starts the game while "ready"
      ignoreWhileReady,              // array of action names to silently drop while "ready" instead of
@@ -51,7 +52,7 @@
     if (holdCanvas) sideCanvases.hold = holdCanvas;
     if (nextCanvas) sideCanvases.next = nextCanvas;
     const renderer = cfg.createRenderer({ skin: skin, wellCanvas: $("well"), wrapEl: wrap, sideCanvases: sideCanvases });
-    K.paintGround(skin.palette);
+    K.paintGround(skin);
 
     if (params.get("debug") === "1") global.__gameslop = { engine: engine, renderer: renderer };
 
@@ -80,7 +81,18 @@
     function onGameOver() {
       const s = engine.state;
       if (s.score > best) { best = s.score; writeBest(cfg.game, skin.name, best); if (ui.best) ui.best.textContent = best; }
-      showOverlay(skin.strings.gameOver, skin.strings.score + " " + s.score + "\n" + skin.strings.best + " " + best, skin.strings.restart);
+      const fallbackOverlay = {
+        title: skin.strings.gameOver,
+        body: skin.strings.score + " " + s.score + "\n" + skin.strings.best + " " + best,
+        button: skin.strings.restart,
+      };
+      const customOverlay = cfg.endOverlay ? cfg.endOverlay(s, skin) : null;
+      const end = customOverlay || fallbackOverlay;
+      showOverlay(
+        end.title === undefined ? fallbackOverlay.title : end.title,
+        end.body === undefined ? fallbackOverlay.body : end.body,
+        end.button === undefined ? fallbackOverlay.button : end.button
+      );
       if (global.parent !== global) {
         global.parent.postMessage({
           v: 1, type: "gameover", game: cfg.game, skin: skin.name, score: s.score, seed: s.seed,
@@ -127,7 +139,7 @@
 
     const inputCfg = cfg.input || {};
     const input = K.createInput({
-      wellEl: wrap, touchEl: $("touch"), cellSize: function () { return renderer.cell; },
+      wellEl: wrap, pointerEl: $("well"), touchEl: $("touch"), cellSize: function () { return renderer.cell; },
       keys: inputCfg.keys, repeatKeys: inputCfg.repeatKeys, gestures: inputCfg.gestures, buttons: inputCfg.buttons,
       onAction: function (action) {
         if (engine.state.status === "ready") {
