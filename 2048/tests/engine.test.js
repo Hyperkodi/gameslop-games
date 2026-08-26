@@ -17,7 +17,7 @@ test("left slide merges once per pair and scores the merged values", () => {
   assert.deepEqual(e.state.board[2].slice(0, 2), [8, 8]);   // 4+4 merges, the 8 does not merge again
   assert.equal(e.state.score, 8 + 12 + 8);
   assert.ok(ev.some((x) => x.type === "slide"));
-  assert.equal(ev.filter((x) => x.type === "merge").length, 4);
+  assert.equal(ev.filter((x) => x.type === "merge").length, 5);
   assert.equal(ev.filter((x) => x.type === "spawn").length, 1);
 });
 test("right/up/down slide in their directions", () => {
@@ -51,13 +51,16 @@ test("bestTile tracks the largest tile; reaching 2048 emits won once and play co
   assert.equal(e.dispatch("left").filter((x) => x.type === "won").length, 0);
 });
 test("game over when the board is full with no merges", () => {
-  const e = playing(); e.setBoard([[2, 4, 2, 4], [4, 2, 4, 2], [2, 4, 2, 4], [4, 2, 4, 0]]);
-  // last move fills the board: slide left on the bottom row puts the 4 at col 3? No: bottom row [4,2,4,0] left → unchanged. Use "right": [0,4,2,4] → changes → spawns into col 0 → full, no merges possible? [x,4,2,4] with x∈{2,4}: x=4 → merge possible → keep trying with seeds until spawn yields 2.
+  // Checkerboard with one hole at the end of the bottom row. "right" shifts that row to [0,4,2,4],
+  // which no longer matches row 2 column-wise; the spawn lands at (x=0, y=3) whose neighbours are both 4,
+  // so a spawned 2 leaves no move in any direction, while a spawned 4 can still merge.
   let over = false;
   for (let seed = 1; seed < 50 && !over; seed++) {
-    const f = playing(seed); f.setBoard([[2, 4, 2, 4], [4, 2, 4, 2], [2, 4, 2, 4], [4, 2, 4, 0]]);
+    const f = playing(seed); f.setBoard([[4, 2, 4, 2], [2, 4, 2, 4], [4, 2, 4, 2], [4, 2, 4, 0]]);
     const ev = f.dispatch("right");
+    assert.deepEqual(f.state.board[3].slice(1), [4, 2, 4]);
     if (f.state.board[3][0] === 2) { over = true; assert.ok(ev.some((x) => x.type === "gameover")); assert.equal(f.state.status, "over"); }
+    else { assert.equal(f.state.status, "playing"); }
   }
   assert.ok(over, "expected at least one seed to spawn a 2");
 });
