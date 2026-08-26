@@ -107,13 +107,15 @@
 
       // enemies: fall; drones also drift sinusoidally around their spawn x (baseX), culled once
       // fully off the bottom. vx on a drone is purely informational telemetry of the current
-      // drift velocity; a test-spawned enemy (no baseX) instead just integrates its own vx.
+      // drift velocity; a test-spawned enemy (no baseX) instead just integrates its own vx. The
+      // sinusoid's own amplitude (12) can carry a drone's spawn x (only ever chosen in [r, 100-r])
+      // outside the world near either edge, so the drifted x is clamped back into [r, 100-r].
       for (let i = 0; i < state.enemies.length; i++) {
         const en = state.enemies[i];
         en.y += en.vy * dtS;
         if (en.kind === "drone" && en.baseX !== undefined) {
           const theta = en.phase + state.elapsed / 400;
-          en.x = en.baseX + 12 * Math.sin(theta);
+          en.x = Math.max(en.r, Math.min(W - en.r, en.baseX + 12 * Math.sin(theta)));
           en.vx = 12 * Math.cos(theta);
         } else {
           en.x += en.vx * dtS;

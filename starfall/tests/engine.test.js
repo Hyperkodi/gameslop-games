@@ -64,3 +64,9 @@ test("determinism: same seed + log reproduces", () => {
   const a = run(8), b = run(8);
   assert.deepEqual(a.state.enemies, b.state.enemies); assert.equal(a.state.score, b.state.score); assert.equal(a.hash(), b.hash());
 });
+test("drones never drift outside the world", () => {
+  const e = playing(); e.setShip(50);
+  e.spawnEnemy({ id: 9, kind: "drone", x: 4, y: 10, r: 4, hp: 2, vx: 0, vy: 0, phase: 0, baseX: 4 });
+  e.spawnEnemy({ id: 10, kind: "drone", x: 96, y: 10, r: 4, hp: 2, vx: 0, vy: 0, phase: Math.PI, baseX: 96 });
+  for (let i = 0; i < 200; i++) { e.state.invulnMs = 5000; e.tick(DT); e.state.enemies.forEach((en) => assert.ok(en.x >= en.r - 1e-9 && en.x <= 100 - en.r + 1e-9, "x=" + en.x)); }
+});
