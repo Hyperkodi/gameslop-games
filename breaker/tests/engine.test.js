@@ -41,13 +41,15 @@ test("a marble brick breaks in one hit for 10 points", () => {
 test("a bronze brick needs two hits and pays 30", () => {
   const e = playing();
   const target = e.state.bricks.find((b) => b.tier === "bronze" && Math.abs(b.x - 3) < 1e-9);
-  e.setBricks([target]);
+  const keeper = e.state.bricks.find((b) => b.tier === "marble" && Math.abs(b.x - 93) < 1e-9);
+  e.setBricks([target, keeper]);
   e.setBall({ x: target.x + 4.7, y: target.y + 4.2 + 3, vx: 0, vy: -55, attached: false });
   for (let i = 0; i < 10; i++) e.tick(DT);
-  assert.equal(e.state.bricks.length, 1); assert.equal(e.state.bricks[0].hits, 1); assert.equal(e.state.score, 0);
+  assert.equal(e.state.bricks.length, 2); assert.equal(e.state.bricks[0].hits, 1); assert.equal(e.state.score, 0);
   e.setBall({ x: target.x + 4.7, y: target.y + 4.2 + 3, vx: 0, vy: -55, attached: false });
   for (let i = 0; i < 10; i++) e.tick(DT);
   assert.equal(e.state.score, 30);
+  assert.equal(e.state.bricks.length, 1);
 });
 test("ball below the paddle costs a life and re-attaches; 0 lives ends the game", () => {
   const e = playing();
