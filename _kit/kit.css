@@ -177,3 +177,38 @@ body {
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* Hub (games/index.html): a scrolling card grid instead of a fixed-viewport game shell. */
+body.hub { overflow: auto; height: auto; }
+.hub-app { display: block; height: auto; min-height: 100dvh; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 12px 16px 48px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  text-decoration: none;
+  background: var(--c-bg2);
+  border: 1px solid var(--c-goldDeep);
+  padding: 26px 18px 20px;
+  transition: border-color .15s ease;
+}
+.card:hover, .card:focus-visible { border-color: var(--c-gold); outline: none; }
+.card-mark { width: 56px; height: 56px; object-fit: contain; opacity: .9; }
+.card h2 {
+  margin: 0; font-family: var(--font-display); font-weight: 700; font-size: 18px;
+  letter-spacing: .12em; color: var(--c-gold); text-transform: uppercase;
+}
+.card p { margin: 0; font-size: 14px; line-height: 1.45; color: var(--c-muted); }
+.card-play {
+  margin-top: 8px; font-family: var(--font-display); font-weight: 700; letter-spacing: .2em; font-size: 12px;
+  color: var(--c-bg); background: var(--c-gold); padding: 8px 22px;
+}

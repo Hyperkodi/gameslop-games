@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0A0A">
+<title>Armara Arcade</title>
+<link id="favicon" rel="icon" href="armaratris/skin/armara/logo.png">
+<link rel="stylesheet" href="_kit/kit.css">
+</head>
+<body class="hub">
+<div class="app hub-app">
+  <header class="title">
+    <img id="titleLogo" class="mark" alt="">
+    <h1 id="title">ARMARA ARCADE</h1>
+    <p class="tagline" id="tagline">SOVEREIGN AI OPERATING SYSTEM</p>
+  </header>
+
+  <main class="cards">
+    <a class="card" href="armaratris/">
+      <img class="card-mark" src="armaratris/skin/armara/logo.png" alt="">
+      <h2>Armaratris</h2>
+      <p>Stack the stones. Clear the lines. The classic, carved in marble and gold.</p>
+      <span class="card-play">PLAY</span>
+    </a>
+    <a class="card" href="serpent/">
+      <img class="card-mark" src="armaratris/skin/armara/logo.png" alt="">
+      <h2>Serpent</h2>
+      <p>Guide the golden serpent to the hourglass. Every pickup makes it faster.</p>
+      <span class="card-play">PLAY</span>
+    </a>
+    <a class="card" href="breaker/">
+      <img class="card-mark" src="armaratris/skin/armara/logo.png" alt="">
+      <h2>Breaker</h2>
+      <p>Bronze, gold and marble bricks. One ball, three lives, endless levels.</p>
+      <span class="card-play">PLAY</span>
+    </a>
+    <a class="card" href="2048/">
+      <img class="card-mark" src="armaratris/skin/armara/logo.png" alt="">
+      <h2>2048</h2>
+      <p>Slide and merge from obsidian to marble. Reach 2048 — then keep going.</p>
+      <span class="card-play">PLAY</span>
+    </a>
+    <a class="card" href="flight/">
+      <img class="card-mark" src="armaratris/skin/armara/logo.png" alt="">
+      <h2>Flight</h2>
+      <p>Tap to fly the hourglass between marble columns. One touch ends it.</p>
+      <span class="card-play">PLAY</span>
+    </a>
+    <a class="card" href="starfall/">
+      <img class="card-mark" src="armaratris/skin/armara/logo.png" alt="">
+      <h2>Starfall</h2>
+      <p>Hold to fire. Asteroids fall, drones drift. Survive the waves.</p>
+      <span class="card-play">PLAY</span>
+    </a>
+  </main>
+</div>
+
+<script src="_kit/rng.js"></script>
+<script src="_kit/skin.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  GameSlopKit.loadSkin("armara", "armaratris/skin/").then(function () {
+    document.title = "Armara Arcade";
+    document.body.dataset.ready = "1";
+  });
+});
+</script>
+</body>
+</html>
