@@ -21,29 +21,13 @@
     let anim = null; // { from: board, start: performance.now(), duration }
 
     r.resize = function () {
-      dpr = Math.min(global.devicePixelRatio || 1, 3);
-      const narrow = global.innerWidth < 760;
-      const frame = parseFloat(getComputedStyle(o.wrapEl).borderTopWidth) || 14;
-      const titleH = (document.querySelector(".title") || {}).offsetHeight || 60;
-      const touchEl = document.getElementById("touch");
-      const touchH = touchEl && getComputedStyle(touchEl).display !== "none" ? touchEl.offsetHeight : 0;
-      const stripH = narrow ? ((document.querySelector(".panel-left") || {}).offsetHeight || 70) + 8 : 0;
-      const availH = global.innerHeight - titleH - touchH - stripH - 2 * frame - 24;
-      const availW = global.innerWidth - (narrow ? 20 : 2 * (172 + 22) + 32) - 2 * frame;
-      const cell = Math.max(48, Math.floor(Math.min(availW, availH) / COLS));
+      const vp = K.wellViewport(o.wrapEl);
+      dpr = vp.dpr;
+      const cell = Math.max(48, Math.floor(Math.min(vp.availW, vp.availH) / COLS));
       r.cell = cell;
       wellCtx = K.setupCanvas(o.wellCanvas, cell * COLS, cell * ROWS, dpr);
       return { cell: cell };
     };
-
-    function drawWatermark(ctx, w, h) {
-      const wa = skin.watermarkAlpha == null ? 0.06 : skin.watermarkAlpha;
-      if (wa <= 0 || !skin.logoImage) return;
-      const size = Math.min(w, h) * 0.62;
-      ctx.globalAlpha = wa;
-      ctx.drawImage(skin.logoImage, (w - size) / 2, (h - size) / 2, size, size);
-      ctx.globalAlpha = 1;
-    }
 
     function toneFor(value) {
       if (value >= 2048) return sprites.t2048plus;
@@ -81,7 +65,7 @@
     r.draw = function (state) {
       const ctx = wellCtx, s = r.cell, w = s * COLS, h = s * ROWS;
       ctx.fillStyle = pal.well; ctx.fillRect(0, 0, w, h);
-      drawWatermark(ctx, w, h);
+      K.drawWatermark(ctx, skin, w, h);
 
       const gap = s * 0.08;
       const tsize = s - gap;

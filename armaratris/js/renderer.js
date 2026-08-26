@@ -39,15 +39,9 @@
     let dpr = 1;
 
     r.resize = function () {
-      dpr = Math.min(global.devicePixelRatio || 1, 3);
-      const narrow = global.innerWidth < 760;
-      const frame = parseFloat(getComputedStyle(o.wrapEl).borderTopWidth) || 14;
-      const titleH = (document.querySelector(".title") || {}).offsetHeight || 60;
-      const touchEl = document.getElementById("touch");
-      const touchH = touchEl && getComputedStyle(touchEl).display !== "none" ? touchEl.offsetHeight : 0;
-      const stripH = narrow ? ((document.querySelector(".panel-left") || {}).offsetHeight || 70) + 8 : 0;
-      const availH = global.innerHeight - titleH - touchH - stripH - 2 * frame - 24;
-      const availW = global.innerWidth - (narrow ? 20 : 2 * (172 + 22) + 32) - 2 * frame;
+      const vp = K.wellViewport(o.wrapEl);
+      dpr = vp.dpr;
+      const narrow = vp.narrow, availH = vp.availH, availW = vp.availW;
       const cell = Math.max(12, Math.floor(Math.min(availH / VISIBLE, availW / COLS)));
       r.cell = cell;
       wellCtx = K.setupCanvas(o.wellCanvas, cell * COLS, cell * VISIBLE, dpr);
@@ -58,15 +52,6 @@
       r.nextCount = nextCount;
       return { cell: cell };
     };
-
-    function drawWatermark(ctx, w, h) {
-      var wa = skin.watermarkAlpha == null ? 0.06 : skin.watermarkAlpha;
-      if (wa <= 0 || !skin.logoImage) return;
-      const size = Math.min(w, h) * 0.62;
-      ctx.globalAlpha = wa;
-      ctx.drawImage(skin.logoImage, (w - size) / 2, (h - size) / 2, size, size);
-      ctx.globalAlpha = 1;
-    }
 
     r.flash = function (rows, boardSnapshot) {
       if (reducedMotion()) return;
@@ -81,7 +66,7 @@
       for (let x = 1; x < COLS; x++) { ctx.moveTo(x * s + 0.5, 0); ctx.lineTo(x * s + 0.5, h); }
       for (let y = 1; y < VISIBLE; y++) { ctx.moveTo(0, y * s + 0.5); ctx.lineTo(w, y * s + 0.5); }
       ctx.stroke();
-      drawWatermark(ctx, w, h);
+      K.drawWatermark(ctx, skin, w, h);
 
       let board = state.board;
       if (flash) {

@@ -59,6 +59,33 @@
     ctx.restore();
   }
 
+  // Shared well-sizing math (title height, touch bar, mobile strip, frame border, paddings) —
+  // every renderer's resize() calls this, then applies its own aspect-specific cell/scale line
+  // to {availW, availH}.
+  function wellViewport(wrapEl) {
+    const dpr = Math.min(global.devicePixelRatio || 1, 3);
+    const narrow = global.innerWidth < 760;
+    const frame = parseFloat(getComputedStyle(wrapEl).borderTopWidth) || 14;
+    const titleH = (document.querySelector(".title") || {}).offsetHeight || 60;
+    const touchEl = document.getElementById("touch");
+    const touchH = touchEl && getComputedStyle(touchEl).display !== "none" ? touchEl.offsetHeight : 0;
+    const stripH = narrow ? ((document.querySelector(".panel-left") || {}).offsetHeight || 70) + 8 : 0;
+    const availH = global.innerHeight - titleH - touchH - stripH - 2 * frame - 24;
+    const availW = global.innerWidth - (narrow ? 20 : 2 * (172 + 22) + 32) - 2 * frame;
+    return { availW: availW, availH: availH, narrow: narrow, dpr: dpr };
+  }
+
+  // Faint centered logo behind the well grid. skin.watermarkAlpha (default 0.06) and
+  // skin.logoImage (preloaded by skin.js) gate it; scale is the fraction of min(w, h).
+  function drawWatermark(ctx, skin, w, h, scale) {
+    const wa = skin.watermarkAlpha == null ? 0.06 : skin.watermarkAlpha;
+    if (wa <= 0 || !skin.logoImage) return;
+    const size = Math.min(w, h) * (scale === undefined ? 0.62 : scale);
+    ctx.globalAlpha = wa;
+    ctx.drawImage(skin.logoImage, (w - size) / 2, (h - size) / 2, size, size);
+    ctx.globalAlpha = 1;
+  }
+
   // The seamless 512px marble ground tile from Armaratris' renderer: soft cloudy patches +
   // veins, each shape drawn at all nine wrap offsets so the tile repeats without a seam.
   // Painted once per page onto document.body.
@@ -115,5 +142,6 @@
   Object.assign(K, {
     drawTile: drawTile, drawBevelRect: drawBevelRect, hexToRgba: hexToRgba,
     setupCanvas: setupCanvas, paintGround: paintGround, drawLogo: drawLogo,
+    wellViewport: wellViewport, drawWatermark: drawWatermark,
   });
 })(typeof window !== "undefined" ? window : globalThis);
