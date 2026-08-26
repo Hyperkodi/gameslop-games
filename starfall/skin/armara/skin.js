@@ -1,7 +1,7 @@
 // GENERATED from skin.json (source of truth). Regenerate with the command in README.md.
-window.Armaratris = window.Armaratris || {};
-window.Armaratris.skins = window.Armaratris.skins || {};
-window.Armaratris.skins.armara = {
+window.GameSlopKit = window.GameSlopKit || {};
+window.GameSlopKit.skins = window.GameSlopKit.skins || {};
+window.GameSlopKit.skins.armara = {
   "name": "armara",
   "title": "ARMARA STARFALL",
   "tagline": "SOVEREIGN AI OPERATING SYSTEM",

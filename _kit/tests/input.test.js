@@ -49,6 +49,14 @@ test("dragHold emits On when past deadzone and Off on return/lift", () => {
   p("pointerup", 80, 100); assert.deepEqual(out, ["rightOn", "rightOff", "leftOn", "leftOff"]);
 });
 
+test("holdFire gesture: pointerdown on the well emits On, pointerup emits Off", () => {
+  const d = fakeDom(); const K = load(); const out = [];
+  K.createInput({ wellEl: d.el, touchEl: null, cellSize: () => 24, gestures: { holdFire: { on: "fireOn", off: "fireOff" } }, onAction: (a) => out.push(a) });
+  const p = (type, x, y) => d.handlers[type]({ pointerId: 1, pointerType: "touch", button: 0, clientX: x, clientY: y, target: { closest: () => null }, preventDefault() {} });
+  p("pointerdown", 100, 100); assert.deepEqual(out, ["fireOn"]);
+  p("pointerup", 100, 100); assert.deepEqual(out, ["fireOn", "fireOff"]);
+});
+
 test("buttons: press/release and tap/hold/release", () => {
   const d = fakeDom(); const K = load(); const out = [];
   const btns = {};

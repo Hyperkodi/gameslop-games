@@ -18,9 +18,9 @@ Armara-branded Tetris. Static — open `index.html`. Runs on the shared kit at `
   const j=fs.readFileSync("skin.json","utf8");
   fs.writeFileSync("skin.js",
   "// GENERATED from skin.json (source of truth). Regenerate with the command in README.md.\n"+
-  "window.Armaratris = window.Armaratris || {};\n"+
-  "window.Armaratris.skins = window.Armaratris.skins || {};\n"+
-  "window.Armaratris.skins."+JSON.parse(j).name+" = "+j.trim()+";\n");
+  "window.GameSlopKit = window.GameSlopKit || {};\n"+
+  "window.GameSlopKit.skins = window.GameSlopKit.skins || {};\n"+
+  "window.GameSlopKit.skins."+JSON.parse(j).name+" = "+j.trim()+";\n");
   '
   ```
 - Play-to-earn hook: on game over the page posts `{v:1, type:"gameover", game, skin, score, seed, inputsHash, stats}` to its parent frame, where `stats` is `{score, level, lines}` (every stat configured in `js/game.js`). The engine is deterministic (seed + input log), so a server can replay a game to verify a score.

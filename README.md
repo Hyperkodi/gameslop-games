@@ -83,9 +83,9 @@ const fs=require("fs");
 const j=fs.readFileSync("skin.json","utf8");
 fs.writeFileSync("skin.js",
 "// GENERATED from skin.json (source of truth). Regenerate with the command in README.md.\n"+
-"window.Armaratris = window.Armaratris || {};\n"+
-"window.Armaratris.skins = window.Armaratris.skins || {};\n"+
-"window.Armaratris.skins."+JSON.parse(j).name+" = "+j.trim()+";\n");
+"window.GameSlopKit = window.GameSlopKit || {};\n"+
+"window.GameSlopKit.skins = window.GameSlopKit.skins || {};\n"+
+"window.GameSlopKit.skins."+JSON.parse(j).name+" = "+j.trim()+";\n");
 '
 ```
 

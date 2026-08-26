@@ -34,7 +34,7 @@
       return sprites["t" + value] || sprites.t2048plus;
     }
     function textColorFor(value) {
-      return value >= 512 ? pal.bg : pal.ink;
+      return value >= 128 ? pal.bg : pal.ink;
     }
     function fontSizeFor(cell, value) {
       const digits = String(value).length;

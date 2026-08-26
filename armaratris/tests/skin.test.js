@@ -36,7 +36,7 @@ for (const name of names) {
     const json = readJson(dir);
     const sandbox = { window: {} };
     vm.runInNewContext(fs.readFileSync(path.join(dir, "skin.js"), "utf8"), sandbox);
-    const fromScript = JSON.parse(JSON.stringify(sandbox.window.Armaratris.skins[json.name]));
+    const fromScript = JSON.parse(JSON.stringify(sandbox.window.GameSlopKit.skins[json.name]));
     assert.deepEqual(fromScript, json);
   });
 }

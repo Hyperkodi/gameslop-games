@@ -205,11 +205,14 @@
       return events;
     }
 
+    // Launch angle: straight up (-90°) with up to ±15° of rng-chosen jitter, so consecutive
+    // launches (after a life is lost, or a fresh level) don't all fire on the same line.
     function doLaunch() {
       const events = [];
       if (!state.ball.attached) return events;
       const speed = ballSpeedForLevel();
-      const angle = angleFromOffset(state.ball.x, state.paddle.x, state.paddle.w / 2);
+      const jitterDeg = (rng() * 2 - 1) * 15;
+      const angle = (-90 + jitterDeg) * Math.PI / 180;
       state.ball.vx = speed * Math.cos(angle);
       state.ball.vy = speed * Math.sin(angle);
       state.ball.attached = false;

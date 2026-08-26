@@ -7,7 +7,7 @@
   const WORLD_W = 62.5, WORLD_H = 100;
   const CAP_H = 2; // gold cap height at each gap edge
   const FLOOR_H = 4; // floor band height
-  const FLOOR_TOP = WORLD_H - FLOOR_H; // 96 — top edge of the floor band
+  const FLOOR_TOP = G.FLOOR_Y; // 96 — top edge of the floor band, from the engine's api
   const BIRD_SIZE = 8;
 
   function createRenderer(o) {
@@ -32,8 +32,8 @@
       const columns = state.columns;
       for (let i = 0; i < columns.length; i++) {
         const c = columns[i];
-        const topH = c.gapY - 14; // top segment: from y=0 to the gap's top edge
-        const botY = c.gapY + 14; // bottom segment: from the gap's bottom edge to the floor
+        const topH = c.gapY - G.GAP_HALF; // top segment: from y=0 to the gap's top edge
+        const botY = c.gapY + G.GAP_HALF; // bottom segment: from the gap's bottom edge to the floor
         const botH = FLOOR_TOP - botY;
         if (topH > 0) K.drawBevelRect(ctx, c.x * s, 0, c.w * s, topH * s, sprites.column);
         if (botH > 0) K.drawBevelRect(ctx, c.x * s, botY * s, c.w * s, botH * s, sprites.column);

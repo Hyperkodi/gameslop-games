@@ -37,8 +37,12 @@
     }
 
     // Uniform pick among empty cells via the engine's own rng stream, so seed + inputLog replays it.
+    // A full board (no empty cell) is unreachable at the 20x20 grid size in practice, but leaves
+    // pickup null rather than crashing rng()'s index math against an empty list — step() below
+    // tolerates a null pickup by skipping the eat check.
     function spawnPickup() {
       const cells = emptyCells();
+      if (cells.length === 0) { state.pickup = null; return; }
       const idx = Math.floor(rng() * cells.length);
       state.pickup = cells[idx];
     }
@@ -75,7 +79,7 @@
         return;
       }
 
-      const ate = newHead.x === state.pickup.x && newHead.y === state.pickup.y;
+      const ate = state.pickup !== null && newHead.x === state.pickup.x && newHead.y === state.pickup.y;
       // Eating keeps the tail (the snake grows); otherwise the tail cell is vacated this step,
       // so moving into it is legal — collision is checked against the post-move body below.
       const newSnake = ate

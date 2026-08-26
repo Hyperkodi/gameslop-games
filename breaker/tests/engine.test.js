@@ -26,7 +26,7 @@ test("launch gives the ball speed 55 upward from the paddle centre", () => {
   assert.ok(ev.some((x) => x.type === "launch"));
   assert.equal(e.state.ball.attached, false);
   assert.ok(Math.abs(Math.hypot(e.state.ball.vx, e.state.ball.vy) - 55) < 1e-6);
-  assert.ok(e.state.ball.vy < 0); assert.ok(Math.abs(e.state.ball.vx) < 1e-6);
+  assert.ok(e.state.ball.vy < 0); assert.ok(Math.abs(e.state.ball.vx) <= 55 * Math.sin(15 * Math.PI / 180) + 1e-9);
   assert.deepEqual(e.dispatch("launch"), []); // already launched
 });
 test("a marble brick breaks in one hit for 10 points", () => {

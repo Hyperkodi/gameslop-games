@@ -57,6 +57,9 @@
       // 1D interval overlap on x (bird's circle bounding box vs the column's rect), AND the bird's
       // centre y outside the gap band — per the task decisions, using the raw centre y (not
       // radius-adjusted) against [gapY - 14, gapY + 14].
+      // Convention: the x overlap test is an open/closed mix (<=/<=) so touching edges count as a
+      // hit, while the y gap test is centre-only (bird's y, not its circle) — the gap band is
+      // exactly [gapY - GAP_HALF, gapY + GAP_HALF] with no radius padding on either bound.
       const overlapsX = (b.x - b.r) <= (c.x + c.w) && c.x <= (b.x + b.r);
       if (!overlapsX) return false;
       return b.y < (c.gapY - GAP_HALF) || b.y > (c.gapY + GAP_HALF);
@@ -142,7 +145,7 @@
     };
   }
 
-  const api = { W: W, H: H, createEngine: createEngine };
+  const api = { W: W, H: H, GAP_HALF: GAP_HALF, FLOOR_Y: FLOOR_Y, createEngine: createEngine };
   Object.assign(G, api);
   if (typeof module !== "undefined" && module.exports) module.exports = api;
 })(typeof window !== "undefined" ? window : globalThis);

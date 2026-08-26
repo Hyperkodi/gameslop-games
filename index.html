@@ -57,11 +57,13 @@
 </div>
 
 <script src="_kit/rng.js"></script>
+<script src="_kit/draw.js"></script>
 <script src="_kit/skin.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  GameSlopKit.loadSkin("armara", "armaratris/skin/").then(function () {
+  GameSlopKit.loadSkin("armara", "armaratris/skin/").then(function (skin) {
     document.title = "Armara Arcade";
+    GameSlopKit.paintGround(skin.palette);
     document.body.dataset.ready = "1";
   });
 });
