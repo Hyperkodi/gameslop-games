@@ -1,0 +1,259 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-bosses-v1",
+  "records": [
+    {
+      "id": "talos-prototype",
+      "nameKey": "boss.talos-prototype.name",
+      "descriptionKey": "boss.talos-prototype.description",
+      "tags": [
+        "boss",
+        "heavy"
+      ],
+      "routeKinds": [
+        "ground"
+      ],
+      "hp": "2200",
+      "speedWorldUnitsPerSecond": "3.2",
+      "armor": "8",
+      "resistances": [
+        {
+          "damageTypeId": "kinetic",
+          "reductionBp": 2000
+        }
+      ],
+      "shieldPools": [],
+      "baseLineageBountyAether": 0,
+      "score": 2500,
+      "leakIntegrity": 20,
+      "threatPriority": 500,
+      "control": {
+        "slowControlBp": 5000,
+        "minimumMovementBp": 6000,
+        "hardControlBp": 4000,
+        "displacementBp": 0
+      },
+      "traits": [],
+      "spawnBehavior": {
+        "kind": "none"
+      },
+      "deathBehavior": {
+        "kind": "terminal"
+      },
+      "semanticEventIds": [
+        "talos.expose",
+        "talos.phase-enter",
+        "talos.phase-exit",
+        "talos.pods",
+        "talos.status",
+        "talos.threshold"
+      ],
+      "ui": {
+        "statFieldIds": [
+          "hp",
+          "armor",
+          "speed",
+          "score"
+        ]
+      },
+      "bossControlBp": 4000,
+      "bossMinimumMovementBp": 6000,
+      "executeBehavior": {
+        "kind": "forbidden"
+      },
+      "thresholdScript": {
+        "contractId": "bossScript",
+        "version": 1,
+        "deliveryKind": "guarded-hp-thresholds",
+        "parameters": {
+          "maximumTransitionsPerResolvedHit": 1,
+          "thresholds": [
+            {
+              "id": "core-75",
+              "order": 0,
+              "thresholdHpBp": 7500,
+              "clampHpToThreshold": true,
+              "warningDelayTicks": 20,
+              "exposedWindowDurationMs": 3000,
+              "exposedDamageCoefficientBp": 14000,
+              "resistanceOverrides": [
+                {
+                  "damageTypeId": "kinetic",
+                  "reductionBp": 0
+                }
+              ],
+              "statusDeliveries": [
+                {
+                  "order": 0,
+                  "statusId": "exposed",
+                  "magnitudeBp": 4000,
+                  "durationMs": 3000,
+                  "stackRuleId": "refresh-same-source",
+                  "semanticEventIds": [
+                    "talos.status"
+                  ]
+                }
+              ],
+              "childSpawnRecords": [
+                {
+                  "order": 0,
+                  "enemyId": "scout",
+                  "count": 3,
+                  "firstDelayTicks": 10,
+                  "intervalTicks": 8,
+                  "routeOwnership": "inherit",
+                  "fixedRouteId": null,
+                  "routeOffsetDistance": "0",
+                  "lineageOwnership": "parent-lineage",
+                  "bountyPolicy": "suppressed"
+                }
+              ],
+              "maximumCreateEventsPerTick": 1,
+              "transitionEventIds": [
+                "talos.expose",
+                "talos.pods",
+                "talos.threshold"
+              ]
+            },
+            {
+              "id": "core-50",
+              "order": 1,
+              "thresholdHpBp": 5000,
+              "clampHpToThreshold": true,
+              "warningDelayTicks": 18,
+              "exposedWindowDurationMs": 2750,
+              "exposedDamageCoefficientBp": 14500,
+              "resistanceOverrides": [
+                {
+                  "damageTypeId": "kinetic",
+                  "reductionBp": 0
+                }
+              ],
+              "statusDeliveries": [
+                {
+                  "order": 0,
+                  "statusId": "exposed",
+                  "magnitudeBp": 4500,
+                  "durationMs": 2750,
+                  "stackRuleId": "refresh-same-source",
+                  "semanticEventIds": [
+                    "talos.status"
+                  ]
+                }
+              ],
+              "childSpawnRecords": [
+                {
+                  "order": 0,
+                  "enemyId": "scout",
+                  "count": 4,
+                  "firstDelayTicks": 8,
+                  "intervalTicks": 7,
+                  "routeOwnership": "inherit",
+                  "fixedRouteId": null,
+                  "routeOffsetDistance": "0",
+                  "lineageOwnership": "parent-lineage",
+                  "bountyPolicy": "suppressed"
+                }
+              ],
+              "maximumCreateEventsPerTick": 1,
+              "transitionEventIds": [
+                "talos.expose",
+                "talos.pods",
+                "talos.threshold"
+              ]
+            },
+            {
+              "id": "core-25",
+              "order": 2,
+              "thresholdHpBp": 2500,
+              "clampHpToThreshold": true,
+              "warningDelayTicks": 16,
+              "exposedWindowDurationMs": 2500,
+              "exposedDamageCoefficientBp": 15000,
+              "resistanceOverrides": [
+                {
+                  "damageTypeId": "kinetic",
+                  "reductionBp": 0
+                }
+              ],
+              "statusDeliveries": [
+                {
+                  "order": 0,
+                  "statusId": "exposed",
+                  "magnitudeBp": 5000,
+                  "durationMs": 2500,
+                  "stackRuleId": "refresh-same-source",
+                  "semanticEventIds": [
+                    "talos.status"
+                  ]
+                }
+              ],
+              "childSpawnRecords": [
+                {
+                  "order": 0,
+                  "enemyId": "scout",
+                  "count": 5,
+                  "firstDelayTicks": 6,
+                  "intervalTicks": 6,
+                  "routeOwnership": "inherit",
+                  "fixedRouteId": null,
+                  "routeOffsetDistance": "0",
+                  "lineageOwnership": "parent-lineage",
+                  "bountyPolicy": "suppressed"
+                }
+              ],
+              "maximumCreateEventsPerTick": 1,
+              "transitionEventIds": [
+                "talos.expose",
+                "talos.pods",
+                "talos.threshold"
+              ]
+            }
+          ]
+        }
+      },
+      "phaseRecords": [
+        {
+          "id": "sealed",
+          "order": 0,
+          "hpUpperInclusiveBp": 10000,
+          "hpLowerInclusiveBp": 7501,
+          "nativeResistanceOverrides": [],
+          "activeStatusIds": [],
+          "enterEventId": "talos.phase-enter",
+          "exitEventId": "talos.phase-exit"
+        },
+        {
+          "id": "breached-75",
+          "order": 1,
+          "hpUpperInclusiveBp": 7500,
+          "hpLowerInclusiveBp": 5001,
+          "nativeResistanceOverrides": [],
+          "activeStatusIds": [],
+          "enterEventId": "talos.phase-enter",
+          "exitEventId": "talos.phase-exit"
+        },
+        {
+          "id": "breached-50",
+          "order": 2,
+          "hpUpperInclusiveBp": 5000,
+          "hpLowerInclusiveBp": 2501,
+          "nativeResistanceOverrides": [],
+          "activeStatusIds": [],
+          "enterEventId": "talos.phase-enter",
+          "exitEventId": "talos.phase-exit"
+        },
+        {
+          "id": "exposed-core",
+          "order": 3,
+          "hpUpperInclusiveBp": 2500,
+          "hpLowerInclusiveBp": 1,
+          "nativeResistanceOverrides": [],
+          "activeStatusIds": [],
+          "enterEventId": "talos.phase-enter",
+          "exitEventId": "talos.phase-exit"
+        }
+      ]
+    }
+  ]
+}

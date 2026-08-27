@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 3,
+  "contentVersion": "slice-dev-v1",
+  "sourceKind": "campaign",
+  "approvalState": "candidate-balance",
+  "abiDescriptor": {
+    "source": "abi/abi-v1.json",
+    "sha256": "sha256:9a84597e731ddb24fc47c284ad9e867dd0ed89d965e9b813e25e858b97be1fae"
+  },
+  "behaviorContracts": {
+    "source": "behavior-contracts.json",
+    "sha256": "sha256:ef2d58fdf7545461734adbdf7308897e8655f0cb87303ac796a5dc0b49cede30"
+  },
+  "annex": {
+    "id": "slice-dev-v1",
+    "source": "annexes/slice-dev-v1.json",
+    "sha256": "sha256:c97151254e586bbd782aa3d713c1cff7387639504e90a43b445357a1871a892e"
+  },
+  "campaignRules": {
+    "source": "campaign-rules/slice-v1.json",
+    "sha256": "sha256:b2d520e0407f8dcc39bc43943bc82d491175b66505251c7ff28a998cd2cd32ed"
+  },
+  "defenses": {
+    "source": "defenses/slice-v1.json",
+    "sha256": "sha256:ae412d5c0427de695d3d1eb5038d5b30c2505212b8678930d51a6e4f791984f0"
+  },
+  "enemies": {
+    "source": "enemies/slice-v1.json",
+    "sha256": "sha256:bef5497e8e231a477e2587c23f937c42318471f2393bd788d45a9a7607bbb01f"
+  },
+  "bosses": {
+    "source": "bosses/slice-v1.json",
+    "sha256": "sha256:a26e18afa55d19450f8953dac92c54004abd6e5c96c6f730259fcab0ae0dccbc"
+  },
+  "eventCatalog": {
+    "source": "events/slice-v1.json",
+    "sha256": "sha256:92415aa55495d6b2144059aff9362b20ff38ad492f1b4ba00833fbf9870ac506"
+  },
+  "stringCatalog": {
+    "source": "strings/en.slice-v1.json",
+    "sha256": "sha256:0e70d08c98b38faea9bd3ce7693342346abd51fa27a81bbe45b3830b166276fb"
+  },
+  "presentationCatalog": {
+    "source": "presentation/slice-v1.json",
+    "sha256": "sha256:a9c0f4ee12decd72c74a24e38f227fcaae5db7187d03091c911f50dd84b42f79"
+  },
+  "missions": [
+    {
+      "id": "m01",
+      "definition": {
+        "source": "missions/m01.slice-v1.json",
+        "sha256": "sha256:48417fab28237794de48077c76c9ff04e3a949b49a44da269261654c383bb61b"
+      },
+      "map": {
+        "schemaVersion": 1,
+        "source": "maps/m01.json",
+        "sha256": "sha256:c3b22844dc4457bf17eb66ab4266223b54aa9f6a09ed6fccefaa185c166b5970"
+      },
+      "mapProofSupplement": {
+        "schemaVersion": 1,
+        "source": "map-proofs/m01.guard-v1.json",
+        "sha256": "sha256:9b26a317093e457d4a3b2979f0a4808a288289cde110dab69b80eca72ccfdb48"
+      }
+    },
+    {
+      "id": "m04",
+      "definition": {
+        "source": "missions/m04.slice-v1.json",
+        "sha256": "sha256:fa6c9c510d6445aa93b4bad5890969891a3c1e7e35672d9d41c81c716395d58b"
+      },
+      "map": {
+        "schemaVersion": 2,
+        "source": "maps/m04.slice-v1.json",
+        "sha256": "sha256:8555d6ea8dd079cd1ff10869011b8439012d6d7fe645b1f2c202b4f462c1d712"
+      }
+    },
+    {
+      "id": "m05",
+      "definition": {
+        "source": "missions/m05.slice-v1.json",
+        "sha256": "sha256:50bf893f4cf25824f0df5832d3ea5c9d4795e34b07b5310cb2356881fc3886d3"
+      },
+      "map": {
+        "schemaVersion": 2,
+        "source": "maps/m05.slice-v1.json",
+        "sha256": "sha256:5f0bd22a887d494e3ec6aedf61b6f1f09d17f261a12c8f32c70caddd55eaa457"
+      }
+    }
+  ]
+}

@@ -372,6 +372,8 @@ test("production simulation bundle exposes all frozen APIs with canonical parity
     assert.equal(Object.isFrozen(commonJs[spec.globalName]), true, spec.globalName + " CommonJS API");
   });
   assert.equal(commonJs.DESCRIPTOR_SHA256, RUNTIME_ABI.DESCRIPTOR_SHA256);
+  assert.equal(commonJs.EVENT_SCHEMA_VERSION, 1);
+  assert.equal(commonJs.BEHAVIOR_REGISTRY_VERSION, 1);
   assert.equal(commonJs.AegisGeometry.isWithinSquaredRange(0, 0, 3, 4, 5), true);
   assert.equal(commonJs.AegisTimers.authoredMillisecondsToTimeUnits(410), 24600);
   assert.equal(commonJs.AegisEconomy.sellRefund(90), 63);
@@ -402,6 +404,8 @@ test("production simulation bundle exposes all frozen APIs with canonical parity
     assert.equal(Object.isFrozen(classic.Game[spec.globalName]), true, spec.globalName + " classic API");
   });
   assert.equal(classic.Game.AegisSim.DESCRIPTOR_SHA256, RUNTIME_ABI.DESCRIPTOR_SHA256);
+  assert.equal(classic.Game.AegisSim.EVENT_SCHEMA_VERSION, 1);
+  assert.equal(classic.Game.AegisSim.BEHAVIOR_REGISTRY_VERSION, 1);
   assert.equal(classic.Game.AegisGeometry.isWithinSquaredRange(0, 0, 3, 4, 5), true);
   assert.equal(classic.Game.AegisTimers.authoredMillisecondsToTimeUnits(1350), 81000);
   assert.equal(classic.Game.AegisEconomy.sellRefund(340), 238);
@@ -1172,6 +1176,27 @@ test("checked-in production artifacts pin the deterministic default simulation b
     }),
     true
   );
+});
+
+test("checked-in Candidate-BAL slice loads, adapts all maps, compiles, and remains release-ineligible", () => {
+  const options = CLI.materializeBuildOptions(CLI.parseArgs([
+    "--check",
+    "--manifest",
+    "games/aegis/content/manifests/slice-dev-v1.json",
+  ]));
+  const checked = executeBuild(options);
+  const manifest = checked.result.artifacts.manifest;
+  assert.equal(manifest.schemaVersion, 3);
+  assert.equal(manifest.contentVersion, "slice-dev-v1");
+  assert.equal(manifest.approvalState, "candidate-balance");
+  assert.equal(manifest.releaseEligible, false);
+  assert.equal(manifest.eventSchemaVersion, 1);
+  assert.equal(manifest.behaviorRegistryVersion, 1);
+  assert.deepEqual(manifest.includedIds.missions, ["m01", "m04", "m05"]);
+  assert.deepEqual(manifest.includedIds.defenses, ["chronos", "hoplite", "oracle", "sentinel", "siege"]);
+  assert.equal(checked.files.includes(manifest.contentArtifact), true);
+  assert.equal(checked.files.includes(manifest.presentationArtifact), true);
+  assert.equal(checked.files.includes(manifest.simulationArtifact), true);
 });
 
 test("CLI accepts exactly one mode, explicit named fixtures, and contained manifest/simulation overrides", () => {

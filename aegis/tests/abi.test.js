@@ -20,6 +20,8 @@ test("ABI v1 descriptor fixes every deterministic scale and is deeply immutable"
   assert.equal(Object.isFrozen(A.BEHAVIOR_CONTRACTS), true);
   assert.equal(Object.isFrozen(A.BEHAVIOR_CONTRACTS[0]), true);
   assert.strictEqual(A.BEHAVIOR_CONTRACTS, A.DESCRIPTOR.behaviorRegistry.contracts);
+  assert.equal(A.EVENT_SCHEMA_VERSION, 1);
+  assert.equal(A.BEHAVIOR_REGISTRY_VERSION, A.DESCRIPTOR.behaviorRegistry.version);
   assert.equal(Object.isFrozen(A.DESCRIPTOR.damagePipeline.resolutionOrder), true);
   assert.equal(Object.isFrozen(A.DESCRIPTOR.canonicalEncoding), true);
   assert.throws(() => { A.DESCRIPTOR.damageScale = 1; }, TypeError);

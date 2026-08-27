@@ -1,0 +1,3487 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-dev-v1",
+  "approvalState": "candidate-balance",
+  "authorityRecords": [
+    {
+      "id": "campaign-expansion-spec",
+      "repositoryPath": "docs/superpowers/specs/2026-08-26-armara-aegis-campaign-expansion.md",
+      "sha256": "sha256:c01811e923c49af4c5da794f224b68d688d4d705eaf06cbe2c2c298b9533cb1f"
+    },
+    {
+      "id": "slice-content-spec",
+      "repositoryPath": "docs/superpowers/specs/2026-08-27-armara-aegis-slice-content-schema.md",
+      "sha256": "sha256:57ce5a55ff627d7dbeb96707d37ad860936c36c1bb2d589947ab704b79e25f7d"
+    }
+  ],
+  "bindingLocks": [
+    {
+      "id": "lock.0001",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/baseLineageBountyAether",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0002",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/deathBehavior",
+      "expectedCanonicalValueHash": "sha256:e103087a7eedc093fa9c330f62d61e4be50cc43ddd62f649ab0e57342975557c"
+    },
+    {
+      "id": "lock.0003",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/executeBehavior",
+      "expectedCanonicalValueHash": "sha256:6880fcb6b53b7388d361cbc9b74d9c35e766c5eb6f2a432ac21bfee66c2f3f3d"
+    },
+    {
+      "id": "lock.0004",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/id",
+      "expectedCanonicalValueHash": "sha256:5d4ab438a2c3d34c991e962a3548c3849e9ed1b3e92d2cdc95ffd7b2403c05fc"
+    },
+    {
+      "id": "lock.0005",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/0/activeStatusIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0006",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/0/enterEventId",
+      "expectedCanonicalValueHash": "sha256:7aa002c00552b6438e427ac0d094e1ede5c8e51c0c6a47d05d9e18be2b81e312"
+    },
+    {
+      "id": "lock.0007",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/0/exitEventId",
+      "expectedCanonicalValueHash": "sha256:dd286ba7f164416c8da9ecf608d57ba5b5d0420f2cbe847c4604940bf0ec0b1d"
+    },
+    {
+      "id": "lock.0008",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/0/id",
+      "expectedCanonicalValueHash": "sha256:6248de8c916da2d0fe49f63c83197b5673acaf91acac3855966ff8b19d6dab03"
+    },
+    {
+      "id": "lock.0009",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0010",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/1/activeStatusIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0011",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/1/enterEventId",
+      "expectedCanonicalValueHash": "sha256:7aa002c00552b6438e427ac0d094e1ede5c8e51c0c6a47d05d9e18be2b81e312"
+    },
+    {
+      "id": "lock.0012",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/1/exitEventId",
+      "expectedCanonicalValueHash": "sha256:dd286ba7f164416c8da9ecf608d57ba5b5d0420f2cbe847c4604940bf0ec0b1d"
+    },
+    {
+      "id": "lock.0013",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/1/id",
+      "expectedCanonicalValueHash": "sha256:401b218ece58eb5039ad9adfc18238d0b7082b875165e6f7868a0ebfc5139a78"
+    },
+    {
+      "id": "lock.0014",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/1/order",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0015",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/2/activeStatusIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0016",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/2/enterEventId",
+      "expectedCanonicalValueHash": "sha256:7aa002c00552b6438e427ac0d094e1ede5c8e51c0c6a47d05d9e18be2b81e312"
+    },
+    {
+      "id": "lock.0017",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/2/exitEventId",
+      "expectedCanonicalValueHash": "sha256:dd286ba7f164416c8da9ecf608d57ba5b5d0420f2cbe847c4604940bf0ec0b1d"
+    },
+    {
+      "id": "lock.0018",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/2/id",
+      "expectedCanonicalValueHash": "sha256:29d330daa407e13fa6d2a07b1bcdf51d41f4d392de9d71905a624f4020073357"
+    },
+    {
+      "id": "lock.0019",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/2/order",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0020",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/3/activeStatusIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0021",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/3/enterEventId",
+      "expectedCanonicalValueHash": "sha256:7aa002c00552b6438e427ac0d094e1ede5c8e51c0c6a47d05d9e18be2b81e312"
+    },
+    {
+      "id": "lock.0022",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/3/exitEventId",
+      "expectedCanonicalValueHash": "sha256:dd286ba7f164416c8da9ecf608d57ba5b5d0420f2cbe847c4604940bf0ec0b1d"
+    },
+    {
+      "id": "lock.0023",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/3/id",
+      "expectedCanonicalValueHash": "sha256:1eacb8f4dbde07c0b0b645002c9e932fe81a2278ea962c9ca50a36ade0f42802"
+    },
+    {
+      "id": "lock.0024",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/phaseRecords/3/order",
+      "expectedCanonicalValueHash": "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    },
+    {
+      "id": "lock.0025",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/routeKinds",
+      "expectedCanonicalValueHash": "sha256:138988e31ce30272a8d4a6f4bd83b60c338e200fa3a0f181a41d8abf82559abf"
+    },
+    {
+      "id": "lock.0026",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:bc860f6e6749ac6886f68dbf9268c120e591a70f6e7fd28807e039959d11f82a"
+    },
+    {
+      "id": "lock.0027",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/shieldPools",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0028",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/spawnBehavior",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0029",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/tags",
+      "expectedCanonicalValueHash": "sha256:03a17620c0e76f3b4d6061b82a6a76c0cbf4e49184548a7979d2b079d4c383e3"
+    },
+    {
+      "id": "lock.0030",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/contractId",
+      "expectedCanonicalValueHash": "sha256:82e47ac961084adcb9ce1f678c1abb9adbaed7e8abd65c2aca2328fb4f15086d"
+    },
+    {
+      "id": "lock.0031",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/deliveryKind",
+      "expectedCanonicalValueHash": "sha256:c2365427a7e072ec28bf09228c8c49d1ac691a24fa9f3c3a4e04a689b1642f0e"
+    },
+    {
+      "id": "lock.0032",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/maximumTransitionsPerResolvedHit",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0033",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/bountyPolicy",
+      "expectedCanonicalValueHash": "sha256:df50a06957be7e06658df1b34a1c4629a0e4584cd07f2d70f6d5d374cdf7785b"
+    },
+    {
+      "id": "lock.0034",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/enemyId",
+      "expectedCanonicalValueHash": "sha256:c8cdfd59c3de85aaccbc47323aec21ccd4c4e448e739601cc60a54825f5cfda6"
+    },
+    {
+      "id": "lock.0035",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/fixedRouteId",
+      "expectedCanonicalValueHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "id": "lock.0036",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/lineageOwnership",
+      "expectedCanonicalValueHash": "sha256:549773e0f47260f940f8549542e974dc2cda34fc79fd5ce8d07044e1eaf86172"
+    },
+    {
+      "id": "lock.0037",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0038",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/routeOffsetDistance",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0039",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/routeOwnership",
+      "expectedCanonicalValueHash": "sha256:d95aec779901c62fa8722c87ec4ee3fbb8816fed9496767027d90da14498cbbe"
+    },
+    {
+      "id": "lock.0040",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/clampHpToThreshold",
+      "expectedCanonicalValueHash": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "id": "lock.0041",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/id",
+      "expectedCanonicalValueHash": "sha256:c1ed4ba86ff06fb532370a4c82dc20b51ac964618a31cb3b3d2e552b519e4637"
+    },
+    {
+      "id": "lock.0042",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/maximumCreateEventsPerTick",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0043",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0044",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/statusDeliveries/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0045",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/statusDeliveries/0/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:89b512fd02a982090e76449758ea7971d17435b3f55e5c903c894316eb37c08e"
+    },
+    {
+      "id": "lock.0046",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/statusDeliveries/0/stackRuleId",
+      "expectedCanonicalValueHash": "sha256:9c6b739f959837147db8a58fae1b57ca239a7041d8e47eb9958e06465476f389"
+    },
+    {
+      "id": "lock.0047",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/statusDeliveries/0/statusId",
+      "expectedCanonicalValueHash": "sha256:4ac3d56670d6a5d702350d06e4877892dc11cb34fba18db0849bb70dea82367f"
+    },
+    {
+      "id": "lock.0048",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/transitionEventIds",
+      "expectedCanonicalValueHash": "sha256:99897456456d08feaefd353dcc7a0e3dd1d3f3aec7562d0e2019d4cf7521cc9a"
+    },
+    {
+      "id": "lock.0049",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/bountyPolicy",
+      "expectedCanonicalValueHash": "sha256:df50a06957be7e06658df1b34a1c4629a0e4584cd07f2d70f6d5d374cdf7785b"
+    },
+    {
+      "id": "lock.0050",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/enemyId",
+      "expectedCanonicalValueHash": "sha256:c8cdfd59c3de85aaccbc47323aec21ccd4c4e448e739601cc60a54825f5cfda6"
+    },
+    {
+      "id": "lock.0051",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/fixedRouteId",
+      "expectedCanonicalValueHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "id": "lock.0052",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/lineageOwnership",
+      "expectedCanonicalValueHash": "sha256:549773e0f47260f940f8549542e974dc2cda34fc79fd5ce8d07044e1eaf86172"
+    },
+    {
+      "id": "lock.0053",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0054",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/routeOffsetDistance",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0055",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/routeOwnership",
+      "expectedCanonicalValueHash": "sha256:d95aec779901c62fa8722c87ec4ee3fbb8816fed9496767027d90da14498cbbe"
+    },
+    {
+      "id": "lock.0056",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/clampHpToThreshold",
+      "expectedCanonicalValueHash": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "id": "lock.0057",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/id",
+      "expectedCanonicalValueHash": "sha256:9aa03337905f69b0d4b80aeec835545279ee795119b4d923b336fd5710086ae1"
+    },
+    {
+      "id": "lock.0058",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/maximumCreateEventsPerTick",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0059",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/order",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0060",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/statusDeliveries/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0061",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/statusDeliveries/0/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:89b512fd02a982090e76449758ea7971d17435b3f55e5c903c894316eb37c08e"
+    },
+    {
+      "id": "lock.0062",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/statusDeliveries/0/stackRuleId",
+      "expectedCanonicalValueHash": "sha256:9c6b739f959837147db8a58fae1b57ca239a7041d8e47eb9958e06465476f389"
+    },
+    {
+      "id": "lock.0063",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/statusDeliveries/0/statusId",
+      "expectedCanonicalValueHash": "sha256:4ac3d56670d6a5d702350d06e4877892dc11cb34fba18db0849bb70dea82367f"
+    },
+    {
+      "id": "lock.0064",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/transitionEventIds",
+      "expectedCanonicalValueHash": "sha256:99897456456d08feaefd353dcc7a0e3dd1d3f3aec7562d0e2019d4cf7521cc9a"
+    },
+    {
+      "id": "lock.0065",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/bountyPolicy",
+      "expectedCanonicalValueHash": "sha256:df50a06957be7e06658df1b34a1c4629a0e4584cd07f2d70f6d5d374cdf7785b"
+    },
+    {
+      "id": "lock.0066",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/enemyId",
+      "expectedCanonicalValueHash": "sha256:c8cdfd59c3de85aaccbc47323aec21ccd4c4e448e739601cc60a54825f5cfda6"
+    },
+    {
+      "id": "lock.0067",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/fixedRouteId",
+      "expectedCanonicalValueHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "id": "lock.0068",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/lineageOwnership",
+      "expectedCanonicalValueHash": "sha256:549773e0f47260f940f8549542e974dc2cda34fc79fd5ce8d07044e1eaf86172"
+    },
+    {
+      "id": "lock.0069",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0070",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/routeOffsetDistance",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0071",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/routeOwnership",
+      "expectedCanonicalValueHash": "sha256:d95aec779901c62fa8722c87ec4ee3fbb8816fed9496767027d90da14498cbbe"
+    },
+    {
+      "id": "lock.0072",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/clampHpToThreshold",
+      "expectedCanonicalValueHash": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "id": "lock.0073",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/id",
+      "expectedCanonicalValueHash": "sha256:b83ddaa8bcbba58fae34f2668878ed9efedf33998eaff518b67e4d66035c3f63"
+    },
+    {
+      "id": "lock.0074",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/maximumCreateEventsPerTick",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0075",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/order",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0076",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/statusDeliveries/0/order",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0077",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/statusDeliveries/0/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:89b512fd02a982090e76449758ea7971d17435b3f55e5c903c894316eb37c08e"
+    },
+    {
+      "id": "lock.0078",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/statusDeliveries/0/stackRuleId",
+      "expectedCanonicalValueHash": "sha256:9c6b739f959837147db8a58fae1b57ca239a7041d8e47eb9958e06465476f389"
+    },
+    {
+      "id": "lock.0079",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/statusDeliveries/0/statusId",
+      "expectedCanonicalValueHash": "sha256:4ac3d56670d6a5d702350d06e4877892dc11cb34fba18db0849bb70dea82367f"
+    },
+    {
+      "id": "lock.0080",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/transitionEventIds",
+      "expectedCanonicalValueHash": "sha256:99897456456d08feaefd353dcc7a0e3dd1d3f3aec7562d0e2019d4cf7521cc9a"
+    },
+    {
+      "id": "lock.0081",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/thresholdScript/version",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0082",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/bosses/talos-prototype/traits",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0083",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/campaignRules",
+      "expectedCanonicalValueHash": "sha256:90e62942da2982400f08e2aae93729bdce5e7e947b280cf6a8e76d0ccdcd1f52"
+    },
+    {
+      "id": "lock.0084",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/allowedTargetPolicyIds",
+      "expectedCanonicalValueHash": "sha256:6b4933d54d54b24d6859a540eb90b9791c97ed3aee4ae5c3110a57521dfa415e"
+    },
+    {
+      "id": "lock.0085",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/defaultTargetPolicyId",
+      "expectedCanonicalValueHash": "sha256:6ff9d60074c1a6d162e4bfa93bfec227e9465d87d0e2611ba1ead042515fb4bb"
+    },
+    {
+      "id": "lock.0086",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/defenseTags",
+      "expectedCanonicalValueHash": "sha256:68aa3e060b0c287759c3f7b9c510fa89d9dbd8581f9888204129e1683a2a5c0e"
+    },
+    {
+      "id": "lock.0087",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/id",
+      "expectedCanonicalValueHash": "sha256:d8df170b141a4b51774edefb74fa9b9d414ee3e7981703b8f9ee0d6412c0dae4"
+    },
+    {
+      "id": "lock.0088",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/0/behaviors/0",
+      "expectedCanonicalValueHash": "sha256:c974372833f3803f13667650e75789bf877505d9f8d7cba5a30ffb02b506fd18"
+    },
+    {
+      "id": "lock.0089",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/0/behaviors/1",
+      "expectedCanonicalValueHash": "sha256:db038d5710a1785dab8d7c22ec9e35ebcd9777268d28ddb2593c1b652b1e3c5f"
+    },
+    {
+      "id": "lock.0090",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/0/level",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0091",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/0/purchase",
+      "expectedCanonicalValueHash": "sha256:162af19222981d970fcc7bf6a7baee6290c7d27e880858fa94d39f9921d9bfeb"
+    },
+    {
+      "id": "lock.0092",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/1/behaviors/0",
+      "expectedCanonicalValueHash": "sha256:8b7e79f7d1077c6c6263fdceb8705c89c18e58aecb06215a1f5b8f26fbb1179a"
+    },
+    {
+      "id": "lock.0093",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/1/behaviors/1",
+      "expectedCanonicalValueHash": "sha256:754ee1df38a6ce476b06f579a4f886d8411dd88fe3a5a0523a57289770c66536"
+    },
+    {
+      "id": "lock.0094",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/1/level",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0095",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/1/purchase",
+      "expectedCanonicalValueHash": "sha256:18bb9549ed7b6aa8c07cc4ebd799f7d3e520aaed2636666713ac6e675450759b"
+    },
+    {
+      "id": "lock.0096",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/0",
+      "expectedCanonicalValueHash": "sha256:a9a6bc410b4be6d5fb612913e1d0645e862ab39bdf4e23f1db4a6e0aec32a75e"
+    },
+    {
+      "id": "lock.0097",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/contractId",
+      "expectedCanonicalValueHash": "sha256:fb18aad9822de9025af5d71f7191c4aca17aa36aa6e24d86489969c0e085a02b"
+    },
+    {
+      "id": "lock.0098",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/deliveryKind",
+      "expectedCanonicalValueHash": "sha256:68b176527ac53d745ca352e303fb823a0f0371afcfec5724ba85c254b6e7308b"
+    },
+    {
+      "id": "lock.0099",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/id",
+      "expectedCanonicalValueHash": "sha256:fb18aad9822de9025af5d71f7191c4aca17aa36aa6e24d86489969c0e085a02b"
+    },
+    {
+      "id": "lock.0100",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/controlKind",
+      "expectedCanonicalValueHash": "sha256:fb18aad9822de9025af5d71f7191c4aca17aa36aa6e24d86489969c0e085a02b"
+    },
+    {
+      "id": "lock.0101",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/durationMs",
+      "expectedCanonicalValueHash": "sha256:9f69998560dcfd8016442e0a32e959191df095817a164ce844c64ec5a8b0cc1b"
+    },
+    {
+      "id": "lock.0102",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/comparatorId",
+      "expectedCanonicalValueHash": "sha256:93686d2a727ea7f498b59397afde1fc3c885e49e4068811f9b5483d8c45a7b85"
+    },
+    {
+      "id": "lock.0103",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/emptyActivationAdvances",
+      "expectedCanonicalValueHash": "sha256:fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "id": "lock.0104",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/kind",
+      "expectedCanonicalValueHash": "sha256:7425216418b1598a45032d11fe5f9840f35d0ce4ad9b15fb0d219b4129da981b"
+    },
+    {
+      "id": "lock.0105",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/maximumSecondaryTargets",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0106",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/recursive",
+      "expectedCanonicalValueHash": "sha256:fcbcf165908dd18a9e49f7ff27810176db8e9f63b4352213741664245224f8aa"
+    },
+    {
+      "id": "lock.0107",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/requiredAcceptedHits",
+      "expectedCanonicalValueHash": "sha256:ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d"
+    },
+    {
+      "id": "lock.0108",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/resetRuleId",
+      "expectedCanonicalValueHash": "sha256:2fb6aebdd9a49d50927ae6ca90251d9130e10403334ebc7d4535ef2e27de18a5"
+    },
+    {
+      "id": "lock.0109",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/semanticEventId",
+      "expectedCanonicalValueHash": "sha256:e6176cdda5da5c0ae025f11bc6fd87291836a0c992a22cf599422816998d5d6f"
+    },
+    {
+      "id": "lock.0110",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/magnitudeBp",
+      "expectedCanonicalValueHash": "sha256:dea1ae8613ee2a5ef5504d98bd969bd46b4c75e9c898341f497c74684599030c"
+    },
+    {
+      "id": "lock.0111",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/statusId",
+      "expectedCanonicalValueHash": "sha256:fb18aad9822de9025af5d71f7191c4aca17aa36aa6e24d86489969c0e085a02b"
+    },
+    {
+      "id": "lock.0112",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/parameters/triggerBehaviorId",
+      "expectedCanonicalValueHash": "sha256:e3faed184ac759c77bcd2fbc0135c9dd88b4f38aec1dc62566f40c23885224e7"
+    },
+    {
+      "id": "lock.0113",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/behaviors/1/version",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0114",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/level",
+      "expectedCanonicalValueHash": "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    },
+    {
+      "id": "lock.0115",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/levels/2/purchase",
+      "expectedCanonicalValueHash": "sha256:38668117b9777c2535c162592e4b55f6333fe2c635da1215b5c4a396a1107b12"
+    },
+    {
+      "id": "lock.0116",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/nameKey",
+      "expectedCanonicalValueHash": "sha256:892bcae149321e51b4089e7064b04d576527d0bac9872250e377532ccb83ce33"
+    },
+    {
+      "id": "lock.0117",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/roleKey",
+      "expectedCanonicalValueHash": "sha256:651650028d3e51ab287de61044f4b60accb48bb9adf6ba13d734825cec102d62"
+    },
+    {
+      "id": "lock.0118",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:f06a19bf0e2ffdd5e01db46b30b37406eb51e9de730e150b78486d13b09c3388"
+    },
+    {
+      "id": "lock.0119",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/targetKinds",
+      "expectedCanonicalValueHash": "sha256:059995c9906dbd7f0d6e0441e0a501b36fd9ee27837b32a56ea72c3d8eedd013"
+    },
+    {
+      "id": "lock.0120",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/unlockId",
+      "expectedCanonicalValueHash": "sha256:e3af894acfcc837af2fb6ad64a472b91dceb5a0c59ee883a0273c23efdf2a4f4"
+    },
+    {
+      "id": "lock.0121",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/chronos/weaknessKey",
+      "expectedCanonicalValueHash": "sha256:481106012be2ad154e361d4444eaea62a5dcaf6e50152c721a5a385d6c1a73c9"
+    },
+    {
+      "id": "lock.0122",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/allowedTargetPolicyIds",
+      "expectedCanonicalValueHash": "sha256:ba5f950a42efe7a4fa05dddb98970d891092ce33371b6eb8361d8a3276badea0"
+    },
+    {
+      "id": "lock.0123",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/defaultTargetPolicyId",
+      "expectedCanonicalValueHash": "sha256:6ff9d60074c1a6d162e4bfa93bfec227e9465d87d0e2611ba1ead042515fb4bb"
+    },
+    {
+      "id": "lock.0124",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/defenseTags",
+      "expectedCanonicalValueHash": "sha256:881f3faad7e2f376ff5b39a2a7f0d97af8d7c6ae31bf39017a54d55c2feb9434"
+    },
+    {
+      "id": "lock.0125",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/id",
+      "expectedCanonicalValueHash": "sha256:438b2dddb98db93816147e8a2a8c6c0d3fb9deb2b77ba8b61bfff405281792e3"
+    },
+    {
+      "id": "lock.0126",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/0/behaviors",
+      "expectedCanonicalValueHash": "sha256:35775a38a61b7e0aef66c16e5bba7ed7f840c3322c9b904060a195c6ca0cee87"
+    },
+    {
+      "id": "lock.0127",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/0/level",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0128",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/0/purchase",
+      "expectedCanonicalValueHash": "sha256:4f53d4a39ac428f6d4b0c1566bed5753f94df202da291058286e453e20782fbc"
+    },
+    {
+      "id": "lock.0129",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/0/rangeWorldUnits",
+      "expectedCanonicalValueHash": "sha256:7d9a4f40e6ed915e889521187c4efd2886135c4334e4db78cc0dd7a9b721c2c7"
+    },
+    {
+      "id": "lock.0130",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/1/behaviors",
+      "expectedCanonicalValueHash": "sha256:cbe81de7bf225938e77ce939e4cba4ffb797349ec678d105ae691fa3c7cb8e76"
+    },
+    {
+      "id": "lock.0131",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/1/level",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0132",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/1/purchase",
+      "expectedCanonicalValueHash": "sha256:29a5b08d96d5af4e3db4dd71e63ee59cfdabb4cb85d36301533325f8e636495b"
+    },
+    {
+      "id": "lock.0133",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/2/behaviors",
+      "expectedCanonicalValueHash": "sha256:343302423fb0841415bd501cf2246e777701eaaab1dde728afa3148ce589e321"
+    },
+    {
+      "id": "lock.0134",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/2/level",
+      "expectedCanonicalValueHash": "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    },
+    {
+      "id": "lock.0135",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/levels/2/purchase",
+      "expectedCanonicalValueHash": "sha256:ece108511d37520499999dd02a377c0cfd0e5442bd65da61633dde0e2f7e8a21"
+    },
+    {
+      "id": "lock.0136",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/nameKey",
+      "expectedCanonicalValueHash": "sha256:a4f0c481261d20929217ef5d3cc30c556acd88bd1e5af3bb17684524bed8588c"
+    },
+    {
+      "id": "lock.0137",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/roleKey",
+      "expectedCanonicalValueHash": "sha256:223359a738a9c451a229768084e4f2d467b51eb530b29d7c58f7c616f3fdc7a1"
+    },
+    {
+      "id": "lock.0138",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:fd0152fc84aadb1c8fbbc84264d133ce73a8278ceb4649c6858be8f543388b22"
+    },
+    {
+      "id": "lock.0139",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/targetKinds",
+      "expectedCanonicalValueHash": "sha256:138988e31ce30272a8d4a6f4bd83b60c338e200fa3a0f181a41d8abf82559abf"
+    },
+    {
+      "id": "lock.0140",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/unlockId",
+      "expectedCanonicalValueHash": "sha256:876eef4db612008eca1e66006d4fe80b53302be56fc111bfa4a9042ff8440ada"
+    },
+    {
+      "id": "lock.0141",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/hoplite/weaknessKey",
+      "expectedCanonicalValueHash": "sha256:eaed5b06cfc9956e77f0a90926803a5c6657fcc933077491e80cc6c183bc706e"
+    },
+    {
+      "id": "lock.0142",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/allowedTargetPolicyIds",
+      "expectedCanonicalValueHash": "sha256:ba5f950a42efe7a4fa05dddb98970d891092ce33371b6eb8361d8a3276badea0"
+    },
+    {
+      "id": "lock.0143",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/defaultTargetPolicyId",
+      "expectedCanonicalValueHash": "sha256:6ff9d60074c1a6d162e4bfa93bfec227e9465d87d0e2611ba1ead042515fb4bb"
+    },
+    {
+      "id": "lock.0144",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/defenseTags",
+      "expectedCanonicalValueHash": "sha256:0f1028ff4fe5be0a32df3d11977a901b7b0203ac88b497a070f65af9359a7cba"
+    },
+    {
+      "id": "lock.0145",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/id",
+      "expectedCanonicalValueHash": "sha256:f131a0db68862d392ff2723be9ce616b75c457252e8df8266b06af9c5dda8726"
+    },
+    {
+      "id": "lock.0146",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/0",
+      "expectedCanonicalValueHash": "sha256:056f78e8cee89f7ba5d954c24d4086394d37e37545b29a41162b4dd0f80b7272"
+    },
+    {
+      "id": "lock.0147",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/contractId",
+      "expectedCanonicalValueHash": "sha256:bebd88a88e9d14d91528cdd8e765d80909fcfde16c150ebb91762171cd8319ed"
+    },
+    {
+      "id": "lock.0148",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/deliveryKind",
+      "expectedCanonicalValueHash": "sha256:b863ca77970a5332e60954e573288d6a37aec3a3d40cd7b5857b54aee05fb3f5"
+    },
+    {
+      "id": "lock.0149",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/id",
+      "expectedCanonicalValueHash": "sha256:839ad40585f204ddb942826a0147efd032b63e1fa24c131e3b463e53e7a56448"
+    },
+    {
+      "id": "lock.0150",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/affectedSide",
+      "expectedCanonicalValueHash": "sha256:cd7f3e933ed87705e4cac5840a4953c65c36d7cbb24421c532116d5f2c390bf1"
+    },
+    {
+      "id": "lock.0151",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/applyEventId",
+      "expectedCanonicalValueHash": "sha256:8231451e5c1234126efc099c7c5fb461e1940d1313bf2dcde11f000e02b0701d"
+    },
+    {
+      "id": "lock.0152",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/expireEventId",
+      "expectedCanonicalValueHash": "sha256:4b89fec82a66559baa1fd5b9c052a7c19236e9a299ac624e4e654ed2559198d8"
+    },
+    {
+      "id": "lock.0153",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/initialReady",
+      "expectedCanonicalValueHash": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "id": "lock.0154",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/maximumTargets",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0155",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/rangeSource",
+      "expectedCanonicalValueHash": "sha256:493fde6c12deb408ccbe47f31438fafe0e6efdb991e5b5fec7e7928ea2415df8"
+    },
+    {
+      "id": "lock.0156",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/scanCounter",
+      "expectedCanonicalValueHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "id": "lock.0157",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/scanEventId",
+      "expectedCanonicalValueHash": "sha256:83b77a95f80b7d1d8b55baaf133f20a59cceb1331598bcd9330345b3033d90a4"
+    },
+    {
+      "id": "lock.0158",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/stackRuleId",
+      "expectedCanonicalValueHash": "sha256:7a35aef426fc63d81d005a854a67bbad235476ed25a573e886fb0bba2433c3eb"
+    },
+    {
+      "id": "lock.0159",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/statusId",
+      "expectedCanonicalValueHash": "sha256:839ad40585f204ddb942826a0147efd032b63e1fa24c131e3b463e53e7a56448"
+    },
+    {
+      "id": "lock.0160",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/statusPayload",
+      "expectedCanonicalValueHash": "sha256:dbed69247aa2cbb4b538cf3ad479c287f23b839e57b63e25e29891ccd73903c7"
+    },
+    {
+      "id": "lock.0161",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/targetKinds",
+      "expectedCanonicalValueHash": "sha256:059995c9906dbd7f0d6e0441e0a501b36fd9ee27837b32a56ea72c3d8eedd013"
+    },
+    {
+      "id": "lock.0162",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/parameters/targetPolicySource",
+      "expectedCanonicalValueHash": "sha256:dd24c1a74c7c5c7d518a3890e5efa645174ff9c4835023185736c433911c306c"
+    },
+    {
+      "id": "lock.0163",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/behaviors/1/version",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0164",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/level",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0165",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/purchase",
+      "expectedCanonicalValueHash": "sha256:6345d3099f53768127e1dc81cb1f70690ac616bcf55a1bab683863d1bbe4f64c"
+    },
+    {
+      "id": "lock.0166",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/0/rangeWorldUnits",
+      "expectedCanonicalValueHash": "sha256:890fd025edbcc52422a48404936f1654d077408ee52231de4c4a2a22cef53f3c"
+    },
+    {
+      "id": "lock.0167",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/0",
+      "expectedCanonicalValueHash": "sha256:056f78e8cee89f7ba5d954c24d4086394d37e37545b29a41162b4dd0f80b7272"
+    },
+    {
+      "id": "lock.0168",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/contractId",
+      "expectedCanonicalValueHash": "sha256:bebd88a88e9d14d91528cdd8e765d80909fcfde16c150ebb91762171cd8319ed"
+    },
+    {
+      "id": "lock.0169",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/deliveryKind",
+      "expectedCanonicalValueHash": "sha256:b863ca77970a5332e60954e573288d6a37aec3a3d40cd7b5857b54aee05fb3f5"
+    },
+    {
+      "id": "lock.0170",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/id",
+      "expectedCanonicalValueHash": "sha256:839ad40585f204ddb942826a0147efd032b63e1fa24c131e3b463e53e7a56448"
+    },
+    {
+      "id": "lock.0171",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/affectedSide",
+      "expectedCanonicalValueHash": "sha256:cd7f3e933ed87705e4cac5840a4953c65c36d7cbb24421c532116d5f2c390bf1"
+    },
+    {
+      "id": "lock.0172",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/applyEventId",
+      "expectedCanonicalValueHash": "sha256:8231451e5c1234126efc099c7c5fb461e1940d1313bf2dcde11f000e02b0701d"
+    },
+    {
+      "id": "lock.0173",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/expireEventId",
+      "expectedCanonicalValueHash": "sha256:4b89fec82a66559baa1fd5b9c052a7c19236e9a299ac624e4e654ed2559198d8"
+    },
+    {
+      "id": "lock.0174",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/initialReady",
+      "expectedCanonicalValueHash": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "id": "lock.0175",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/maximumTargets",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0176",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/rangeSource",
+      "expectedCanonicalValueHash": "sha256:493fde6c12deb408ccbe47f31438fafe0e6efdb991e5b5fec7e7928ea2415df8"
+    },
+    {
+      "id": "lock.0177",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/scanCounter",
+      "expectedCanonicalValueHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "id": "lock.0178",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/scanEventId",
+      "expectedCanonicalValueHash": "sha256:83b77a95f80b7d1d8b55baaf133f20a59cceb1331598bcd9330345b3033d90a4"
+    },
+    {
+      "id": "lock.0179",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/stackRuleId",
+      "expectedCanonicalValueHash": "sha256:7a35aef426fc63d81d005a854a67bbad235476ed25a573e886fb0bba2433c3eb"
+    },
+    {
+      "id": "lock.0180",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/statusId",
+      "expectedCanonicalValueHash": "sha256:839ad40585f204ddb942826a0147efd032b63e1fa24c131e3b463e53e7a56448"
+    },
+    {
+      "id": "lock.0181",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/statusPayload",
+      "expectedCanonicalValueHash": "sha256:b6b70faca2c0cdedd91cc72ca12e054287f4b22f51a039bb6bb799f0fd2b8ace"
+    },
+    {
+      "id": "lock.0182",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/targetKinds",
+      "expectedCanonicalValueHash": "sha256:059995c9906dbd7f0d6e0441e0a501b36fd9ee27837b32a56ea72c3d8eedd013"
+    },
+    {
+      "id": "lock.0183",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/parameters/targetPolicySource",
+      "expectedCanonicalValueHash": "sha256:dd24c1a74c7c5c7d518a3890e5efa645174ff9c4835023185736c433911c306c"
+    },
+    {
+      "id": "lock.0184",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/behaviors/1/version",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0185",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/level",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0186",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/purchase",
+      "expectedCanonicalValueHash": "sha256:18bb9549ed7b6aa8c07cc4ebd799f7d3e520aaed2636666713ac6e675450759b"
+    },
+    {
+      "id": "lock.0187",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/1/rangeWorldUnits",
+      "expectedCanonicalValueHash": "sha256:b06ff625e497afac6d97bd4e3f65fc6636ba421022f1376300ca2a58f58b7d2b"
+    },
+    {
+      "id": "lock.0188",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/0",
+      "expectedCanonicalValueHash": "sha256:056f78e8cee89f7ba5d954c24d4086394d37e37545b29a41162b4dd0f80b7272"
+    },
+    {
+      "id": "lock.0189",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/contractId",
+      "expectedCanonicalValueHash": "sha256:bebd88a88e9d14d91528cdd8e765d80909fcfde16c150ebb91762171cd8319ed"
+    },
+    {
+      "id": "lock.0190",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/deliveryKind",
+      "expectedCanonicalValueHash": "sha256:b863ca77970a5332e60954e573288d6a37aec3a3d40cd7b5857b54aee05fb3f5"
+    },
+    {
+      "id": "lock.0191",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/id",
+      "expectedCanonicalValueHash": "sha256:839ad40585f204ddb942826a0147efd032b63e1fa24c131e3b463e53e7a56448"
+    },
+    {
+      "id": "lock.0192",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/affectedSide",
+      "expectedCanonicalValueHash": "sha256:cd7f3e933ed87705e4cac5840a4953c65c36d7cbb24421c532116d5f2c390bf1"
+    },
+    {
+      "id": "lock.0193",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/applyEventId",
+      "expectedCanonicalValueHash": "sha256:8231451e5c1234126efc099c7c5fb461e1940d1313bf2dcde11f000e02b0701d"
+    },
+    {
+      "id": "lock.0194",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/expireEventId",
+      "expectedCanonicalValueHash": "sha256:4b89fec82a66559baa1fd5b9c052a7c19236e9a299ac624e4e654ed2559198d8"
+    },
+    {
+      "id": "lock.0195",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/initialReady",
+      "expectedCanonicalValueHash": "sha256:b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b"
+    },
+    {
+      "id": "lock.0196",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/maximumTargets",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0197",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/rangeSource",
+      "expectedCanonicalValueHash": "sha256:493fde6c12deb408ccbe47f31438fafe0e6efdb991e5b5fec7e7928ea2415df8"
+    },
+    {
+      "id": "lock.0198",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/scanCounter",
+      "expectedCanonicalValueHash": "sha256:8241bbbf6ab8fb562d7dfb093705fc322bed0455dea21b929a8598f3a7bed68b"
+    },
+    {
+      "id": "lock.0199",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/scanEventId",
+      "expectedCanonicalValueHash": "sha256:83b77a95f80b7d1d8b55baaf133f20a59cceb1331598bcd9330345b3033d90a4"
+    },
+    {
+      "id": "lock.0200",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/stackRuleId",
+      "expectedCanonicalValueHash": "sha256:7a35aef426fc63d81d005a854a67bbad235476ed25a573e886fb0bba2433c3eb"
+    },
+    {
+      "id": "lock.0201",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/statusId",
+      "expectedCanonicalValueHash": "sha256:839ad40585f204ddb942826a0147efd032b63e1fa24c131e3b463e53e7a56448"
+    },
+    {
+      "id": "lock.0202",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/statusPayload",
+      "expectedCanonicalValueHash": "sha256:b6b70faca2c0cdedd91cc72ca12e054287f4b22f51a039bb6bb799f0fd2b8ace"
+    },
+    {
+      "id": "lock.0203",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/targetKinds",
+      "expectedCanonicalValueHash": "sha256:059995c9906dbd7f0d6e0441e0a501b36fd9ee27837b32a56ea72c3d8eedd013"
+    },
+    {
+      "id": "lock.0204",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/parameters/targetPolicySource",
+      "expectedCanonicalValueHash": "sha256:dd24c1a74c7c5c7d518a3890e5efa645174ff9c4835023185736c433911c306c"
+    },
+    {
+      "id": "lock.0205",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/behaviors/1/version",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0206",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/level",
+      "expectedCanonicalValueHash": "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    },
+    {
+      "id": "lock.0207",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/purchase",
+      "expectedCanonicalValueHash": "sha256:e6f956cc63d7df2a43fce24a95ae85b1225c223e7a9be5ab23c0079c82816437"
+    },
+    {
+      "id": "lock.0208",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/levels/2/rangeWorldUnits",
+      "expectedCanonicalValueHash": "sha256:492f431bae35265f2e5f4ed49bd8c58dda912431be561504846988d00d05d117"
+    },
+    {
+      "id": "lock.0209",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/nameKey",
+      "expectedCanonicalValueHash": "sha256:eaf6ca5abc56bd7331611c8a218b74278a5613e5efb62018d769bdaaf5fbff10"
+    },
+    {
+      "id": "lock.0210",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/roleKey",
+      "expectedCanonicalValueHash": "sha256:4a67e0cd655b13476a2a87abb21a43cad678e18c5ff68bd3466db15ed38e0266"
+    },
+    {
+      "id": "lock.0211",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:29b1ab263cb9df0de4f7874642d3890764f6e2e6b2f135c072b86e83fd74891b"
+    },
+    {
+      "id": "lock.0212",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/targetKinds",
+      "expectedCanonicalValueHash": "sha256:059995c9906dbd7f0d6e0441e0a501b36fd9ee27837b32a56ea72c3d8eedd013"
+    },
+    {
+      "id": "lock.0213",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/unlockId",
+      "expectedCanonicalValueHash": "sha256:7fe46a72ec96352ca76751907c1766800deeb2ec3de033e7f89e65df1b450ff3"
+    },
+    {
+      "id": "lock.0214",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/oracle/weaknessKey",
+      "expectedCanonicalValueHash": "sha256:1507c979a8e9f701ec39c918e00a7c88da6f5fdb47e338978823a49eff9662d2"
+    },
+    {
+      "id": "lock.0215",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/sentinel",
+      "expectedCanonicalValueHash": "sha256:a24d431c83f47c4e77677723546fd5b78a475d27254a270d2e85232ac5f78f1b"
+    },
+    {
+      "id": "lock.0216",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/defenses/siege",
+      "expectedCanonicalValueHash": "sha256:dafbb14f21d19228ad9814756fbcb1b62a7aa433804fd21ba60814f7331e48b9"
+    },
+    {
+      "id": "lock.0217",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/deathBehavior",
+      "expectedCanonicalValueHash": "sha256:e103087a7eedc093fa9c330f62d61e4be50cc43ddd62f649ab0e57342975557c"
+    },
+    {
+      "id": "lock.0218",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/id",
+      "expectedCanonicalValueHash": "sha256:2cce4a684da298d953ede42c2ef22466c79e4da41233c3698511e994db021d4e"
+    },
+    {
+      "id": "lock.0219",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/routeKinds",
+      "expectedCanonicalValueHash": "sha256:138988e31ce30272a8d4a6f4bd83b60c338e200fa3a0f181a41d8abf82559abf"
+    },
+    {
+      "id": "lock.0220",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:6505a4d6a25abf9557d0a55d3b60cd8db073be6a41b16f54f73212c4e7a6fb1a"
+    },
+    {
+      "id": "lock.0221",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/shieldPools",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0222",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/spawnBehavior",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0223",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/tags",
+      "expectedCanonicalValueHash": "sha256:0d27b37838dd64b6f1c6642e3ee795b35fde8461385cb1ee107b83024b586105"
+    },
+    {
+      "id": "lock.0224",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/echo/traits",
+      "expectedCanonicalValueHash": "sha256:4e18f63bdc7587c49715ceca58827883c9a90f1251545211954e6d2fc5b895b8"
+    },
+    {
+      "id": "lock.0225",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/deathBehavior",
+      "expectedCanonicalValueHash": "sha256:e103087a7eedc093fa9c330f62d61e4be50cc43ddd62f649ab0e57342975557c"
+    },
+    {
+      "id": "lock.0226",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/id",
+      "expectedCanonicalValueHash": "sha256:1bf82dbbbb009e46c5b4e4c33d2a2317897bec8a00627991fea5aa6999f97c76"
+    },
+    {
+      "id": "lock.0227",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/routeKinds",
+      "expectedCanonicalValueHash": "sha256:138988e31ce30272a8d4a6f4bd83b60c338e200fa3a0f181a41d8abf82559abf"
+    },
+    {
+      "id": "lock.0228",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0229",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/shieldPools",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0230",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/spawnBehavior",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0231",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/tags",
+      "expectedCanonicalValueHash": "sha256:87f4e20c7c53d6a98998f4383e3819b6e59f7b2ed652a18db171d14ee3ff10b0"
+    },
+    {
+      "id": "lock.0232",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/guardian/traits",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0233",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/deathBehavior",
+      "expectedCanonicalValueHash": "sha256:e103087a7eedc093fa9c330f62d61e4be50cc43ddd62f649ab0e57342975557c"
+    },
+    {
+      "id": "lock.0234",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/id",
+      "expectedCanonicalValueHash": "sha256:8c35d9521a07168ebcdc5fa06a7190676a625371a0c28474695b1ca43956f661"
+    },
+    {
+      "id": "lock.0235",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/routeKinds",
+      "expectedCanonicalValueHash": "sha256:138988e31ce30272a8d4a6f4bd83b60c338e200fa3a0f181a41d8abf82559abf"
+    },
+    {
+      "id": "lock.0236",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0237",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/shieldPools",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0238",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/spawnBehavior",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0239",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/tags",
+      "expectedCanonicalValueHash": "sha256:61fa0c084f9eaf9ec09f163b3dc39ca99c9e46c91c1c4e4ba3ba7b2a8e61a39d"
+    },
+    {
+      "id": "lock.0240",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/raider/traits",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0241",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/deathBehavior",
+      "expectedCanonicalValueHash": "sha256:e103087a7eedc093fa9c330f62d61e4be50cc43ddd62f649ab0e57342975557c"
+    },
+    {
+      "id": "lock.0242",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/id",
+      "expectedCanonicalValueHash": "sha256:c8cdfd59c3de85aaccbc47323aec21ccd4c4e448e739601cc60a54825f5cfda6"
+    },
+    {
+      "id": "lock.0243",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/routeKinds",
+      "expectedCanonicalValueHash": "sha256:138988e31ce30272a8d4a6f4bd83b60c338e200fa3a0f181a41d8abf82559abf"
+    },
+    {
+      "id": "lock.0244",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0245",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/shieldPools",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0246",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/spawnBehavior",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0247",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/tags",
+      "expectedCanonicalValueHash": "sha256:270d397716345b77b99481c6e18a5e5ae75a598940b5d4443cc779e26ff075c9"
+    },
+    {
+      "id": "lock.0248",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/scout/traits",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0249",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/deathBehavior",
+      "expectedCanonicalValueHash": "sha256:e103087a7eedc093fa9c330f62d61e4be50cc43ddd62f649ab0e57342975557c"
+    },
+    {
+      "id": "lock.0250",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/id",
+      "expectedCanonicalValueHash": "sha256:f1cb40b289a87737fa1e4dae83c1551ab9c19c946b22b3d4a364f180377888bb"
+    },
+    {
+      "id": "lock.0251",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/routeKinds",
+      "expectedCanonicalValueHash": "sha256:138988e31ce30272a8d4a6f4bd83b60c338e200fa3a0f181a41d8abf82559abf"
+    },
+    {
+      "id": "lock.0252",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0253",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/shieldPools",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0254",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/spawnBehavior",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0255",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/tags",
+      "expectedCanonicalValueHash": "sha256:87f4e20c7c53d6a98998f4383e3819b6e59f7b2ed652a18db171d14ee3ff10b0"
+    },
+    {
+      "id": "lock.0256",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/enemies/titan/traits",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0257",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/maps/m01",
+      "expectedCanonicalValueHash": "sha256:48b619ce9a84ea846183de11a0f5eace8f532bde516dc0b9a605ae3abf803a31"
+    },
+    {
+      "id": "lock.0258",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/actIndex",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0259",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/availableDefenseIds",
+      "expectedCanonicalValueHash": "sha256:025d8c9bb93777f976eedfb39429f60f5c23482fa4ee981eaaac03aa246be154"
+    },
+    {
+      "id": "lock.0260",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/baseStartAether",
+      "expectedCanonicalValueHash": "sha256:9ae2bdd7beedc2e766c6b76585530e16925115707dc7a06ab5ee4aa2776b2c7b"
+    },
+    {
+      "id": "lock.0261",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/bossRosterIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0262",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/enemyRosterIds",
+      "expectedCanonicalValueHash": "sha256:8758bb2e79c2dd3c86fd7049ddbb83c591ad5e30ff84d24a949c68e34e9959f8"
+    },
+    {
+      "id": "lock.0263",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/firstClearRewards",
+      "expectedCanonicalValueHash": "sha256:98d9b48cf6cd1dfaf2a5991c0fceb125979e3c92a890c7b7881b787e2fbec1fc"
+    },
+    {
+      "id": "lock.0264",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/headlineMechanicId",
+      "expectedCanonicalValueHash": "sha256:85932e0796bbc64e690cc488f7a9cdfb700a83c5c84bd3f0cd589554c8dd1ea0"
+    },
+    {
+      "id": "lock.0265",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/id",
+      "expectedCanonicalValueHash": "sha256:015a81f29672a78dc78a6c73e9b153a8b83ed073eed6a253ea47401a34593e07"
+    },
+    {
+      "id": "lock.0266",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/mapId",
+      "expectedCanonicalValueHash": "sha256:015a81f29672a78dc78a6c73e9b153a8b83ed073eed6a253ea47401a34593e07"
+    },
+    {
+      "id": "lock.0267",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/missionIndex",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0268",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/prerequisiteMissionIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0269",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/previewDeclarations",
+      "expectedCanonicalValueHash": "sha256:710f1f3d715722771f87c3d58353db5270e12f9ec12b9a5f077002d6a2113690"
+    },
+    {
+      "id": "lock.0270",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/schemaVersion",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0271",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/seedNamespace",
+      "expectedCanonicalValueHash": "sha256:1c0c66f1c565a31a121caf7d31602f5310bb76a1a8c5a900bce6c532453b79fb"
+    },
+    {
+      "id": "lock.0272",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:5f2a02069c9f1ed2bab7d1fd6aa8fec48b199ac850e9c898b8b56de3c05c26bb"
+    },
+    {
+      "id": "lock.0273",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/tutorial",
+      "expectedCanonicalValueHash": "sha256:f1b3a0db6e37de924f3f2159cb3d5adbb044411f626ab2e038f35bc89f535a84"
+    },
+    {
+      "id": "lock.0274",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/0/baseAetherEnvelope",
+      "expectedCanonicalValueHash": "sha256:624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4"
+    },
+    {
+      "id": "lock.0275",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/0/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0276",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/0/id",
+      "expectedCanonicalValueHash": "sha256:5798978912bcbe7625df95bd8833ff72697b73f63a8bf3fb1f2d0a74fc3b6380"
+    },
+    {
+      "id": "lock.0277",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/0/index",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0278",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/1/baseAetherEnvelope",
+      "expectedCanonicalValueHash": "sha256:d59eced1ded07f84c145592f65bdf854358e009c5cd705f5215bf18697fed103"
+    },
+    {
+      "id": "lock.0279",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/1/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0280",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/1/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0281",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/1/id",
+      "expectedCanonicalValueHash": "sha256:5dadcac9b2c9f8d1557f0d15a8f1219715bb22e4bc61d032c6bcfe2880c6662f"
+    },
+    {
+      "id": "lock.0282",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/1/index",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0283",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/2/baseAetherEnvelope",
+      "expectedCanonicalValueHash": "sha256:811786ad1ae74adfdd20dd0372abaaebc6246e343aebd01da0bfc4c02bf0106c"
+    },
+    {
+      "id": "lock.0284",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/2/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0285",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/2/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0286",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/2/id",
+      "expectedCanonicalValueHash": "sha256:8e5a264918f225322386cf26e77540bb06e729ab51bba05cecbf46b065982eb3"
+    },
+    {
+      "id": "lock.0287",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/2/index",
+      "expectedCanonicalValueHash": "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    },
+    {
+      "id": "lock.0288",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/3/baseAetherEnvelope",
+      "expectedCanonicalValueHash": "sha256:1a6562590ef19d1045d06c4055742d38288e9e6dcd71ccde5cee80f1d5a774eb"
+    },
+    {
+      "id": "lock.0289",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/3/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0290",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/3/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0291",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/3/id",
+      "expectedCanonicalValueHash": "sha256:2764a6ae1d914874c9f80a61875a867ac932a61da12fe8a1c2dbfe953cb1cbbd"
+    },
+    {
+      "id": "lock.0292",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/3/index",
+      "expectedCanonicalValueHash": "sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
+    },
+    {
+      "id": "lock.0293",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/4/baseAetherEnvelope",
+      "expectedCanonicalValueHash": "sha256:02d20bbd7e394ad5999a4cebabac9619732c343a4cac99470c03e23ba2bdc2bc"
+    },
+    {
+      "id": "lock.0294",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/4/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0295",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/4/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0296",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/4/id",
+      "expectedCanonicalValueHash": "sha256:e41747952d745c63043ad3ef023c54614f843f299508370c8f6727e468d5537d"
+    },
+    {
+      "id": "lock.0297",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/4/index",
+      "expectedCanonicalValueHash": "sha256:ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d"
+    },
+    {
+      "id": "lock.0298",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/baseAetherEnvelope",
+      "expectedCanonicalValueHash": "sha256:39fa9ec190eee7b6f4dff1100d6343e10918d044c75eac8f9e9a2596173f80c9"
+    },
+    {
+      "id": "lock.0299",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/clearGrantAether",
+      "expectedCanonicalValueHash": "sha256:5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9"
+    },
+    {
+      "id": "lock.0300",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/clearGrantEventId",
+      "expectedCanonicalValueHash": "sha256:74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b"
+    },
+    {
+      "id": "lock.0301",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/deploymentGrantAether",
+      "expectedCanonicalValueHash": "sha256:39fa9ec190eee7b6f4dff1100d6343e10918d044c75eac8f9e9a2596173f80c9"
+    },
+    {
+      "id": "lock.0302",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/deploymentGrantEventId",
+      "expectedCanonicalValueHash": "sha256:331d9916b4eb46037dd9e14390fd611e95c80422c8972f6466ec858e49527820"
+    },
+    {
+      "id": "lock.0303",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/groups/0/bountyPolicy",
+      "expectedCanonicalValueHash": "sha256:df50a06957be7e06658df1b34a1c4629a0e4584cd07f2d70f6d5d374cdf7785b"
+    },
+    {
+      "id": "lock.0304",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0305",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/groups/1/bountyPolicy",
+      "expectedCanonicalValueHash": "sha256:df50a06957be7e06658df1b34a1c4629a0e4584cd07f2d70f6d5d374cdf7785b"
+    },
+    {
+      "id": "lock.0306",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e547b7c24e1ad0ab057e102b6fc1e5e354ed8414279b36e1758436446e1f64a7"
+    },
+    {
+      "id": "lock.0307",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/id",
+      "expectedCanonicalValueHash": "sha256:701fddceeb9ba70ad26f4b8b69f813114b3e7b77d568db15e68b94c8ee3cc2da"
+    },
+    {
+      "id": "lock.0308",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m01/waves/5/index",
+      "expectedCanonicalValueHash": "sha256:e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683"
+    },
+    {
+      "id": "lock.0309",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/actIndex",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0310",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/availableDefenseIds",
+      "expectedCanonicalValueHash": "sha256:025d8c9bb93777f976eedfb39429f60f5c23482fa4ee981eaaac03aa246be154"
+    },
+    {
+      "id": "lock.0311",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/bossRosterIds",
+      "expectedCanonicalValueHash": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "id": "lock.0312",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/enemyRosterIds",
+      "expectedCanonicalValueHash": "sha256:76006addc137712a36a93a29326de883241878bf3695a3087f6b9eb5c5c238ba"
+    },
+    {
+      "id": "lock.0313",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/firstClearRewards",
+      "expectedCanonicalValueHash": "sha256:64ed09b168ef08377b7e0acb90a95cdd4ca6210c08dcaceefd5a4784f4e22d80"
+    },
+    {
+      "id": "lock.0314",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/headlineMechanicId",
+      "expectedCanonicalValueHash": "sha256:98cdc2a6c8478984616470a17d63eb10fa53c0c6ff0b3024b8f1fc02a84f71c3"
+    },
+    {
+      "id": "lock.0315",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/id",
+      "expectedCanonicalValueHash": "sha256:08572e7adc25ebd8f99ad1b5a0e77ad4554778eaf1b4eb514dc45096d2d43c8f"
+    },
+    {
+      "id": "lock.0316",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/mapId",
+      "expectedCanonicalValueHash": "sha256:08572e7adc25ebd8f99ad1b5a0e77ad4554778eaf1b4eb514dc45096d2d43c8f"
+    },
+    {
+      "id": "lock.0317",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/missionIndex",
+      "expectedCanonicalValueHash": "sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
+    },
+    {
+      "id": "lock.0318",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/prerequisiteMissionIds",
+      "expectedCanonicalValueHash": "sha256:28310a59baf2cf56337d7216cb01fdc05214012a68e7e6d8d259f4ba9c99910a"
+    },
+    {
+      "id": "lock.0319",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/previewDeclarations",
+      "expectedCanonicalValueHash": "sha256:18011db6a7bf33f634571ffd7bc7e26b6e26529fd068087672585d4296725eec"
+    },
+    {
+      "id": "lock.0320",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/schemaVersion",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0321",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/seedNamespace",
+      "expectedCanonicalValueHash": "sha256:f297dc4aa1738c74ab34382f8399e056b7599d09d53f8fb1650c777bd42d46f4"
+    },
+    {
+      "id": "lock.0322",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:497e7c80a2a8a81ab44598f283f080c07d046c0a13c9135688798f79990ea625"
+    },
+    {
+      "id": "lock.0323",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/tutorial",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0324",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/0/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0325",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/0/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0326",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/0/id",
+      "expectedCanonicalValueHash": "sha256:9684dbcc72ffff396d185dd754e4ef7f60eecc1ec256180621aed18aad4ef49c"
+    },
+    {
+      "id": "lock.0327",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/0/index",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0328",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/1/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0329",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/1/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0330",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/1/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0331",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/1/groups/3/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0332",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/1/id",
+      "expectedCanonicalValueHash": "sha256:ecea51f1b18c188aa7ef6b17baae6e9317ac53b951028b1e3c32ba291e1ce934"
+    },
+    {
+      "id": "lock.0333",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/1/index",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0334",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/2/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0335",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/2/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0336",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/2/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0337",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/2/groups/3/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0338",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/2/id",
+      "expectedCanonicalValueHash": "sha256:d818812a358c0030508a950b22e6b8d8a451e2c444050c01d999c9765b8be0cf"
+    },
+    {
+      "id": "lock.0339",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/2/index",
+      "expectedCanonicalValueHash": "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    },
+    {
+      "id": "lock.0340",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0341",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0342",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0343",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/groups/3/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0344",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/groups/4/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0345",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/groups/5/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0346",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/id",
+      "expectedCanonicalValueHash": "sha256:46bf68ba9a849f465b95717fcaf72d7b9a7a7234f48115fe0050f75db3da7d54"
+    },
+    {
+      "id": "lock.0347",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/3/index",
+      "expectedCanonicalValueHash": "sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
+    },
+    {
+      "id": "lock.0348",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0349",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0350",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0351",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/groups/3/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0352",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/groups/4/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0353",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/groups/5/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0354",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/id",
+      "expectedCanonicalValueHash": "sha256:bbaf77a491c49475ff1593637007db47b499bbb2e4646c1a8c2336090fe30786"
+    },
+    {
+      "id": "lock.0355",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/4/index",
+      "expectedCanonicalValueHash": "sha256:ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d"
+    },
+    {
+      "id": "lock.0356",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0357",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0358",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0359",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/groups/3/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0360",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/groups/4/routeId",
+      "expectedCanonicalValueHash": "sha256:12c13d1c8ceb03d32cba7bd4b9abba86c8f869a11578f1407691e224b5e4aa6f"
+    },
+    {
+      "id": "lock.0361",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/groups/5/routeId",
+      "expectedCanonicalValueHash": "sha256:e7aed4b290999a5c006b58b2e3a2bd51a316f772fda040f50c5cbe1e786defba"
+    },
+    {
+      "id": "lock.0362",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/id",
+      "expectedCanonicalValueHash": "sha256:0effd3c78bae1252db5d641799e5c417fb709acdba77ee70a40fe7a751b6c33f"
+    },
+    {
+      "id": "lock.0363",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m04/waves/5/index",
+      "expectedCanonicalValueHash": "sha256:e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683"
+    },
+    {
+      "id": "lock.0364",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/actIndex",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0365",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/availableDefenseIds",
+      "expectedCanonicalValueHash": "sha256:025d8c9bb93777f976eedfb39429f60f5c23482fa4ee981eaaac03aa246be154"
+    },
+    {
+      "id": "lock.0366",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/bossRosterIds",
+      "expectedCanonicalValueHash": "sha256:c0a0a40c785467ac36744d8d0843ea9cd893987a31f6eb4227eb3ff2dc128795"
+    },
+    {
+      "id": "lock.0367",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/enemyRosterIds",
+      "expectedCanonicalValueHash": "sha256:25ff26d826d56774b6235da6bde97ee6e5ae210df44d738ba9fc6d571ff45b8c"
+    },
+    {
+      "id": "lock.0368",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/firstClearRewards",
+      "expectedCanonicalValueHash": "sha256:9d3e6b6a21a277f9eb5623747382701ed9c8f450687d78ac48eb1e54e0f0d246"
+    },
+    {
+      "id": "lock.0369",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/headlineMechanicId",
+      "expectedCanonicalValueHash": "sha256:b2cc5d8c598b27dbd5ab155c9ec9dfd2a84a8e990d0e3536c94241fc12df6472"
+    },
+    {
+      "id": "lock.0370",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/id",
+      "expectedCanonicalValueHash": "sha256:c43ea8a305351fbafacf162e89f16ee59f691da3bfed71920c494905839bbfcc"
+    },
+    {
+      "id": "lock.0371",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/mapId",
+      "expectedCanonicalValueHash": "sha256:c43ea8a305351fbafacf162e89f16ee59f691da3bfed71920c494905839bbfcc"
+    },
+    {
+      "id": "lock.0372",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/missionIndex",
+      "expectedCanonicalValueHash": "sha256:ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d"
+    },
+    {
+      "id": "lock.0373",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/prerequisiteMissionIds",
+      "expectedCanonicalValueHash": "sha256:b9387a4cdb94bd86863e1c41d65230d2498edec70ce79f2cbcb0f25790c4e5cc"
+    },
+    {
+      "id": "lock.0374",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/previewDeclarations",
+      "expectedCanonicalValueHash": "sha256:e2784811a1a61be7496b5eb14a50644f4430979a2fe80601acc0d2a5729e1a00"
+    },
+    {
+      "id": "lock.0375",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/schemaVersion",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0376",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/seedNamespace",
+      "expectedCanonicalValueHash": "sha256:21aa8a8a50c5ad8f4f9bc04ae52115f92dd1de91e8ce0c1947a0775a09cd0d20"
+    },
+    {
+      "id": "lock.0377",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/semanticEventIds",
+      "expectedCanonicalValueHash": "sha256:76a0bef15e6afb00a7cb9af36ba4952995eae4690466ad421185374c4f51384d"
+    },
+    {
+      "id": "lock.0378",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/tutorial",
+      "expectedCanonicalValueHash": "sha256:2ff9cdff091aef6faf5f29ea2e9d90021c8046bb62ad5a5591d615403ad52203"
+    },
+    {
+      "id": "lock.0379",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/0/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0380",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/0/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0381",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/0/id",
+      "expectedCanonicalValueHash": "sha256:f5cf86682d011537b97e42ac42a10abb2e497826ace898d8be7bf453e82b717a"
+    },
+    {
+      "id": "lock.0382",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/0/index",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0383",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/1/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0384",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/1/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0385",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/1/id",
+      "expectedCanonicalValueHash": "sha256:23184370d497b3ca9aa1becb9d0c36fd8eefbbd7830df9d1c3bfecde830815a6"
+    },
+    {
+      "id": "lock.0386",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/1/index",
+      "expectedCanonicalValueHash": "sha256:d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+    },
+    {
+      "id": "lock.0387",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/2/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0388",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/2/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0389",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/2/id",
+      "expectedCanonicalValueHash": "sha256:da579940e703a68218965b1f2c45fc3746c1e187ff58088461c9fbc4458aaf67"
+    },
+    {
+      "id": "lock.0390",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/2/index",
+      "expectedCanonicalValueHash": "sha256:4e07408562bedb8b60ce05c1decfe3ad16b72230967de01f640b7e4729b49fce"
+    },
+    {
+      "id": "lock.0391",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/3/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0392",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/3/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0393",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/3/id",
+      "expectedCanonicalValueHash": "sha256:4626a4e36206c3771a485adb748bd26bef14635e64479e784a92b0bea7893114"
+    },
+    {
+      "id": "lock.0394",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/3/index",
+      "expectedCanonicalValueHash": "sha256:4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a"
+    },
+    {
+      "id": "lock.0395",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/4/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0396",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/4/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0397",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/4/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0398",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/4/id",
+      "expectedCanonicalValueHash": "sha256:3ee7ec95dac700aa8eebcec9a73bfb0c486ce9f14bd7aa6812c4a7d3badd319d"
+    },
+    {
+      "id": "lock.0399",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/4/index",
+      "expectedCanonicalValueHash": "sha256:ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d"
+    },
+    {
+      "id": "lock.0400",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/5/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0401",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/5/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0402",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/5/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0403",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/5/id",
+      "expectedCanonicalValueHash": "sha256:1ea1e3db773462d9b79446738f62c682efb491e17c67142f7e012d82f35731c5"
+    },
+    {
+      "id": "lock.0404",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/5/index",
+      "expectedCanonicalValueHash": "sha256:e7f6c011776e8db7cd330b54174fd76f7d0216b612387a5ffcfb81e6f0919683"
+    },
+    {
+      "id": "lock.0405",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/6/groups/0/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0406",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/6/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0407",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/6/groups/2/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0408",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/6/id",
+      "expectedCanonicalValueHash": "sha256:b25c75bce18a6d290c02fd4c9de0a4d31f692504a065730a5252dd28dc432b6e"
+    },
+    {
+      "id": "lock.0409",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/6/index",
+      "expectedCanonicalValueHash": "sha256:7902699be42c8a8e46fbbb4501726517e86b22c56a189f7625a6da49081b2451"
+    },
+    {
+      "id": "lock.0410",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/7/groups/0",
+      "expectedCanonicalValueHash": "sha256:31979015f7c5416a030ead2331d2f824778ed78ffbfd76da6a71bc013a59e8fb"
+    },
+    {
+      "id": "lock.0411",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/7/groups/1/routeId",
+      "expectedCanonicalValueHash": "sha256:7476f7a53ad3183aaca16ef7432a6b7eb6f6ea8a0631eec45d749645311ddfce"
+    },
+    {
+      "id": "lock.0412",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/7/id",
+      "expectedCanonicalValueHash": "sha256:7a36e200267bc3ced8377efcf6aa19d869ea9a7f418260780e62063476685f1d"
+    },
+    {
+      "id": "lock.0413",
+      "authorityId": "campaign-expansion-spec",
+      "jsonPointer": "/missions/m05/waves/7/index",
+      "expectedCanonicalValueHash": "sha256:2c624232cdd221771294dfbb310aca000a0df6ac8b66b696d90ef06fdefb64a3"
+    },
+    {
+      "id": "lock.0414",
+      "authorityId": "slice-content-spec",
+      "jsonPointer": "/schemaVersion",
+      "expectedCanonicalValueHash": "sha256:6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b"
+    },
+    {
+      "id": "lock.0415",
+      "authorityId": "slice-content-spec",
+      "jsonPointer": "/summons/hoplite-guard",
+      "expectedCanonicalValueHash": "sha256:ceac869eea4d1a4e19243c285144c2d06abe4b955bc89c5efaf9f8749df324c9"
+    }
+  ],
+  "candidateScopes": [
+    "/bosses/talos-prototype/armor",
+    "/bosses/talos-prototype/bossControlBp",
+    "/bosses/talos-prototype/bossMinimumMovementBp",
+    "/bosses/talos-prototype/control",
+    "/bosses/talos-prototype/descriptionKey",
+    "/bosses/talos-prototype/hp",
+    "/bosses/talos-prototype/leakIntegrity",
+    "/bosses/talos-prototype/nameKey",
+    "/bosses/talos-prototype/phaseRecords/0/hpLowerInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/0/hpUpperInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/0/nativeResistanceOverrides",
+    "/bosses/talos-prototype/phaseRecords/1/hpLowerInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/1/hpUpperInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/1/nativeResistanceOverrides",
+    "/bosses/talos-prototype/phaseRecords/2/hpLowerInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/2/hpUpperInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/2/nativeResistanceOverrides",
+    "/bosses/talos-prototype/phaseRecords/3/hpLowerInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/3/hpUpperInclusiveBp",
+    "/bosses/talos-prototype/phaseRecords/3/nativeResistanceOverrides",
+    "/bosses/talos-prototype/resistances",
+    "/bosses/talos-prototype/score",
+    "/bosses/talos-prototype/speedWorldUnitsPerSecond",
+    "/bosses/talos-prototype/threatPriority",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/count",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/firstDelayTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/childSpawnRecords/0/intervalTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/exposedDamageCoefficientBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/exposedWindowDurationMs",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/resistanceOverrides",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/statusDeliveries/0/durationMs",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/statusDeliveries/0/magnitudeBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/thresholdHpBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/warningDelayTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/count",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/firstDelayTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/childSpawnRecords/0/intervalTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/exposedDamageCoefficientBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/exposedWindowDurationMs",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/resistanceOverrides",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/statusDeliveries/0/durationMs",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/statusDeliveries/0/magnitudeBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/thresholdHpBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/warningDelayTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/count",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/firstDelayTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/childSpawnRecords/0/intervalTicks",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/exposedDamageCoefficientBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/exposedWindowDurationMs",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/resistanceOverrides",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/statusDeliveries/0/durationMs",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/statusDeliveries/0/magnitudeBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/thresholdHpBp",
+    "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/warningDelayTicks",
+    "/defenses/chronos/levels/0/rangeWorldUnits",
+    "/defenses/chronos/levels/1/rangeWorldUnits",
+    "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/durationMs",
+    "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/magnitudeBp",
+    "/defenses/chronos/levels/2/behaviors/1/parameters/echoCounter/radiusWorldUnits",
+    "/defenses/chronos/levels/2/rangeWorldUnits",
+    "/defenses/hoplite/levels/1/rangeWorldUnits",
+    "/defenses/hoplite/levels/2/rangeWorldUnits",
+    "/defenses/oracle/levels/0/behaviors/1/parameters/cadenceMs",
+    "/defenses/oracle/levels/0/behaviors/1/parameters/durationMs",
+    "/defenses/oracle/levels/1/behaviors/1/parameters/cadenceMs",
+    "/defenses/oracle/levels/1/behaviors/1/parameters/durationMs",
+    "/defenses/oracle/levels/2/behaviors/1/parameters/cadenceMs",
+    "/defenses/oracle/levels/2/behaviors/1/parameters/durationMs",
+    "/enemies/echo/armor",
+    "/enemies/echo/baseLineageBountyAether",
+    "/enemies/echo/control",
+    "/enemies/echo/descriptionKey",
+    "/enemies/echo/hp",
+    "/enemies/echo/leakIntegrity",
+    "/enemies/echo/nameKey",
+    "/enemies/echo/resistances",
+    "/enemies/echo/score",
+    "/enemies/echo/speedWorldUnitsPerSecond",
+    "/enemies/echo/threatPriority",
+    "/enemies/guardian/armor",
+    "/enemies/guardian/baseLineageBountyAether",
+    "/enemies/guardian/control",
+    "/enemies/guardian/descriptionKey",
+    "/enemies/guardian/hp",
+    "/enemies/guardian/leakIntegrity",
+    "/enemies/guardian/nameKey",
+    "/enemies/guardian/resistances",
+    "/enemies/guardian/score",
+    "/enemies/guardian/speedWorldUnitsPerSecond",
+    "/enemies/guardian/threatPriority",
+    "/enemies/raider/armor",
+    "/enemies/raider/baseLineageBountyAether",
+    "/enemies/raider/control",
+    "/enemies/raider/descriptionKey",
+    "/enemies/raider/hp",
+    "/enemies/raider/leakIntegrity",
+    "/enemies/raider/nameKey",
+    "/enemies/raider/resistances",
+    "/enemies/raider/score",
+    "/enemies/raider/speedWorldUnitsPerSecond",
+    "/enemies/raider/threatPriority",
+    "/enemies/scout/armor",
+    "/enemies/scout/baseLineageBountyAether",
+    "/enemies/scout/control",
+    "/enemies/scout/descriptionKey",
+    "/enemies/scout/hp",
+    "/enemies/scout/leakIntegrity",
+    "/enemies/scout/nameKey",
+    "/enemies/scout/resistances",
+    "/enemies/scout/score",
+    "/enemies/scout/speedWorldUnitsPerSecond",
+    "/enemies/scout/threatPriority",
+    "/enemies/titan/armor",
+    "/enemies/titan/baseLineageBountyAether",
+    "/enemies/titan/control",
+    "/enemies/titan/descriptionKey",
+    "/enemies/titan/hp",
+    "/enemies/titan/leakIntegrity",
+    "/enemies/titan/nameKey",
+    "/enemies/titan/resistances",
+    "/enemies/titan/score",
+    "/enemies/titan/speedWorldUnitsPerSecond",
+    "/enemies/titan/threatPriority",
+    "/eventCatalog",
+    "/maps/m04",
+    "/maps/m05",
+    "/missions/m01/briefing",
+    "/missions/m01/objectives",
+    "/missions/m01/scoreRecord",
+    "/missions/m01/spawnAnalysis",
+    "/missions/m01/titleKey",
+    "/missions/m01/waves/0/clearGrantAether",
+    "/missions/m01/waves/0/clearGrantEventId",
+    "/missions/m01/waves/0/deploymentGrantAether",
+    "/missions/m01/waves/0/deploymentGrantEventId",
+    "/missions/m01/waves/0/groups/0/bountyPolicy",
+    "/missions/m01/waves/0/groups/0/count",
+    "/missions/m01/waves/0/groups/0/enemyId",
+    "/missions/m01/waves/0/groups/0/firstTick",
+    "/missions/m01/waves/0/groups/0/id",
+    "/missions/m01/waves/0/groups/0/intervalTicks",
+    "/missions/m01/waves/0/groups/0/modifierIds",
+    "/missions/m01/waves/0/groups/0/order",
+    "/missions/m01/waves/0/groups/0/rngStreamId",
+    "/missions/m01/waves/0/groups/0/shuffleWithinGroup",
+    "/missions/m01/waves/0/groups/0/spawnEventId",
+    "/missions/m01/waves/0/groups/0/spawnKind",
+    "/missions/m01/waves/0/previewDeclarationIds",
+    "/missions/m01/waves/0/titleKey",
+    "/missions/m01/waves/0/waveClearScore",
+    "/missions/m01/waves/1/clearGrantAether",
+    "/missions/m01/waves/1/clearGrantEventId",
+    "/missions/m01/waves/1/deploymentGrantAether",
+    "/missions/m01/waves/1/deploymentGrantEventId",
+    "/missions/m01/waves/1/groups/0/bountyPolicy",
+    "/missions/m01/waves/1/groups/0/count",
+    "/missions/m01/waves/1/groups/0/enemyId",
+    "/missions/m01/waves/1/groups/0/firstTick",
+    "/missions/m01/waves/1/groups/0/id",
+    "/missions/m01/waves/1/groups/0/intervalTicks",
+    "/missions/m01/waves/1/groups/0/modifierIds",
+    "/missions/m01/waves/1/groups/0/order",
+    "/missions/m01/waves/1/groups/0/rngStreamId",
+    "/missions/m01/waves/1/groups/0/shuffleWithinGroup",
+    "/missions/m01/waves/1/groups/0/spawnEventId",
+    "/missions/m01/waves/1/groups/0/spawnKind",
+    "/missions/m01/waves/1/groups/1/bountyPolicy",
+    "/missions/m01/waves/1/groups/1/count",
+    "/missions/m01/waves/1/groups/1/enemyId",
+    "/missions/m01/waves/1/groups/1/firstTick",
+    "/missions/m01/waves/1/groups/1/id",
+    "/missions/m01/waves/1/groups/1/intervalTicks",
+    "/missions/m01/waves/1/groups/1/modifierIds",
+    "/missions/m01/waves/1/groups/1/order",
+    "/missions/m01/waves/1/groups/1/rngStreamId",
+    "/missions/m01/waves/1/groups/1/shuffleWithinGroup",
+    "/missions/m01/waves/1/groups/1/spawnEventId",
+    "/missions/m01/waves/1/groups/1/spawnKind",
+    "/missions/m01/waves/1/previewDeclarationIds",
+    "/missions/m01/waves/1/titleKey",
+    "/missions/m01/waves/1/waveClearScore",
+    "/missions/m01/waves/2/clearGrantAether",
+    "/missions/m01/waves/2/clearGrantEventId",
+    "/missions/m01/waves/2/deploymentGrantAether",
+    "/missions/m01/waves/2/deploymentGrantEventId",
+    "/missions/m01/waves/2/groups/0/bountyPolicy",
+    "/missions/m01/waves/2/groups/0/count",
+    "/missions/m01/waves/2/groups/0/enemyId",
+    "/missions/m01/waves/2/groups/0/firstTick",
+    "/missions/m01/waves/2/groups/0/id",
+    "/missions/m01/waves/2/groups/0/intervalTicks",
+    "/missions/m01/waves/2/groups/0/modifierIds",
+    "/missions/m01/waves/2/groups/0/order",
+    "/missions/m01/waves/2/groups/0/rngStreamId",
+    "/missions/m01/waves/2/groups/0/shuffleWithinGroup",
+    "/missions/m01/waves/2/groups/0/spawnEventId",
+    "/missions/m01/waves/2/groups/0/spawnKind",
+    "/missions/m01/waves/2/groups/1/bountyPolicy",
+    "/missions/m01/waves/2/groups/1/count",
+    "/missions/m01/waves/2/groups/1/enemyId",
+    "/missions/m01/waves/2/groups/1/firstTick",
+    "/missions/m01/waves/2/groups/1/id",
+    "/missions/m01/waves/2/groups/1/intervalTicks",
+    "/missions/m01/waves/2/groups/1/modifierIds",
+    "/missions/m01/waves/2/groups/1/order",
+    "/missions/m01/waves/2/groups/1/rngStreamId",
+    "/missions/m01/waves/2/groups/1/shuffleWithinGroup",
+    "/missions/m01/waves/2/groups/1/spawnEventId",
+    "/missions/m01/waves/2/groups/1/spawnKind",
+    "/missions/m01/waves/2/previewDeclarationIds",
+    "/missions/m01/waves/2/titleKey",
+    "/missions/m01/waves/2/waveClearScore",
+    "/missions/m01/waves/3/clearGrantAether",
+    "/missions/m01/waves/3/clearGrantEventId",
+    "/missions/m01/waves/3/deploymentGrantAether",
+    "/missions/m01/waves/3/deploymentGrantEventId",
+    "/missions/m01/waves/3/groups/0/bountyPolicy",
+    "/missions/m01/waves/3/groups/0/count",
+    "/missions/m01/waves/3/groups/0/enemyId",
+    "/missions/m01/waves/3/groups/0/firstTick",
+    "/missions/m01/waves/3/groups/0/id",
+    "/missions/m01/waves/3/groups/0/intervalTicks",
+    "/missions/m01/waves/3/groups/0/modifierIds",
+    "/missions/m01/waves/3/groups/0/order",
+    "/missions/m01/waves/3/groups/0/rngStreamId",
+    "/missions/m01/waves/3/groups/0/shuffleWithinGroup",
+    "/missions/m01/waves/3/groups/0/spawnEventId",
+    "/missions/m01/waves/3/groups/0/spawnKind",
+    "/missions/m01/waves/3/groups/1/bountyPolicy",
+    "/missions/m01/waves/3/groups/1/count",
+    "/missions/m01/waves/3/groups/1/enemyId",
+    "/missions/m01/waves/3/groups/1/firstTick",
+    "/missions/m01/waves/3/groups/1/id",
+    "/missions/m01/waves/3/groups/1/intervalTicks",
+    "/missions/m01/waves/3/groups/1/modifierIds",
+    "/missions/m01/waves/3/groups/1/order",
+    "/missions/m01/waves/3/groups/1/rngStreamId",
+    "/missions/m01/waves/3/groups/1/shuffleWithinGroup",
+    "/missions/m01/waves/3/groups/1/spawnEventId",
+    "/missions/m01/waves/3/groups/1/spawnKind",
+    "/missions/m01/waves/3/previewDeclarationIds",
+    "/missions/m01/waves/3/titleKey",
+    "/missions/m01/waves/3/waveClearScore",
+    "/missions/m01/waves/4/clearGrantAether",
+    "/missions/m01/waves/4/clearGrantEventId",
+    "/missions/m01/waves/4/deploymentGrantAether",
+    "/missions/m01/waves/4/deploymentGrantEventId",
+    "/missions/m01/waves/4/groups/0/bountyPolicy",
+    "/missions/m01/waves/4/groups/0/count",
+    "/missions/m01/waves/4/groups/0/enemyId",
+    "/missions/m01/waves/4/groups/0/firstTick",
+    "/missions/m01/waves/4/groups/0/id",
+    "/missions/m01/waves/4/groups/0/intervalTicks",
+    "/missions/m01/waves/4/groups/0/modifierIds",
+    "/missions/m01/waves/4/groups/0/order",
+    "/missions/m01/waves/4/groups/0/rngStreamId",
+    "/missions/m01/waves/4/groups/0/shuffleWithinGroup",
+    "/missions/m01/waves/4/groups/0/spawnEventId",
+    "/missions/m01/waves/4/groups/0/spawnKind",
+    "/missions/m01/waves/4/groups/1/bountyPolicy",
+    "/missions/m01/waves/4/groups/1/count",
+    "/missions/m01/waves/4/groups/1/enemyId",
+    "/missions/m01/waves/4/groups/1/firstTick",
+    "/missions/m01/waves/4/groups/1/id",
+    "/missions/m01/waves/4/groups/1/intervalTicks",
+    "/missions/m01/waves/4/groups/1/modifierIds",
+    "/missions/m01/waves/4/groups/1/order",
+    "/missions/m01/waves/4/groups/1/rngStreamId",
+    "/missions/m01/waves/4/groups/1/shuffleWithinGroup",
+    "/missions/m01/waves/4/groups/1/spawnEventId",
+    "/missions/m01/waves/4/groups/1/spawnKind",
+    "/missions/m01/waves/4/previewDeclarationIds",
+    "/missions/m01/waves/4/titleKey",
+    "/missions/m01/waves/4/waveClearScore",
+    "/missions/m01/waves/5/groups/0/count",
+    "/missions/m01/waves/5/groups/0/enemyId",
+    "/missions/m01/waves/5/groups/0/firstTick",
+    "/missions/m01/waves/5/groups/0/id",
+    "/missions/m01/waves/5/groups/0/intervalTicks",
+    "/missions/m01/waves/5/groups/0/modifierIds",
+    "/missions/m01/waves/5/groups/0/order",
+    "/missions/m01/waves/5/groups/0/rngStreamId",
+    "/missions/m01/waves/5/groups/0/shuffleWithinGroup",
+    "/missions/m01/waves/5/groups/0/spawnEventId",
+    "/missions/m01/waves/5/groups/0/spawnKind",
+    "/missions/m01/waves/5/groups/1/count",
+    "/missions/m01/waves/5/groups/1/enemyId",
+    "/missions/m01/waves/5/groups/1/firstTick",
+    "/missions/m01/waves/5/groups/1/id",
+    "/missions/m01/waves/5/groups/1/intervalTicks",
+    "/missions/m01/waves/5/groups/1/modifierIds",
+    "/missions/m01/waves/5/groups/1/order",
+    "/missions/m01/waves/5/groups/1/rngStreamId",
+    "/missions/m01/waves/5/groups/1/shuffleWithinGroup",
+    "/missions/m01/waves/5/groups/1/spawnEventId",
+    "/missions/m01/waves/5/groups/1/spawnKind",
+    "/missions/m01/waves/5/previewDeclarationIds",
+    "/missions/m01/waves/5/titleKey",
+    "/missions/m01/waves/5/waveClearScore",
+    "/missions/m04/baseStartAether",
+    "/missions/m04/briefing",
+    "/missions/m04/objectives",
+    "/missions/m04/scoreRecord",
+    "/missions/m04/spawnAnalysis",
+    "/missions/m04/titleKey",
+    "/missions/m04/waves/0/baseAetherEnvelope",
+    "/missions/m04/waves/0/clearGrantAether",
+    "/missions/m04/waves/0/clearGrantEventId",
+    "/missions/m04/waves/0/deploymentGrantAether",
+    "/missions/m04/waves/0/deploymentGrantEventId",
+    "/missions/m04/waves/0/groups/0/bountyPolicy",
+    "/missions/m04/waves/0/groups/0/count",
+    "/missions/m04/waves/0/groups/0/enemyId",
+    "/missions/m04/waves/0/groups/0/firstTick",
+    "/missions/m04/waves/0/groups/0/id",
+    "/missions/m04/waves/0/groups/0/intervalTicks",
+    "/missions/m04/waves/0/groups/0/modifierIds",
+    "/missions/m04/waves/0/groups/0/order",
+    "/missions/m04/waves/0/groups/0/rngStreamId",
+    "/missions/m04/waves/0/groups/0/shuffleWithinGroup",
+    "/missions/m04/waves/0/groups/0/spawnEventId",
+    "/missions/m04/waves/0/groups/0/spawnKind",
+    "/missions/m04/waves/0/groups/1/bountyPolicy",
+    "/missions/m04/waves/0/groups/1/count",
+    "/missions/m04/waves/0/groups/1/enemyId",
+    "/missions/m04/waves/0/groups/1/firstTick",
+    "/missions/m04/waves/0/groups/1/id",
+    "/missions/m04/waves/0/groups/1/intervalTicks",
+    "/missions/m04/waves/0/groups/1/modifierIds",
+    "/missions/m04/waves/0/groups/1/order",
+    "/missions/m04/waves/0/groups/1/rngStreamId",
+    "/missions/m04/waves/0/groups/1/shuffleWithinGroup",
+    "/missions/m04/waves/0/groups/1/spawnEventId",
+    "/missions/m04/waves/0/groups/1/spawnKind",
+    "/missions/m04/waves/0/previewDeclarationIds",
+    "/missions/m04/waves/0/titleKey",
+    "/missions/m04/waves/0/waveClearScore",
+    "/missions/m04/waves/1/baseAetherEnvelope",
+    "/missions/m04/waves/1/clearGrantAether",
+    "/missions/m04/waves/1/clearGrantEventId",
+    "/missions/m04/waves/1/deploymentGrantAether",
+    "/missions/m04/waves/1/deploymentGrantEventId",
+    "/missions/m04/waves/1/groups/0/bountyPolicy",
+    "/missions/m04/waves/1/groups/0/count",
+    "/missions/m04/waves/1/groups/0/enemyId",
+    "/missions/m04/waves/1/groups/0/firstTick",
+    "/missions/m04/waves/1/groups/0/id",
+    "/missions/m04/waves/1/groups/0/intervalTicks",
+    "/missions/m04/waves/1/groups/0/modifierIds",
+    "/missions/m04/waves/1/groups/0/order",
+    "/missions/m04/waves/1/groups/0/rngStreamId",
+    "/missions/m04/waves/1/groups/0/shuffleWithinGroup",
+    "/missions/m04/waves/1/groups/0/spawnEventId",
+    "/missions/m04/waves/1/groups/0/spawnKind",
+    "/missions/m04/waves/1/groups/1/bountyPolicy",
+    "/missions/m04/waves/1/groups/1/count",
+    "/missions/m04/waves/1/groups/1/enemyId",
+    "/missions/m04/waves/1/groups/1/firstTick",
+    "/missions/m04/waves/1/groups/1/id",
+    "/missions/m04/waves/1/groups/1/intervalTicks",
+    "/missions/m04/waves/1/groups/1/modifierIds",
+    "/missions/m04/waves/1/groups/1/order",
+    "/missions/m04/waves/1/groups/1/rngStreamId",
+    "/missions/m04/waves/1/groups/1/shuffleWithinGroup",
+    "/missions/m04/waves/1/groups/1/spawnEventId",
+    "/missions/m04/waves/1/groups/1/spawnKind",
+    "/missions/m04/waves/1/groups/2/bountyPolicy",
+    "/missions/m04/waves/1/groups/2/count",
+    "/missions/m04/waves/1/groups/2/enemyId",
+    "/missions/m04/waves/1/groups/2/firstTick",
+    "/missions/m04/waves/1/groups/2/id",
+    "/missions/m04/waves/1/groups/2/intervalTicks",
+    "/missions/m04/waves/1/groups/2/modifierIds",
+    "/missions/m04/waves/1/groups/2/order",
+    "/missions/m04/waves/1/groups/2/rngStreamId",
+    "/missions/m04/waves/1/groups/2/shuffleWithinGroup",
+    "/missions/m04/waves/1/groups/2/spawnEventId",
+    "/missions/m04/waves/1/groups/2/spawnKind",
+    "/missions/m04/waves/1/groups/3/bountyPolicy",
+    "/missions/m04/waves/1/groups/3/count",
+    "/missions/m04/waves/1/groups/3/enemyId",
+    "/missions/m04/waves/1/groups/3/firstTick",
+    "/missions/m04/waves/1/groups/3/id",
+    "/missions/m04/waves/1/groups/3/intervalTicks",
+    "/missions/m04/waves/1/groups/3/modifierIds",
+    "/missions/m04/waves/1/groups/3/order",
+    "/missions/m04/waves/1/groups/3/rngStreamId",
+    "/missions/m04/waves/1/groups/3/shuffleWithinGroup",
+    "/missions/m04/waves/1/groups/3/spawnEventId",
+    "/missions/m04/waves/1/groups/3/spawnKind",
+    "/missions/m04/waves/1/previewDeclarationIds",
+    "/missions/m04/waves/1/titleKey",
+    "/missions/m04/waves/1/waveClearScore",
+    "/missions/m04/waves/2/baseAetherEnvelope",
+    "/missions/m04/waves/2/clearGrantAether",
+    "/missions/m04/waves/2/clearGrantEventId",
+    "/missions/m04/waves/2/deploymentGrantAether",
+    "/missions/m04/waves/2/deploymentGrantEventId",
+    "/missions/m04/waves/2/groups/0/bountyPolicy",
+    "/missions/m04/waves/2/groups/0/count",
+    "/missions/m04/waves/2/groups/0/enemyId",
+    "/missions/m04/waves/2/groups/0/firstTick",
+    "/missions/m04/waves/2/groups/0/id",
+    "/missions/m04/waves/2/groups/0/intervalTicks",
+    "/missions/m04/waves/2/groups/0/modifierIds",
+    "/missions/m04/waves/2/groups/0/order",
+    "/missions/m04/waves/2/groups/0/rngStreamId",
+    "/missions/m04/waves/2/groups/0/shuffleWithinGroup",
+    "/missions/m04/waves/2/groups/0/spawnEventId",
+    "/missions/m04/waves/2/groups/0/spawnKind",
+    "/missions/m04/waves/2/groups/1/bountyPolicy",
+    "/missions/m04/waves/2/groups/1/count",
+    "/missions/m04/waves/2/groups/1/enemyId",
+    "/missions/m04/waves/2/groups/1/firstTick",
+    "/missions/m04/waves/2/groups/1/id",
+    "/missions/m04/waves/2/groups/1/intervalTicks",
+    "/missions/m04/waves/2/groups/1/modifierIds",
+    "/missions/m04/waves/2/groups/1/order",
+    "/missions/m04/waves/2/groups/1/rngStreamId",
+    "/missions/m04/waves/2/groups/1/shuffleWithinGroup",
+    "/missions/m04/waves/2/groups/1/spawnEventId",
+    "/missions/m04/waves/2/groups/1/spawnKind",
+    "/missions/m04/waves/2/groups/2/bountyPolicy",
+    "/missions/m04/waves/2/groups/2/count",
+    "/missions/m04/waves/2/groups/2/enemyId",
+    "/missions/m04/waves/2/groups/2/firstTick",
+    "/missions/m04/waves/2/groups/2/id",
+    "/missions/m04/waves/2/groups/2/intervalTicks",
+    "/missions/m04/waves/2/groups/2/modifierIds",
+    "/missions/m04/waves/2/groups/2/order",
+    "/missions/m04/waves/2/groups/2/rngStreamId",
+    "/missions/m04/waves/2/groups/2/shuffleWithinGroup",
+    "/missions/m04/waves/2/groups/2/spawnEventId",
+    "/missions/m04/waves/2/groups/2/spawnKind",
+    "/missions/m04/waves/2/groups/3/bountyPolicy",
+    "/missions/m04/waves/2/groups/3/count",
+    "/missions/m04/waves/2/groups/3/enemyId",
+    "/missions/m04/waves/2/groups/3/firstTick",
+    "/missions/m04/waves/2/groups/3/id",
+    "/missions/m04/waves/2/groups/3/intervalTicks",
+    "/missions/m04/waves/2/groups/3/modifierIds",
+    "/missions/m04/waves/2/groups/3/order",
+    "/missions/m04/waves/2/groups/3/rngStreamId",
+    "/missions/m04/waves/2/groups/3/shuffleWithinGroup",
+    "/missions/m04/waves/2/groups/3/spawnEventId",
+    "/missions/m04/waves/2/groups/3/spawnKind",
+    "/missions/m04/waves/2/previewDeclarationIds",
+    "/missions/m04/waves/2/titleKey",
+    "/missions/m04/waves/2/waveClearScore",
+    "/missions/m04/waves/3/baseAetherEnvelope",
+    "/missions/m04/waves/3/clearGrantAether",
+    "/missions/m04/waves/3/clearGrantEventId",
+    "/missions/m04/waves/3/deploymentGrantAether",
+    "/missions/m04/waves/3/deploymentGrantEventId",
+    "/missions/m04/waves/3/groups/0/bountyPolicy",
+    "/missions/m04/waves/3/groups/0/count",
+    "/missions/m04/waves/3/groups/0/enemyId",
+    "/missions/m04/waves/3/groups/0/firstTick",
+    "/missions/m04/waves/3/groups/0/id",
+    "/missions/m04/waves/3/groups/0/intervalTicks",
+    "/missions/m04/waves/3/groups/0/modifierIds",
+    "/missions/m04/waves/3/groups/0/order",
+    "/missions/m04/waves/3/groups/0/rngStreamId",
+    "/missions/m04/waves/3/groups/0/shuffleWithinGroup",
+    "/missions/m04/waves/3/groups/0/spawnEventId",
+    "/missions/m04/waves/3/groups/0/spawnKind",
+    "/missions/m04/waves/3/groups/1/bountyPolicy",
+    "/missions/m04/waves/3/groups/1/count",
+    "/missions/m04/waves/3/groups/1/enemyId",
+    "/missions/m04/waves/3/groups/1/firstTick",
+    "/missions/m04/waves/3/groups/1/id",
+    "/missions/m04/waves/3/groups/1/intervalTicks",
+    "/missions/m04/waves/3/groups/1/modifierIds",
+    "/missions/m04/waves/3/groups/1/order",
+    "/missions/m04/waves/3/groups/1/rngStreamId",
+    "/missions/m04/waves/3/groups/1/shuffleWithinGroup",
+    "/missions/m04/waves/3/groups/1/spawnEventId",
+    "/missions/m04/waves/3/groups/1/spawnKind",
+    "/missions/m04/waves/3/groups/2/bountyPolicy",
+    "/missions/m04/waves/3/groups/2/count",
+    "/missions/m04/waves/3/groups/2/enemyId",
+    "/missions/m04/waves/3/groups/2/firstTick",
+    "/missions/m04/waves/3/groups/2/id",
+    "/missions/m04/waves/3/groups/2/intervalTicks",
+    "/missions/m04/waves/3/groups/2/modifierIds",
+    "/missions/m04/waves/3/groups/2/order",
+    "/missions/m04/waves/3/groups/2/rngStreamId",
+    "/missions/m04/waves/3/groups/2/shuffleWithinGroup",
+    "/missions/m04/waves/3/groups/2/spawnEventId",
+    "/missions/m04/waves/3/groups/2/spawnKind",
+    "/missions/m04/waves/3/groups/3/bountyPolicy",
+    "/missions/m04/waves/3/groups/3/count",
+    "/missions/m04/waves/3/groups/3/enemyId",
+    "/missions/m04/waves/3/groups/3/firstTick",
+    "/missions/m04/waves/3/groups/3/id",
+    "/missions/m04/waves/3/groups/3/intervalTicks",
+    "/missions/m04/waves/3/groups/3/modifierIds",
+    "/missions/m04/waves/3/groups/3/order",
+    "/missions/m04/waves/3/groups/3/rngStreamId",
+    "/missions/m04/waves/3/groups/3/shuffleWithinGroup",
+    "/missions/m04/waves/3/groups/3/spawnEventId",
+    "/missions/m04/waves/3/groups/3/spawnKind",
+    "/missions/m04/waves/3/groups/4/bountyPolicy",
+    "/missions/m04/waves/3/groups/4/count",
+    "/missions/m04/waves/3/groups/4/enemyId",
+    "/missions/m04/waves/3/groups/4/firstTick",
+    "/missions/m04/waves/3/groups/4/id",
+    "/missions/m04/waves/3/groups/4/intervalTicks",
+    "/missions/m04/waves/3/groups/4/modifierIds",
+    "/missions/m04/waves/3/groups/4/order",
+    "/missions/m04/waves/3/groups/4/rngStreamId",
+    "/missions/m04/waves/3/groups/4/shuffleWithinGroup",
+    "/missions/m04/waves/3/groups/4/spawnEventId",
+    "/missions/m04/waves/3/groups/4/spawnKind",
+    "/missions/m04/waves/3/groups/5/bountyPolicy",
+    "/missions/m04/waves/3/groups/5/count",
+    "/missions/m04/waves/3/groups/5/enemyId",
+    "/missions/m04/waves/3/groups/5/firstTick",
+    "/missions/m04/waves/3/groups/5/id",
+    "/missions/m04/waves/3/groups/5/intervalTicks",
+    "/missions/m04/waves/3/groups/5/modifierIds",
+    "/missions/m04/waves/3/groups/5/order",
+    "/missions/m04/waves/3/groups/5/rngStreamId",
+    "/missions/m04/waves/3/groups/5/shuffleWithinGroup",
+    "/missions/m04/waves/3/groups/5/spawnEventId",
+    "/missions/m04/waves/3/groups/5/spawnKind",
+    "/missions/m04/waves/3/previewDeclarationIds",
+    "/missions/m04/waves/3/titleKey",
+    "/missions/m04/waves/3/waveClearScore",
+    "/missions/m04/waves/4/baseAetherEnvelope",
+    "/missions/m04/waves/4/clearGrantAether",
+    "/missions/m04/waves/4/clearGrantEventId",
+    "/missions/m04/waves/4/deploymentGrantAether",
+    "/missions/m04/waves/4/deploymentGrantEventId",
+    "/missions/m04/waves/4/groups/0/bountyPolicy",
+    "/missions/m04/waves/4/groups/0/count",
+    "/missions/m04/waves/4/groups/0/enemyId",
+    "/missions/m04/waves/4/groups/0/firstTick",
+    "/missions/m04/waves/4/groups/0/id",
+    "/missions/m04/waves/4/groups/0/intervalTicks",
+    "/missions/m04/waves/4/groups/0/modifierIds",
+    "/missions/m04/waves/4/groups/0/order",
+    "/missions/m04/waves/4/groups/0/rngStreamId",
+    "/missions/m04/waves/4/groups/0/shuffleWithinGroup",
+    "/missions/m04/waves/4/groups/0/spawnEventId",
+    "/missions/m04/waves/4/groups/0/spawnKind",
+    "/missions/m04/waves/4/groups/1/bountyPolicy",
+    "/missions/m04/waves/4/groups/1/count",
+    "/missions/m04/waves/4/groups/1/enemyId",
+    "/missions/m04/waves/4/groups/1/firstTick",
+    "/missions/m04/waves/4/groups/1/id",
+    "/missions/m04/waves/4/groups/1/intervalTicks",
+    "/missions/m04/waves/4/groups/1/modifierIds",
+    "/missions/m04/waves/4/groups/1/order",
+    "/missions/m04/waves/4/groups/1/rngStreamId",
+    "/missions/m04/waves/4/groups/1/shuffleWithinGroup",
+    "/missions/m04/waves/4/groups/1/spawnEventId",
+    "/missions/m04/waves/4/groups/1/spawnKind",
+    "/missions/m04/waves/4/groups/2/bountyPolicy",
+    "/missions/m04/waves/4/groups/2/count",
+    "/missions/m04/waves/4/groups/2/enemyId",
+    "/missions/m04/waves/4/groups/2/firstTick",
+    "/missions/m04/waves/4/groups/2/id",
+    "/missions/m04/waves/4/groups/2/intervalTicks",
+    "/missions/m04/waves/4/groups/2/modifierIds",
+    "/missions/m04/waves/4/groups/2/order",
+    "/missions/m04/waves/4/groups/2/rngStreamId",
+    "/missions/m04/waves/4/groups/2/shuffleWithinGroup",
+    "/missions/m04/waves/4/groups/2/spawnEventId",
+    "/missions/m04/waves/4/groups/2/spawnKind",
+    "/missions/m04/waves/4/groups/3/bountyPolicy",
+    "/missions/m04/waves/4/groups/3/count",
+    "/missions/m04/waves/4/groups/3/enemyId",
+    "/missions/m04/waves/4/groups/3/firstTick",
+    "/missions/m04/waves/4/groups/3/id",
+    "/missions/m04/waves/4/groups/3/intervalTicks",
+    "/missions/m04/waves/4/groups/3/modifierIds",
+    "/missions/m04/waves/4/groups/3/order",
+    "/missions/m04/waves/4/groups/3/rngStreamId",
+    "/missions/m04/waves/4/groups/3/shuffleWithinGroup",
+    "/missions/m04/waves/4/groups/3/spawnEventId",
+    "/missions/m04/waves/4/groups/3/spawnKind",
+    "/missions/m04/waves/4/groups/4/bountyPolicy",
+    "/missions/m04/waves/4/groups/4/count",
+    "/missions/m04/waves/4/groups/4/enemyId",
+    "/missions/m04/waves/4/groups/4/firstTick",
+    "/missions/m04/waves/4/groups/4/id",
+    "/missions/m04/waves/4/groups/4/intervalTicks",
+    "/missions/m04/waves/4/groups/4/modifierIds",
+    "/missions/m04/waves/4/groups/4/order",
+    "/missions/m04/waves/4/groups/4/rngStreamId",
+    "/missions/m04/waves/4/groups/4/shuffleWithinGroup",
+    "/missions/m04/waves/4/groups/4/spawnEventId",
+    "/missions/m04/waves/4/groups/4/spawnKind",
+    "/missions/m04/waves/4/groups/5/bountyPolicy",
+    "/missions/m04/waves/4/groups/5/count",
+    "/missions/m04/waves/4/groups/5/enemyId",
+    "/missions/m04/waves/4/groups/5/firstTick",
+    "/missions/m04/waves/4/groups/5/id",
+    "/missions/m04/waves/4/groups/5/intervalTicks",
+    "/missions/m04/waves/4/groups/5/modifierIds",
+    "/missions/m04/waves/4/groups/5/order",
+    "/missions/m04/waves/4/groups/5/rngStreamId",
+    "/missions/m04/waves/4/groups/5/shuffleWithinGroup",
+    "/missions/m04/waves/4/groups/5/spawnEventId",
+    "/missions/m04/waves/4/groups/5/spawnKind",
+    "/missions/m04/waves/4/previewDeclarationIds",
+    "/missions/m04/waves/4/titleKey",
+    "/missions/m04/waves/4/waveClearScore",
+    "/missions/m04/waves/5/baseAetherEnvelope",
+    "/missions/m04/waves/5/clearGrantAether",
+    "/missions/m04/waves/5/clearGrantEventId",
+    "/missions/m04/waves/5/deploymentGrantAether",
+    "/missions/m04/waves/5/deploymentGrantEventId",
+    "/missions/m04/waves/5/groups/0/bountyPolicy",
+    "/missions/m04/waves/5/groups/0/count",
+    "/missions/m04/waves/5/groups/0/enemyId",
+    "/missions/m04/waves/5/groups/0/firstTick",
+    "/missions/m04/waves/5/groups/0/id",
+    "/missions/m04/waves/5/groups/0/intervalTicks",
+    "/missions/m04/waves/5/groups/0/modifierIds",
+    "/missions/m04/waves/5/groups/0/order",
+    "/missions/m04/waves/5/groups/0/rngStreamId",
+    "/missions/m04/waves/5/groups/0/shuffleWithinGroup",
+    "/missions/m04/waves/5/groups/0/spawnEventId",
+    "/missions/m04/waves/5/groups/0/spawnKind",
+    "/missions/m04/waves/5/groups/1/bountyPolicy",
+    "/missions/m04/waves/5/groups/1/count",
+    "/missions/m04/waves/5/groups/1/enemyId",
+    "/missions/m04/waves/5/groups/1/firstTick",
+    "/missions/m04/waves/5/groups/1/id",
+    "/missions/m04/waves/5/groups/1/intervalTicks",
+    "/missions/m04/waves/5/groups/1/modifierIds",
+    "/missions/m04/waves/5/groups/1/order",
+    "/missions/m04/waves/5/groups/1/rngStreamId",
+    "/missions/m04/waves/5/groups/1/shuffleWithinGroup",
+    "/missions/m04/waves/5/groups/1/spawnEventId",
+    "/missions/m04/waves/5/groups/1/spawnKind",
+    "/missions/m04/waves/5/groups/2/bountyPolicy",
+    "/missions/m04/waves/5/groups/2/count",
+    "/missions/m04/waves/5/groups/2/enemyId",
+    "/missions/m04/waves/5/groups/2/firstTick",
+    "/missions/m04/waves/5/groups/2/id",
+    "/missions/m04/waves/5/groups/2/intervalTicks",
+    "/missions/m04/waves/5/groups/2/modifierIds",
+    "/missions/m04/waves/5/groups/2/order",
+    "/missions/m04/waves/5/groups/2/rngStreamId",
+    "/missions/m04/waves/5/groups/2/shuffleWithinGroup",
+    "/missions/m04/waves/5/groups/2/spawnEventId",
+    "/missions/m04/waves/5/groups/2/spawnKind",
+    "/missions/m04/waves/5/groups/3/bountyPolicy",
+    "/missions/m04/waves/5/groups/3/count",
+    "/missions/m04/waves/5/groups/3/enemyId",
+    "/missions/m04/waves/5/groups/3/firstTick",
+    "/missions/m04/waves/5/groups/3/id",
+    "/missions/m04/waves/5/groups/3/intervalTicks",
+    "/missions/m04/waves/5/groups/3/modifierIds",
+    "/missions/m04/waves/5/groups/3/order",
+    "/missions/m04/waves/5/groups/3/rngStreamId",
+    "/missions/m04/waves/5/groups/3/shuffleWithinGroup",
+    "/missions/m04/waves/5/groups/3/spawnEventId",
+    "/missions/m04/waves/5/groups/3/spawnKind",
+    "/missions/m04/waves/5/groups/4/bountyPolicy",
+    "/missions/m04/waves/5/groups/4/count",
+    "/missions/m04/waves/5/groups/4/enemyId",
+    "/missions/m04/waves/5/groups/4/firstTick",
+    "/missions/m04/waves/5/groups/4/id",
+    "/missions/m04/waves/5/groups/4/intervalTicks",
+    "/missions/m04/waves/5/groups/4/modifierIds",
+    "/missions/m04/waves/5/groups/4/order",
+    "/missions/m04/waves/5/groups/4/rngStreamId",
+    "/missions/m04/waves/5/groups/4/shuffleWithinGroup",
+    "/missions/m04/waves/5/groups/4/spawnEventId",
+    "/missions/m04/waves/5/groups/4/spawnKind",
+    "/missions/m04/waves/5/groups/5/bountyPolicy",
+    "/missions/m04/waves/5/groups/5/count",
+    "/missions/m04/waves/5/groups/5/enemyId",
+    "/missions/m04/waves/5/groups/5/firstTick",
+    "/missions/m04/waves/5/groups/5/id",
+    "/missions/m04/waves/5/groups/5/intervalTicks",
+    "/missions/m04/waves/5/groups/5/modifierIds",
+    "/missions/m04/waves/5/groups/5/order",
+    "/missions/m04/waves/5/groups/5/rngStreamId",
+    "/missions/m04/waves/5/groups/5/shuffleWithinGroup",
+    "/missions/m04/waves/5/groups/5/spawnEventId",
+    "/missions/m04/waves/5/groups/5/spawnKind",
+    "/missions/m04/waves/5/previewDeclarationIds",
+    "/missions/m04/waves/5/titleKey",
+    "/missions/m04/waves/5/waveClearScore",
+    "/missions/m05/baseStartAether",
+    "/missions/m05/briefing",
+    "/missions/m05/objectives",
+    "/missions/m05/scoreRecord",
+    "/missions/m05/spawnAnalysis",
+    "/missions/m05/titleKey",
+    "/missions/m05/waves/0/baseAetherEnvelope",
+    "/missions/m05/waves/0/clearGrantAether",
+    "/missions/m05/waves/0/clearGrantEventId",
+    "/missions/m05/waves/0/deploymentGrantAether",
+    "/missions/m05/waves/0/deploymentGrantEventId",
+    "/missions/m05/waves/0/groups/0/bountyPolicy",
+    "/missions/m05/waves/0/groups/0/count",
+    "/missions/m05/waves/0/groups/0/enemyId",
+    "/missions/m05/waves/0/groups/0/firstTick",
+    "/missions/m05/waves/0/groups/0/id",
+    "/missions/m05/waves/0/groups/0/intervalTicks",
+    "/missions/m05/waves/0/groups/0/modifierIds",
+    "/missions/m05/waves/0/groups/0/order",
+    "/missions/m05/waves/0/groups/0/rngStreamId",
+    "/missions/m05/waves/0/groups/0/shuffleWithinGroup",
+    "/missions/m05/waves/0/groups/0/spawnEventId",
+    "/missions/m05/waves/0/groups/0/spawnKind",
+    "/missions/m05/waves/0/groups/1/bountyPolicy",
+    "/missions/m05/waves/0/groups/1/count",
+    "/missions/m05/waves/0/groups/1/enemyId",
+    "/missions/m05/waves/0/groups/1/firstTick",
+    "/missions/m05/waves/0/groups/1/id",
+    "/missions/m05/waves/0/groups/1/intervalTicks",
+    "/missions/m05/waves/0/groups/1/modifierIds",
+    "/missions/m05/waves/0/groups/1/order",
+    "/missions/m05/waves/0/groups/1/rngStreamId",
+    "/missions/m05/waves/0/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/0/groups/1/spawnEventId",
+    "/missions/m05/waves/0/groups/1/spawnKind",
+    "/missions/m05/waves/0/previewDeclarationIds",
+    "/missions/m05/waves/0/titleKey",
+    "/missions/m05/waves/0/waveClearScore",
+    "/missions/m05/waves/1/baseAetherEnvelope",
+    "/missions/m05/waves/1/clearGrantAether",
+    "/missions/m05/waves/1/clearGrantEventId",
+    "/missions/m05/waves/1/deploymentGrantAether",
+    "/missions/m05/waves/1/deploymentGrantEventId",
+    "/missions/m05/waves/1/groups/0/bountyPolicy",
+    "/missions/m05/waves/1/groups/0/count",
+    "/missions/m05/waves/1/groups/0/enemyId",
+    "/missions/m05/waves/1/groups/0/firstTick",
+    "/missions/m05/waves/1/groups/0/id",
+    "/missions/m05/waves/1/groups/0/intervalTicks",
+    "/missions/m05/waves/1/groups/0/modifierIds",
+    "/missions/m05/waves/1/groups/0/order",
+    "/missions/m05/waves/1/groups/0/rngStreamId",
+    "/missions/m05/waves/1/groups/0/shuffleWithinGroup",
+    "/missions/m05/waves/1/groups/0/spawnEventId",
+    "/missions/m05/waves/1/groups/0/spawnKind",
+    "/missions/m05/waves/1/groups/1/bountyPolicy",
+    "/missions/m05/waves/1/groups/1/count",
+    "/missions/m05/waves/1/groups/1/enemyId",
+    "/missions/m05/waves/1/groups/1/firstTick",
+    "/missions/m05/waves/1/groups/1/id",
+    "/missions/m05/waves/1/groups/1/intervalTicks",
+    "/missions/m05/waves/1/groups/1/modifierIds",
+    "/missions/m05/waves/1/groups/1/order",
+    "/missions/m05/waves/1/groups/1/rngStreamId",
+    "/missions/m05/waves/1/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/1/groups/1/spawnEventId",
+    "/missions/m05/waves/1/groups/1/spawnKind",
+    "/missions/m05/waves/1/previewDeclarationIds",
+    "/missions/m05/waves/1/titleKey",
+    "/missions/m05/waves/1/waveClearScore",
+    "/missions/m05/waves/2/baseAetherEnvelope",
+    "/missions/m05/waves/2/clearGrantAether",
+    "/missions/m05/waves/2/clearGrantEventId",
+    "/missions/m05/waves/2/deploymentGrantAether",
+    "/missions/m05/waves/2/deploymentGrantEventId",
+    "/missions/m05/waves/2/groups/0/bountyPolicy",
+    "/missions/m05/waves/2/groups/0/count",
+    "/missions/m05/waves/2/groups/0/enemyId",
+    "/missions/m05/waves/2/groups/0/firstTick",
+    "/missions/m05/waves/2/groups/0/id",
+    "/missions/m05/waves/2/groups/0/intervalTicks",
+    "/missions/m05/waves/2/groups/0/modifierIds",
+    "/missions/m05/waves/2/groups/0/order",
+    "/missions/m05/waves/2/groups/0/rngStreamId",
+    "/missions/m05/waves/2/groups/0/shuffleWithinGroup",
+    "/missions/m05/waves/2/groups/0/spawnEventId",
+    "/missions/m05/waves/2/groups/0/spawnKind",
+    "/missions/m05/waves/2/groups/1/bountyPolicy",
+    "/missions/m05/waves/2/groups/1/count",
+    "/missions/m05/waves/2/groups/1/enemyId",
+    "/missions/m05/waves/2/groups/1/firstTick",
+    "/missions/m05/waves/2/groups/1/id",
+    "/missions/m05/waves/2/groups/1/intervalTicks",
+    "/missions/m05/waves/2/groups/1/modifierIds",
+    "/missions/m05/waves/2/groups/1/order",
+    "/missions/m05/waves/2/groups/1/rngStreamId",
+    "/missions/m05/waves/2/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/2/groups/1/spawnEventId",
+    "/missions/m05/waves/2/groups/1/spawnKind",
+    "/missions/m05/waves/2/previewDeclarationIds",
+    "/missions/m05/waves/2/titleKey",
+    "/missions/m05/waves/2/waveClearScore",
+    "/missions/m05/waves/3/baseAetherEnvelope",
+    "/missions/m05/waves/3/clearGrantAether",
+    "/missions/m05/waves/3/clearGrantEventId",
+    "/missions/m05/waves/3/deploymentGrantAether",
+    "/missions/m05/waves/3/deploymentGrantEventId",
+    "/missions/m05/waves/3/groups/0/bountyPolicy",
+    "/missions/m05/waves/3/groups/0/count",
+    "/missions/m05/waves/3/groups/0/enemyId",
+    "/missions/m05/waves/3/groups/0/firstTick",
+    "/missions/m05/waves/3/groups/0/id",
+    "/missions/m05/waves/3/groups/0/intervalTicks",
+    "/missions/m05/waves/3/groups/0/modifierIds",
+    "/missions/m05/waves/3/groups/0/order",
+    "/missions/m05/waves/3/groups/0/rngStreamId",
+    "/missions/m05/waves/3/groups/0/shuffleWithinGroup",
+    "/missions/m05/waves/3/groups/0/spawnEventId",
+    "/missions/m05/waves/3/groups/0/spawnKind",
+    "/missions/m05/waves/3/groups/1/bountyPolicy",
+    "/missions/m05/waves/3/groups/1/count",
+    "/missions/m05/waves/3/groups/1/enemyId",
+    "/missions/m05/waves/3/groups/1/firstTick",
+    "/missions/m05/waves/3/groups/1/id",
+    "/missions/m05/waves/3/groups/1/intervalTicks",
+    "/missions/m05/waves/3/groups/1/modifierIds",
+    "/missions/m05/waves/3/groups/1/order",
+    "/missions/m05/waves/3/groups/1/rngStreamId",
+    "/missions/m05/waves/3/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/3/groups/1/spawnEventId",
+    "/missions/m05/waves/3/groups/1/spawnKind",
+    "/missions/m05/waves/3/previewDeclarationIds",
+    "/missions/m05/waves/3/titleKey",
+    "/missions/m05/waves/3/waveClearScore",
+    "/missions/m05/waves/4/baseAetherEnvelope",
+    "/missions/m05/waves/4/clearGrantAether",
+    "/missions/m05/waves/4/clearGrantEventId",
+    "/missions/m05/waves/4/deploymentGrantAether",
+    "/missions/m05/waves/4/deploymentGrantEventId",
+    "/missions/m05/waves/4/groups/0/bountyPolicy",
+    "/missions/m05/waves/4/groups/0/count",
+    "/missions/m05/waves/4/groups/0/enemyId",
+    "/missions/m05/waves/4/groups/0/firstTick",
+    "/missions/m05/waves/4/groups/0/id",
+    "/missions/m05/waves/4/groups/0/intervalTicks",
+    "/missions/m05/waves/4/groups/0/modifierIds",
+    "/missions/m05/waves/4/groups/0/order",
+    "/missions/m05/waves/4/groups/0/rngStreamId",
+    "/missions/m05/waves/4/groups/0/shuffleWithinGroup",
+    "/missions/m05/waves/4/groups/0/spawnEventId",
+    "/missions/m05/waves/4/groups/0/spawnKind",
+    "/missions/m05/waves/4/groups/1/bountyPolicy",
+    "/missions/m05/waves/4/groups/1/count",
+    "/missions/m05/waves/4/groups/1/enemyId",
+    "/missions/m05/waves/4/groups/1/firstTick",
+    "/missions/m05/waves/4/groups/1/id",
+    "/missions/m05/waves/4/groups/1/intervalTicks",
+    "/missions/m05/waves/4/groups/1/modifierIds",
+    "/missions/m05/waves/4/groups/1/order",
+    "/missions/m05/waves/4/groups/1/rngStreamId",
+    "/missions/m05/waves/4/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/4/groups/1/spawnEventId",
+    "/missions/m05/waves/4/groups/1/spawnKind",
+    "/missions/m05/waves/4/groups/2/bountyPolicy",
+    "/missions/m05/waves/4/groups/2/count",
+    "/missions/m05/waves/4/groups/2/enemyId",
+    "/missions/m05/waves/4/groups/2/firstTick",
+    "/missions/m05/waves/4/groups/2/id",
+    "/missions/m05/waves/4/groups/2/intervalTicks",
+    "/missions/m05/waves/4/groups/2/modifierIds",
+    "/missions/m05/waves/4/groups/2/order",
+    "/missions/m05/waves/4/groups/2/rngStreamId",
+    "/missions/m05/waves/4/groups/2/shuffleWithinGroup",
+    "/missions/m05/waves/4/groups/2/spawnEventId",
+    "/missions/m05/waves/4/groups/2/spawnKind",
+    "/missions/m05/waves/4/previewDeclarationIds",
+    "/missions/m05/waves/4/titleKey",
+    "/missions/m05/waves/4/waveClearScore",
+    "/missions/m05/waves/5/baseAetherEnvelope",
+    "/missions/m05/waves/5/clearGrantAether",
+    "/missions/m05/waves/5/clearGrantEventId",
+    "/missions/m05/waves/5/deploymentGrantAether",
+    "/missions/m05/waves/5/deploymentGrantEventId",
+    "/missions/m05/waves/5/groups/0/bountyPolicy",
+    "/missions/m05/waves/5/groups/0/count",
+    "/missions/m05/waves/5/groups/0/enemyId",
+    "/missions/m05/waves/5/groups/0/firstTick",
+    "/missions/m05/waves/5/groups/0/id",
+    "/missions/m05/waves/5/groups/0/intervalTicks",
+    "/missions/m05/waves/5/groups/0/modifierIds",
+    "/missions/m05/waves/5/groups/0/order",
+    "/missions/m05/waves/5/groups/0/rngStreamId",
+    "/missions/m05/waves/5/groups/0/shuffleWithinGroup",
+    "/missions/m05/waves/5/groups/0/spawnEventId",
+    "/missions/m05/waves/5/groups/0/spawnKind",
+    "/missions/m05/waves/5/groups/1/bountyPolicy",
+    "/missions/m05/waves/5/groups/1/count",
+    "/missions/m05/waves/5/groups/1/enemyId",
+    "/missions/m05/waves/5/groups/1/firstTick",
+    "/missions/m05/waves/5/groups/1/id",
+    "/missions/m05/waves/5/groups/1/intervalTicks",
+    "/missions/m05/waves/5/groups/1/modifierIds",
+    "/missions/m05/waves/5/groups/1/order",
+    "/missions/m05/waves/5/groups/1/rngStreamId",
+    "/missions/m05/waves/5/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/5/groups/1/spawnEventId",
+    "/missions/m05/waves/5/groups/1/spawnKind",
+    "/missions/m05/waves/5/groups/2/bountyPolicy",
+    "/missions/m05/waves/5/groups/2/count",
+    "/missions/m05/waves/5/groups/2/enemyId",
+    "/missions/m05/waves/5/groups/2/firstTick",
+    "/missions/m05/waves/5/groups/2/id",
+    "/missions/m05/waves/5/groups/2/intervalTicks",
+    "/missions/m05/waves/5/groups/2/modifierIds",
+    "/missions/m05/waves/5/groups/2/order",
+    "/missions/m05/waves/5/groups/2/rngStreamId",
+    "/missions/m05/waves/5/groups/2/shuffleWithinGroup",
+    "/missions/m05/waves/5/groups/2/spawnEventId",
+    "/missions/m05/waves/5/groups/2/spawnKind",
+    "/missions/m05/waves/5/previewDeclarationIds",
+    "/missions/m05/waves/5/titleKey",
+    "/missions/m05/waves/5/waveClearScore",
+    "/missions/m05/waves/6/baseAetherEnvelope",
+    "/missions/m05/waves/6/clearGrantAether",
+    "/missions/m05/waves/6/clearGrantEventId",
+    "/missions/m05/waves/6/deploymentGrantAether",
+    "/missions/m05/waves/6/deploymentGrantEventId",
+    "/missions/m05/waves/6/groups/0/bountyPolicy",
+    "/missions/m05/waves/6/groups/0/count",
+    "/missions/m05/waves/6/groups/0/enemyId",
+    "/missions/m05/waves/6/groups/0/firstTick",
+    "/missions/m05/waves/6/groups/0/id",
+    "/missions/m05/waves/6/groups/0/intervalTicks",
+    "/missions/m05/waves/6/groups/0/modifierIds",
+    "/missions/m05/waves/6/groups/0/order",
+    "/missions/m05/waves/6/groups/0/rngStreamId",
+    "/missions/m05/waves/6/groups/0/shuffleWithinGroup",
+    "/missions/m05/waves/6/groups/0/spawnEventId",
+    "/missions/m05/waves/6/groups/0/spawnKind",
+    "/missions/m05/waves/6/groups/1/bountyPolicy",
+    "/missions/m05/waves/6/groups/1/count",
+    "/missions/m05/waves/6/groups/1/enemyId",
+    "/missions/m05/waves/6/groups/1/firstTick",
+    "/missions/m05/waves/6/groups/1/id",
+    "/missions/m05/waves/6/groups/1/intervalTicks",
+    "/missions/m05/waves/6/groups/1/modifierIds",
+    "/missions/m05/waves/6/groups/1/order",
+    "/missions/m05/waves/6/groups/1/rngStreamId",
+    "/missions/m05/waves/6/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/6/groups/1/spawnEventId",
+    "/missions/m05/waves/6/groups/1/spawnKind",
+    "/missions/m05/waves/6/groups/2/bountyPolicy",
+    "/missions/m05/waves/6/groups/2/count",
+    "/missions/m05/waves/6/groups/2/enemyId",
+    "/missions/m05/waves/6/groups/2/firstTick",
+    "/missions/m05/waves/6/groups/2/id",
+    "/missions/m05/waves/6/groups/2/intervalTicks",
+    "/missions/m05/waves/6/groups/2/modifierIds",
+    "/missions/m05/waves/6/groups/2/order",
+    "/missions/m05/waves/6/groups/2/rngStreamId",
+    "/missions/m05/waves/6/groups/2/shuffleWithinGroup",
+    "/missions/m05/waves/6/groups/2/spawnEventId",
+    "/missions/m05/waves/6/groups/2/spawnKind",
+    "/missions/m05/waves/6/previewDeclarationIds",
+    "/missions/m05/waves/6/titleKey",
+    "/missions/m05/waves/6/waveClearScore",
+    "/missions/m05/waves/7/baseAetherEnvelope",
+    "/missions/m05/waves/7/clearGrantAether",
+    "/missions/m05/waves/7/clearGrantEventId",
+    "/missions/m05/waves/7/deploymentGrantAether",
+    "/missions/m05/waves/7/deploymentGrantEventId",
+    "/missions/m05/waves/7/groups/1/bountyPolicy",
+    "/missions/m05/waves/7/groups/1/count",
+    "/missions/m05/waves/7/groups/1/enemyId",
+    "/missions/m05/waves/7/groups/1/firstTick",
+    "/missions/m05/waves/7/groups/1/id",
+    "/missions/m05/waves/7/groups/1/intervalTicks",
+    "/missions/m05/waves/7/groups/1/modifierIds",
+    "/missions/m05/waves/7/groups/1/order",
+    "/missions/m05/waves/7/groups/1/rngStreamId",
+    "/missions/m05/waves/7/groups/1/shuffleWithinGroup",
+    "/missions/m05/waves/7/groups/1/spawnEventId",
+    "/missions/m05/waves/7/groups/1/spawnKind",
+    "/missions/m05/waves/7/previewDeclarationIds",
+    "/missions/m05/waves/7/titleKey",
+    "/missions/m05/waves/7/waveClearScore"
+  ],
+  "evidenceRecords": []
+}

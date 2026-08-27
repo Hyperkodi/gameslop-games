@@ -1,0 +1,759 @@
+{
+  "schemaVersion": 2,
+  "id": "m04",
+  "title": "Piraeus Switchyard",
+  "sourceKind": "campaign",
+  "board": {
+    "columns": 40,
+    "rows": 25,
+    "cellWorldUnits": 4,
+    "widthWorldUnits": 160,
+    "heightWorldUnits": 100
+  },
+  "road": {
+    "widthWorldUnits": 12
+  },
+  "laneSegments": [
+    {
+      "id": "lane.north.approach",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        {
+          "column": -2,
+          "row": 4,
+          "portal": true
+        },
+        {
+          "column": 8,
+          "row": 4
+        },
+        {
+          "column": 8,
+          "row": 8
+        },
+        {
+          "column": 18,
+          "row": 8
+        },
+        {
+          "column": 23,
+          "row": 12
+        }
+      ]
+    },
+    {
+      "id": "lane.shared.trunk",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        {
+          "column": 23,
+          "row": 12
+        },
+        {
+          "column": 29,
+          "row": 12
+        },
+        {
+          "column": 29,
+          "row": 20
+        },
+        {
+          "column": 41,
+          "row": 20,
+          "portal": true
+        }
+      ]
+    },
+    {
+      "id": "lane.south.approach",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        {
+          "column": -2,
+          "row": 20,
+          "portal": true
+        },
+        {
+          "column": 8,
+          "row": 20
+        },
+        {
+          "column": 8,
+          "row": 16
+        },
+        {
+          "column": 18,
+          "row": 16
+        },
+        {
+          "column": 23,
+          "row": 12
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route.north",
+      "kind": "ground",
+      "laneSegmentIds": [
+        "lane.north.approach",
+        "lane.shared.trunk"
+      ],
+      "entryAnchorId": "entry.north",
+      "gateAnchorId": "gate.east"
+    },
+    {
+      "id": "route.south",
+      "kind": "ground",
+      "laneSegmentIds": [
+        "lane.south.approach",
+        "lane.shared.trunk"
+      ],
+      "entryAnchorId": "entry.south",
+      "gateAnchorId": "gate.east"
+    }
+  ],
+  "joins": [
+    {
+      "id": "join.harbor-merge",
+      "kind": "merge",
+      "column": 23,
+      "row": 12,
+      "incomingLaneSegmentIds": [
+        "lane.north.approach",
+        "lane.south.approach"
+      ],
+      "outgoingLaneSegmentIds": [
+        "lane.shared.trunk"
+      ]
+    }
+  ],
+  "crossings": [],
+  "pads": [
+    {
+      "id": "p01",
+      "kind": "ordinary",
+      "column": 3,
+      "row": 8,
+      "intent": "bend",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.north"
+      ],
+      "selectionOrder": 0
+    },
+    {
+      "id": "p02",
+      "kind": "ordinary",
+      "column": 12,
+      "row": 4,
+      "intent": "bend",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.north"
+      ],
+      "selectionOrder": 2
+    },
+    {
+      "id": "p03",
+      "kind": "ordinary",
+      "column": 13,
+      "row": 12,
+      "intent": "bend",
+      "declaredQuality": "standard",
+      "claimedRouteIds": [
+        "route.north",
+        "route.south"
+      ],
+      "selectionOrder": 4
+    },
+    {
+      "id": "p04",
+      "kind": "ordinary",
+      "column": 3,
+      "row": 16,
+      "intent": "bend",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.south"
+      ],
+      "selectionOrder": 1
+    },
+    {
+      "id": "p05",
+      "kind": "ordinary",
+      "column": 17,
+      "row": 4,
+      "intent": "support",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": [
+        "route.north"
+      ],
+      "selectionOrder": 5
+    },
+    {
+      "id": "p06",
+      "kind": "ordinary",
+      "column": 17,
+      "row": 20,
+      "intent": "support",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": [
+        "route.south"
+      ],
+      "selectionOrder": 6
+    },
+    {
+      "id": "p07",
+      "kind": "ordinary",
+      "column": 25,
+      "row": 8,
+      "intent": "bend",
+      "declaredQuality": "standard",
+      "claimedRouteIds": [
+        "route.north",
+        "route.south"
+      ],
+      "selectionOrder": 7
+    },
+    {
+      "id": "p08",
+      "kind": "ordinary",
+      "column": 33,
+      "row": 14,
+      "intent": "bend",
+      "declaredQuality": "standard",
+      "claimedRouteIds": [
+        "route.north",
+        "route.south"
+      ],
+      "selectionOrder": 8
+    },
+    {
+      "id": "p09",
+      "kind": "ordinary",
+      "column": 25,
+      "row": 19,
+      "intent": "support",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": [
+        "route.north",
+        "route.south"
+      ],
+      "selectionOrder": 9
+    },
+    {
+      "id": "p10",
+      "kind": "ordinary",
+      "column": 12,
+      "row": 20,
+      "intent": "bend",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.south"
+      ],
+      "selectionOrder": 3
+    }
+  ],
+  "anchors": [
+    {
+      "id": "entry.north",
+      "kind": "entry",
+      "column": -2,
+      "row": 4,
+      "laneSegmentId": "lane.north.approach",
+      "routeIds": [
+        "route.north"
+      ]
+    },
+    {
+      "id": "entry.south",
+      "kind": "entry",
+      "column": -2,
+      "row": 20,
+      "laneSegmentId": "lane.south.approach",
+      "routeIds": [
+        "route.south"
+      ]
+    },
+    {
+      "id": "gate.east",
+      "kind": "gate",
+      "column": 41,
+      "row": 20,
+      "laneSegmentId": "lane.shared.trunk",
+      "routeIds": [
+        "route.north",
+        "route.south"
+      ]
+    }
+  ],
+  "exclusions": [],
+  "probes": [
+    {
+      "id": "r20",
+      "rangeWorldUnits": 20,
+      "targetKinds": [
+        "ground"
+      ],
+      "routeIds": [
+        "route.north",
+        "route.south"
+      ]
+    },
+    {
+      "id": "r22",
+      "rangeWorldUnits": 22,
+      "targetKinds": [
+        "ground"
+      ],
+      "routeIds": [
+        "route.north",
+        "route.south"
+      ],
+      "baselineMilliUnits": 30200
+    },
+    {
+      "id": "r24",
+      "rangeWorldUnits": 24,
+      "targetKinds": [
+        "ground"
+      ],
+      "routeIds": [
+        "route.north",
+        "route.south"
+      ]
+    }
+  ],
+  "roleProofs": [
+    {
+      "id": "proof.guard.p01",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p01",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p01.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 5000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p01.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 27000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p01.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 58000,
+          "routeIds": [
+            "route.north"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p02",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p02",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p02.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 34000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p02.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 65000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p02.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 87000,
+          "routeIds": [
+            "route.north"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p03",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p03",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p03.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 61000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p03.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 91000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p03.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 61000,
+          "routeIds": [
+            "route.south"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p04",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p04",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p04.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 5000,
+          "routeIds": [
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p04.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 27000,
+          "routeIds": [
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p04.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 58000,
+          "routeIds": [
+            "route.south"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p05",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p05",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p05.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 77000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p05.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 89000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p05.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 102000,
+          "routeIds": [
+            "route.north"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p06",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p06",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p06.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 77000,
+          "routeIds": [
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p06.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 89000,
+          "routeIds": [
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p06.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 102000,
+          "routeIds": [
+            "route.south"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p07",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p07",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p07.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.north.approach",
+          "laneOffsetMilliUnits": 105000,
+          "routeIds": [
+            "route.north"
+          ]
+        },
+        {
+          "id": "marker.p07.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 3000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p07.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 23000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p08",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p08",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p08.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 20000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p08.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 35000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p08.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 47000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p09",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p09",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p09.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 37000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p09.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 47000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p09.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.shared.trunk",
+          "laneOffsetMilliUnits": 61000,
+          "routeIds": [
+            "route.north",
+            "route.south"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p10",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p10",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p10.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 34000,
+          "routeIds": [
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p10.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 65000,
+          "routeIds": [
+            "route.south"
+          ]
+        },
+        {
+          "id": "marker.p10.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.south.approach",
+          "laneOffsetMilliUnits": 87000,
+          "routeIds": [
+            "route.south"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.support.p05",
+      "kind": "support",
+      "version": 1,
+      "padId": "p05",
+      "rangeWorldUnits": 26,
+      "routeProofRecords": [
+        {
+          "routeId": "route.north",
+          "minimumExposureMilliUnits": 35000,
+          "expectedCoverageWindowCount": 1
+        }
+      ]
+    },
+    {
+      "id": "proof.support.p06",
+      "kind": "support",
+      "version": 1,
+      "padId": "p06",
+      "rangeWorldUnits": 26,
+      "routeProofRecords": [
+        {
+          "routeId": "route.south",
+          "minimumExposureMilliUnits": 35000,
+          "expectedCoverageWindowCount": 1
+        }
+      ]
+    },
+    {
+      "id": "proof.support.p09",
+      "kind": "support",
+      "version": 1,
+      "padId": "p09",
+      "rangeWorldUnits": 26,
+      "routeProofRecords": [
+        {
+          "routeId": "route.north",
+          "minimumExposureMilliUnits": 34000,
+          "expectedCoverageWindowCount": 1
+        },
+        {
+          "routeId": "route.south",
+          "minimumExposureMilliUnits": 34000,
+          "expectedCoverageWindowCount": 1
+        }
+      ]
+    }
+  ],
+  "review": {
+    "entryProbeId": "r20",
+    "qualityProbeId": "r22",
+    "minimumEntryExposureMilliUnits": 18000,
+    "maximumSpread": {
+      "numerator": 3,
+      "denominator": 1
+    },
+    "selectionOrderPolicy": "route-stage-route-id-pad-id"
+  }
+}

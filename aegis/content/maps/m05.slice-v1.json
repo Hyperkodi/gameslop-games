@@ -1,0 +1,751 @@
+{
+  "schemaVersion": 2,
+  "id": "m05",
+  "title": "Bronze Warden",
+  "sourceKind": "campaign",
+  "board": {
+    "columns": 40,
+    "rows": 25,
+    "cellWorldUnits": 4,
+    "widthWorldUnits": 160,
+    "heightWorldUnits": 100
+  },
+  "road": {
+    "widthWorldUnits": 12
+  },
+  "laneSegments": [
+    {
+      "id": "lane.spiral",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        {
+          "column": -2,
+          "row": 4,
+          "portal": true
+        },
+        {
+          "column": 36,
+          "row": 4
+        },
+        {
+          "column": 36,
+          "row": 21
+        },
+        {
+          "column": 5,
+          "row": 21
+        },
+        {
+          "column": 5,
+          "row": 12
+        },
+        {
+          "column": 26,
+          "row": 12
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route.spiral",
+      "kind": "ground",
+      "laneSegmentIds": [
+        "lane.spiral"
+      ],
+      "entryAnchorId": "entry.west",
+      "gateAnchorId": "gate.core"
+    }
+  ],
+  "joins": [],
+  "crossings": [],
+  "pads": [
+    {
+      "id": "p01",
+      "kind": "ordinary",
+      "column": 3,
+      "row": 8,
+      "intent": "double-pass",
+      "declaredQuality": "standard",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 0
+    },
+    {
+      "id": "p02",
+      "kind": "ordinary",
+      "column": 8,
+      "row": 8,
+      "intent": "double-pass",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 3
+    },
+    {
+      "id": "p03",
+      "kind": "ordinary",
+      "column": 13,
+      "row": 8,
+      "intent": "double-pass",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 4
+    },
+    {
+      "id": "p04",
+      "kind": "ordinary",
+      "column": 18,
+      "row": 8,
+      "intent": "double-pass",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 6
+    },
+    {
+      "id": "p05",
+      "kind": "ordinary",
+      "column": 23,
+      "row": 8,
+      "intent": "double-pass",
+      "declaredQuality": "strong",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 7
+    },
+    {
+      "id": "p06",
+      "kind": "ordinary",
+      "column": 29,
+      "row": 8,
+      "intent": "support",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 1
+    },
+    {
+      "id": "p07",
+      "kind": "ordinary",
+      "column": 9,
+      "row": 17,
+      "intent": "double-pass",
+      "declaredQuality": "power",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 11
+    },
+    {
+      "id": "p08",
+      "kind": "ordinary",
+      "column": 14,
+      "row": 17,
+      "intent": "double-pass",
+      "declaredQuality": "standard",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 10
+    },
+    {
+      "id": "p09",
+      "kind": "ordinary",
+      "column": 19,
+      "row": 17,
+      "intent": "double-pass",
+      "declaredQuality": "standard",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 9
+    },
+    {
+      "id": "p10",
+      "kind": "ordinary",
+      "column": 24,
+      "row": 17,
+      "intent": "double-pass",
+      "declaredQuality": "standard",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 8
+    },
+    {
+      "id": "p11",
+      "kind": "ordinary",
+      "column": 29,
+      "row": 17,
+      "intent": "support",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 5
+    },
+    {
+      "id": "p12",
+      "kind": "ordinary",
+      "column": 32,
+      "row": 13,
+      "intent": "support",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": [
+        "route.spiral"
+      ],
+      "selectionOrder": 2
+    }
+  ],
+  "anchors": [
+    {
+      "id": "entry.west",
+      "kind": "entry",
+      "column": -2,
+      "row": 4,
+      "laneSegmentId": "lane.spiral",
+      "routeIds": [
+        "route.spiral"
+      ]
+    },
+    {
+      "id": "gate.core",
+      "kind": "gate",
+      "column": 26,
+      "row": 12,
+      "laneSegmentId": "lane.spiral",
+      "routeIds": [
+        "route.spiral"
+      ]
+    }
+  ],
+  "exclusions": [],
+  "probes": [
+    {
+      "id": "r20",
+      "rangeWorldUnits": 20,
+      "targetKinds": [
+        "ground"
+      ],
+      "routeIds": [
+        "route.spiral"
+      ]
+    },
+    {
+      "id": "r22",
+      "rangeWorldUnits": 22,
+      "targetKinds": [
+        "ground"
+      ],
+      "routeIds": [
+        "route.spiral"
+      ],
+      "baselineMilliUnits": 40000
+    },
+    {
+      "id": "r24",
+      "rangeWorldUnits": 24,
+      "targetKinds": [
+        "ground"
+      ],
+      "routeIds": [
+        "route.spiral"
+      ]
+    }
+  ],
+  "roleProofs": [
+    {
+      "id": "proof.guard.p01",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p01",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p01.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 5000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p01.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 35000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p01.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 376000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p02",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p02",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p02.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 25000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p02.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 55000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p02.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 378000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p03",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p03",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p03.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 45000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p03.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 75000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p03.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 397000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p04",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p04",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p04.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 65000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p04.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 95000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p04.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 417000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p05",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p05",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p05.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 85000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p05.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 115000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p05.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 437000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p06",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p06",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p06.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 109000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p06.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 139000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p06.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 461000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p07",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p07",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p07.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 313000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p07.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 357000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p07.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 405000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p08",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p08",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p08.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 293000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p08.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 323000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p08.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 407000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p09",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p09",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p09.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 273000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p09.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 303000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p09.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 427000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p10",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p10",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p10.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 253000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p10.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 283000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p10.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 447000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p11",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p11",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p11.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 233000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p11.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 248000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p11.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 263000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p12",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p12",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p12.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 173000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p12.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 188000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        },
+        {
+          "id": "marker.p12.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.spiral",
+          "laneOffsetMilliUnits": 203000,
+          "routeIds": [
+            "route.spiral"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.support.p06",
+      "kind": "support",
+      "version": 1,
+      "padId": "p06",
+      "rangeWorldUnits": 26,
+      "routeProofRecords": [
+        {
+          "routeId": "route.spiral",
+          "minimumExposureMilliUnits": 49000,
+          "expectedCoverageWindowCount": 2
+        }
+      ]
+    },
+    {
+      "id": "proof.support.p11",
+      "kind": "support",
+      "version": 1,
+      "padId": "p11",
+      "rangeWorldUnits": 26,
+      "routeProofRecords": [
+        {
+          "routeId": "route.spiral",
+          "minimumExposureMilliUnits": 45000,
+          "expectedCoverageWindowCount": 2
+        }
+      ]
+    },
+    {
+      "id": "proof.support.p12",
+      "kind": "support",
+      "version": 1,
+      "padId": "p12",
+      "rangeWorldUnits": 26,
+      "routeProofRecords": [
+        {
+          "routeId": "route.spiral",
+          "minimumExposureMilliUnits": 42000,
+          "expectedCoverageWindowCount": 2
+        }
+      ]
+    }
+  ],
+  "review": {
+    "entryProbeId": "r20",
+    "qualityProbeId": "r22",
+    "minimumEntryExposureMilliUnits": 18000,
+    "maximumSpread": {
+      "numerator": 3,
+      "denominator": 1
+    },
+    "selectionOrderPolicy": "route-stage-route-id-pad-id"
+  }
+}

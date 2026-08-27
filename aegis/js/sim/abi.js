@@ -40,6 +40,8 @@
   const BASIS_POINTS = 10000;
   const MAX_AUTHORED_DECIMAL_PLACES = 3;
   const MAX_UINT32 = 0xffffffff;
+  const EVENT_SCHEMA_VERSION = 1;
+  const BEHAVIOR_REGISTRY_VERSION = 1;
 
   function deepFreeze(value) {
     if (!value || typeof value !== "object" || Object.isFrozen(value)) return value;
@@ -170,7 +172,7 @@
     },
     behaviorRegistry: {
       id: "armara-aegis-behavior-registry",
-      version: 1,
+      version: BEHAVIOR_REGISTRY_VERSION,
       dispatch: "stable-ascii-behavior-id",
       membership: "simulation-artifact-owned-and-ruleset-hashed",
       arbitraryExecutableContent: "forbidden",
@@ -720,6 +722,8 @@
     DESCRIPTOR_CANONICAL: DESCRIPTOR_CANONICAL,
     DESCRIPTOR_SHA256: DESCRIPTOR_SHA256,
     BEHAVIOR_CONTRACTS: BEHAVIOR_CONTRACTS,
+    EVENT_SCHEMA_VERSION: EVENT_SCHEMA_VERSION,
+    BEHAVIOR_REGISTRY_VERSION: BEHAVIOR_REGISTRY_VERSION,
     TICKS_PER_SECOND: TICKS_PER_SECOND,
     TIME_UNITS_PER_SECOND: TIME_UNITS_PER_SECOND,
     TIME_UNITS_PER_TICK: TIME_UNITS_PER_TICK,

@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-presentation-v1",
+  "packRecords": [
+    {
+      "id": "pack.m01",
+      "kind": "procedural-placeholder",
+      "missionIds": ["m01"],
+      "fallbackStyleId": "ancient-greece-ai-procedural"
+    },
+    {
+      "id": "pack.m04",
+      "kind": "procedural-placeholder",
+      "missionIds": ["m04"],
+      "fallbackStyleId": "ancient-greece-ai-procedural"
+    },
+    {
+      "id": "pack.m05",
+      "kind": "procedural-placeholder",
+      "missionIds": ["m05"],
+      "fallbackStyleId": "ancient-greece-ai-procedural"
+    }
+  ],
+  "cueMappings": [
+    {
+      "cueId": "cue.default",
+      "kind": "semantic-fallback",
+      "fallbackStyleId": "ancient-greece-ai-procedural"
+    }
+  ]
+}
+

@@ -1,0 +1,829 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-strings-en-v1",
+  "locale": "en",
+  "fallbackLocale": null,
+  "entries": [
+    {
+      "key": "boss.talos-prototype.description",
+      "value": "A towering bronze automaton that releases Scout pods at fixed health thresholds. Each release briefly exposes its core to amplified damage.",
+      "placeholders": []
+    },
+    {
+      "key": "boss.talos-prototype.name",
+      "value": "Talos Prototype",
+      "placeholders": []
+    },
+    {
+      "key": "defense.chronos.l1.description",
+      "value": "Deals {damage} damage every {cooldownMs} ms and slows targets by {slowPercent}% for {durationMs} ms.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "slowPercent",
+          "type": "integer"
+        },
+        {
+          "name": "durationMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.chronos.l2.description",
+      "value": "Deals {damage} damage every {cooldownMs} ms and slows targets by {slowPercent}% for {durationMs} ms.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "slowPercent",
+          "type": "integer"
+        },
+        {
+          "name": "durationMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.chronos.l3.description",
+      "value": "Deals {damage} damage every {cooldownMs} ms and slows by {slowPercent}% for {durationMs} ms. Every {requiredHits} hits, the slow echoes to {maximumTargets} nearby enemies.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "slowPercent",
+          "type": "integer"
+        },
+        {
+          "name": "durationMs",
+          "type": "integer"
+        },
+        {
+          "name": "requiredHits",
+          "type": "integer"
+        },
+        {
+          "name": "maximumTargets",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.chronos.name",
+      "value": "Chronos",
+      "placeholders": []
+    },
+    {
+      "key": "defense.chronos.role",
+      "value": "Controls ground and air lanes with persistent soft slows.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.chronos.weakness",
+      "value": "Low direct damage, and heavy enemies resist part of its control.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hoplite.l1.description",
+      "value": "Projects {slotCount} guard that blocks for {controlDurationMs} ms and replenishes after {replenishMs} ms.",
+      "placeholders": [
+        {
+          "name": "slotCount",
+          "type": "integer"
+        },
+        {
+          "name": "controlDurationMs",
+          "type": "integer"
+        },
+        {
+          "name": "replenishMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.hoplite.l2.description",
+      "value": "Projects {slotCount} guards that each block for {controlDurationMs} ms and replenish after {replenishMs} ms.",
+      "placeholders": [
+        {
+          "name": "slotCount",
+          "type": "integer"
+        },
+        {
+          "name": "controlDurationMs",
+          "type": "integer"
+        },
+        {
+          "name": "replenishMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.hoplite.l3.description",
+      "value": "Projects {slotCount} guards that block for {controlDurationMs} ms and replenish after {replenishMs} ms. First contact bashes for {bashDamage} damage and stuns for {stunDurationMs} ms.",
+      "placeholders": [
+        {
+          "name": "slotCount",
+          "type": "integer"
+        },
+        {
+          "name": "controlDurationMs",
+          "type": "integer"
+        },
+        {
+          "name": "replenishMs",
+          "type": "integer"
+        },
+        {
+          "name": "bashDamage",
+          "type": "integer"
+        },
+        {
+          "name": "stunDurationMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.hoplite.name",
+      "value": "Hoplite Node",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hoplite.role",
+      "value": "Creates fixed guards that hold ground threats at strategic road positions.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hoplite.weakness",
+      "value": "Deals little damage, cannot affect air, and guards need time to replenish.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.oracle.l1.description",
+      "value": "Reveals hidden enemies and maintains {markCount} mark that amplifies damage by {amplificationPercent}% within range {range}.",
+      "placeholders": [
+        {
+          "name": "markCount",
+          "type": "integer"
+        },
+        {
+          "name": "amplificationPercent",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.oracle.l2.description",
+      "value": "Reveals hidden enemies and maintains {markCount} marks that amplify damage by {amplificationPercent}% within range {range}.",
+      "placeholders": [
+        {
+          "name": "markCount",
+          "type": "integer"
+        },
+        {
+          "name": "amplificationPercent",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.oracle.l3.description",
+      "value": "Maintains {markCount} marks at {amplificationPercent}% amplification. Every {requiredScans} scans marks up to {maximumTargets} targets for {durationMs} ms within range {range}.",
+      "placeholders": [
+        {
+          "name": "markCount",
+          "type": "integer"
+        },
+        {
+          "name": "amplificationPercent",
+          "type": "integer"
+        },
+        {
+          "name": "requiredScans",
+          "type": "integer"
+        },
+        {
+          "name": "maximumTargets",
+          "type": "integer"
+        },
+        {
+          "name": "durationMs",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.oracle.name",
+      "value": "Oracle Relay",
+      "placeholders": []
+    },
+    {
+      "key": "defense.oracle.role",
+      "value": "Reveals cloaked enemies and amplifies allied damage against marked targets.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.oracle.weakness",
+      "value": "Provides almost no direct damage and depends on nearby attackers.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.sentinel.l1.description",
+      "value": "Fires a {damage}-damage bolt every {cooldownMs} ms at ground or air targets within range {range}.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.sentinel.l2.description",
+      "value": "Fires a {damage}-damage bolt every {cooldownMs} ms at targets within range {range}.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.sentinel.l3.description",
+      "value": "Fires {damage} damage every {cooldownMs} ms within range {range}. After {requiredHits} consecutive hits, Lock-On adds {lockOnPercent}% damage.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        },
+        {
+          "name": "requiredHits",
+          "type": "integer"
+        },
+        {
+          "name": "lockOnPercent",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.sentinel.name",
+      "value": "Sentinel",
+      "placeholders": []
+    },
+    {
+      "key": "defense.sentinel.role",
+      "value": "Fast, focused fire that answers both ground and air threats.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.sentinel.weakness",
+      "value": "Armor and dense crowds reduce the value of its single-target attacks.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.siege.l1.description",
+      "value": "Launches a {damage}-damage ground shell every {cooldownMs} ms with a {radius}-unit blast radius.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "radius",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "key": "defense.siege.l2.description",
+      "value": "Launches a {damage}-damage shell every {cooldownMs} ms with a {radius}-unit blast radius.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "radius",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "key": "defense.siege.l3.description",
+      "value": "Launches a {damage}-damage shell every {cooldownMs} ms with a {radius}-unit blast. Enemies inside {centerRadius} units take {centerBonusPercent}% more damage.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "radius",
+          "type": "string"
+        },
+        {
+          "name": "centerRadius",
+          "type": "string"
+        },
+        {
+          "name": "centerBonusPercent",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.siege.name",
+      "value": "Siege",
+      "placeholders": []
+    },
+    {
+      "key": "defense.siege.role",
+      "value": "Heavy circular splash punishes tightly packed ground formations.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.siege.weakness",
+      "value": "Slow cadence, high cost, and no ability to attack air.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.echo.description",
+      "value": "A cloaked infiltrator that becomes exposed when damaged. Oracle Relays reveal it continuously.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.echo.name",
+      "value": "Echo",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.guardian.description",
+      "value": "A slow armored escort built to absorb focused fire and screen lighter attackers.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.guardian.name",
+      "value": "Guardian",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.raider.description",
+      "value": "A sturdy rank-and-file attacker that anchors the enemy formation.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.raider.name",
+      "value": "Raider",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.scout.description",
+      "value": "A fragile runner whose speed punishes late coverage and slow reactions.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.scout.name",
+      "value": "Scout",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.titan.description",
+      "value": "A heavily armored elite with high health and partial resistance to control.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.titan.name",
+      "value": "Titan",
+      "placeholders": []
+    },
+    {
+      "key": "m01.briefing.mechanic.tutorial",
+      "value": "Command guidance pauses the battle while it introduces Aether, pads, tower comparison, construction, waves, and upgrades.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.briefing.objective",
+      "value": "Hold the Eternal Gate through {waveCount} waves and learn when to build, upgrade, or save.",
+      "placeholders": [
+        {
+          "name": "waveCount",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m01.briefing.route.main",
+      "value": "One broad road bends past ten deliberate firing positions before reaching the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.briefing.summary",
+      "value": "The first hostile column advances at dawn. Establish a compact defense before its faster ranks arrive.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.integrity.description",
+      "value": "Finish with the required gate integrity for your chosen difficulty.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.integrity.progress",
+      "value": "Gate integrity remaining",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.integrity.title",
+      "value": "Unbroken Seal",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.mastery.description",
+      "value": "Win while owning no more than {maximumTowers} towers.",
+      "placeholders": [
+        {
+          "name": "maximumTowers",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m01.objective.mastery.progress",
+      "value": "Towers owned at victory",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.mastery.title",
+      "value": "Measured Defense",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.victory.description",
+      "value": "Defeat every enemy in all {waveCount} waves.",
+      "placeholders": [
+        {
+          "name": "waveCount",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m01.objective.victory.progress",
+      "value": "Waves cleared",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.victory.title",
+      "value": "Hold the Gate",
+      "placeholders": []
+    },
+    {
+      "key": "m01.preview.tutorial-foundation",
+      "value": "Command guidance teaches the complete build-and-wave loop before the opening assault can threaten the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.title",
+      "value": "Gate of Dawn",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.01.title",
+      "value": "First Footsteps",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.02.title",
+      "value": "Running Bronze",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.03.title",
+      "value": "Split Cadence",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.04.title",
+      "value": "Pressure Line",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.05.title",
+      "value": "The Long Advance",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.06.title",
+      "value": "Dawn Assault",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.mechanic.merge",
+      "value": "North and south formations arrive together, then merge onto one final causeway. Pads marked Support trade direct road exposure for strong Oracle Relay coverage.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.objective",
+      "value": "Balance both entrances without neglecting the shared trunk to the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.route.north",
+      "value": "The north harbor approach gives dedicated coverage before joining the shared causeway.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.route.south",
+      "value": "The south harbor approach demands its own answer before both formations merge.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.summary",
+      "value": "Two Piraeus landing parties converge through the switchyard. A tower committed to one approach may miss the other.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.integrity.description",
+      "value": "Finish with the required gate integrity for your chosen difficulty.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.integrity.progress",
+      "value": "Gate integrity remaining",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.integrity.title",
+      "value": "Harbor Bulwark",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.mastery.description",
+      "value": "Allow no enemy from either entrance to leak through the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.mastery.progress",
+      "value": "North and south leaks",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.mastery.title",
+      "value": "Seal Both Harbors",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.victory.description",
+      "value": "Defeat every formation from both routes.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.victory.progress",
+      "value": "Waves cleared",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.victory.title",
+      "value": "Secure Piraeus",
+      "placeholders": []
+    },
+    {
+      "key": "m04.preview.two-route-merge",
+      "value": "Route labels reveal simultaneous north and south deployments before each wave begins.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.title",
+      "value": "Piraeus Switchyard",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.01.title",
+      "value": "Twin Landings",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.02.title",
+      "value": "Harbor Raiders",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.03.title",
+      "value": "Shielded Cargo",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.04.title",
+      "value": "Echoes on the Quays",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.05.title",
+      "value": "Converging Steel",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.06.title",
+      "value": "The Piraeus Crush",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.mechanic.talos",
+      "value": "Talos releases Scout pods at fixed health thresholds and exposes its core for a short damage window.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.objective",
+      "value": "Survive the spiral siege, preserve enough force for Talos, and strike hard when its core opens.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.route.spiral",
+      "value": "The clockwise spiral offers repeated coverage, while pads marked Support are deliberate Oracle Relay positions rather than primary firing sites.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.summary",
+      "value": "The Bronze Warden awakens inside the foundry. {waveCount} waves coil inward before Talos takes the road.",
+      "placeholders": [
+        {
+          "name": "waveCount",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m05.objective.integrity.description",
+      "value": "Finish with the required gate integrity for your chosen difficulty.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.integrity.progress",
+      "value": "Gate integrity remaining",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.integrity.title",
+      "value": "Foundry Fortitude",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.mastery.description",
+      "value": "Prevent Talos and every enemy descended from its boss wave from leaking.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.mastery.progress",
+      "value": "Boss-lineage leaks",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.mastery.title",
+      "value": "Break the Bronze Line",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.victory.description",
+      "value": "Destroy Talos and clear every supporting formation.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.victory.progress",
+      "value": "Waves cleared",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.victory.title",
+      "value": "Topple the Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.preview.talos-thresholds",
+      "value": "Talos enters on Wave {bossWave}. Its warning pulse precedes each Scout-pod release and exposed-core window.",
+      "placeholders": [
+        {
+          "name": "bossWave",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m05.preview.titan-heavy",
+      "value": "Titans arrive next: slow Heavy enemies with extreme durability, strong armor, and a punishing gate leak.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.title",
+      "value": "Bronze Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.01.title",
+      "value": "Foundry Runners",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.02.title",
+      "value": "Bronze Escort",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.03.title",
+      "value": "Hidden Sparks",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.04.title",
+      "value": "Shield and Echo",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.05.title",
+      "value": "Heavy Footfalls",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.06.title",
+      "value": "Coils of War",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.07.title",
+      "value": "Before the Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.08.title",
+      "value": "Talos Unbound",
+      "placeholders": []
+    }
+  ]
+}
