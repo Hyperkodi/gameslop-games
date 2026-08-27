@@ -645,6 +645,7 @@ test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and dr
 test("valid-minimal source compiles twice to byte-identical immutable artifacts and a framed ruleset hash", () => {
   const first = compile();
   const second = compile();
+  assert.equal(first.artifacts.outputs.size, 3);
   assert.equal(first.artifacts.rulesetHash, second.artifacts.rulesetHash);
   assert.deepEqual(Array.from(first.artifacts.outputs.keys()), Array.from(second.artifacts.outputs.keys()));
   for (const [name, bytes] of first.artifacts.outputs) {
@@ -900,7 +901,7 @@ test("artifact emission fails closed for incomplete or unknown source schemas", 
   );
 });
 
-test("v3 compiler dispatch completes strict preflight then stops before simulation or emission", (t) => {
+test("v3 compiler dispatch completes strict preflight then requires explicit simulation before emission", (t) => {
   const output = fs.mkdtempSync(path.join(os.tmpdir(), "aegis-v3-output-"));
   fs.rmSync(output, { recursive: true, force: true });
   t.after(function () { fs.rmSync(output, { recursive: true, force: true }); });
@@ -913,7 +914,20 @@ test("v3 compiler dispatch completes strict preflight then stops before simulati
         outputRoot: output,
       });
     },
-    "SOURCE_SCHEMA_INCOMPLETE",
+    "SIMULATION_REQUIRED",
+    "/simulation"
+  );
+  expectDiagnostic(
+    function () {
+      executeBuild({
+        mode: "write",
+        sourceRoot: V3_STRUCTURAL_FIXTURE,
+        repositoryRoot: V3_STRUCTURAL_FIXTURE,
+        simulationBytes: fs.readFileSync(SIMULATION),
+        outputRoot: output,
+      });
+    },
+    "SCHEMA_UNKNOWN_KEY",
     "/schemaVersion"
   );
   assert.equal(fs.existsSync(output), false);
@@ -1095,8 +1109,12 @@ test("write/check enforce immutable names, regular files, bytes, and verified hi
   assert.notDeepEqual(exposed, result.artifacts.outputs.get(firstName));
 
   const historicalBytes = Buffer.from("historical immutable bytes\n");
-  const historicalName = "aegis-content." + sha256Hex(historicalBytes) + ".js";
-  fs.writeFileSync(path.join(output, historicalName), historicalBytes);
+  const historicalNames = ["aegis-content", "aegis-presentation", "aegis-release"].map(function (kind) {
+    const name = kind + "." + sha256Hex(historicalBytes) + ".js";
+    fs.writeFileSync(path.join(output, name), historicalBytes);
+    return name;
+  });
+  const historicalName = historicalNames[0];
   assert.deepEqual(checkArtifacts(result, output), written);
   fs.appendFileSync(path.join(output, historicalName), "corrupt");
   expectDiagnostic(() => checkArtifacts(result, output), "ARTIFACT_IDENTITY");
@@ -1195,5 +1213,7 @@ test("CLI accepts exactly one mode, explicit named fixtures, and contained manif
   assert.throws(() => CLI.parseArgs(["--check", "--bogus"]), /Unknown argument/);
   assert.match(CLI.USAGE, /1 source\/build\/I\/O failure, 2 invalid CLI usage/);
   assert.match(CLI.USAGE, /complete declared deterministic simulation module bundle/);
+  assert.match(CLI.USAGE, /--write --manifest <repo-relative-file>/);
+  assert.doesNotMatch(CLI.USAGE, /preflight an alternate/);
   assert.doesNotMatch(CLI.USAGE, /abi\/geometry\/timers\/economy/);
 });

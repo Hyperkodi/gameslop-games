@@ -83,7 +83,6 @@ test("a complete synthetic slice record set normalizes into an unshared deeply f
     { defenseId: "sentinel", accessGrantId: "campaign.sentinel" },
     { defenseId: "siege", accessGrantId: "campaign.siege" },
   ]);
-  assert.deepEqual(normalized.defenseAccessGrantRecords, normalized.defenseUnlockGrantMappings);
   assert.deepEqual(normalized.defenses.records.find((record) => record.id === "sentinel").targetKinds, [
     "air",
     "ground",

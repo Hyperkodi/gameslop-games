@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "test.synthetic.v1",
+  "approvalState": "candidate-balance",
+  "authorityRecords": [],
+  "bindingLocks": [],
+  "candidateScopes": [
+    "/bosses",
+    "/campaignRules",
+    "/defenses",
+    "/enemies",
+    "/eventCatalog",
+    "/maps",
+    "/missions",
+    "/schemaVersion",
+    "/summons"
+  ],
+  "evidenceRecords": []
+}

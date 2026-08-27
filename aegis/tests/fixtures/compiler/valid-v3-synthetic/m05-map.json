@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 2,
+  "id": "m05",
+  "routes": [
+    { "id": "route.spiral", "kind": "ground" }
+  ],
+  "roleProofs": []
+}

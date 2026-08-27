@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 2,
+  "id": "m04",
+  "routes": [
+    { "id": "route.north", "kind": "ground" },
+    { "id": "route.south", "kind": "ground" }
+  ],
+  "roleProofs": []
+}
