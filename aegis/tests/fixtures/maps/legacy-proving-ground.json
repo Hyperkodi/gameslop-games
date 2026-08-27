@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "legacy-proving-ground",
+  "sourceKind": "legacy-report-only",
+  "route": {
+    "id": "legacy.route.main",
+    "length": 266000,
+    "segments": [
+      { "id": "legacy.route.main:s000", "index": 0, "start": 0, "length": 50000, "fromX": -8000, "fromY": 18000, "toX": 42000, "toY": 18000, "deltaX": 50000, "deltaY": 0 },
+      { "id": "legacy.route.main:s001", "index": 1, "start": 50000, "length": 30000, "fromX": 42000, "fromY": 18000, "toX": 42000, "toY": 48000, "deltaX": 0, "deltaY": 30000 },
+      { "id": "legacy.route.main:s002", "index": 2, "start": 80000, "length": 46000, "fromX": 42000, "fromY": 48000, "toX": 88000, "toY": 48000, "deltaX": 46000, "deltaY": 0 },
+      { "id": "legacy.route.main:s003", "index": 3, "start": 126000, "length": 28000, "fromX": 88000, "fromY": 48000, "toX": 88000, "toY": 76000, "deltaX": 0, "deltaY": 28000 },
+      { "id": "legacy.route.main:s004", "index": 4, "start": 154000, "length": 44000, "fromX": 88000, "fromY": 76000, "toX": 132000, "toY": 76000, "deltaX": 44000, "deltaY": 0 },
+      { "id": "legacy.route.main:s005", "index": 5, "start": 198000, "length": 32000, "fromX": 132000, "fromY": 76000, "toX": 132000, "toY": 44000, "deltaX": 0, "deltaY": -32000 },
+      { "id": "legacy.route.main:s006", "index": 6, "start": 230000, "length": 36000, "fromX": 132000, "fromY": 44000, "toX": 168000, "toY": 44000, "deltaX": 36000, "deltaY": 0 }
+    ]
+  },
+  "pads": [
+    { "id": "legacy.p01", "x": 18000, "y": 34000 },
+    { "id": "legacy.p02", "x": 61000, "y": 17000 },
+    { "id": "legacy.p03", "x": 61000, "y": 64000 },
+    { "id": "legacy.p04", "x": 76000, "y": 31000 },
+    { "id": "legacy.p05", "x": 104000, "y": 32000 },
+    { "id": "legacy.p06", "x": 105000, "y": 61000 },
+    { "id": "legacy.p07", "x": 106000, "y": 90000 },
+    { "id": "legacy.p08", "x": 148000, "y": 88000 },
+    { "id": "legacy.p09", "x": 148000, "y": 61000 },
+    { "id": "legacy.p10", "x": 148000, "y": 27000 }
+  ],
+  "probe": {
+    "id": "r22",
+    "rangeMilliUnits": 22000,
+    "baselineMilliUnits": 30200
+  },
+  "expectedExposureMilliUnits": [30199, 13068, 30199, 27403, 0, 59899, 33941, 5539, 58122, 27928],
+  "knownIssues": {
+    "weakOrDeadPadIds": ["legacy.p02", "legacy.p05", "legacy.p08"],
+    "dominantPadIds": ["legacy.p06", "legacy.p09"]
+  }
+}

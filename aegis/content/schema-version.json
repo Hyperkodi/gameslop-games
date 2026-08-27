@@ -1,8 +1,13 @@
 {
-  "schemaVersion": 1,
-  "contentVersion": "campaign-foundation-1",
+  "schemaVersion": 2,
+  "contentVersion": "campaign-map-foundation-2",
   "sourceKind": "foundation",
   "abiDescriptor": "abi/abi-v1.json",
   "behaviorContracts": "behavior-contracts.json",
-  "missionIds": []
+  "missionMaps": [
+    {
+      "id": "m01",
+      "source": "maps/m01.json"
+    }
+  ]
 }

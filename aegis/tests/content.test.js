@@ -10,20 +10,32 @@ const vm = require("node:vm");
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
 const FIXTURE = path.join(__dirname, "fixtures", "compiler", "valid-minimal");
 const SIMULATION = path.join(FIXTURE, "simulation.js");
+const PRODUCTION_SOURCE = path.join(__dirname, "..", "content");
+const M01_SOURCE = path.join(PRODUCTION_SOURCE, "maps", "m01.json");
 const LIB = path.join(REPO_ROOT, "tools", "lib", "aegis");
 const { AegisContentError } = require(path.join(LIB, "diagnostics.js"));
 const { canonicalEncode } = require(path.join(LIB, "canonical.js"));
 const { parseExactDecimal } = require(path.join(LIB, "exact-decimal.js"));
 const { parseStrictJsonBytes } = require(path.join(LIB, "strict-json.js"));
-const { compileSourceTree, writeArtifacts, checkArtifacts } = require(path.join(LIB, "compiler.js"));
+const { compileSourceTree, writeArtifacts, checkArtifacts, executeBuild } = require(path.join(LIB, "compiler.js"));
 const {
   frameRulesetBytes,
   renderContentArtifact,
   sha256Hex,
   simulationDescriptor,
 } = require(path.join(LIB, "artifacts.js"));
+const {
+  MODULE_SPECS,
+  readSimulationSources,
+  assembleSimulationBundle,
+  buildSimulationBundle,
+} = require(path.join(LIB, "simulation-bundle.js"));
+const MapValidation = require(path.join(LIB, "map-validation.js"));
+const MapReport = require(path.join(LIB, "map-report.js"));
 const CLI = require(path.join(REPO_ROOT, "tools", "build-aegis-content.js"));
 const RUNTIME_ABI = require(path.join(__dirname, "..", "js", "sim", "abi.js"));
+const SIMULATION_SOURCE_ROOT = path.join(__dirname, "..", "js", "sim");
+const PRODUCTION_GENERATED = path.join(__dirname, "..", "content", "generated");
 
 function expectDiagnostic(fn, code, diagnosticPath) {
   assert.throws(fn, function (error) {
@@ -40,12 +52,68 @@ function temporaryFixture() {
   return root;
 }
 
+function temporaryProductionSource() {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), "aegis-production-content-"));
+  fs.cpSync(PRODUCTION_SOURCE, root, { recursive: true });
+  return root;
+}
+
+function productionSimulationBytes() {
+  return buildSimulationBundle({ sourceRoot: SIMULATION_SOURCE_ROOT });
+}
+
+function compileProduction(root, simulationBytes) {
+  return compileSourceTree({
+    sourceRoot: root || PRODUCTION_SOURCE,
+    simulationBytes: simulationBytes || productionSimulationBytes(),
+  });
+}
+
+function readManifest(root) {
+  return JSON.parse(fs.readFileSync(path.join(root, "schema-version.json"), "utf8"));
+}
+
+function writeManifest(root, value) {
+  fs.writeFileSync(path.join(root, "schema-version.json"), JSON.stringify(value, null, 2) + "\n");
+}
+
+function reverseJsonObjectKeys(value) {
+  if (Array.isArray(value)) return value.map(reverseJsonObjectKeys);
+  if (value && typeof value === "object") {
+    const reversed = {};
+    Object.keys(value).reverse().forEach(function (key) {
+      reversed[key] = reverseJsonObjectKeys(value[key]);
+    });
+    return reversed;
+  }
+  return value;
+}
+
 function compile(root, simulationBytes) {
   return compileSourceTree({
     sourceRoot: root || FIXTURE,
     simulationPath: simulationBytes === undefined ? SIMULATION : undefined,
     simulationBytes: simulationBytes,
   });
+}
+
+function copySimulationSources(sources) {
+  return sources.map(function (entry) {
+    return { id: entry.id, relativePath: entry.relativePath, bytes: Buffer.from(entry.bytes) };
+  });
+}
+
+function replaceModuleBytes(sources, id, before, after) {
+  const copy = copySimulationSources(sources);
+  const entry = copy.find(function (candidate) { return candidate.id === id; });
+  const source = entry.bytes.toString("utf8");
+  assert.equal(
+    source.split(before).length - 1,
+    1,
+    id + " mutation sentinel must exist exactly once"
+  );
+  entry.bytes = Buffer.from(source.replace(before, after), "utf8");
+  return copy;
 }
 
 test("strict JSON rejects duplicate keys, BOMs, decimal number tokens, and unsafe integers", () => {
@@ -119,6 +187,263 @@ test("canonical encoding sorts ASCII keys and permits only integer canonical num
   expectDiagnostic(() => canonicalEncode(hidden), "CANONICAL_OBJECT_PROPERTY", "/value");
 });
 
+test("production simulation bundle is deterministic, source-byte-bound, and leaves modules untouched", () => {
+  const before = new Map(MODULE_SPECS.map(function (spec) {
+    return [spec.id, fs.readFileSync(path.join(SIMULATION_SOURCE_ROOT, spec.relativePath))];
+  }));
+  const first = buildSimulationBundle({ sourceRoot: SIMULATION_SOURCE_ROOT });
+  const second = buildSimulationBundle({ sourceRoot: SIMULATION_SOURCE_ROOT });
+  assert.deepEqual(first, second);
+  const source = first.toString("utf8");
+  assert.equal(source.includes("\r"), false);
+  assert.equal(source.endsWith("\n"), true);
+  assert.equal(source.endsWith("\n\n"), false);
+  assert.doesNotMatch(source, /\brequire\s*\(|\bimport\s*(?:\(|["'])/);
+  assert.doesNotMatch(source, /\beval\s*\(|\b(?:new\s+)?Function\s*\(/);
+  for (const spec of MODULE_SPECS) {
+    const bytes = before.get(spec.id);
+    assert.match(
+      source,
+      new RegExp(
+        "source " + spec.relativePath.replace(".", "\\.") +
+        " bytes=" + bytes.length + " sha256=" + sha256Hex(bytes)
+      )
+    );
+    assert.deepEqual(
+      fs.readFileSync(path.join(SIMULATION_SOURCE_ROOT, spec.relativePath)),
+      bytes,
+      spec.id + " source bytes must not be mutated"
+    );
+  }
+  assert.equal(
+    canonicalEncode(simulationDescriptor(first, "production-bundle.js")),
+    RUNTIME_ABI.DESCRIPTOR_CANONICAL
+  );
+  const targetingSpec = MODULE_SPECS.find(function (spec) { return spec.id === "targeting"; });
+  assert.deepEqual(
+    targetingSpec.dependencies.map(function (dependency) {
+      return [dependency.id, dependency.parameterName, dependency.requirePath];
+    }),
+    [
+      ["abi", "ABI", "./abi.js"],
+      ["geometry", "Geometry", "./geometry.js"],
+    ]
+  );
+  assert.equal(Object.isFrozen(targetingSpec.dependencies), true);
+  assert.equal(targetingSpec.dependencies.every(Object.isFrozen), true);
+});
+
+test("production simulation bundle exposes all frozen APIs in CommonJS and classic mode without imports", () => {
+  const builtBytes = buildSimulationBundle({ sourceRoot: SIMULATION_SOURCE_ROOT });
+  const artifactPath = path.join(
+    PRODUCTION_GENERATED,
+    "aegis-sim." + sha256Hex(builtBytes) + ".js"
+  );
+  const bytes = fs.readFileSync(artifactPath);
+  assert.deepEqual(bytes, builtBytes, "emitted production simulation must equal deterministic assembly");
+
+  const commonJsContext = vm.createContext(
+    { module: { exports: {} }, exports: {} },
+    { codeGeneration: { strings: false, wasm: false } }
+  );
+  vm.runInContext(bytes.toString("utf8"), commonJsContext, { filename: "aegis-sim-bundle.js" });
+  const commonJs = commonJsContext.module.exports;
+  assert.equal(Object.isFrozen(commonJs), true);
+  assert.equal(Object.isFrozen(commonJs.AegisSim), true);
+  assert.equal(Object.isFrozen(commonJs.AegisGeometry), true);
+  assert.equal(Object.isFrozen(commonJs.AegisTimers), true);
+  assert.equal(Object.isFrozen(commonJs.AegisEconomy), true);
+  assert.equal(Object.isFrozen(commonJs.AegisMovement), true);
+  assert.equal(Object.isFrozen(commonJs.AegisEffects), true);
+  assert.equal(Object.isFrozen(commonJs.AegisTargeting), true);
+  assert.equal(commonJs.DESCRIPTOR_SHA256, RUNTIME_ABI.DESCRIPTOR_SHA256);
+  assert.equal(commonJs.AegisGeometry.isWithinSquaredRange(0, 0, 3, 4, 5), true);
+  assert.equal(commonJs.AegisTimers.authoredMillisecondsToTimeUnits(410), 24600);
+  assert.equal(commonJs.AegisEconomy.sellRefund(90), 63);
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(commonJs.AegisMovement.advanceMovementTick(
+      commonJs.AegisMovement.createMovementState(), 600, 10000
+    ))),
+    { advance: 10, numerator: 6000000, state: { remainder: 0 } }
+  );
+  assert.equal(vm.runInContext(
+    'module.exports.AegisEffects.selectStrongestStatus([{appliedTick:0,expiryTimeUnits:1000,magnitude:5,sourceId:1,statusId:"slow"}]).magnitude',
+    commonJsContext
+  ), 5);
+  assert.equal(vm.runInContext([
+    'module.exports.AegisTargeting.selectTarget("FRONT",',
+    '{originX:0,originY:0,range:5,targetLayerIds:["ground"]},',
+    '[{baseSpeedDistanceUnitsPerSecond:10,currentHpMilli:1000,id:7,layerId:"ground",remainingDistance:100,revealEligible:true,shieldPoolsMilli:[],threatPriority:0,x:3,y:4}]).id',
+  ].join(""), commonJsContext), 7);
+  assert.equal(commonJsContext.Game, undefined, "CommonJS assembly uses a private bundle root");
+  assert.equal(commonJsContext.require, undefined);
+
+  const classic = vm.createContext({}, { codeGeneration: { strings: false, wasm: false } });
+  vm.runInContext(bytes.toString("utf8"), classic, { filename: "aegis-sim-bundle.js" });
+  assert.equal(Object.isFrozen(classic.Game.AegisSim), true);
+  assert.equal(Object.isFrozen(classic.Game.AegisGeometry), true);
+  assert.equal(Object.isFrozen(classic.Game.AegisTimers), true);
+  assert.equal(Object.isFrozen(classic.Game.AegisEconomy), true);
+  assert.equal(Object.isFrozen(classic.Game.AegisMovement), true);
+  assert.equal(Object.isFrozen(classic.Game.AegisEffects), true);
+  assert.equal(Object.isFrozen(classic.Game.AegisTargeting), true);
+  assert.equal(classic.Game.AegisSim.DESCRIPTOR_SHA256, RUNTIME_ABI.DESCRIPTOR_SHA256);
+  assert.equal(classic.Game.AegisGeometry.isWithinSquaredRange(0, 0, 3, 4, 5), true);
+  assert.equal(classic.Game.AegisTimers.authoredMillisecondsToTimeUnits(1350), 81000);
+  assert.equal(classic.Game.AegisEconomy.sellRefund(340), 238);
+  assert.equal(
+    classic.Game.AegisMovement.advanceMovementTick(
+      classic.Game.AegisMovement.createMovementState(), 600, 10000
+    ).advance,
+    10
+  );
+  assert.equal(vm.runInContext(
+    'Game.AegisEffects.selectStrongestStatus([{appliedTick:0,expiryTimeUnits:1000,magnitude:8,sourceId:1,statusId:"slow"}]).magnitude',
+    classic
+  ), 8);
+  assert.equal(vm.runInContext([
+    'Game.AegisTargeting.selectTarget("FRONT",',
+    '{originX:0,originY:0,range:5,targetLayerIds:["ground"]},',
+    '[{baseSpeedDistanceUnitsPerSecond:10,currentHpMilli:1000,id:9,layerId:"ground",remainingDistance:100,revealEligible:true,shieldPoolsMilli:[],threatPriority:0,x:3,y:4}]).id',
+  ].join(""), classic), 9);
+  assert.equal(classic.GameSlopKit, undefined);
+  assert.equal(classic.require, undefined);
+  assert.equal(classic.document, undefined);
+  assert.equal(classic.fetch, undefined);
+});
+
+test("every declared deterministic module source changes simulation and ruleset identity", () => {
+  const sources = readSimulationSources(SIMULATION_SOURCE_ROOT);
+  const baselineBytes = assembleSimulationBundle(sources);
+  const baseline = compile(FIXTURE, baselineBytes);
+  const vectors = [
+    ["abi", "deterministic simulation ABI v1.", "deterministic simulation ABI v2."],
+    ["geometry", "deterministic runtime geometry v1.", "deterministic runtime geometry v2."],
+    ["timers", "deterministic timer transitions v1.", "deterministic timer transitions v2."],
+    ["economy", "deterministic runtime economy v1.", "deterministic runtime economy v2."],
+    ["movement", "deterministic movement, named RNG, and runtime-ID helpers v1.", "deterministic movement, named RNG, and runtime-ID helpers v2."],
+    ["effects", "deterministic status, amplification, and shield-pool resolution v1.", "deterministic status, amplification, and shield-pool resolution v2."],
+    ["targeting", "deterministic target eligibility and selection v1.", "deterministic target eligibility and selection v2."],
+  ];
+
+  for (const vector of vectors) {
+    const changedBytes = assembleSimulationBundle(
+      replaceModuleBytes(sources, vector[0], vector[1], vector[2])
+    );
+    assert.notEqual(sha256Hex(changedBytes), sha256Hex(baselineBytes), vector[0]);
+    const changed = compile(FIXTURE, changedBytes);
+    assert.notEqual(changed.artifacts.rulesetHash, baseline.artifacts.rulesetHash, vector[0]);
+  }
+  for (const spec of MODULE_SPECS) {
+    const original = sources.find(function (entry) { return entry.id === spec.id; }).bytes;
+    assert.deepEqual(fs.readFileSync(path.join(SIMULATION_SOURCE_ROOT, spec.relativePath)), original);
+  }
+});
+
+test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and drifted module seams", () => {
+  const sources = readSimulationSources(SIMULATION_SOURCE_ROOT);
+  expectDiagnostic(
+    () => assembleSimulationBundle(copySimulationSources(sources).slice(0, -1)),
+    "SIMULATION_BUNDLE_MISSING",
+    "/simulationBundle"
+  );
+
+  const duplicate = copySimulationSources(sources);
+  duplicate[3] = {
+    id: duplicate[1].id,
+    relativePath: duplicate[1].relativePath,
+    bytes: Buffer.from(duplicate[1].bytes),
+  };
+  expectDiagnostic(
+    () => assembleSimulationBundle(duplicate),
+    "SIMULATION_BUNDLE_DUPLICATE",
+    "/simulationBundle/geometry"
+  );
+
+  const unsafe = copySimulationSources(sources);
+  unsafe[0].relativePath = "../abi.js";
+  expectDiagnostic(() => assembleSimulationBundle(unsafe), "SIMULATION_BUNDLE_PATH", "/simulationBundle");
+
+  const reordered = copySimulationSources(sources);
+  [reordered[1], reordered[2]] = [reordered[2], reordered[1]];
+  expectDiagnostic(() => assembleSimulationBundle(reordered), "SIMULATION_BUNDLE_ORDER", "/simulationBundle/1");
+
+  const crlf = copySimulationSources(sources);
+  crlf[3].bytes = Buffer.from(crlf[3].bytes.toString("utf8").replace(/\n/g, "\r\n"), "utf8");
+  expectDiagnostic(
+    () => assembleSimulationBundle(crlf),
+    "SIMULATION_BUNDLE_LINE_ENDINGS",
+    "/simulationBundle/economy"
+  );
+
+  const drifted = replaceModuleBytes(sources, "geometry", 'require("./abi.js")', 'require("./wrong.js")');
+  expectDiagnostic(
+    () => assembleSimulationBundle(drifted),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/geometry"
+  );
+
+  const targetingDependencyDrift = replaceModuleBytes(
+    sources,
+    "targeting",
+    'factory(require("./abi.js"), require("./geometry.js"))',
+    'factory(require("./geometry.js"), require("./abi.js"))'
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(targetingDependencyDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/targeting"
+  );
+
+  const targetingParameterDrift = replaceModuleBytes(
+    sources,
+    "targeting",
+    "function (ABI, Geometry) {",
+    "function (Geometry, ABI) {"
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(targetingParameterDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/targeting"
+  );
+
+  const targetingClassicCallDrift = replaceModuleBytes(
+    sources,
+    "targeting",
+    "factory(game.AegisSim, game.AegisGeometry)",
+    "factory(game.AegisGeometry, game.AegisSim)"
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(targetingClassicCallDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/targeting"
+  );
+
+  const targetingClassicGuardDrift = replaceModuleBytes(
+    sources,
+    "targeting",
+    'if (!game.AegisGeometry) throw new Error("Game.AegisGeometry must be installed before targeting.js");',
+    'if (!game.Geometry) throw new Error("Game.AegisGeometry must be installed before targeting.js");'
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(targetingClassicGuardDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/targeting"
+  );
+
+  const rogueImport = copySimulationSources(sources);
+  const geometry = rogueImport.find(function (entry) { return entry.id === "geometry"; });
+  geometry.bytes = Buffer.from(
+    geometry.bytes.toString("utf8").replace(/\n$/, '\nrequire("./rogue.js");\n'),
+    "utf8"
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(rogueImport),
+    "SIMULATION_BUNDLE_IMPORT",
+    "/simulationBundle/geometry"
+  );
+});
+
 test("valid-minimal source compiles twice to byte-identical immutable artifacts and a framed ruleset hash", () => {
   const first = compile();
   const second = compile();
@@ -140,6 +465,213 @@ test("valid-minimal source compiles twice to byte-identical immutable artifacts 
     first.artifacts.content.behaviorContracts,
     RUNTIME_ABI.DESCRIPTOR.behaviorRegistry.contracts
   );
+  assert.equal(first.artifacts.rulesetHash, "sha256:d7645d030d44a971bae2db846a7db03845b9073d756b81185b7a592543b6d291");
+  assert.equal(first.artifacts.manifestName, "manifest.8e837e6b4ed8195b12b0f4c8b287134012234c77471064dfca4c81ecabd710a0.json");
+  assert.deepEqual(first.artifacts.content.missionIds, []);
+  assert.equal(Object.prototype.hasOwnProperty.call(first.artifacts.content, "missionMaps"), false);
+});
+
+test("production v2 embeds the analyzer-exact frozen M1 record and derived manifest references", () => {
+  const result = compileProduction();
+  const direct = MapValidation.validateMissionMap(MapValidation.readMapFile(M01_SOURCE));
+  const embedded = result.artifacts.content.missionMaps[0];
+  assert.deepEqual(result.artifacts.content.missionIds, ["m01"]);
+  assert.deepEqual(
+    result.artifacts.manifest.missionMaps,
+    [{ id: "m01", source: "maps/m01.json" }]
+  );
+  assert.equal(embedded.id, "m01");
+  assert.equal(Object.prototype.hasOwnProperty.call(embedded, "source"), false);
+  assert.equal(canonicalEncode(embedded.compiled), canonicalEncode(direct));
+  assert.equal(embedded.compiled.routes[0].route.length, 260000);
+  assert.deepEqual(
+    embedded.compiled.pads.map(function (pad) { return [pad.id, pad.x, pad.y]; }),
+    direct.pads.map(function (pad) { return [pad.id, pad.x, pad.y]; })
+  );
+  const embeddedP04 = embedded.compiled.analysis.pads.find(function (pad) { return pad.id === "p04"; });
+  const embeddedR22 = embeddedP04.probes.find(function (probe) { return probe.probeId === "r22"; });
+  const directP04 = direct.analysis.pads.find(function (pad) { return pad.id === "p04"; });
+  const directR22 = directP04.probes.find(function (probe) { return probe.probeId === "r22"; });
+  assert.deepEqual(embeddedR22.routes[0].windows, directR22.routes[0].windows);
+  assert.equal(Object.isFrozen(result.source.missionMaps), true);
+  assert.equal(Object.isFrozen(result.source.missionMaps[0]), true);
+  assert.equal(Object.isFrozen(result.source.missionMaps[0].compiled.analysis), true);
+  assert.equal(Object.isFrozen(result.artifacts.content.missionMaps[0].compiled.analysis), true);
+});
+
+test("production map identity is semantic while unreferenced report and SVG bytes are excluded", (t) => {
+  const root = temporaryProductionSource();
+  t.after(function () { fs.rmSync(root, { recursive: true, force: true }); });
+  const mapPath = path.join(root, "maps", "m01.json");
+  const baseline = compileProduction(root);
+
+  const renamedRoot = temporaryProductionSource();
+  t.after(function () { fs.rmSync(renamedRoot, { recursive: true, force: true }); });
+  const renamedDirectory = path.join(renamedRoot, "authored");
+  fs.mkdirSync(renamedDirectory);
+  fs.renameSync(
+    path.join(renamedRoot, "maps", "m01.json"),
+    path.join(renamedDirectory, "dawn.json")
+  );
+  const renamedManifest = readManifest(renamedRoot);
+  renamedManifest.missionMaps[0].source = "authored/dawn.json";
+  writeManifest(renamedRoot, renamedManifest);
+  const renamed = compileProduction(renamedRoot);
+  assert.deepEqual(renamed.artifacts.contentBytes, baseline.artifacts.contentBytes);
+  assert.equal(renamed.artifacts.rulesetHash, baseline.artifacts.rulesetHash);
+  assert.notDeepEqual(renamed.artifacts.manifestBytes, baseline.artifacts.manifestBytes);
+  assert.deepEqual(renamed.artifacts.manifest.missionMaps, [
+    { id: "m01", source: "authored/dawn.json" },
+  ]);
+
+  const source = JSON.parse(fs.readFileSync(mapPath, "utf8"));
+  const reversed = reverseJsonObjectKeys(source);
+  fs.writeFileSync(
+    mapPath,
+    ("\n  " + JSON.stringify(reversed, null, 4) + "\n\n").replace(/\n/g, "\r\n")
+  );
+  const reordered = compileProduction(root);
+  assert.deepEqual(reordered.artifacts.contentBytes, baseline.artifacts.contentBytes);
+  assert.deepEqual(reordered.artifacts.manifestBytes, baseline.artifacts.manifestBytes);
+  assert.equal(reordered.artifacts.rulesetHash, baseline.artifacts.rulesetHash);
+
+  const reports = path.join(root, "unreferenced-review-output");
+  fs.mkdirSync(reports);
+  const report = MapReport.createMissionArtifacts(baseline.source.missionMaps[0].compiled);
+  fs.writeFileSync(path.join(reports, "m01.json"), report.reportBytes);
+  fs.writeFileSync(path.join(reports, "m01.svg"), report.svgBytes);
+  fs.appendFileSync(path.join(reports, "m01.json"), "ignored report edit\n");
+  fs.appendFileSync(path.join(reports, "m01.svg"), "<!-- ignored SVG edit -->\n");
+  const reportEdited = compileProduction(root);
+  assert.deepEqual(reportEdited.artifacts.contentBytes, baseline.artifacts.contentBytes);
+  assert.equal(reportEdited.artifacts.rulesetHash, baseline.artifacts.rulesetHash);
+
+  reversed.title = "Gate of Dawn — identity mutation";
+  fs.writeFileSync(mapPath, JSON.stringify(reversed, null, 2) + "\n");
+  const changed = compileProduction(root);
+  assert.notDeepEqual(changed.artifacts.contentBytes, baseline.artifacts.contentBytes);
+  assert.notEqual(changed.artifacts.rulesetHash, baseline.artifacts.rulesetHash);
+});
+
+test("source schema v2 rejects malformed mission manifests and unsafe map references before artifacts", (t) => {
+  const roots = [];
+  t.after(function () {
+    roots.forEach(function (root) { fs.rmSync(root, { recursive: true, force: true }); });
+  });
+  function mutation(change) {
+    const root = temporaryProductionSource();
+    roots.push(root);
+    const manifest = readManifest(root);
+    change(manifest, root);
+    writeManifest(root, manifest);
+    return root;
+  }
+
+  let root = mutation(function (manifest) { manifest.missionMaps[0].extra = true; });
+  expectDiagnostic(() => compileProduction(root), "SCHEMA_UNKNOWN_KEY", "/missionMaps/0/extra");
+
+  root = mutation(function (manifest) { manifest.missionIds = ["m01"]; });
+  expectDiagnostic(() => compileProduction(root), "SCHEMA_UNKNOWN_KEY", "/missionIds");
+
+  root = mutation(function (manifest) { manifest.missionMaps = []; });
+  expectDiagnostic(() => compileProduction(root), "SCHEMA_ARRAY", "/missionMaps");
+
+  root = mutation(function (manifest) {
+    manifest.missionMaps = [
+      { id: "m01", source: "maps/m01.json" },
+      { id: "m01", source: "maps/other.json" },
+    ];
+  });
+  expectDiagnostic(() => compileProduction(root), "SCHEMA_DUPLICATE_ID", "/missionMaps/1/id");
+
+  root = mutation(function (manifest) {
+    manifest.missionMaps = [
+      { id: "m01", source: "maps/m01.json" },
+      { id: "m02", source: "maps/m01.json" },
+    ];
+  });
+  expectDiagnostic(() => compileProduction(root), "SCHEMA_DUPLICATE_SOURCE", "/missionMaps/1/source");
+
+  root = mutation(function (manifest) {
+    manifest.missionMaps = [
+      { id: "m02", source: "maps/m02.json" },
+      { id: "m01", source: "maps/m01.json" },
+    ];
+  });
+  expectDiagnostic(() => compileProduction(root), "SCHEMA_UNSTABLE_ORDER", "/missionMaps/1/id");
+
+  root = mutation(function (manifest) { manifest.missionMaps[0].id = "M01"; });
+  expectDiagnostic(() => compileProduction(root), "SCHEMA_STRING", "/missionMaps/0/id");
+
+  root = mutation(function (manifest) { manifest.missionMaps[0].id = "legacy-proving-ground"; });
+  expectDiagnostic(() => compileProduction(root), "MISSION_LEGACY_FORBIDDEN", "/missionMaps/0/id");
+
+  root = mutation(function (manifest) { manifest.missionMaps[0].source = "../outside.json"; });
+  expectDiagnostic(() => compileProduction(root), "SOURCE_REFERENCE", "/missionMaps/0/source");
+
+  root = mutation(function (manifest) { manifest.missionMaps[0].source = "maps/m01.JSON"; });
+  expectDiagnostic(() => compileProduction(root), "SOURCE_REFERENCE", "/missionMaps/0/source");
+
+  root = mutation(function (manifest) { manifest.missionMaps[0].source = "maps/missing.json"; });
+  expectDiagnostic(() => compileProduction(root), "SOURCE_READ", "/missionMaps/0/source");
+
+  root = mutation(function (manifest, sourceRoot) {
+    manifest.missionMaps[0].source = "maps/not-a-file.json";
+    fs.mkdirSync(path.join(sourceRoot, "maps", "not-a-file.json"));
+  });
+  expectDiagnostic(() => compileProduction(root), "SOURCE_READ", "/missionMaps/0/source");
+
+  root = mutation(function (manifest) { manifest.missionMaps[0].id = "m02"; });
+  expectDiagnostic(() => compileProduction(root), "MAP_MANIFEST_ID", "/missionMaps/0/id");
+
+  const duplicateRoot = temporaryProductionSource();
+  roots.push(duplicateRoot);
+  const alias = path.join(duplicateRoot, "map-alias");
+  try {
+    fs.symlinkSync(
+      path.join(duplicateRoot, "maps"),
+      alias,
+      process.platform === "win32" ? "junction" : "dir"
+    );
+  } catch (error) {
+    if (["EPERM", "EACCES", "ENOSYS"].includes(error && error.code)) {
+      t.skip("Temporary directory links are unavailable for the duplicate-realpath fixture");
+      return;
+    }
+    throw error;
+  }
+  const duplicateManifest = readManifest(duplicateRoot);
+  duplicateManifest.missionMaps = [
+    { id: "m01", source: "maps/m01.json" },
+    { id: "m02", source: "map-alias/m01.json" },
+  ];
+  writeManifest(duplicateRoot, duplicateManifest);
+  expectDiagnostic(
+    () => compileProduction(duplicateRoot),
+    "SOURCE_DUPLICATE_REALPATH",
+    "/missionMaps/1/source"
+  );
+});
+
+test("generated production content deeply freezes compiled maps in CommonJS and classic modes", () => {
+  const result = compileProduction();
+  const contentEntry = Array.from(result.artifacts.outputs).find(function (entry) {
+    return entry[0].startsWith("aegis-content.");
+  });
+  const commonJsContext = vm.createContext({ module: { exports: {} }, exports: {} });
+  vm.runInContext(contentEntry[1].toString("utf8"), commonJsContext, { filename: contentEntry[0] });
+  const commonJs = commonJsContext.module.exports.CONTENT;
+  assert.equal(Object.isFrozen(commonJs), true);
+  assert.equal(Object.isFrozen(commonJs.missionMaps), true);
+  assert.equal(Object.isFrozen(commonJs.missionMaps[0].compiled.routes[0].route.segments), true);
+  assert.equal(Object.isFrozen(commonJs.missionMaps[0].compiled.analysis.pads[0].probes), true);
+
+  const classicContext = vm.createContext({});
+  vm.runInContext(contentEntry[1].toString("utf8"), classicContext, { filename: contentEntry[0] });
+  const classic = classicContext.Game.AegisContent.CONTENT;
+  assert.equal(Object.isFrozen(classic), true);
+  assert.equal(Object.isFrozen(classic.missionMaps[0].compiled), true);
+  assert.equal(Object.isFrozen(classic.missionMaps[0].compiled.padChecks[0].intent), true);
 });
 
 test("ruleset framing prefixes every ordered input with an unsigned 64-bit big-endian length", () => {
@@ -312,9 +844,10 @@ test("an explicit simulation byte seam is required and any simulation-byte chang
   );
 });
 
-test("write/check enforce immutable names, bytes, and verified historical artifacts", () => {
+test("write/check enforce immutable names, regular files, bytes, and verified historical artifacts", (t) => {
   const result = compile();
   const output = fs.mkdtempSync(path.join(os.tmpdir(), "aegis-generated-"));
+  t.after(function () { fs.rmSync(output, { recursive: true, force: true }); });
   const written = writeArtifacts(result, output);
   assert.deepEqual(checkArtifacts(result, output), written);
 
@@ -336,6 +869,24 @@ test("write/check enforce immutable names, bytes, and verified historical artifa
   expectDiagnostic(() => checkArtifacts(result, output), "ARTIFACT_UNEXPECTED");
   fs.unlinkSync(path.join(output, "mutable-pointer.js"));
 
+  const linkedBytesPath = path.join(output, "linked-identical-bytes.js");
+  fs.writeFileSync(linkedBytesPath, result.artifacts.outputs.get(firstName));
+  fs.unlinkSync(path.join(output, firstName));
+  let linked = false;
+  try {
+    fs.symlinkSync(linkedBytesPath, path.join(output, firstName), "file");
+    linked = true;
+  } catch (error) {
+    if (!["EPERM", "EACCES", "ENOSYS"].includes(error && error.code)) throw error;
+  }
+  if (linked) {
+    expectDiagnostic(() => checkArtifacts(result, output), "ARTIFACT_TYPE", "/generated/" + firstName);
+    expectDiagnostic(() => writeArtifacts(result, output), "ARTIFACT_COLLISION", "/generated/" + firstName);
+    fs.unlinkSync(path.join(output, firstName));
+  }
+  fs.unlinkSync(linkedBytesPath);
+  writeArtifacts(result, output);
+
   fs.writeFileSync(path.join(output, firstName), "collision");
   expectDiagnostic(() => writeArtifacts(result, output), "ARTIFACT_COLLISION");
   fs.unlinkSync(path.join(output, firstName));
@@ -347,13 +898,40 @@ test("write/check enforce immutable names, bytes, and verified historical artifa
   expectDiagnostic(() => writeArtifacts(forged, output), "ARTIFACT_NAME");
 });
 
+test("checked-in production artifacts pin the deterministic default simulation bundle", () => {
+  const parsed = CLI.parseArgs(["--check"]);
+  assert.equal(parsed.useDefaultSimulationBundle, true);
+  assert.equal(parsed.simulationBytes, undefined);
+  const first = CLI.materializeBuildOptions(parsed);
+  const second = CLI.materializeBuildOptions(CLI.parseArgs(["--check"]));
+  assert.deepEqual(first.simulationBytes, second.simulationBytes);
+  assert.equal(
+    sha256Hex(first.simulationBytes),
+    sha256Hex(buildSimulationBundle({ sourceRoot: SIMULATION_SOURCE_ROOT }))
+  );
+  const checked = executeBuild(first);
+  assert.match(checked.rulesetHash, /^sha256:[0-9a-f]{64}$/);
+  assert.equal(
+    checked.files.some(function (name) {
+      return name === "aegis-sim." + sha256Hex(first.simulationBytes) + ".js";
+    }),
+    true
+  );
+});
+
 test("CLI accepts exactly one mode, explicit named fixtures, and a repo-relative simulation override", () => {
-  assert.equal(CLI.parseArgs(["--check"]).mode, "check");
+  const defaultBuild = CLI.parseArgs(["--check"]);
+  assert.equal(defaultBuild.mode, "check");
+  assert.equal(defaultBuild.useDefaultSimulationBundle, true);
   const fixture = CLI.parseArgs(["--write", "--fixture", "valid-minimal"]);
   assert.equal(fixture.mode, "write");
   assert.equal(path.basename(fixture.sourceRoot), "valid-minimal");
+  assert.equal(fixture.useDefaultSimulationBundle, false);
+  assert.equal(CLI.materializeBuildOptions(fixture), fixture);
   const override = CLI.parseArgs(["--check", "--simulation", "games/aegis/js/sim/abi.js"]);
   assert.equal(override.simulationPath, path.join(REPO_ROOT, "games", "aegis", "js", "sim", "abi.js"));
+  assert.equal(override.useDefaultSimulationBundle, false);
+  assert.equal(CLI.materializeBuildOptions(override), override);
   assert.throws(() => CLI.parseArgs([]), /exactly one/);
   assert.throws(() => CLI.parseArgs(["--check", "--write"]), /exactly one/);
   assert.throws(() => CLI.parseArgs(["--check", "--fixture", ".."]), /fixture/i);
@@ -362,4 +940,6 @@ test("CLI accepts exactly one mode, explicit named fixtures, and a repo-relative
   assert.throws(() => CLI.parseArgs(["--check", "--simulation", "D:relative.js"]), /portable/i);
   assert.throws(() => CLI.parseArgs(["--check", "--bogus"]), /Unknown argument/);
   assert.match(CLI.USAGE, /1 source\/build\/I\/O failure, 2 invalid CLI usage/);
+  assert.match(CLI.USAGE, /complete declared deterministic simulation module bundle/);
+  assert.doesNotMatch(CLI.USAGE, /abi\/geometry\/timers\/economy/);
 });

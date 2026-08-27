@@ -1,0 +1,68 @@
+{
+  "straight": {
+    "route": {
+      "id": "route.straight",
+      "nodes": [
+        { "column": 0, "row": 5 },
+        { "column": 20, "row": 5 }
+      ]
+    },
+    "pad": { "id": "pad.straight", "column": 10, "row": 9 },
+    "range20": {
+      "exposureSubunits": 24000000000,
+      "startSubunits": 28000000000,
+      "endSubunits": 52000000000
+    },
+    "range16TangentSubunits": 40000000000
+  },
+  "corner": {
+    "route": {
+      "id": "route.corner",
+      "nodes": [
+        { "column": 0, "row": 5 },
+        { "column": 20, "row": 5 },
+        { "column": 20, "row": 20 }
+      ]
+    },
+    "pad": { "id": "pad.corner", "column": 17, "row": 9 },
+    "range20": {
+      "exposureSubunits": 56000000000,
+      "startSubunits": 56000000000,
+      "endSubunits": 112000000000,
+      "meanStageBp": 6000
+    }
+  },
+  "diagonal": {
+    "route": {
+      "id": "route.diagonal",
+      "nodes": [
+        { "column": 0, "row": 0 },
+        { "column": 15, "row": 20 }
+      ]
+    },
+    "pad": { "id": "pad.diagonal", "column": 10, "row": 5 },
+    "range20TangentSubunits": 40000000000,
+    "range22": {
+      "exposureSubunits": 18330302778,
+      "startSubunits": 30834848611,
+      "endSubunits": 49165151389
+    }
+  },
+  "twoPass": {
+    "route": {
+      "id": "route.two-pass",
+      "nodes": [
+        { "column": 0, "row": 5 },
+        { "column": 20, "row": 5 },
+        { "column": 20, "row": 15 },
+        { "column": 0, "row": 15 }
+      ]
+    },
+    "pad": { "id": "pad.two-pass", "column": 10, "row": 10 },
+    "range22": {
+      "exposureSubunits": 36660605556,
+      "longestWindowSubunits": 18330302778,
+      "meanStageBp": 5000
+    }
+  }
+}
