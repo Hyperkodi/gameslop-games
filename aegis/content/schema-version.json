@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "campaign-foundation-1",
+  "sourceKind": "foundation",
+  "abiDescriptor": "abi/abi-v1.json",
+  "behaviorContracts": "behavior-contracts.json",
+  "missionIds": []
+}

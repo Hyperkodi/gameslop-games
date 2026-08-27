@@ -1,0 +1,310 @@
+{
+  "descriptor": {
+    "value": {
+      "id": "armara-aegis-sim-abi",
+      "version": 1,
+      "canonicalVersion": 1,
+      "safeIntegerMax": 9007199254740991,
+      "ticksPerSecond": 60,
+      "timeUnitsPerSecond": 60000,
+      "timeUnitsPerTick": 1000,
+      "distanceScale": 1000,
+      "damageScale": 1000,
+      "basisPoints": 10000,
+      "maxAuthoredDecimalPlaces": 3,
+      "externalCapsBp": { "damage": 2000, "range": 1200, "rate": 1500 },
+      "phaseOrder": [
+        "commands",
+        "scheduled-spawns",
+        "status-expiry",
+        "movement",
+        "leaks",
+        "tower-acquisition-and-attacks",
+        "shield-damage-and-status",
+        "guarded-boss-threshold-transition",
+        "terminal-death-execute-children-and-revival",
+        "bounty",
+        "wave-clear"
+      ],
+      "commands": {
+        "schemaVersion": 1,
+        "recordFields": ["tick", "seq", "type"],
+        "sequence": "zero-based-strictly-increasing-within-tick",
+        "application": "beginning-of-tick-in-sequence-order",
+        "acceptedWaveStartGrant": "credited-before-scheduled-spawns"
+      },
+      "runtimeIds": {
+        "domains": ["tower", "enemy", "summon", "projectile", "effect"],
+        "initialValue": 1,
+        "allocation": "accepted-creation-only-monotonic-per-domain",
+        "denialOrPlanReset": "never-rewinds-a-counter",
+        "batchOrder": ["source-id", "authored-index"]
+      },
+      "timers": {
+        "decrementUnitsPerTick": 1000,
+        "due": "after-named-phase-decrement-when-remaining-is-less-than-or-equal-to-zero",
+        "overshoot": "negative-remainder-carried-into-repeated-schedule",
+        "repeatingEventCap": "strict-authored-per-tick",
+        "simultaneousOrder": ["authored-order", "stable-runtime-id"]
+      },
+      "cooldown": {
+        "initialRemainingUnits": 0,
+        "decrement": "subtract-timeUnitsPerTick-only-when-positive-during-attack-phase",
+        "due": "zero-is-already-due",
+        "attacksPerTowerPerTickMax": 1,
+        "noTarget": "clamp-to-zero-and-reacquire-next-eligible-attack-phase",
+        "scheduleFormula": "remaining += ceil(baseCooldownUnits * basisPoints / (basisPoints + externalRateBp))",
+        "activeRescale": "forbidden-on-upgrade-link-unlink-enable-disable-or-source-change",
+        "minimumEffectiveCooldownUnits": 1000
+      },
+      "movement": {
+        "formula": "numerator = speedDistanceUnitsPerSecond * effectiveSpeedBp + remainder",
+        "divisor": 600000,
+        "advance": "floor(numerator / divisor)",
+        "remainder": "numerator % divisor",
+        "remainderOnSpeedChange": "preserved",
+        "displacementDivision": "signed-truncate-toward-zero",
+        "routeBounds": "clamped"
+      },
+      "geometry": {
+        "coordinates": "compiled-integer-distance-units",
+        "compilerSegmentLength": "floor-bigint-isqrt(dx-squared-plus-dy-squared)",
+        "routeLength": "checked-sum-of-positive-segment-lengths",
+        "waypointOwnership": "exact-interior-boundary-belongs-to-incoming-segment-route-start-to-first",
+        "interpolation": "start + trunc(distanceIntoSegment * signedDelta / segmentLength)",
+        "rangeEligibility": "dx-squared-plus-dy-squared-less-than-or-equal-to-range-squared",
+        "arithmetic": "checked-safe-integer-products-at-runtime"
+      },
+      "statuses": {
+        "expiryPhase": "status-expiry",
+        "decrementUnitsPerTick": 1000,
+        "removal": "before-movement-and-targeting-when-remaining-is-less-than-or-equal-to-zero",
+        "appliedAfterExpiry": "first-decrement-on-next-tick",
+        "instanceComparator": ["magnitude-desc", "expiry-desc", "source-id-asc"]
+      },
+      "division": {
+        "nonnegative": "floor",
+        "signed": "truncate-toward-zero",
+        "ceiling": "quotient-plus-nonzero-remainder",
+        "rational": "cross-cancel-before-checked-multiplication"
+      },
+      "formulas": {
+        "authoredMilliseconds": "milliseconds * 60",
+        "effectiveCooldown": "ceil(baseCooldownUnits * 10000 / (10000 + externalRateBp))",
+        "effectiveRange": "floor(baseRangeUnits * (10000 + externalRangeBp) / 10000)",
+        "scaledSlow": "floor(strongestReductionBp * enemySlowControlBp / 10000)",
+        "effectiveSpeed": "max(enemyMinMovementBp, 10000 - scaledReductionBp)",
+        "preShieldDamage": "floor(baseDamageMilli * product(internalDamageBp) * (10000 + externalDamageBp) / 10000^(internalCount + 1))",
+        "sellRefund": "floor(investedAether * 70 / 100)"
+      },
+      "damagePipeline": {
+        "internalCoefficientOrder": ["lock-on", "crit", "center-hit", "pierce", "chain-or-fork", "boss"],
+        "externalResolution": "same-name-strongest-then-distinct-source-types-in-ascii-order-then-cap",
+        "resolutionOrder": [
+          "reveal-and-target-eligibility-snapshot",
+          "base-milli-damage",
+          "internal-coefficients",
+          "external-damage-amplification",
+          "authored-shield-coefficient",
+          "ordered-shield-pool-consumption",
+          "armor-ignore-and-armor-break",
+          "native-resistance",
+          "minimum-positive-hp-application",
+          "authored-status-application",
+          "guarded-boss-threshold-transition",
+          "terminal-death-or-execute",
+          "children-or-revival-scheduling",
+          "bounty"
+        ],
+        "coefficientRounding": "cross-cancel-then-one-floor-at-pre-shield-boundary",
+        "shieldPoolOrder": ["earliest-expiry", "source-id-asc"],
+        "minimumPositiveNonimmuneHpDamageMilli": 1,
+        "executeBosses": false
+      },
+      "behaviorRegistry": {
+        "id": "armara-aegis-behavior-registry",
+        "version": 1,
+        "dispatch": "stable-ascii-behavior-id",
+        "membership": "simulation-artifact-owned-and-ruleset-hashed",
+        "arbitraryExecutableContent": "forbidden",
+        "contracts": [
+          { "id": "armorBreak", "version": 1 },
+          { "id": "aura", "version": 1 },
+          { "id": "block", "version": 1 },
+          { "id": "bossScript", "version": 1 },
+          { "id": "chain", "version": 1 },
+          { "id": "direct", "version": 1 },
+          { "id": "dot", "version": 1 },
+          { "id": "execute", "version": 1 },
+          { "id": "slow", "version": 1 },
+          { "id": "spawnUnit", "version": 1 },
+          { "id": "splash", "version": 1 }
+        ]
+      },
+      "canonicalEncoding": {
+        "version": 1,
+        "format": "utf8-json-no-whitespace",
+        "keys": "ascii-lexicographic",
+        "arrays": "authored-order",
+        "numbers": "safe-integers-only",
+        "objectGraph": "tree-only-no-cycles-or-shared-references",
+        "allowedTypes": ["integer", "boolean", "string", "null", "array", "ascii-keyed-object"]
+      },
+      "hashes": {
+        "diagnostic": { "algorithm": "fnv1a32", "input": "canonical-utf8-bytes", "output": "uint32" },
+        "finalState": { "algorithm": "sha256", "input": "canonical-utf8-bytes", "output": "lowercase-hex" },
+        "ruleset": {
+          "algorithm": "sha256",
+          "framing": "uint64be-byte-length-prefix-before-each-input",
+          "inputs": ["abi-descriptor-bytes", "simulation-artifact-bytes", "compiled-content-bytes"]
+        }
+      },
+      "rng": {
+        "algorithm": "mulberry32",
+        "namedSeed": "fnv1a32-utf8(unsignedMissionSeed + NUL + streamId)",
+        "streamId": "non-empty-ascii-without-nul",
+        "state": "explicit-uint32-in-canonical-authoritative-simulation-state",
+        "stateTransition": "mulberry32Step(uint32-state)->{state,uint32}",
+        "floatProjection": "uint32 / 4294967296",
+        "consumption": "declared-simulation-sites-only-in-stable-authored-order",
+        "cosmeticConsumption": "forbidden",
+        "groupShuffle": "only-when-shuffleWithinGroup-is-true",
+        "consumptionChange": "changes-ruleset-identity"
+      },
+      "tutorialUpgradeGate": {
+        "modes": ["m01-wave1", "none"],
+        "skipCommand": "skipTutorialGate",
+        "denialReason": "tutorial-gated",
+        "profileLookupDuringReplay": "forbidden"
+      }
+    },
+    "canonicalByteLength": 6274,
+    "sha256": "4a788f71581d4b1c4e79318d72ae45ffa1c6b79281c3ae32e6c29f22a8b2256b"
+  },
+  "decimal": [
+    { "input": "8", "scale": 1000, "output": 8000 },
+    { "input": "410", "scale": 1000, "output": 410000 },
+    { "input": "0.001", "scale": 1000, "output": 1 },
+    { "input": "12.34", "scale": 1000, "output": 12340 },
+    { "input": "-6.125", "scale": 1000, "output": -6125 }
+  ],
+  "invalidDecimal": [
+    "1e3",
+    "+1",
+    " 1",
+    "1 ",
+    "01",
+    ".5",
+    "1.",
+    "1.0000",
+    "NaN",
+    "Infinity"
+  ],
+  "rational": {
+    "crossCancelledFloor": {
+      "base": 3000000000,
+      "numerators": [3000000000],
+      "denominators": [3000000000],
+      "output": 3000000000
+    },
+    "cooldownCeiling": {
+      "base": 410000,
+      "numerators": [10000],
+      "denominators": [11500],
+      "output": 356522
+    },
+    "damageChain": {
+      "baseDamageMilli": 8000,
+      "internalDamageBp": [],
+      "externalDamageBp": 800,
+      "output": 8640
+    },
+    "multiCoefficientDamage": {
+      "baseDamageMilli": 8000,
+      "internalDamageBp": [15000, 5000],
+      "externalDamageBp": 800,
+      "output": 6480
+    }
+  },
+  "timeAndEffects": {
+    "authoredMilliseconds": [
+      { "milliseconds": 0, "output": 0 },
+      { "milliseconds": 410, "output": 24600 },
+      { "milliseconds": 1350, "output": 81000 }
+    ],
+    "cooldown": [
+      { "baseCooldownUnits": 410000, "externalRateBp": 1500, "output": 356522 },
+      { "baseCooldownUnits": 24600, "externalRateBp": 1500, "output": 21392 },
+      { "baseCooldownUnits": 24600, "externalRateBp": 0, "output": 24600 }
+    ],
+    "range": [
+      { "baseRangeUnits": 22000, "externalRangeBp": 1000, "output": 24200 },
+      { "baseRangeUnits": 21555, "externalRangeBp": 1200, "output": 24141 }
+    ],
+    "slow": [
+      {
+        "strongestReductionBp": 4800,
+        "enemySlowControlBp": 10000,
+        "enemyMinMovementBp": 5200,
+        "output": { "scaledReductionBp": 4800, "effectiveSpeedBp": 5200 }
+      },
+      {
+        "strongestReductionBp": 4800,
+        "enemySlowControlBp": 2000,
+        "enemyMinMovementBp": 5200,
+        "output": { "scaledReductionBp": 960, "effectiveSpeedBp": 9040 }
+      },
+      {
+        "strongestReductionBp": 0,
+        "enemySlowControlBp": 10000,
+        "enemyMinMovementBp": 5200,
+        "output": { "scaledReductionBp": 0, "effectiveSpeedBp": 10000 }
+      }
+    ]
+  },
+  "refunds": [
+    { "invested": 60, "output": 42 },
+    { "invested": 90, "output": 63 },
+    { "invested": 175, "output": 122 },
+    { "invested": 315, "output": 220 },
+    { "invested": 340, "output": 238 }
+  ],
+  "canonical": {
+    "encoded": "{\"a\":[3,true,\"Ω\"],\"nested\":{\"a\":1,\"b\":2},\"z\":null}"
+  },
+  "fnv1a32": [
+    { "input": "", "output": 2166136261 },
+    { "input": "hello", "output": 1335831723 },
+    { "input": "π", "output": 3450233754 }
+  ],
+  "sha256": [
+    {
+      "input": "",
+      "output": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "input": "abc",
+      "output": "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+    },
+    {
+      "input": "The quick brown fox jumps over the lazy dog",
+      "output": "d7a8fbb307d7809469ca9abcb0082e4f8d5651e46d3cdb762d02d0bf37c9e592"
+    }
+  ],
+  "sha256Repeats": [
+    { "character": "a", "count": 55, "output": "9f4390f8d30c2dd92ec9f095b65e2b9ae9b0a925a5258e241c9f1e910f734318" },
+    { "character": "a", "count": 56, "output": "b35439a4ac6f0948b6d6f9e3c6af0f5f590ce20f1bde7090ef7970686ec6738a" },
+    { "character": "a", "count": 64, "output": "ffe054fe7ae0cb6dc65c3af9b61d5209f439851db43d0ba5997337df154668eb" },
+    { "character": "a", "count": 65, "output": "635361c48bb9eab14198e76ea8ab7f1a41685d6ad62aa9146d301d4f17eb0ae0" }
+  ],
+  "namedSeed": {
+    "missionSeed": 123,
+    "streamId": "wave:m01",
+    "output": 3996353814
+  },
+  "mulberry32": {
+    "seed": 3996353814,
+    "states": [1532952331, 3364518144, 901116661, 2732682474, 269280991],
+    "uint32Outputs": [2654892469, 401723586, 2341143762, 1486269684, 35363608]
+  }
+}

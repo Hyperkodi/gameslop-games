@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "fixture-foundation-1",
+  "sourceKind": "fixture",
+  "abiDescriptor": "abi/abi-v1.json",
+  "behaviorContracts": "behavior-contracts.json",
+  "missionIds": []
+}

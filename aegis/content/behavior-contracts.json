@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "contracts": [
+    { "id": "direct", "version": 1 },
+    { "id": "splash", "version": 1 },
+    { "id": "slow", "version": 1 },
+    { "id": "dot", "version": 1 },
+    { "id": "chain", "version": 1 },
+    { "id": "armorBreak", "version": 1 },
+    { "id": "aura", "version": 1 },
+    { "id": "spawnUnit", "version": 1 },
+    { "id": "block", "version": 1 },
+    { "id": "execute", "version": 1 },
+    { "id": "bossScript", "version": 1 }
+  ]
+}
