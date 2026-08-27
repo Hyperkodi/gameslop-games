@@ -35,7 +35,7 @@ cd games/starfall && node --test
 Run from inside each folder (not `node --test games/<id>/tests/` — passing a path fails on
 Node 24; passing none discovers `tests/` from the cwd).
 
-Current expected total: 225 tests — kit 12, Armaratris 35, Serpent 11, Breaker 9, Aegis 142,
+Current expected total: 268 tests — kit 12, Armaratris 35, Serpent 11, Breaker 9, Aegis 185,
 Flight 7, and Starfall 9.
 
 ## Add a game

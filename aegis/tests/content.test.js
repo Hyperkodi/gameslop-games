@@ -35,7 +35,6 @@ const MapReport = require(path.join(LIB, "map-report.js"));
 const CLI = require(path.join(REPO_ROOT, "tools", "build-aegis-content.js"));
 const RUNTIME_ABI = require(path.join(__dirname, "..", "js", "sim", "abi.js"));
 const SIMULATION_SOURCE_ROOT = path.join(__dirname, "..", "js", "sim");
-const PRODUCTION_GENERATED = path.join(__dirname, "..", "content", "generated");
 
 function expectDiagnostic(fn, code, diagnosticPath) {
   assert.throws(fn, function (error) {
@@ -114,6 +113,41 @@ function replaceModuleBytes(sources, id, before, after) {
   );
   entry.bytes = Buffer.from(source.replace(before, after), "utf8");
   return copy;
+}
+
+function bundleParityExpression(apiExpression, abiExpression) {
+  return [
+    "(function () {",
+    "  const APIs = " + apiExpression + ";",
+    "  const ABI = " + abiExpression + ";",
+    "  const commandSource = [{tick:0,seq:0,type:\"build\",padId:\"p01\",defenseId:\"sentinel\"}];",
+    "  const commands = APIs.AegisCommands.normalizeCommandSequence(commandSource);",
+    "  const managementConfig = {",
+    "    missionId:\"m01\",resolvedStartAether:150,tutorialUpgradeGateMode:\"none\",",
+    "    padIds:[\"p01\"],waveStartGrants:[0],",
+    "    defenses:[{id:\"sentinel\",costsAether:[60,55,95],defaultTargetPolicy:\"FRONT\",allowedTargetPolicies:[\"FRONT\"]}]",
+    "  };",
+    "  const management = APIs.AegisManagement.applyCommandBucket(",
+    "    APIs.AegisManagement.createManagementState(managementConfig),",
+    "    managementConfig,0,commandSource",
+    "  ).state;",
+    "  const replaySource = {",
+    "    formatVersion:1,rulesetHash:\"sha256:\"+\"a\".repeat(64),eventSchemaVersion:1,",
+    "    missionId:\"m01\",difficultyId:\"strategos\",assist:false,seed:123,loadoutIds:[\"sentinel\"],",
+    "    campaignModifierIds:[],accessGrantIds:[],tutorialUpgradeGateMode:\"none\",inputs:commandSource,",
+    "    checkpoints:[],finalClaim:{outcome:\"victory\",score:1,laurels:1,durationTicks:1,finalStateHash:\"b\".repeat(64)}",
+    "  };",
+    "  const replayCanonical = APIs.AegisReplay.canonicalEnvelopeString(replaySource);",
+    "  function identity(value) {",
+    "    return {canonical:ABI.canonicalEncode(value),hash:ABI.sha256Hex(ABI.canonicalBytes(value))};",
+    "  }",
+    "  return JSON.stringify({",
+    "    commands:identity(commands),",
+    "    management:identity(management),",
+    "    replay:{canonical:replayCanonical,hash:ABI.sha256Hex(ABI.utf8Bytes(replayCanonical))}",
+    "  });",
+    "})()",
+  ].join("\n");
 }
 
 test("strict JSON rejects duplicate keys, BOMs, decimal number tokens, and unsafe integers", () => {
@@ -200,8 +234,16 @@ test("production simulation bundle is deterministic, source-byte-bound, and leav
   assert.equal(source.endsWith("\n\n"), false);
   assert.doesNotMatch(source, /\brequire\s*\(|\bimport\s*(?:\(|["'])/);
   assert.doesNotMatch(source, /\beval\s*\(|\b(?:new\s+)?Function\s*\(/);
+  assert.doesNotMatch(
+    source,
+    /\b(?:document|localStorage|sessionStorage|indexedDB|fetch|XMLHttpRequest|WebSocket|navigator)\b/
+  );
+  let priorSourceMarker = -1;
   for (const spec of MODULE_SPECS) {
     const bytes = before.get(spec.id);
+    const sourceMarker = source.indexOf("/* source " + spec.relativePath + " bytes=");
+    assert.ok(sourceMarker > priorSourceMarker, spec.id + " must retain its declared bundle order");
+    priorSourceMarker = sourceMarker;
     assert.match(
       source,
       new RegExp(
@@ -219,28 +261,48 @@ test("production simulation bundle is deterministic, source-byte-bound, and leav
     canonicalEncode(simulationDescriptor(first, "production-bundle.js")),
     RUNTIME_ABI.DESCRIPTOR_CANONICAL
   );
-  const targetingSpec = MODULE_SPECS.find(function (spec) { return spec.id === "targeting"; });
   assert.deepEqual(
-    targetingSpec.dependencies.map(function (dependency) {
-      return [dependency.id, dependency.parameterName, dependency.requirePath];
+    MODULE_SPECS.map(function (spec) {
+      return [spec.id, spec.dependencies && spec.dependencies.map(function (dependency) {
+        return [dependency.id, dependency.parameterName, dependency.requirePath];
+      })];
     }),
     [
-      ["abi", "ABI", "./abi.js"],
-      ["geometry", "Geometry", "./geometry.js"],
+      ["abi", null],
+      ["geometry", [["abi", "ABI", "./abi.js"]]],
+      ["timers", [["abi", "ABI", "./abi.js"]]],
+      ["economy", [["abi", "ABI", "./abi.js"]]],
+      ["movement", [["abi", "ABI", "./abi.js"]]],
+      ["effects", [["abi", "ABI", "./abi.js"]]],
+      ["targeting", [
+        ["abi", "ABI", "./abi.js"],
+        ["geometry", "Geometry", "./geometry.js"],
+      ]],
+      ["commands", [["abi", "ABI", "./abi.js"]]],
+      ["management", [
+        ["abi", "ABI", "./abi.js"],
+        ["economy", "Economy", "./economy.js"],
+        ["movement", "Movement", "./movement.js"],
+        ["commands", "Commands", "./commands.js"],
+      ]],
+      ["replay", [
+        ["abi", "ABI", "./abi.js"],
+        ["commands", "Commands", "./commands.js"],
+      ]],
     ]
   );
-  assert.equal(Object.isFrozen(targetingSpec.dependencies), true);
-  assert.equal(targetingSpec.dependencies.every(Object.isFrozen), true);
+  assert.equal(Object.isFrozen(MODULE_SPECS), true);
+  MODULE_SPECS.forEach(function (spec) {
+    assert.equal(Object.isFrozen(spec), true);
+    if (spec.dependencies !== null) {
+      assert.equal(Object.isFrozen(spec.dependencies), true);
+      assert.equal(spec.dependencies.every(Object.isFrozen), true);
+    }
+  });
 });
 
-test("production simulation bundle exposes all frozen APIs in CommonJS and classic mode without imports", () => {
-  const builtBytes = buildSimulationBundle({ sourceRoot: SIMULATION_SOURCE_ROOT });
-  const artifactPath = path.join(
-    PRODUCTION_GENERATED,
-    "aegis-sim." + sha256Hex(builtBytes) + ".js"
-  );
-  const bytes = fs.readFileSync(artifactPath);
-  assert.deepEqual(bytes, builtBytes, "emitted production simulation must equal deterministic assembly");
+test("production simulation bundle exposes all frozen APIs with canonical parity and no platform I/O", () => {
+  const bytes = buildSimulationBundle({ sourceRoot: SIMULATION_SOURCE_ROOT });
 
   const commonJsContext = vm.createContext(
     { module: { exports: {} }, exports: {} },
@@ -249,13 +311,9 @@ test("production simulation bundle exposes all frozen APIs in CommonJS and class
   vm.runInContext(bytes.toString("utf8"), commonJsContext, { filename: "aegis-sim-bundle.js" });
   const commonJs = commonJsContext.module.exports;
   assert.equal(Object.isFrozen(commonJs), true);
-  assert.equal(Object.isFrozen(commonJs.AegisSim), true);
-  assert.equal(Object.isFrozen(commonJs.AegisGeometry), true);
-  assert.equal(Object.isFrozen(commonJs.AegisTimers), true);
-  assert.equal(Object.isFrozen(commonJs.AegisEconomy), true);
-  assert.equal(Object.isFrozen(commonJs.AegisMovement), true);
-  assert.equal(Object.isFrozen(commonJs.AegisEffects), true);
-  assert.equal(Object.isFrozen(commonJs.AegisTargeting), true);
+  MODULE_SPECS.forEach(function (spec) {
+    assert.equal(Object.isFrozen(commonJs[spec.globalName]), true, spec.globalName + " CommonJS API");
+  });
   assert.equal(commonJs.DESCRIPTOR_SHA256, RUNTIME_ABI.DESCRIPTOR_SHA256);
   assert.equal(commonJs.AegisGeometry.isWithinSquaredRange(0, 0, 3, 4, 5), true);
   assert.equal(commonJs.AegisTimers.authoredMillisecondsToTimeUnits(410), 24600);
@@ -275,18 +333,17 @@ test("production simulation bundle exposes all frozen APIs in CommonJS and class
     '{originX:0,originY:0,range:5,targetLayerIds:["ground"]},',
     '[{baseSpeedDistanceUnitsPerSecond:10,currentHpMilli:1000,id:7,layerId:"ground",remainingDistance:100,revealEligible:true,shieldPoolsMilli:[],threatPriority:0,x:3,y:4}]).id',
   ].join(""), commonJsContext), 7);
+  assert.equal(typeof commonJs.AegisCommands.normalizeCommandSequence, "function");
+  assert.equal(typeof commonJs.AegisManagement.applyCommandBucket, "function");
+  assert.equal(typeof commonJs.AegisReplay.canonicalEnvelopeString, "function");
   assert.equal(commonJsContext.Game, undefined, "CommonJS assembly uses a private bundle root");
   assert.equal(commonJsContext.require, undefined);
 
   const classic = vm.createContext({}, { codeGeneration: { strings: false, wasm: false } });
   vm.runInContext(bytes.toString("utf8"), classic, { filename: "aegis-sim-bundle.js" });
-  assert.equal(Object.isFrozen(classic.Game.AegisSim), true);
-  assert.equal(Object.isFrozen(classic.Game.AegisGeometry), true);
-  assert.equal(Object.isFrozen(classic.Game.AegisTimers), true);
-  assert.equal(Object.isFrozen(classic.Game.AegisEconomy), true);
-  assert.equal(Object.isFrozen(classic.Game.AegisMovement), true);
-  assert.equal(Object.isFrozen(classic.Game.AegisEffects), true);
-  assert.equal(Object.isFrozen(classic.Game.AegisTargeting), true);
+  MODULE_SPECS.forEach(function (spec) {
+    assert.equal(Object.isFrozen(classic.Game[spec.globalName]), true, spec.globalName + " classic API");
+  });
   assert.equal(classic.Game.AegisSim.DESCRIPTOR_SHA256, RUNTIME_ABI.DESCRIPTOR_SHA256);
   assert.equal(classic.Game.AegisGeometry.isWithinSquaredRange(0, 0, 3, 4, 5), true);
   assert.equal(classic.Game.AegisTimers.authoredMillisecondsToTimeUnits(1350), 81000);
@@ -306,33 +363,45 @@ test("production simulation bundle exposes all frozen APIs in CommonJS and class
     '{originX:0,originY:0,range:5,targetLayerIds:["ground"]},',
     '[{baseSpeedDistanceUnitsPerSecond:10,currentHpMilli:1000,id:9,layerId:"ground",remainingDistance:100,revealEligible:true,shieldPoolsMilli:[],threatPriority:0,x:3,y:4}]).id',
   ].join(""), classic), 9);
+  const commonJsParity = vm.runInContext(
+    bundleParityExpression("module.exports", "module.exports.AegisSim"),
+    commonJsContext
+  );
+  const classicParity = vm.runInContext(
+    bundleParityExpression("Game", "Game.AegisSim"),
+    classic
+  );
+  assert.equal(commonJsParity, classicParity);
+  const parity = JSON.parse(commonJsParity);
+  assert.deepEqual(JSON.parse(parity.commands.canonical), [
+    { defenseId: "sentinel", padId: "p01", seq: 0, tick: 0, type: "build" },
+  ]);
+  assert.equal(JSON.parse(parity.management.canonical).aether, 90);
+  assert.equal(JSON.parse(parity.management.canonical).towers[0].defenseId, "sentinel");
+  assert.equal(JSON.parse(parity.replay.canonical).inputs[0].type, "build");
+  [parity.commands.hash, parity.management.hash, parity.replay.hash].forEach(function (hash) {
+    assert.match(hash, /^[0-9a-f]{64}$/);
+  });
   assert.equal(classic.GameSlopKit, undefined);
   assert.equal(classic.require, undefined);
   assert.equal(classic.document, undefined);
   assert.equal(classic.fetch, undefined);
+  assert.equal(classic.localStorage, undefined);
+  assert.equal(classic.sessionStorage, undefined);
+  assert.equal(classic.indexedDB, undefined);
 });
 
 test("every declared deterministic module source changes simulation and ruleset identity", () => {
   const sources = readSimulationSources(SIMULATION_SOURCE_ROOT);
   const baselineBytes = assembleSimulationBundle(sources);
   const baseline = compile(FIXTURE, baselineBytes);
-  const vectors = [
-    ["abi", "deterministic simulation ABI v1.", "deterministic simulation ABI v2."],
-    ["geometry", "deterministic runtime geometry v1.", "deterministic runtime geometry v2."],
-    ["timers", "deterministic timer transitions v1.", "deterministic timer transitions v2."],
-    ["economy", "deterministic runtime economy v1.", "deterministic runtime economy v2."],
-    ["movement", "deterministic movement, named RNG, and runtime-ID helpers v1.", "deterministic movement, named RNG, and runtime-ID helpers v2."],
-    ["effects", "deterministic status, amplification, and shield-pool resolution v1.", "deterministic status, amplification, and shield-pool resolution v2."],
-    ["targeting", "deterministic target eligibility and selection v1.", "deterministic target eligibility and selection v2."],
-  ];
-
-  for (const vector of vectors) {
+  for (const spec of MODULE_SPECS) {
     const changedBytes = assembleSimulationBundle(
-      replaceModuleBytes(sources, vector[0], vector[1], vector[2])
+      replaceModuleBytes(sources, spec.id, "/* Armara Aegis", "/* Armara  Aegis")
     );
-    assert.notEqual(sha256Hex(changedBytes), sha256Hex(baselineBytes), vector[0]);
+    assert.notEqual(sha256Hex(changedBytes), sha256Hex(baselineBytes), spec.id);
     const changed = compile(FIXTURE, changedBytes);
-    assert.notEqual(changed.artifacts.rulesetHash, baseline.artifacts.rulesetHash, vector[0]);
+    assert.notEqual(changed.artifacts.rulesetHash, baseline.artifacts.rulesetHash, spec.id);
   }
   for (const spec of MODULE_SPECS) {
     const original = sources.find(function (entry) { return entry.id === spec.id; }).bytes;
@@ -429,6 +498,78 @@ test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and dr
     () => assembleSimulationBundle(targetingClassicGuardDrift),
     "SIMULATION_BUNDLE_SEAM",
     "/simulationBundle/targeting"
+  );
+
+  const commandsDependencyDrift = replaceModuleBytes(
+    sources,
+    "commands",
+    'factory(require("./abi.js"))',
+    'factory(require("./economy.js"))'
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(commandsDependencyDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/commands"
+  );
+
+  const managementDependencyDrift = replaceModuleBytes(
+    sources,
+    "management",
+    'require("./economy.js"),\n      require("./movement.js")',
+    'require("./movement.js"),\n      require("./economy.js")'
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(managementDependencyDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/management"
+  );
+
+  const managementParameterDrift = replaceModuleBytes(
+    sources,
+    "management",
+    "function (ABI, Economy, Movement, Commands) {",
+    "function (ABI, Movement, Economy, Commands) {"
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(managementParameterDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/management"
+  );
+
+  const managementClassicGuardDrift = replaceModuleBytes(
+    sources,
+    "management",
+    'if (!game.AegisCommands) throw new Error("Game.AegisCommands must be installed before management.js");',
+    'if (!game.Commands) throw new Error("Game.AegisCommands must be installed before management.js");'
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(managementClassicGuardDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/management"
+  );
+
+  const replayDependencyDrift = replaceModuleBytes(
+    sources,
+    "replay",
+    'factory(require("./abi.js"), require("./commands.js"))',
+    'factory(require("./commands.js"), require("./abi.js"))'
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(replayDependencyDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/replay"
+  );
+
+  const replayClassicCallDrift = replaceModuleBytes(
+    sources,
+    "replay",
+    "factory(game.AegisSim, game.AegisCommands)",
+    "factory(game.AegisCommands, game.AegisSim)"
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(replayClassicCallDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/replay"
   );
 
   const rogueImport = copySimulationSources(sources);
