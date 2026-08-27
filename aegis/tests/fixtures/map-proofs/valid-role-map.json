@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 2,
+  "id": "fixture.role-proofs",
+  "title": "Synthetic Role Proof Map",
+  "sourceKind": "campaign",
+  "board": {
+    "columns": 40,
+    "rows": 25,
+    "cellWorldUnits": 4,
+    "widthWorldUnits": 160,
+    "heightWorldUnits": 100
+  },
+  "road": {
+    "widthWorldUnits": 12
+  },
+  "laneSegments": [
+    {
+      "id": "lane.main",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        { "column": -2, "row": 12, "portal": true },
+        { "column": 41, "row": 12, "portal": true }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route.main",
+      "kind": "ground",
+      "laneSegmentIds": ["lane.main"],
+      "entryAnchorId": "entry.main",
+      "gateAnchorId": "gate.main"
+    }
+  ],
+  "joins": [],
+  "crossings": [],
+  "pads": [
+    {
+      "id": "p01",
+      "kind": "ordinary",
+      "column": 5,
+      "row": 8,
+      "intent": "early",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": ["route.main"],
+      "selectionOrder": 0
+    },
+    {
+      "id": "p02",
+      "kind": "specialist",
+      "column": 15,
+      "row": 8,
+      "intent": "support",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": ["route.main"],
+      "selectionOrder": 1
+    },
+    {
+      "id": "p03",
+      "kind": "ordinary",
+      "column": 25,
+      "row": 8,
+      "intent": "late",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": ["route.main"],
+      "selectionOrder": 2
+    }
+  ],
+  "anchors": [
+    {
+      "id": "entry.main",
+      "kind": "entry",
+      "column": -2,
+      "row": 12,
+      "laneSegmentId": "lane.main",
+      "routeIds": ["route.main"]
+    },
+    {
+      "id": "gate.main",
+      "kind": "gate",
+      "column": 41,
+      "row": 12,
+      "laneSegmentId": "lane.main",
+      "routeIds": ["route.main"]
+    }
+  ],
+  "exclusions": [],
+  "probes": [
+    {
+      "id": "r20",
+      "rangeWorldUnits": 20,
+      "targetKinds": ["ground"],
+      "routeIds": ["route.main"],
+      "baselineMilliUnits": 30000
+    }
+  ],
+  "roleProofs": [
+    {
+      "id": "proof.guard.p01",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p01",
+      "projectionRangeWorldUnits": 20,
+      "markers": [
+        { "id": "marker.p01.0", "slotIndex": 0, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 20000, "routeIds": ["route.main"] },
+        { "id": "marker.p01.1", "slotIndex": 1, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 28000, "routeIds": ["route.main"] },
+        { "id": "marker.p01.2", "slotIndex": 2, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 36000, "routeIds": ["route.main"] }
+      ]
+    },
+    {
+      "id": "proof.guard.p02",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p02",
+      "projectionRangeWorldUnits": 20,
+      "markers": [
+        { "id": "marker.p02.0", "slotIndex": 0, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 60000, "routeIds": ["route.main"] },
+        { "id": "marker.p02.1", "slotIndex": 1, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 68000, "routeIds": ["route.main"] },
+        { "id": "marker.p02.2", "slotIndex": 2, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 76000, "routeIds": ["route.main"] }
+      ]
+    },
+    {
+      "id": "proof.guard.p03",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p03",
+      "projectionRangeWorldUnits": 20,
+      "markers": [
+        { "id": "marker.p03.0", "slotIndex": 0, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 100000, "routeIds": ["route.main"] },
+        { "id": "marker.p03.1", "slotIndex": 1, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 108000, "routeIds": ["route.main"] },
+        { "id": "marker.p03.2", "slotIndex": 2, "laneSegmentId": "lane.main", "laneOffsetMilliUnits": 116000, "routeIds": ["route.main"] }
+      ]
+    },
+    {
+      "id": "proof.support.p02",
+      "kind": "support",
+      "version": 1,
+      "padId": "p02",
+      "rangeWorldUnits": 20,
+      "routeProofRecords": [
+        { "routeId": "route.main", "minimumExposureMilliUnits": 24000, "expectedCoverageWindowCount": 1 }
+      ]
+    }
+  ],
+  "review": {
+    "entryProbeId": "r20",
+    "qualityProbeId": "r20",
+    "minimumEntryExposureMilliUnits": 18000,
+    "maximumSpread": {
+      "numerator": 1,
+      "denominator": 1
+    },
+    "selectionOrderPolicy": "route-stage-route-id-pad-id"
+  }
+}

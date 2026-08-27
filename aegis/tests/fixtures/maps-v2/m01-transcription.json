@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 2,
+  "id": "m01",
+  "title": "Gate of Dawn",
+  "sourceKind": "campaign",
+  "board": {
+    "columns": 40,
+    "rows": 25,
+    "cellWorldUnits": 4,
+    "widthWorldUnits": 160,
+    "heightWorldUnits": 100
+  },
+  "road": {
+    "widthWorldUnits": 12
+  },
+  "laneSegments": [
+    {
+      "id": "lane.migrated.route.main",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        { "column": -2, "row": 5, "portal": true },
+        { "column": 11, "row": 5 },
+        { "column": 11, "row": 18 },
+        { "column": 28, "row": 18 },
+        { "column": 28, "row": 9 },
+        { "column": 41, "row": 9, "portal": true }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route.main",
+      "kind": "ground",
+      "laneSegmentIds": ["lane.migrated.route.main"],
+      "entryAnchorId": "entry.west",
+      "gateAnchorId": "gate.east"
+    }
+  ],
+  "joins": [],
+  "crossings": [],
+  "pads": [
+    { "id": "p01", "kind": "ordinary", "column": 3, "row": 9, "intent": "early", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 0 },
+    { "id": "p02", "kind": "ordinary", "column": 15, "row": 8, "intent": "early", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 1 },
+    { "id": "p03", "kind": "ordinary", "column": 7, "row": 14, "intent": "bend", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 2 },
+    { "id": "p04", "kind": "ordinary", "column": 16, "row": 14, "intent": "double-pass", "declaredQuality": "strong", "claimedRouteIds": ["route.main"], "selectionOrder": 3 },
+    { "id": "p05", "kind": "ordinary", "column": 15, "row": 22, "intent": "mid", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 4 },
+    { "id": "p06", "kind": "ordinary", "column": 20, "row": 22, "intent": "mid", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 5 },
+    { "id": "p07", "kind": "ordinary", "column": 25, "row": 22, "intent": "late", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 6 },
+    { "id": "p08", "kind": "ordinary", "column": 24, "row": 13, "intent": "double-pass", "declaredQuality": "strong", "claimedRouteIds": ["route.main"], "selectionOrder": 7 },
+    { "id": "p09", "kind": "ordinary", "column": 31, "row": 5, "intent": "late", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 8 },
+    { "id": "p10", "kind": "ordinary", "column": 36, "row": 13, "intent": "late", "declaredQuality": "standard", "claimedRouteIds": ["route.main"], "selectionOrder": 9 }
+  ],
+  "anchors": [
+    { "id": "entry.west", "kind": "entry", "column": -2, "row": 5, "laneSegmentId": "lane.migrated.route.main", "routeIds": ["route.main"] },
+    { "id": "gate.east", "kind": "gate", "column": 41, "row": 9, "laneSegmentId": "lane.migrated.route.main", "routeIds": ["route.main"] }
+  ],
+  "exclusions": [],
+  "probes": [
+    { "id": "r20", "rangeWorldUnits": 20, "targetKinds": ["ground"], "routeIds": ["route.main"] },
+    { "id": "r22", "rangeWorldUnits": 22, "targetKinds": ["ground"], "routeIds": ["route.main"], "baselineMilliUnits": 30200 },
+    { "id": "r24", "rangeWorldUnits": 24, "targetKinds": ["ground"], "routeIds": ["route.main"] }
+  ],
+  "roleProofs": [],
+  "review": {
+    "entryProbeId": "r20",
+    "qualityProbeId": "r22",
+    "minimumEntryExposureMilliUnits": 24000,
+    "maximumSpread": {
+      "numerator": 165,
+      "denominator": 100
+    },
+    "selectionOrderPolicy": "route-stage-route-id-pad-id"
+  }
+}

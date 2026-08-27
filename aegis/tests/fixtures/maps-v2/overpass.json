@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 2,
+  "id": "fixture.overpass",
+  "title": "Synthetic Overpass",
+  "sourceKind": "campaign",
+  "board": {
+    "columns": 40,
+    "rows": 25,
+    "cellWorldUnits": 4,
+    "widthWorldUnits": 160,
+    "heightWorldUnits": 100
+  },
+  "road": {
+    "widthWorldUnits": 12
+  },
+  "laneSegments": [
+    {
+      "id": "lane.horizontal",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        { "column": -2, "row": 12, "portal": true },
+        { "column": 41, "row": 12, "portal": true }
+      ]
+    },
+    {
+      "id": "lane.vertical",
+      "kind": "ground",
+      "layerId": "bridge",
+      "nodes": [
+        { "column": 20, "row": -2, "portal": true },
+        { "column": 20, "row": 26, "portal": true }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route.horizontal",
+      "kind": "ground",
+      "laneSegmentIds": ["lane.horizontal"],
+      "entryAnchorId": "entry.horizontal",
+      "gateAnchorId": "gate.horizontal"
+    },
+    {
+      "id": "route.vertical",
+      "kind": "ground",
+      "laneSegmentIds": ["lane.vertical"],
+      "entryAnchorId": "entry.vertical",
+      "gateAnchorId": "gate.vertical"
+    }
+  ],
+  "joins": [],
+  "crossings": [
+    {
+      "id": "cross.center",
+      "kind": "overpass",
+      "laneAId": "lane.horizontal",
+      "subsegmentAIndex": 0,
+      "laneBId": "lane.vertical",
+      "subsegmentBIndex": 0,
+      "upperLayerId": "bridge"
+    }
+  ],
+  "pads": [
+    {
+      "id": "p01",
+      "kind": "ordinary",
+      "column": 5,
+      "row": 8,
+      "intent": "early",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": ["route.horizontal"],
+      "selectionOrder": 0
+    }
+  ],
+  "anchors": [
+    {
+      "id": "entry.horizontal",
+      "kind": "entry",
+      "column": -2,
+      "row": 12,
+      "laneSegmentId": "lane.horizontal",
+      "routeIds": ["route.horizontal"]
+    },
+    {
+      "id": "entry.vertical",
+      "kind": "entry",
+      "column": 20,
+      "row": -2,
+      "laneSegmentId": "lane.vertical",
+      "routeIds": ["route.vertical"]
+    },
+    {
+      "id": "gate.horizontal",
+      "kind": "gate",
+      "column": 41,
+      "row": 12,
+      "laneSegmentId": "lane.horizontal",
+      "routeIds": ["route.horizontal"]
+    },
+    {
+      "id": "gate.vertical",
+      "kind": "gate",
+      "column": 20,
+      "row": 26,
+      "laneSegmentId": "lane.vertical",
+      "routeIds": ["route.vertical"]
+    }
+  ],
+  "exclusions": [],
+  "probes": [
+    {
+      "id": "r20",
+      "rangeWorldUnits": 20,
+      "targetKinds": ["ground"],
+      "routeIds": ["route.horizontal", "route.vertical"],
+      "baselineMilliUnits": 30000
+    }
+  ],
+  "roleProofs": [],
+  "review": {
+    "entryProbeId": "r20",
+    "qualityProbeId": "r20",
+    "minimumEntryExposureMilliUnits": 18000,
+    "maximumSpread": {
+      "numerator": 2,
+      "denominator": 1
+    },
+    "selectionOrderPolicy": "route-stage-route-id-pad-id"
+  }
+}

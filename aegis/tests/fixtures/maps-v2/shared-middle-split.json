@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 2,
+  "id": "fixture.shared-middle-split",
+  "title": "Synthetic Shared Middle Split",
+  "sourceKind": "campaign",
+  "board": {
+    "columns": 40,
+    "rows": 25,
+    "cellWorldUnits": 4,
+    "widthWorldUnits": 160,
+    "heightWorldUnits": 100
+  },
+  "road": { "widthWorldUnits": 12 },
+  "laneSegments": [
+    {
+      "id": "lane.north.exit",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        { "column": 12, "row": 12 },
+        { "column": 20, "row": 6 },
+        { "column": 41, "row": 6, "portal": true }
+      ]
+    },
+    {
+      "id": "lane.shared.entry",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        { "column": -2, "row": 12, "portal": true },
+        { "column": 12, "row": 12 }
+      ]
+    },
+    {
+      "id": "lane.south.exit",
+      "kind": "ground",
+      "layerId": "surface",
+      "nodes": [
+        { "column": 12, "row": 12 },
+        { "column": 20, "row": 18 },
+        { "column": 41, "row": 18, "portal": true }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "route.north",
+      "kind": "ground",
+      "laneSegmentIds": ["lane.shared.entry", "lane.north.exit"],
+      "entryAnchorId": "entry.shared",
+      "gateAnchorId": "gate.north"
+    },
+    {
+      "id": "route.south",
+      "kind": "ground",
+      "laneSegmentIds": ["lane.shared.entry", "lane.south.exit"],
+      "entryAnchorId": "entry.shared",
+      "gateAnchorId": "gate.south"
+    }
+  ],
+  "joins": [
+    {
+      "id": "join.split",
+      "kind": "split",
+      "column": 12,
+      "row": 12,
+      "incomingLaneSegmentIds": ["lane.shared.entry"],
+      "outgoingLaneSegmentIds": ["lane.north.exit", "lane.south.exit"]
+    }
+  ],
+  "crossings": [],
+  "pads": [
+    {
+      "id": "p01",
+      "kind": "ordinary",
+      "column": 22,
+      "row": 10,
+      "intent": "mid",
+      "declaredQuality": "standard",
+      "claimedRouteIds": ["route.north"],
+      "selectionOrder": 0
+    },
+    {
+      "id": "p02",
+      "kind": "ordinary",
+      "column": 28,
+      "row": 14,
+      "intent": "late",
+      "declaredQuality": "specialist",
+      "claimedRouteIds": ["route.south"],
+      "selectionOrder": 1
+    }
+  ],
+  "anchors": [
+    {
+      "id": "entry.shared",
+      "kind": "entry",
+      "column": -2,
+      "row": 12,
+      "laneSegmentId": "lane.shared.entry",
+      "routeIds": ["route.north", "route.south"]
+    },
+    {
+      "id": "gate.north",
+      "kind": "gate",
+      "column": 41,
+      "row": 6,
+      "laneSegmentId": "lane.north.exit",
+      "routeIds": ["route.north"]
+    },
+    {
+      "id": "gate.south",
+      "kind": "gate",
+      "column": 41,
+      "row": 18,
+      "laneSegmentId": "lane.south.exit",
+      "routeIds": ["route.south"]
+    }
+  ],
+  "exclusions": [],
+  "probes": [
+    {
+      "id": "r20",
+      "rangeWorldUnits": 20,
+      "targetKinds": ["ground"],
+      "routeIds": ["route.north", "route.south"],
+      "baselineMilliUnits": 30000
+    }
+  ],
+  "roleProofs": [],
+  "review": {
+    "entryProbeId": "r20",
+    "qualityProbeId": "r20",
+    "minimumEntryExposureMilliUnits": 18000,
+    "maximumSpread": { "numerator": 2, "denominator": 1 },
+    "selectionOrderPolicy": "route-stage-route-id-pad-id"
+  }
+}

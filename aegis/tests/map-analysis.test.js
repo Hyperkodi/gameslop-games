@@ -15,6 +15,7 @@ const CLI_PATH = path.join(REPO_ROOT, "tools", "analyze-aegis-map.js");
 const Validation = require(path.join(REPO_ROOT, "tools", "lib", "aegis", "map-validation.js"));
 const Report = require(path.join(REPO_ROOT, "tools", "lib", "aegis", "map-report.js"));
 const Geometry = require(path.join(REPO_ROOT, "tools", "lib", "aegis", "map-geometry.js"));
+const MapIr = require(path.join(REPO_ROOT, "tools", "lib", "aegis", "map-ir.js"));
 const Cli = require(CLI_PATH);
 const { canonicalEncode } = require(path.join(REPO_ROOT, "tools", "lib", "aegis", "canonical.js"));
 const { AegisContentError } = require(path.join(REPO_ROOT, "tools", "lib", "aegis", "diagnostics.js"));
@@ -358,6 +359,22 @@ test("deterministic JSON and script-free SVG artifacts retain rounded evidence a
   assert.match(svg, /data-exposure-milli="30199"/);
   assert.doesNotMatch(svg, /<script\b|\son[a-z]+\s*=|\b(?:href|src)\s*=/i);
   assert.doesNotMatch(svg.replace('xmlns="http://www.w3.org/2000/svg"', ""), /https?:|data:/i);
+});
+
+test("normalized v2 reports add route-local physical provenance without changing the v1 report mode", () => {
+  const sharedPath = path.join(__dirname, "fixtures", "maps-v2", "shared-trunk.json");
+  const ir = MapIr.normalizeMap(JSON.parse(fs.readFileSync(sharedPath, "utf8")));
+  const report = Report.createNormalizedMapReport(ir);
+  assert.equal(report.schemaVersion, 2);
+  assert.deepEqual(report.routes[0].laneSegments.map(function (lane) {
+    return [lane.laneSegmentId, lane.sharedRouteIds, lane.routeOffset, lane.remainingDistanceAtEnd];
+  }), [
+    ["lane.north.approach", ["route.north"], 0, 125941],
+    ["lane.shared.trunk", ["route.north", "route.south"], 68844, 0],
+  ]);
+  assert.deepEqual(report.pads[0].probes[0].claimedRoutes.map(function (route) { return route.routeId; }), ["route.north"]);
+  assert.deepEqual(report.pads[0].probes[0].unclaimedRoutes.map(function (route) { return route.routeId; }), ["route.south"]);
+  assert.equal(Report.renderReportJson(report).equals(Report.renderReportJson(Report.createNormalizedMapReport(ir))), true);
 });
 
 test("artifact checks detect a stale JSON report and SVG independently without writing", (t) => {
