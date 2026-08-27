@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "contentVersion": "slice-dev-v1",
+  "sourceKind": "campaign",
+  "approvalState": "candidate-balance",
+  "abiDescriptor": {
+    "source": "abi/abi-v1.json",
+    "sha256": "sha256:75addf654da51f5ec945706db31adb8415f3638fa1f3eb961daeb697bc2d5fa1"
+  },
+  "behaviorContracts": {
+    "source": "behavior-contracts.json",
+    "sha256": "sha256:2f49f51550a6fb292906a2a4e972a50c838ef1ba64c1476417291e9c3de2933c"
+  },
+  "annex": {
+    "id": "slice-dev-v1",
+    "source": "annexes/slice-dev-v1.json",
+    "sha256": "sha256:21a39e1510703ee4d9f9ea3c381571d9e4796d01677e7e9009973d44552619ba"
+  },
+  "campaignRules": {
+    "source": "campaign-rules/slice-v1.json",
+    "sha256": "sha256:51ff3e889e390004558467bbf35c5e8acc1c6fb4dbd2baf234f4add1092bce27"
+  },
+  "defenses": {
+    "source": "defenses/slice-v1.json",
+    "sha256": "sha256:7e22b08d42534b6d3d2635e3d3f8fbef179dc5266d379f7f5e4c051fd203738e"
+  },
+  "enemies": {
+    "source": "enemies/slice-v1.json",
+    "sha256": "sha256:450513aaea959a4332ccf7b1739e48398940b967fbc468b4eac5e15082275edc"
+  },
+  "bosses": {
+    "source": "bosses/slice-v1.json",
+    "sha256": "sha256:28202b1c7003f3055d67696ba562a92face4d46ed5f9e8958af7c2a58af552c1"
+  },
+  "eventCatalog": {
+    "source": "events/slice-v1.json",
+    "sha256": "sha256:6621e1b91406b14e9948841e7d99dfb57c536c7d900cc544d8c8a85c1e5283a9"
+  },
+  "stringCatalog": {
+    "source": "strings/en.slice-v1.json",
+    "sha256": "sha256:e3882e736ca554039ea5ff4319d9759a0ca36bec39c2e4faea497e353a3d5c43"
+  },
+  "presentationCatalog": {
+    "source": "presentation/slice-v1.json",
+    "sha256": "sha256:4f03973b375a559bddfa6914e7729b25ac89eae04373e9caa20bd9af162217c6"
+  },
+  "missions": [
+    {
+      "id": "m01",
+      "definition": {
+        "source": "missions/m01.slice-v1.json",
+        "sha256": "sha256:3133b6f07dc34dc83b365924f3c40493a55c0d6eaf4fcb15473c28d4509cb1d5"
+      },
+      "map": {
+        "schemaVersion": 1,
+        "source": "maps/m01.json",
+        "sha256": "sha256:3133b6f07dc34dc83b365924f3c40493a55c0d6eaf4fcb15473c28d4509cb1d5"
+      },
+      "mapProofSupplement": {
+        "schemaVersion": 1,
+        "source": "map-proofs/m01.guard-v1.json",
+        "sha256": "sha256:0abe79af5b593438d560fbe33035fa4951e02900fd278c60e7d6873bd62ce559"
+      }
+    }
+  ]
+}

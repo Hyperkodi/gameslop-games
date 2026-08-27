@@ -9,6 +9,13 @@ const vm = require("node:vm");
 
 const REPO_ROOT = path.resolve(__dirname, "..", "..", "..");
 const FIXTURE = path.join(__dirname, "fixtures", "compiler", "valid-minimal");
+const V3_STRUCTURAL_FIXTURE = path.join(
+  __dirname,
+  "fixtures",
+  "compiler",
+  "v3-loader",
+  "valid-v3-structural"
+);
 const SIMULATION = path.join(FIXTURE, "simulation.js");
 const PRODUCTION_SOURCE = path.join(__dirname, "..", "content");
 const M01_SOURCE = path.join(PRODUCTION_SOURCE, "maps", "m01.json");
@@ -19,6 +26,7 @@ const { parseExactDecimal } = require(path.join(LIB, "exact-decimal.js"));
 const { parseStrictJsonBytes } = require(path.join(LIB, "strict-json.js"));
 const { compileSourceTree, writeArtifacts, checkArtifacts, executeBuild } = require(path.join(LIB, "compiler.js"));
 const {
+  buildArtifacts,
   frameRulesetBytes,
   renderContentArtifact,
   sha256Hex,
@@ -189,6 +197,55 @@ test("strict JSON rejects duplicate keys, BOMs, decimal number tokens, and unsaf
   assert.equal(Object.getPrototypeOf(inert), null);
   assert.equal(Object.prototype.polluted, undefined);
   assert.equal(Object.prototype.hasOwnProperty.call(inert, "__proto__"), true);
+});
+
+test("strict JSON v3 options tighten depth, object fields, and negative zero without changing defaults", () => {
+  const negativeZeroDefault = parseStrictJsonBytes(Buffer.from('{"value":-0}'), "legacy-negative-zero.json");
+  assert.equal(negativeZeroDefault.value, 0);
+  assert.equal(Object.is(negativeZeroDefault.value, -0), false);
+  expectDiagnostic(
+    () => parseStrictJsonBytes(
+      Buffer.from('{"value":-0}'),
+      "v3-negative-zero.json",
+      { rejectNegativeZero: true }
+    ),
+    "JSON_NUMBER_NEGATIVE_ZERO",
+    "/value"
+  );
+  expectDiagnostic(
+    () => parseStrictJsonBytes(
+      Buffer.from('{"a":1,"b":2}'),
+      "v3-fields.json",
+      { maxObjectFields: 1 }
+    ),
+    "JSON_OBJECT_FIELDS",
+    "/b"
+  );
+  expectDiagnostic(
+    () => parseStrictJsonBytes(
+      Buffer.from('{"a":{"b":1}}'),
+      "v3-depth.json",
+      { maxDepth: 1 }
+    ),
+    "JSON_DEPTH",
+    "/a/b"
+  );
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(parseStrictJsonBytes(
+      Buffer.from('{"a":{"b":1}}'),
+      "v3-bounds.json",
+      { maxDepth: 2, maxObjectFields: 1, rejectNegativeZero: true }
+    ))),
+    { a: { b: 1 } }
+  );
+  assert.throws(
+    () => parseStrictJsonBytes(Buffer.from("{}"), "options.json", { maxDepth: 257 }),
+    /cannot relax|maximum|256/i
+  );
+  assert.throws(
+    () => parseStrictJsonBytes(Buffer.from("{}"), "options.json", { surprise: true }),
+    /Unknown strict JSON option/
+  );
 });
 
 test("exact decimal compilation is string-only, signed, exact, and bounded", () => {
@@ -830,6 +887,45 @@ test("ruleset framing prefixes every ordered input with an unsigned 64-bit big-e
   );
 });
 
+test("artifact emission fails closed for incomplete or unknown source schemas", () => {
+  expectDiagnostic(
+    () => buildArtifacts({ schemaVersion: 3 }),
+    "ARTIFACT_SCHEMA_UNIMPLEMENTED",
+    "/schemaVersion"
+  );
+  expectDiagnostic(
+    () => buildArtifacts({ schemaVersion: 0 }),
+    "ARTIFACT_SCHEMA_UNIMPLEMENTED",
+    "/schemaVersion"
+  );
+});
+
+test("v3 compiler dispatch completes strict preflight then stops before simulation or emission", (t) => {
+  const output = fs.mkdtempSync(path.join(os.tmpdir(), "aegis-v3-output-"));
+  fs.rmSync(output, { recursive: true, force: true });
+  t.after(function () { fs.rmSync(output, { recursive: true, force: true }); });
+  expectDiagnostic(
+    function () {
+      executeBuild({
+        mode: "write",
+        sourceRoot: V3_STRUCTURAL_FIXTURE,
+        repositoryRoot: V3_STRUCTURAL_FIXTURE,
+        outputRoot: output,
+      });
+    },
+    "SOURCE_SCHEMA_INCOMPLETE",
+    "/schemaVersion"
+  );
+  assert.equal(fs.existsSync(output), false);
+  const structural = require(path.join(LIB, "source-loader.js")).loadSourceTree(
+    V3_STRUCTURAL_FIXTURE,
+    { repositoryRoot: V3_STRUCTURAL_FIXTURE }
+  );
+  assert.equal(structural.preflightOnly, true);
+  assert.equal(structural.lockCoverageStatus, "deferred-until-normalization");
+  assert.equal(structural.lockCoverage, undefined);
+});
+
 test("generated content loads as classic script and CommonJS while generated simulation needs no shared kit", () => {
   const result = compile();
   const contentEntry = Array.from(result.artifacts.outputs).find(([name]) => name.startsWith("aegis-content."));
@@ -1060,7 +1156,7 @@ test("checked-in production artifacts pin the deterministic default simulation b
   );
 });
 
-test("CLI accepts exactly one mode, explicit named fixtures, and a repo-relative simulation override", () => {
+test("CLI accepts exactly one mode, explicit named fixtures, and contained manifest/simulation overrides", () => {
   const defaultBuild = CLI.parseArgs(["--check"]);
   assert.equal(defaultBuild.mode, "check");
   assert.equal(defaultBuild.useDefaultSimulationBundle, true);
@@ -1069,6 +1165,17 @@ test("CLI accepts exactly one mode, explicit named fixtures, and a repo-relative
   assert.equal(path.basename(fixture.sourceRoot), "valid-minimal");
   assert.equal(fixture.useDefaultSimulationBundle, false);
   assert.equal(CLI.materializeBuildOptions(fixture), fixture);
+  const manifest = CLI.parseArgs([
+    "--check",
+    "--manifest",
+    "games/aegis/content/manifests/slice-dev-v1.json",
+  ]);
+  assert.equal(
+    manifest.manifestPath,
+    path.join(REPO_ROOT, "games", "aegis", "content", "manifests", "slice-dev-v1.json")
+  );
+  assert.equal(manifest.repositoryRoot, REPO_ROOT);
+  assert.equal(manifest.useDefaultSimulationBundle, true);
   const override = CLI.parseArgs(["--check", "--simulation", "games/aegis/js/sim/abi.js"]);
   assert.equal(override.simulationPath, path.join(REPO_ROOT, "games", "aegis", "js", "sim", "abi.js"));
   assert.equal(override.useDefaultSimulationBundle, false);
@@ -1076,6 +1183,12 @@ test("CLI accepts exactly one mode, explicit named fixtures, and a repo-relative
   assert.throws(() => CLI.parseArgs([]), /exactly one/);
   assert.throws(() => CLI.parseArgs(["--check", "--write"]), /exactly one/);
   assert.throws(() => CLI.parseArgs(["--check", "--fixture", ".."]), /fixture/i);
+  assert.throws(
+    () => CLI.parseArgs(["--check", "--fixture", "valid-minimal", "--manifest", "games/aegis/content/schema-version.json"]),
+    /cannot be combined/i
+  );
+  assert.throws(() => CLI.parseArgs(["--check", "--manifest", "../outside.json"]), /portable|inside the repository/i);
+  assert.throws(() => CLI.parseArgs(["--check", "--manifest", "D:relative.json"]), /portable/i);
   assert.throws(() => CLI.parseArgs(["--check", "--simulation", "../outside.js"]), /portable|inside the repository/i);
   assert.throws(() => CLI.parseArgs(["--check", "--simulation", "games/aegis/js/sim/abi.js:untracked"]), /portable/i);
   assert.throws(() => CLI.parseArgs(["--check", "--simulation", "D:relative.js"]), /portable/i);

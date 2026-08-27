@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-presentation-v1",
+  "packRecords": [
+    {
+      "id": "pack.m01",
+      "kind": "procedural-placeholder",
+      "missionIds": ["m01"],
+      "fallbackStyleId": "armara-procedural"
+    }
+  ],
+  "cueMappings": []
+}
