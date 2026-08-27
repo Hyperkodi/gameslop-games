@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-strings-en-v1",
+  "locale": "en",
+  "fallbackLocale": null,
+  "entries": [
+    { "key": "boss.description", "value": "Synthetic boss description.", "placeholders": [] },
+    { "key": "boss.name", "value": "Synthetic Boss", "placeholders": [] },
+    { "key": "defense.level.description", "value": "Synthetic complete level.", "placeholders": [] },
+    { "key": "defense.name", "value": "Synthetic Defense", "placeholders": [] },
+    { "key": "defense.role", "value": "Synthetic role.", "placeholders": [] },
+    { "key": "defense.weakness", "value": "Synthetic weakness.", "placeholders": [] },
+    { "key": "enemy.description", "value": "Synthetic enemy description.", "placeholders": [] },
+    { "key": "enemy.name", "value": "Synthetic Enemy", "placeholders": [] },
+    { "key": "mission.mechanic-notice", "value": "Synthetic mechanic notice.", "placeholders": [] },
+    { "key": "mission.objective", "value": "Complete the synthetic objective.", "placeholders": [] },
+    { "key": "mission.route-notice", "value": "Synthetic route notice.", "placeholders": [] },
+    { "key": "mission.summary", "value": "Synthetic mission summary.", "placeholders": [] },
+    { "key": "mission.title", "value": "Synthetic Mission", "placeholders": [] },
+    { "key": "objective.description", "value": "Synthetic objective description.", "placeholders": [] },
+    { "key": "objective.progress", "value": "Synthetic objective progress.", "placeholders": [] },
+    { "key": "objective.title", "value": "Synthetic Objective", "placeholders": [] },
+    { "key": "preview.briefing", "value": "Synthetic preview briefing.", "placeholders": [] },
+    { "key": "wave.title", "value": "Wave {wave}", "placeholders": [{ "name": "wave", "type": "integer" }] }
+  ]
+}

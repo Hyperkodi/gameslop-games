@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-events-v1",
+  "records": [
+    { "id": "boss.spawn", "version": 1, "phaseId": "scheduled-spawns", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "direct.combo", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "echo.cloak", "version": 1, "phaseId": "status-expiry", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "echo.exposed", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "enemy.spawn", "version": 1, "phaseId": "scheduled-spawns", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "guard.bash", "version": 1, "phaseId": "movement", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "guard.consume", "version": 1, "phaseId": "movement", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "guard.contact", "version": 1, "phaseId": "movement", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "guard.create", "version": 1, "phaseId": "scheduled-spawns", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "guard.rejected", "version": 1, "phaseId": "movement", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "mark.apply", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "mark.echo", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "mark.expire", "version": 1, "phaseId": "status-expiry", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "mark.scan", "version": 1, "phaseId": "tower-acquisition-and-attacks", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "reveal.apply", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "reveal.remove", "version": 1, "phaseId": "status-expiry", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "shield.consume", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "shield.expire", "version": 1, "phaseId": "status-expiry", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "slow.echo", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "splash.center", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    { "id": "talos.expose", "version": 1, "phaseId": "guarded-boss-threshold-transition", "payloadFields": [], "highlightTags": ["boss"], "presentationCueId": "cue.default" },
+    { "id": "talos.phase-enter", "version": 1, "phaseId": "guarded-boss-threshold-transition", "payloadFields": [], "highlightTags": ["boss"], "presentationCueId": "cue.default" },
+    { "id": "talos.phase-exit", "version": 1, "phaseId": "guarded-boss-threshold-transition", "payloadFields": [], "highlightTags": ["boss"], "presentationCueId": "cue.default" },
+    { "id": "talos.pods", "version": 1, "phaseId": "terminal-death-execute-children-and-revival", "payloadFields": [], "highlightTags": ["boss"], "presentationCueId": "cue.default" },
+    { "id": "talos.status", "version": 1, "phaseId": "shield-damage-and-status", "payloadFields": [], "highlightTags": ["boss"], "presentationCueId": "cue.default" },
+    { "id": "talos.threshold", "version": 1, "phaseId": "guarded-boss-threshold-transition", "payloadFields": [], "highlightTags": ["boss"], "presentationCueId": "cue.default" },
+    { "id": "tutorial.step", "version": 1, "phaseId": "commands", "payloadFields": [], "highlightTags": [], "presentationCueId": "cue.default" },
+    {
+      "id": "wave.deploy",
+      "version": 1,
+      "phaseId": "commands",
+      "payloadFields": [
+        { "name": "waveId", "type": "id", "required": true, "nullable": false },
+        { "name": "amountAether", "type": "integer", "required": true, "nullable": false }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    }
+  ]
+}

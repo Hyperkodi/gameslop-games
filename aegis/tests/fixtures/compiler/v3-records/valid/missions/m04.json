@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "m04",
+  "titleKey": "mission.title",
+  "actIndex": 1,
+  "missionIndex": 4,
+  "seedNamespace": "slice.m04",
+  "mapId": "m04",
+  "prerequisiteMissionIds": ["m03"],
+  "headlineMechanicId": "two-route-merge",
+  "briefing": {
+    "summaryKey": "mission.summary",
+    "objectiveKey": "mission.objective",
+    "routeNoticeKeys": ["mission.route-notice"],
+    "mechanicNoticeKeys": ["mission.mechanic-notice"]
+  },
+  "enemyRosterIds": ["raider"],
+  "bossRosterIds": [],
+  "availableDefenseIds": ["chronos", "hoplite", "oracle", "sentinel", "siege"],
+  "baseStartAether": 1,
+  "waves": [
+    {
+      "id": "m04.w01",
+      "index": 1,
+      "baseAetherEnvelope": 1,
+      "deploymentGrantAether": 1,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m04.w01.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "enemyId": "raider",
+          "routeId": "route.north",
+          "count": 1,
+          "firstTick": 0,
+          "intervalTicks": 1,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "suppressed",
+          "spawnEventId": "enemy.spawn"
+        }
+      ],
+      "previewDeclarationIds": ["preview.m04"],
+      "waveClearScore": 1,
+      "titleKey": "wave.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    }
+  ],
+  "objectives": [
+    { "id": "victory", "kind": "victory", "titleKey": "objective.title", "descriptionKey": "objective.description", "progressKey": "objective.progress", "predicate": "mission-victory" },
+    {
+      "id": "integrity", "kind": "integrity", "titleKey": "objective.title", "descriptionKey": "objective.description", "progressKey": "objective.progress",
+      "thresholdRecords": [
+        { "difficultyId": "story", "minimumIntegrity": 1 },
+        { "difficultyId": "strategos", "minimumIntegrity": 1 },
+        { "difficultyId": "titan", "minimumIntegrity": 1 }
+      ]
+    },
+    { "id": "mastery", "kind": "mastery", "titleKey": "objective.title", "descriptionKey": "objective.description", "progressKey": "objective.progress", "predicate": { "kind": "no-leaks-from-routes", "routeIds": ["route.north", "route.south"] } }
+  ],
+  "firstClearRewards": [
+    { "id": "reward.m04.reserve", "order": 0, "kind": "campaign-modifier", "campaignModifierId": "reserve-1", "amountAether": 1 }
+  ],
+  "tutorial": { "kind": "none" },
+  "previewDeclarations": [
+    { "id": "preview.m04", "mechanicId": "two-route-merge", "briefingKey": "preview.briefing", "previewKind": "briefing", "firstLethalWaveIndex": 1, "semanticCueIds": ["cue.default"] }
+  ],
+  "scoreRecord": { "scoreRuleId": "campaign-score-v1", "victoryScore": 1, "integrityPointScore": 1, "masteryObjectiveScore": 1, "rawUnspentScorePerEligibleAether": 1 },
+  "semanticEventIds": ["enemy.spawn", "wave.deploy"],
+  "presentationPackId": "pack.slice"
+}

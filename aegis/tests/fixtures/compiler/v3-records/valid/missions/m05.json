@@ -1,0 +1,74 @@
+{
+  "schemaVersion": 1,
+  "id": "m05",
+  "titleKey": "mission.title",
+  "actIndex": 1,
+  "missionIndex": 5,
+  "seedNamespace": "slice.m05",
+  "mapId": "m05",
+  "prerequisiteMissionIds": ["m04"],
+  "headlineMechanicId": "talos-thresholds",
+  "briefing": {
+    "summaryKey": "mission.summary",
+    "objectiveKey": "mission.objective",
+    "routeNoticeKeys": ["mission.route-notice"],
+    "mechanicNoticeKeys": ["mission.mechanic-notice"]
+  },
+  "enemyRosterIds": ["scout"],
+  "bossRosterIds": ["talos-prototype"],
+  "availableDefenseIds": ["chronos", "hoplite", "oracle", "sentinel", "siege"],
+  "baseStartAether": 1,
+  "waves": [
+    {
+      "id": "m05.w01",
+      "index": 1,
+      "baseAetherEnvelope": 1,
+      "deploymentGrantAether": 1,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m05.w01.g00",
+          "order": 0,
+          "spawnKind": "boss",
+          "bossId": "talos-prototype",
+          "routeId": "route.spiral",
+          "count": 1,
+          "firstTick": 0,
+          "intervalTicks": 1,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "suppressed",
+          "spawnEventId": "boss.spawn"
+        }
+      ],
+      "previewDeclarationIds": ["preview.m05"],
+      "waveClearScore": 1,
+      "titleKey": "wave.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    }
+  ],
+  "objectives": [
+    { "id": "victory", "kind": "victory", "titleKey": "objective.title", "descriptionKey": "objective.description", "progressKey": "objective.progress", "predicate": "mission-victory" },
+    {
+      "id": "integrity", "kind": "integrity", "titleKey": "objective.title", "descriptionKey": "objective.description", "progressKey": "objective.progress",
+      "thresholdRecords": [
+        { "difficultyId": "story", "minimumIntegrity": 1 },
+        { "difficultyId": "strategos", "minimumIntegrity": 1 },
+        { "difficultyId": "titan", "minimumIntegrity": 1 }
+      ]
+    },
+    { "id": "mastery", "kind": "mastery", "titleKey": "objective.title", "descriptionKey": "objective.description", "progressKey": "objective.progress", "predicate": { "kind": "no-leaks-from-lineage-tag", "lineageTag": "boss" } }
+  ],
+  "firstClearRewards": [
+    { "id": "reward.m05.slot", "order": 0, "kind": "loadout-slot", "slotCap": 5 }
+  ],
+  "tutorial": { "kind": "none" },
+  "previewDeclarations": [
+    { "id": "preview.m05", "mechanicId": "talos-thresholds", "briefingKey": "preview.briefing", "previewKind": "briefing", "firstLethalWaveIndex": 1, "semanticCueIds": ["cue.default"] }
+  ],
+  "scoreRecord": { "scoreRuleId": "campaign-score-v1", "victoryScore": 1, "integrityPointScore": 1, "masteryObjectiveScore": 1, "rawUnspentScorePerEligibleAether": 1 },
+  "semanticEventIds": ["boss.spawn", "wave.deploy"],
+  "presentationPackId": "pack.slice"
+}

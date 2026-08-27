@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-rules-v1",
+  "difficultyPresets": [
+    {
+      "id": "story",
+      "availabilityId": "difficulty.story",
+      "startAetherBp": 11900,
+      "integrity": 25,
+      "enemyHpBp": 8500,
+      "enemySpeedBp": 9500,
+      "bountyBp": 11000,
+      "scoreBp": 7500
+    },
+    {
+      "id": "strategos",
+      "availabilityId": "difficulty.strategos",
+      "startAetherBp": 10000,
+      "integrity": 20,
+      "enemyHpBp": 10000,
+      "enemySpeedBp": 10000,
+      "bountyBp": 10000,
+      "scoreBp": 10000
+    },
+    {
+      "id": "titan",
+      "availabilityId": "difficulty.titan",
+      "startAetherBp": 9100,
+      "integrity": 15,
+      "enemyHpBp": 12500,
+      "enemySpeedBp": 10800,
+      "bountyBp": 10000,
+      "scoreBp": 15000
+    }
+  ],
+  "assistRecord": {
+    "id": "assist",
+    "startAetherAdd": 20,
+    "enemySpeedBp": 9200,
+    "competitiveScoreEligible": false
+  },
+  "targetPolicyRecords": [
+    {
+      "id": "FAST",
+      "eligibilityRuleId": "target-kind-and-state-eligible",
+      "comparatorIds": [
+        "base-speed-desc",
+        "remaining-route-distance-asc",
+        "immutable-enemy-id-asc"
+      ]
+    },
+    {
+      "id": "FRONT",
+      "eligibilityRuleId": "target-kind-and-state-eligible",
+      "comparatorIds": [
+        "remaining-route-distance-asc",
+        "threat-priority-desc",
+        "immutable-enemy-id-asc"
+      ]
+    },
+    {
+      "id": "STRONG",
+      "eligibilityRuleId": "target-kind-and-state-eligible",
+      "comparatorIds": [
+        "hp-plus-shields-desc",
+        "remaining-route-distance-asc",
+        "immutable-enemy-id-asc"
+      ]
+    }
+  ],
+  "statusIds": [
+    "exposed",
+    "mark",
+    "resolve",
+    "reveal",
+    "slow",
+    "stun"
+  ],
+  "damageTypeIds": [
+    "arcane",
+    "kinetic"
+  ],
+  "ruleCatalog": {
+    "comparatorIds": [
+      "base-speed-desc",
+      "guard-contact-v1",
+      "hp-plus-shields-desc",
+      "immutable-enemy-id-asc",
+      "remaining-route-distance-asc",
+      "secondary-route-front-v1",
+      "threat-priority-desc"
+    ],
+    "eligibilityRuleIds": [
+      "collateral-cloak-eligible",
+      "continuous-reveal-eligible",
+      "direct-visible-or-exposed",
+      "target-kind-and-state-eligible"
+    ],
+    "removalRuleIds": [
+      "counter-reset-on-gap-or-target-change",
+      "counter-reset-on-wave-start",
+      "source-out-of-range-or-removed"
+    ],
+    "stackRuleIds": [
+      "refresh-same-source",
+      "strongest-magnitude-expiry-source"
+    ],
+    "prefilterRuleIds": [
+      "guard-ground-control-resolve-eligible"
+    ],
+    "scoreFormulaIds": [
+      "difficulty-before-unspent-cap",
+      "eligible-unspent-excluding-assist-modifiers"
+    ]
+  },
+  "campaignModifierRecords": [
+    {
+      "id": "reserve-1",
+      "kind": "start-aether-add",
+      "amountAether": 1,
+      "scope": "campaign"
+    }
+  ],
+  "accessGrantIds": [
+    "campaign.chronos",
+    "campaign.hoplite",
+    "campaign.oracle",
+    "campaign.sentinel",
+    "campaign.siege"
+  ],
+  "missionCatalogIds": [
+    "m01",
+    "m02",
+    "m03",
+    "m04",
+    "m05",
+    "m06",
+    "m07",
+    "m08",
+    "m09",
+    "m10",
+    "m11",
+    "m12",
+    "m13",
+    "m14",
+    "m15",
+    "m16",
+    "m17",
+    "m18",
+    "m19",
+    "m20"
+  ],
+  "scoreRules": {
+    "id": "campaign-score-v1",
+    "eligibleUnspentFormulaId": "eligible-unspent-excluding-assist-modifiers",
+    "unspentCapDivisor": 19,
+    "difficultyApplicationId": "difficulty-before-unspent-cap",
+    "minimumNonzeroScore": 1
+  }
+}

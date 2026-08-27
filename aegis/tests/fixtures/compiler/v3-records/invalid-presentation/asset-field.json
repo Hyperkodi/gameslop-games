@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-presentation-v1",
+  "packRecords": [
+    {
+      "id": "pack.slice",
+      "kind": "procedural-placeholder",
+      "missionIds": ["m01", "m04", "m05"],
+      "fallbackStyleId": "ancient-greece-ai-procedural",
+      "assetUrl": "sprites/forbidden.png"
+    }
+  ],
+  "cueMappings": [
+    { "cueId": "cue.default", "kind": "semantic-fallback", "fallbackStyleId": "ancient-greece-ai-procedural" }
+  ]
+}

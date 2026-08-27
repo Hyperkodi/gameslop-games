@@ -1,0 +1,165 @@
+{
+  "schemaVersion": 1,
+  "id": "slice-enemies-v1",
+  "records": [
+    {
+      "id": "echo",
+      "nameKey": "enemy.name",
+      "descriptionKey": "enemy.description",
+      "tags": ["cloak", "regular"],
+      "routeKinds": ["ground"],
+      "hp": "1",
+      "speedWorldUnitsPerSecond": "1",
+      "armor": "0",
+      "resistances": [],
+      "shieldPools": [],
+      "baseLineageBountyAether": 1,
+      "score": 1,
+      "leakIntegrity": 1,
+      "threatPriority": 1,
+      "control": {
+        "slowControlBp": 10000,
+        "minimumMovementBp": 1,
+        "hardControlBp": 10000,
+        "displacementBp": 10000
+      },
+      "traits": [
+        {
+          "kind": "cloak",
+          "version": 1,
+          "revealStatusId": "reveal",
+          "damageExposeStatusId": "exposed",
+          "damageExposeDurationMs": 1,
+          "directTargetEligibilityRuleId": "direct-visible-or-exposed",
+          "collateralEligibilityRuleId": "collateral-cloak-eligible",
+          "continuousRevealRuleId": "continuous-reveal-eligible",
+          "semanticEventIds": ["echo.cloak", "echo.exposed"]
+        }
+      ],
+      "spawnBehavior": { "kind": "none" },
+      "deathBehavior": { "kind": "terminal" },
+      "semanticEventIds": ["echo.cloak", "echo.exposed"],
+      "ui": { "statFieldIds": ["hp", "speed", "bounty-aether", "leak-integrity"] }
+    },
+    {
+      "id": "guardian",
+      "nameKey": "enemy.name",
+      "descriptionKey": "enemy.description",
+      "tags": ["heavy", "regular"],
+      "routeKinds": ["ground"],
+      "hp": "2",
+      "speedWorldUnitsPerSecond": "1",
+      "armor": "1",
+      "resistances": [
+        { "damageTypeId": "kinetic", "reductionBp": 1 }
+      ],
+      "shieldPools": [
+        {
+          "id": "guardian-shield",
+          "capacity": "1",
+          "initialAmount": "1",
+          "durationMs": null,
+          "sourceTypeId": "native-shield",
+          "consumeEventId": "shield.consume",
+          "expireEventId": "shield.expire"
+        }
+      ],
+      "baseLineageBountyAether": 1,
+      "score": 1,
+      "leakIntegrity": 1,
+      "threatPriority": 2,
+      "control": {
+        "slowControlBp": 10000,
+        "minimumMovementBp": 1,
+        "hardControlBp": 10000,
+        "displacementBp": 10000
+      },
+      "traits": [],
+      "spawnBehavior": { "kind": "none" },
+      "deathBehavior": { "kind": "terminal" },
+      "semanticEventIds": ["shield.consume", "shield.expire"],
+      "ui": { "statFieldIds": ["hp", "armor", "shield", "speed"] }
+    },
+    {
+      "id": "raider",
+      "nameKey": "enemy.name",
+      "descriptionKey": "enemy.description",
+      "tags": ["regular", "swift"],
+      "routeKinds": ["ground"],
+      "hp": "1",
+      "speedWorldUnitsPerSecond": "2",
+      "armor": "0",
+      "resistances": [],
+      "shieldPools": [],
+      "baseLineageBountyAether": 1,
+      "score": 1,
+      "leakIntegrity": 1,
+      "threatPriority": 1,
+      "control": {
+        "slowControlBp": 10000,
+        "minimumMovementBp": 1,
+        "hardControlBp": 10000,
+        "displacementBp": 10000
+      },
+      "traits": [],
+      "spawnBehavior": { "kind": "none" },
+      "deathBehavior": { "kind": "terminal" },
+      "semanticEventIds": [],
+      "ui": { "statFieldIds": ["hp", "speed"] }
+    },
+    {
+      "id": "scout",
+      "nameKey": "enemy.name",
+      "descriptionKey": "enemy.description",
+      "tags": ["regular"],
+      "routeKinds": ["ground"],
+      "hp": "1",
+      "speedWorldUnitsPerSecond": "1",
+      "armor": "0",
+      "resistances": [],
+      "shieldPools": [],
+      "baseLineageBountyAether": 1,
+      "score": 1,
+      "leakIntegrity": 1,
+      "threatPriority": 1,
+      "control": {
+        "slowControlBp": 10000,
+        "minimumMovementBp": 1,
+        "hardControlBp": 10000,
+        "displacementBp": 10000
+      },
+      "traits": [],
+      "spawnBehavior": { "kind": "none" },
+      "deathBehavior": { "kind": "terminal" },
+      "semanticEventIds": [],
+      "ui": { "statFieldIds": ["hp", "speed"] }
+    },
+    {
+      "id": "titan",
+      "nameKey": "enemy.name",
+      "descriptionKey": "enemy.description",
+      "tags": ["heavy", "regular"],
+      "routeKinds": ["ground"],
+      "hp": "3",
+      "speedWorldUnitsPerSecond": "1",
+      "armor": "1",
+      "resistances": [],
+      "shieldPools": [],
+      "baseLineageBountyAether": 1,
+      "score": 1,
+      "leakIntegrity": 1,
+      "threatPriority": 3,
+      "control": {
+        "slowControlBp": 10000,
+        "minimumMovementBp": 1,
+        "hardControlBp": 10000,
+        "displacementBp": 10000
+      },
+      "traits": [],
+      "spawnBehavior": { "kind": "none" },
+      "deathBehavior": { "kind": "terminal" },
+      "semanticEventIds": [],
+      "ui": { "statFieldIds": ["hp", "armor", "speed"] }
+    }
+  ]
+}

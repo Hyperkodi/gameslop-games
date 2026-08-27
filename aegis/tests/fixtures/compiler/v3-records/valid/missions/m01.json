@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "id": "m01",
+  "titleKey": "mission.title",
+  "actIndex": 1,
+  "missionIndex": 1,
+  "seedNamespace": "slice.m01",
+  "mapId": "m01",
+  "prerequisiteMissionIds": [],
+  "headlineMechanicId": "tutorial-foundation",
+  "briefing": {
+    "summaryKey": "mission.summary",
+    "objectiveKey": "mission.objective",
+    "routeNoticeKeys": ["mission.route-notice"],
+    "mechanicNoticeKeys": ["mission.mechanic-notice"]
+  },
+  "enemyRosterIds": ["scout"],
+  "bossRosterIds": [],
+  "availableDefenseIds": ["chronos", "hoplite", "oracle", "sentinel", "siege"],
+  "baseStartAether": 1,
+  "waves": [
+    {
+      "id": "m01.w01",
+      "index": 1,
+      "baseAetherEnvelope": 1,
+      "deploymentGrantAether": 1,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m01.w01.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "enemyId": "scout",
+          "routeId": "route.main",
+          "count": 1,
+          "firstTick": 0,
+          "intervalTicks": 1,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "suppressed",
+          "spawnEventId": "enemy.spawn"
+        }
+      ],
+      "previewDeclarationIds": ["preview.m01"],
+      "waveClearScore": 1,
+      "titleKey": "wave.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    }
+  ],
+  "objectives": [
+    {
+      "id": "victory",
+      "kind": "victory",
+      "titleKey": "objective.title",
+      "descriptionKey": "objective.description",
+      "progressKey": "objective.progress",
+      "predicate": "mission-victory"
+    },
+    {
+      "id": "integrity",
+      "kind": "integrity",
+      "titleKey": "objective.title",
+      "descriptionKey": "objective.description",
+      "progressKey": "objective.progress",
+      "thresholdRecords": [
+        { "difficultyId": "story", "minimumIntegrity": 1 },
+        { "difficultyId": "strategos", "minimumIntegrity": 1 },
+        { "difficultyId": "titan", "minimumIntegrity": 1 }
+      ]
+    },
+    {
+      "id": "mastery",
+      "kind": "mastery",
+      "titleKey": "objective.title",
+      "descriptionKey": "objective.description",
+      "progressKey": "objective.progress",
+      "predicate": { "kind": "maximum-owned-towers-at-victory", "maximum": 1 }
+    }
+  ],
+  "firstClearRewards": [
+    { "id": "reward.m01.hoplite", "order": 0, "kind": "unlock-defense", "defenseId": "hoplite" }
+  ],
+  "tutorial": {
+    "kind": "guided",
+    "modeId": "m01-guided",
+    "stepIds": ["compare", "build", "start-wave"],
+    "upgradeGateMode": "m01-wave1",
+    "skipCommandType": "skipTutorialGate",
+    "semanticEventIds": ["tutorial.step"]
+  },
+  "previewDeclarations": [
+    {
+      "id": "preview.m01",
+      "mechanicId": "tutorial-foundation",
+      "briefingKey": "preview.briefing",
+      "previewKind": "briefing",
+      "firstLethalWaveIndex": 1,
+      "semanticCueIds": ["cue.default"]
+    }
+  ],
+  "scoreRecord": {
+    "scoreRuleId": "campaign-score-v1",
+    "victoryScore": 1,
+    "integrityPointScore": 1,
+    "masteryObjectiveScore": 1,
+    "rawUnspentScorePerEligibleAether": 1
+  },
+  "semanticEventIds": ["enemy.spawn", "tutorial.step", "wave.deploy"],
+  "presentationPackId": "pack.slice"
+}
