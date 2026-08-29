@@ -16,7 +16,11 @@
   if (!game || !game.AegisSimV2) throw new Error("Game.AegisSimV2 must be installed before replay-v2.js");
   if (!game.AegisCommandsV2) throw new Error("Game.AegisCommandsV2 must be installed before replay-v2.js");
   if (!game.AegisReplay) throw new Error("Game.AegisReplay must be installed before replay-v2.js");
-  const api = factory(game.AegisSimV2, game.AegisCommandsV2, game.AegisReplay);
+  const api = factory(
+    game.AegisSimV2,
+    game.AegisCommandsV2,
+    game.AegisReplay
+  );
   if (Object.prototype.hasOwnProperty.call(game, "AegisReplayV2")) {
     if (game.AegisReplayV2 !== api) throw new Error("Game.AegisReplayV2 is already installed");
     return;
