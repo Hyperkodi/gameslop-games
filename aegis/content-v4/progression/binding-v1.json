@@ -322,6 +322,186 @@
       "kind": "unlock-relic",
       "targetId": "titan-gear",
       "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.apollo-forked-ray",
+      "kind": "unlock-specialization",
+      "targetId": "apollo-forked-ray",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.apollo-solar-lance",
+      "kind": "unlock-specialization",
+      "targetId": "apollo-solar-lance",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.artemis-execution-line",
+      "kind": "unlock-specialization",
+      "targetId": "artemis-execution-line",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.artemis-threader",
+      "kind": "unlock-specialization",
+      "targetId": "artemis-threader",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.athena-command-mesh",
+      "kind": "unlock-specialization",
+      "targetId": "athena-command-mesh",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.athena-coordinated-fire",
+      "kind": "unlock-specialization",
+      "targetId": "athena-coordinated-fire",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.chronos-echo-field",
+      "kind": "unlock-specialization",
+      "targetId": "chronos-echo-field",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.chronos-time-debt",
+      "kind": "unlock-specialization",
+      "targetId": "chronos-time-debt",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hades-soul-tithe",
+      "kind": "unlock-specialization",
+      "targetId": "hades-soul-tithe",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hades-twin-banish",
+      "kind": "unlock-specialization",
+      "targetId": "hades-twin-banish",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hephaestus-molten-field",
+      "kind": "unlock-specialization",
+      "targetId": "hephaestus-molten-field",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hephaestus-triple-foundry",
+      "kind": "unlock-specialization",
+      "targetId": "hephaestus-triple-foundry",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hermes-sky-swarm",
+      "kind": "unlock-specialization",
+      "targetId": "hermes-sky-swarm",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hermes-wing-command",
+      "kind": "unlock-specialization",
+      "targetId": "hermes-wing-command",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hoplite-phalanx",
+      "kind": "unlock-specialization",
+      "targetId": "hoplite-phalanx",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.hoplite-spearwall",
+      "kind": "unlock-specialization",
+      "targetId": "hoplite-spearwall",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.medusa-basilisk-focus",
+      "kind": "unlock-specialization",
+      "targetId": "medusa-basilisk-focus",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.medusa-gorgon-bloom",
+      "kind": "unlock-specialization",
+      "targetId": "medusa-gorgon-bloom",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.oracle-chorus",
+      "kind": "unlock-specialization",
+      "targetId": "oracle-chorus",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.oracle-judgment",
+      "kind": "unlock-specialization",
+      "targetId": "oracle-judgment",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.poseidon-maelstrom",
+      "kind": "unlock-specialization",
+      "targetId": "poseidon-maelstrom",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.poseidon-undertow",
+      "kind": "unlock-specialization",
+      "targetId": "poseidon-undertow",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.sentinel-lock-on",
+      "kind": "unlock-specialization",
+      "targetId": "sentinel-lock-on",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.sentinel-twin-lance",
+      "kind": "unlock-specialization",
+      "targetId": "sentinel-twin-lance",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.siege-breach-core",
+      "kind": "unlock-specialization",
+      "targetId": "siege-breach-core",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.siege-sun-shrapnel",
+      "kind": "unlock-specialization",
+      "targetId": "siege-sun-shrapnel",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.talos-earthbreaker",
+      "kind": "unlock-specialization",
+      "targetId": "talos-earthbreaker",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.talos-titan-hunter",
+      "kind": "unlock-specialization",
+      "targetId": "talos-titan-hunter",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.zeus-storm-crown",
+      "kind": "unlock-specialization",
+      "targetId": "zeus-storm-crown",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.specialization.zeus-thunderhead",
+      "kind": "unlock-specialization",
+      "targetId": "zeus-thunderhead",
+      "integerValue": 0
     }
   ],
   "records": [
