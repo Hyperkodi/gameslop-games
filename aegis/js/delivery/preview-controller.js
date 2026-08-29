@@ -13,7 +13,14 @@
     commonJs ? require("../presentation/m01-art.js") : installedGame && installedGame.AegisM01Art,
     commonJs ? require("../presentation/act-i-art.js") : installedGame && installedGame.AegisActIArt,
     commonJs ? require("../presentation/sprite-atlas.js") : installedGame && installedGame.AegisSpriteAtlas,
-    commonJs ? require("../presentation/share-card.js") : installedGame && installedGame.AegisShareCard
+    commonJs ? require("../presentation/share-card.js") : installedGame && installedGame.AegisShareCard,
+    commonJs ? require("./battle-session.js") : installedGame && installedGame.AegisBattleSession,
+    commonJs ? require("./shell.js") : installedGame && installedGame.AegisShell,
+    commonJs ? require("../presentation/shell-view.js") : installedGame && installedGame.AegisShellView,
+    commonJs ? require("./run-header-v2.js") : installedGame && installedGame.AegisRunHeaderV2,
+    commonJs ? require("./session-store.js") : installedGame && installedGame.AegisSessionStore,
+    commonJs ? require("../progression/profile-v2.js") : installedGame && installedGame.AegisProfileV2,
+    commonJs ? require("../progression/progression.js") : installedGame && installedGame.AegisProgression
   );
   if (commonJs) {
     module.exports = api;
@@ -39,12 +46,22 @@
   M01Art,
   ActIArt,
   SpriteAtlas,
-  ShareCard
+  ShareCard,
+  BattleSession,
+  Shell,
+  ShellView,
+  RunHeaderV2,
+  SessionStore,
+  Profile,
+  Progression
 ) {
   "use strict";
 
   if (!Camera || !RoadGeometry || !M01Art || !ActIArt || !SpriteAtlas || !ShareCard) {
     throw new Error("Aegis preview requires camera, road, Act I art, sprite-atlas, and share-card presentation modules");
+  }
+  if (!BattleSession || !Shell || !ShellView || !RunHeaderV2 || !SessionStore || !Profile || !Progression) {
+    throw new Error("Aegis preview requires the battle session, shell, shell view, run header, store, and progression modules");
   }
 
   const MAX_LOADOUT = 4;
@@ -333,8 +350,10 @@
     return mission ? stringValue(strings, mission.titleKey, missionId) : missionId;
   }
 
-  function resultCardModel(runtimeInput, state) {
+  function resultCardModel(runtimeInput, state, options) {
     const runtime = assertRuntime(runtimeInput);
+    const challengeLine = options && typeof options.challengeLine === "string" && options.challengeLine
+      ? options.challengeLine : null;
     if (!state || (state.outcome !== "victory" && state.outcome !== "defeat") ||
         !state.management || !Number.isSafeInteger(state.management.clearedWaves)) {
       throw new TypeError("Preview result card requires a terminal authoritative kernel state");
@@ -358,6 +377,7 @@
       score: state.score,
       waves: { cleared: clearedWaves, total: totalWaves },
       gateHealth: { current: state.integrity, max: difficulty.integrity },
+      challengeLine: challengeLine,
     });
   }
 
@@ -365,138 +385,10 @@
     return view.attacksPerSecond === "continuous" ? "continuous" : view.attacksPerSecond + "/sec";
   }
 
-  function createHeader(runtimeInput, options) {
-    const runtime = assertRuntime(runtimeInput);
-    options = options || {};
-    const missionId = options.missionId || runtime.descriptor.contentIds[0];
-    const mission = runtime.content.missions[missionId];
-    if (!mission || runtime.descriptor.contentIds.indexOf(missionId) === -1) {
-      throw new RangeError("Mission is not available in the selected preview release");
-    }
-    const difficulties = runtime.content.campaignRules.difficultyPresets.map(function (record) { return record.id; });
-    const difficultyId = options.difficultyId || "strategos";
-    if (difficulties.indexOf(difficultyId) === -1) throw new RangeError("Unknown preview difficulty");
-    const seed = options.seed === undefined ? 1 : Number(options.seed);
-    if (!Number.isSafeInteger(seed) || seed < 0 || seed > 0xffffffff) {
-      throw new RangeError("Preview seed must be an unsigned 32-bit integer");
-    }
-    const defaultLoadoutIds = mission.id === "m01"
-      ? STARTER_DEFENSE_IDS.filter(function (id) { return mission.availableDefenseIds.includes(id); })
-      : mission.availableDefenseIds.slice(0, MAX_LOADOUT);
-    const loadoutIds = (options.loadoutIds || defaultLoadoutIds).slice();
-    if (!loadoutIds.length || loadoutIds.length > MAX_LOADOUT ||
-        new Set(loadoutIds).size !== loadoutIds.length || loadoutIds.some(function (id) {
-          return mission.availableDefenseIds.indexOf(id) === -1 || !runtime.content.defenses[id];
-        })) {
-      throw new RangeError("Preview loadout must contain one to four unique mission defenses");
-    }
-    const grantByDefense = Object.create(null);
-    runtime.content.defenseUnlockGrantMappings.forEach(function (record) {
-      grantByDefense[record.defenseId] = record.accessGrantId;
-    });
-    const accessGrantIds = loadoutIds.map(function (id) {
-      if (!grantByDefense[id]) throw new RangeError("Preview defense lacks an access-grant mapping: " + id);
-      return grantByDefense[id];
-    });
-    const tutorialUpgradeGateMode = mission.tutorial && mission.tutorial.upgradeGateMode
-      ? mission.tutorial.upgradeGateMode : "none";
-    return deepFreeze({
-      formatVersion: 1,
-      rulesetHash: runtime.binding.rulesetHash,
-      eventSchemaVersion: runtime.release.eventSchemaVersion,
-      missionId: missionId,
-      difficultyId: difficultyId,
-      assist: options.assist === true,
-      seed: seed,
-      loadoutIds: loadoutIds,
-      loadoutSlotCap: MAX_LOADOUT,
-      campaignModifierIds: [],
-      accessGrantIds: accessGrantIds,
-      tutorialUpgradeGateMode: tutorialUpgradeGateMode,
-    });
-  }
-
-  function createSession(runtimeInput, headerInput) {
-    const runtime = assertRuntime(runtimeInput);
-    const header = headerInput || createHeader(runtime);
-    let state = runtime.kernel.createInitialState(runtime.binding, header);
-    let planningBaseState = state;
-    let planningCommands = [];
-    let pendingCommands = [];
-    let inputs = [];
-    let events = [];
-    let paused = false;
-
-    function canonicalCommand(fields, tick, seq) {
-      const command = Object.assign({ tick: tick, seq: seq }, fields);
-      return runtime.commands.normalizeCommand(command);
-    }
-
-    function command(fields) {
-      if (state.outcome !== "active") throw new RangeError("Terminal preview state cannot accept commands");
-      if (!fields || typeof fields !== "object" || Array.isArray(fields) ||
-          own(fields, "tick") || own(fields, "seq")) {
-        throw new TypeError("Preview command fields must omit host-owned tick and sequence");
-      }
-      if (state.management.phase === "planning") {
-        if (!planningBaseState) planningBaseState = state;
-        const normalized = canonicalCommand(fields, state.tick, planningCommands.length);
-        const candidateCommands = planningCommands.concat([normalized]);
-        const result = runtime.kernel.advanceTick(runtime.binding, planningBaseState, candidateCommands);
-        planningCommands = candidateCommands;
-        inputs.push(normalized);
-        state = result.state;
-        events = events.concat(result.events);
-        if (state.management.phase !== "planning") {
-          planningBaseState = null;
-          planningCommands = [];
-        }
-        return state;
-      }
-      const normalized = canonicalCommand(fields, state.tick, pendingCommands.length);
-      pendingCommands.push(normalized);
-      inputs.push(normalized);
-      return state;
-    }
-
-    function step() {
-      if (paused || state.outcome !== "active" || state.management.phase === "planning") {
-        return Object.freeze({ advanced: false, events: Object.freeze([]), state: state });
-      }
-      const bucket = pendingCommands;
-      pendingCommands = [];
-      const result = runtime.kernel.advanceTick(runtime.binding, state, bucket);
-      state = result.state;
-      events = events.concat(result.events);
-      if (state.management.phase === "planning") {
-        planningBaseState = state;
-        planningCommands = [];
-      }
-      return Object.freeze({ advanced: true, events: result.events, state: state });
-    }
-
-    function pause() {
-      paused = true;
-      return paused;
-    }
-
-    function resume() {
-      paused = false;
-      return paused;
-    }
-
-    return Object.freeze({
-      command: command,
-      step: step,
-      pause: pause,
-      resume: resume,
-      get state() { return state; },
-      get paused() { return paused; },
-      get pendingCommandCount() { return pendingCommands.length; },
-      get inputs() { return Object.freeze(inputs.slice()); },
-      get events() { return Object.freeze(events.slice()); },
-    });
-  }
+  /* The run header and the session live in battle-session.js so the shell can
+     own navigation while one module owns the authoritative run. */
+  const createHeader = BattleSession.createHeader;
+  const createSession = BattleSession.createSession;
 
   function routeSegments(map, route) {
     if (route.route && Array.isArray(route.route.segments)) return route.route.segments;
@@ -1275,7 +1167,7 @@
     return node;
   }
 
-  function mount(runtimeInput, options) {
+  function mountBattle(runtimeInput, options) {
     const runtime = assertRuntime(runtimeInput);
     options = options || {};
     const documentObject = options.document || (root && root.document);
@@ -1323,6 +1215,7 @@
     let fatalPaused = false;
     let renderedShareState = null;
     let renderedShareModel = null;
+    let outcomeReported = false;
     const reduceMotion = typeof windowObject.matchMedia === "function" &&
       windowObject.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -1392,7 +1285,10 @@
       ui.shareStatus.textContent = "Rendering your local Armara result card...";
       let model;
       try {
-        model = resultCardModel(runtime, state);
+        model = resultCardModel(runtime, state, {
+          challengeLine: typeof options.resultChallengeLine === "function"
+            ? options.resultChallengeLine(state) : null,
+        });
       } catch (error) {
         ui.shareStatus.textContent = "Result card unavailable: " + String(error && error.message || error);
         return;
@@ -1957,9 +1853,9 @@
         " · " + runtime.release.contentVersion + " · LOCAL / UNVERIFIED";
     }
 
-    function resetSession() {
+    function resetSession(explicitHeader) {
       try {
-        const header = createHeader(runtime, {
+        const header = explicitHeader || createHeader(runtime, {
           missionId: ui.mission.value,
           difficultyId: ui.difficulty.value,
           assist: ui.assist.checked,
@@ -1967,6 +1863,7 @@
           loadoutIds: selectedLoadout(),
         });
         session = createSession(runtime, header);
+        outcomeReported = false;
         selectedPadId = null;
         manuallyPaused = false;
         fatalPaused = false;
@@ -2013,7 +1910,7 @@
     ui.skipTutorial.addEventListener("click", function () {
       issue({ type: "skipTutorialGate" }, "Upgrades unlocked for this test.");
     });
-    resetSession();
+    if (options.autoStart !== false) resetSession();
 
     timer = windowObject.setInterval(function () {
       if (!session) return;
@@ -2040,6 +1937,10 @@
             render();
           }
         }
+        if (!outcomeReported && session.state.outcome !== "active") {
+          outcomeReported = true;
+          if (typeof options.onOutcome === "function") options.onOutcome(session);
+        }
       } catch (error) {
         fatalPaused = true;
         session.pause();
@@ -2048,22 +1949,549 @@
       }
     }, 1000 / runtime.simulation.TICKS_PER_SECOND);
 
-    documentObject.body.dataset.ready = "1";
-    windowObject.__gameslop = {
-      preview: true,
-      releaseId: runtime.descriptor.id,
-      get state() { return session && session.state; },
-      get paused() { return session && session.paused; },
-      get manuallyPaused() { return manuallyPaused; },
-      get storeOpen() { return Boolean(selectedPadId); },
-    };
     return Object.freeze({
       dispose: function () {
         if (timer !== null) windowObject.clearInterval(timer);
         timer = null;
       },
+      startRun: function (header) { resetSession(header); },
       get session() { return session; },
+      get manuallyPaused() { return manuallyPaused; },
+      get storeOpen() { return Boolean(selectedPadId); },
       render: render,
+    });
+  }
+
+  /* ------------------------------------------------------- campaign shell */
+
+  function debugRequested(search) {
+    if (typeof search !== "string" || !search) return false;
+    const query = search.charAt(0) === "?" ? search.slice(1) : search;
+    return query.split("&").some(function (pair) {
+      const parts = pair.split("=");
+      return parts[0] === "debug" && parts[1] === "1";
+    });
+  }
+
+  function optionalElement(documentObject, id) {
+    return typeof documentObject.getElementById === "function" ? documentObject.getElementById(id) : null;
+  }
+
+  function setHidden(element, hidden) {
+    if (!element) return;
+    element.hidden = hidden;
+    if (typeof element.setAttribute === "function") {
+      if (hidden) element.setAttribute("hidden", "hidden");
+      else if (typeof element.removeAttribute === "function") element.removeAttribute("hidden");
+    }
+  }
+
+  /* Training grants trial access to every defense in the build without touching
+     the stored profile: the synthetic snapshot is never written back. */
+  function trainingSnapshot(snapshot, catalog) {
+    return deepFreeze(Object.assign({}, snapshot, {
+      defenseGrantIds: Object.keys(catalog.defenses).slice().sort(),
+      defenseSlotCap: 6,
+    }));
+  }
+
+  function mount(runtimeInput, options) {
+    const runtime = assertRuntime(runtimeInput);
+    options = options || {};
+    const documentObject = options.document || (root && root.document);
+    const windowObject = options.window || root;
+    if (!documentObject || !windowObject) throw new TypeError("The Aegis shell requires a document and window");
+
+    const search = options.search !== undefined ? options.search
+      : (windowObject.location && windowObject.location.search) || "";
+    const debug = options.debug === true || debugRequested(search);
+    const shellRoot = requiredElement(documentObject, "shellRoot");
+    const battleRegion = optionalElement(documentObject, "battleRegion");
+    const resultCardRegion = optionalElement(documentObject, "resultCardRegion");
+    const developerTools = optionalElement(documentObject, "previewDeveloperTools");
+    const bootStatus = optionalElement(documentObject, "previewBootStatus");
+    const reduceMotionPreferred = typeof windowObject.matchMedia === "function" &&
+      windowObject.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const catalog = Shell.createCatalog({
+      content: runtime.content,
+      presentation: runtime.presentation,
+      distanceScale: runtime.simulation && runtime.simulation.DISTANCE_SCALE,
+      damageScale: runtime.simulation && runtime.simulation.DAMAGE_SCALE,
+    });
+    const contentIdentity = runtime.release.contentVersion;
+
+    let profile = Profile.createProfileV2(contentIdentity);
+    let store = SessionStore.openSessionProfileStore({
+      namespace: runtime.descriptor.namespaces.profile,
+      profile: profile,
+    });
+    let state = Shell.createInitialState({
+      catalog: catalog,
+      profile: profile,
+      storageKind: "session",
+      debug: debug,
+      settings: { reducedMotion: reduceMotionPreferred },
+    });
+    let battle = null;
+    let lastResultState = null;
+
+    function context(extra) {
+      return Object.assign({ catalog: catalog, profile: profile, state: state }, extra || {});
+    }
+
+    function notice(text, tone) {
+      state = Shell.transition(context(), {
+        type: "setNotice",
+        notice: text === null ? null : { text: text, tone: tone || "quiet" },
+      }).state;
+    }
+
+    function applyRootFlags() {
+      const body = documentObject.body;
+      if (!body || !body.dataset) return;
+      body.dataset.screen = state.screen;
+      body.dataset.mode = state.mode;
+      body.dataset.debug = debug ? "1" : "0";
+      body.dataset.reducedMotion = String(state.settings.reducedMotion);
+      body.dataset.photosensitiveSafe = String(state.settings.photosensitiveSafe);
+      body.dataset.storage = state.storageKind;
+    }
+
+    function currentWaves() {
+      const mission = state.missionId === null ? null : runtime.content.missions[state.missionId];
+      return mission && Array.isArray(mission.waves) ? mission.waves : [];
+    }
+
+    function screenModel() {
+      return Shell.selectScreen(context({
+        waves: currentWaves(),
+        ticksPerSecond: runtime.simulation ? runtime.simulation.TICKS_PER_SECOND : 60,
+      }));
+    }
+
+    function render() {
+      applyRootFlags();
+      setHidden(battleRegion, state.screen !== "battle");
+      setHidden(resultCardRegion, state.screen !== "result");
+      setHidden(developerTools, !debug);
+      if (bootStatus) {
+        /* Ordinary play shows no release identity: the honesty banner above it
+           already states that this build is local and unverified. */
+        bootStatus.textContent = debug
+          ? "Candidate-BAL · " + runtime.release.approvalState + " · " + runtime.release.contentVersion
+            + " · ABI v" + runtime.abiVersion + " · LOCAL / UNVERIFIED"
+          : "";
+        bootStatus.hidden = !debug;
+      }
+      const tree = ShellView.buildScreenTree(screenModel(), {
+        storageKind: state.storageKind,
+        notice: state.notice,
+        reducedMotion: state.settings.reducedMotion,
+        photosensitiveSafe: state.settings.photosensitiveSafe,
+      });
+      ShellView.mount(documentObject, shellRoot, tree, dispatch);
+    }
+
+    function apply(action) {
+      const result = Shell.transition(context(), action);
+      state = result.state;
+      if (!result.ok) notice(result.reason, "warning");
+      return result;
+    }
+
+    async function persistProfile(nextProfile, journalEntry) {
+      profile = nextProfile;
+      const written = await store.writeProfile(nextProfile, journalEntry || null);
+      if (!written.ok) notice("Progress could not be saved: " + written.reason + ".", "warning");
+      return written.ok;
+    }
+
+    function runEdit(edit) {
+      if (state.mode === "training") {
+        notice("Training does not change your campaign loadout.", "warning");
+        render();
+        return;
+      }
+      const plan = Shell.planLoadoutEdit(profile, edit);
+      if (!plan.ok) {
+        notice(plan.reason, "warning");
+        render();
+        return;
+      }
+      persistProfile(plan.profile, { kind: edit.kind }).then(function () {
+        if (plan.notes.length) notice(plan.notes.join(" "), "ready");
+        render();
+      });
+    }
+
+    function toggleTower(defenseId) {
+      const equipped = state.loadoutIds.slice();
+      const index = equipped.indexOf(defenseId);
+      if (index === -1) equipped.push(defenseId);
+      else equipped.splice(index, 1);
+      apply({ type: "setLoadout", loadoutIds: equipped });
+      render();
+    }
+
+    function toggleProtocol(protocolId) {
+      const current = profile.protocolLoadout.slice();
+      const index = current.findIndex(function (entry) { return entry.protocolId === protocolId; });
+      let loadout;
+      if (index === -1) {
+        const record = profile.protocols.find(function (entry) { return entry.id === protocolId; });
+        const usedSlots = current.map(function (entry) { return entry.slot; });
+        let slot = 0;
+        while (usedSlots.indexOf(slot) !== -1) slot += 1;
+        loadout = current.concat([{
+          slot: slot,
+          protocolId: protocolId,
+          tier: record ? record.availableTier : 1,
+        }]);
+      } else {
+        loadout = current.filter(function (entry) { return entry.protocolId !== protocolId; });
+      }
+      runEdit({ kind: "setProtocolLoadout", loadout: loadout });
+    }
+
+    function toggleRelic(relicId) {
+      const current = profile.relicLoadoutIds.slice();
+      const index = current.indexOf(relicId);
+      const next = index === -1 ? current.concat([relicId])
+        : current.filter(function (id) { return id !== relicId; });
+      runEdit({ kind: "setRelicLoadout", relicIds: next });
+    }
+
+    function buildRunHeader() {
+      const mission = runtime.content.missions[state.missionId];
+      if (runtime.abiVersion === 2) {
+        const baseSnapshot = Profile.resolveRunSnapshot(profile);
+        const snapshot = state.mode === "training"
+          ? trainingSnapshot(baseSnapshot, catalog) : baseSnapshot;
+        return RunHeaderV2.createRunHeaderV2({
+          snapshot: snapshot,
+          protocolAuthority: RunHeaderV2.deriveProtocolAuthority(profile),
+          mission: mission,
+          loadoutIds: state.loadoutIds,
+          accessGrantMappings: runtime.content.defenseUnlockGrantMappings,
+          difficultyId: state.difficultyId,
+          seed: state.seed,
+          assist: state.assist,
+          rulesetHash: runtime.binding.rulesetHash,
+        });
+      }
+      return createHeader(runtime, {
+        missionId: state.missionId,
+        difficultyId: state.difficultyId,
+        assist: state.assist,
+        seed: state.seed,
+        loadoutIds: state.loadoutIds,
+      });
+    }
+
+    function startRun() {
+      let header;
+      try {
+        header = buildRunHeader();
+      } catch (error) {
+        notice("This mission cannot start yet: " + String(error && error.message || error), "warning");
+        render();
+        return;
+      }
+      const result = apply({ type: "startRun", header: header });
+      if (!result.ok) {
+        render();
+        return;
+      }
+      render();
+      if (battle) battle.startRun(header);
+    }
+
+    function runAuthorizationFor(header) {
+      return Progression.deriveRunAuthorization(
+        Object.assign({}, header, {
+          specializationAccessIds: header.specializationAccessIds || profile.specializationAccessIds,
+        }),
+        profile.contentIdentity
+      );
+    }
+
+    async function commitVictory(runResult, header) {
+      if (state.mode === "training" || runResult.outcome !== "victory") {
+        return Object.assign({}, runResult, {
+          persistence: {
+            kind: state.mode === "training" ? "training" : state.storageKind,
+            durable: false,
+            message: state.mode === "training"
+              ? "Training runs are never saved."
+              : (runResult.outcome === "victory"
+                ? "This victory is only in this browser tab."
+                : "Defeats are not saved. Retry when you are ready."),
+          },
+        });
+      }
+      let plan;
+      try {
+        plan = Progression.planApplyVerifiedVictory(profile, {
+          missionId: runResult.missionId,
+          difficultyId: runResult.difficultyId,
+          completedObjectiveIds: runResult.completedObjectiveIds,
+          defenseEvidence: runResult.facts.defenseEvidence,
+          runAuthorization: runAuthorizationFor(header),
+        });
+      } catch (error) {
+        return Object.assign({}, runResult, {
+          persistence: {
+            kind: "session",
+            durable: false,
+            message: "Progress could not be recorded: "
+              + String(error && error.message || error) + " The result below is real but unsaved.",
+          },
+        });
+      }
+      const committed = await store.commitVictory({
+        profile: plan.profile,
+        result: {
+          resultId: runResult.missionId + ":" + runResult.difficultyId + ":" + runResult.seed,
+          missionId: runResult.missionId,
+          difficultyId: runResult.difficultyId,
+          score: runResult.score,
+          durationTicks: runResult.durationTicks,
+        },
+        journalEntry: { kind: "verified-victory", missionId: runResult.missionId },
+      });
+      if (!committed.ok) {
+        return Object.assign({}, runResult, {
+          persistence: {
+            kind: "session", durable: false,
+            message: "Progress could not be saved: " + committed.reason
+              + ". The result below is real but unsaved.",
+          },
+        });
+      }
+      profile = plan.profile;
+      return Object.assign({}, runResult, {
+        newLaurelIds: plan.laurelIdsAdded || [],
+        grantIdsApplied: plan.grantIdsApplied || [],
+        masteryChanges: (plan.masteryChanges || []).map(function (change) {
+          return {
+            defenseId: change.defenseId,
+            milestone: change.masteredAdded ? "mastered"
+              : (change.temperedAdded ? "tempered" : "fielded"),
+          };
+        }),
+        persistence: {
+          kind: store.kind,
+          durable: Boolean(committed.value && committed.value.durable),
+          message: committed.value && committed.value.durable
+            ? "Saved to this browser."
+            : "SESSION ONLY. This victory is not saved and disappears when the page closes.",
+        },
+      });
+    }
+
+    function finishRun(session) {
+      const header = state.runHeader;
+      let runResult;
+      try {
+        runResult = BattleSession.createRunResult({
+          runtime: runtime,
+          header: header,
+          state: session.state,
+          events: session.events,
+        });
+      } catch (error) {
+        notice("The run finished but its result could not be summarized: "
+          + String(error && error.message || error), "warning");
+        render();
+        return;
+      }
+      lastResultState = session.state;
+      commitVictory(runResult, header).then(function (finalResult) {
+        apply({ type: "finishRun", result: finalResult });
+        render();
+      });
+    }
+
+    function exportRecovery() {
+      store.exportRecovery().then(function (result) {
+        notice(result.ok
+          ? "Recovery data prepared. Copy it from the developer console readout."
+          : "Recovery export failed: " + result.reason, result.ok ? "ready" : "warning");
+        if (result.ok) windowObject.__gameslopRecovery = result.value;
+        render();
+      });
+    }
+
+    function importRecovery() {
+      const bundle = windowObject.__gameslopRecovery || null;
+      if (!bundle) {
+        notice("No recovery data is loaded in this tab yet.", "warning");
+        render();
+        return;
+      }
+      store.importRecovery(bundle).then(function (result) {
+        if (!result.ok) {
+          notice("Recovery import failed: " + result.reason, "warning");
+        } else if (result.value) {
+          profile = Profile.validateProfileV2(result.value);
+          notice("Recovery data imported.", "ready");
+        }
+        render();
+      });
+    }
+
+    function dispatch(action, event) {
+      if (!action || typeof action.type !== "string") return;
+      switch (action.type) {
+        case "continueCampaign": {
+          apply({ type: "navigate", screen: "campaign" });
+          const model = Shell.selectTitleScreen(context());
+          apply({ type: "selectMission", missionId: model.continueMissionId });
+          render();
+          return;
+        }
+        case "toggleTower":
+          toggleTower(action.defenseId);
+          return;
+        case "toggleAssist":
+          apply({ type: "setAssist", assist: !state.assist });
+          render();
+          return;
+        case "toggleProtocol":
+          toggleProtocol(action.protocolId);
+          return;
+        case "toggleRelic":
+          toggleRelic(action.relicId);
+          return;
+        case "toggleReinforcement":
+          runEdit({
+            kind: "setReinforcement",
+            reinforcementId: profile.reinforcementId === action.reinforcementId
+              ? null : action.reinforcementId,
+          });
+          return;
+        case "clearTowers":
+          apply({ type: "setLoadout", loadoutIds: [] });
+          render();
+          return;
+        case "clearProtocols":
+          runEdit({ kind: "clearProtocols" });
+          return;
+        case "clearRelics":
+          runEdit({ kind: "clearRelics" });
+          return;
+        case "clearReinforcement":
+          runEdit({ kind: "clearReinforcement" });
+          return;
+        case "allocateProtocolTier":
+          runEdit({ kind: "allocateProtocolTier", protocolId: action.protocolId });
+          return;
+        case "refundProtocolTier":
+          runEdit({ kind: "refundProtocolTier", protocolId: action.protocolId });
+          return;
+        case "startRun":
+          startRun();
+          return;
+        case "rebindKey": {
+          const key = action.key !== undefined ? action.key : (event && event.key);
+          if (event && typeof event.preventDefault === "function") event.preventDefault();
+          apply({ type: "rebindKey", actionId: action.actionId, key: key });
+          render();
+          return;
+        }
+        case "highlightGuide":
+          /* Presentation-only guidance. The page never records, uploads, or
+             posts anything, and nothing here gates a reward. */
+          notice("Local highlight: start your device's screen recorder, press Retry or replay the "
+            + "last wave, and stop after 10 to 20 seconds. Nothing is uploaded or posted from here.",
+          "ready");
+          render();
+          return;
+        case "exportRecovery":
+          exportRecovery();
+          return;
+        case "importRecovery":
+          importRecovery();
+          return;
+        default:
+          apply(action);
+          render();
+      }
+    }
+
+    battle = mountBattle(runtime, {
+      document: documentObject,
+      window: windowObject,
+      autoStart: false,
+      onOutcome: finishRun,
+      resultChallengeLine: function (terminalState) {
+        if (!state.runHeader) return null;
+        return Shell.badgeLine(Shell.usageBadges(catalog, BattleSession.deriveRunFacts({
+          header: state.runHeader,
+          events: battle && battle.session ? battle.session.events : [],
+          state: terminalState,
+        })));
+      },
+    });
+
+    const probe = SessionStore.detectStorage(windowObject);
+    SessionStore.openProfileStore({
+      game: root && root.Game,
+      namespace: runtime.descriptor.namespaces.profile,
+      profile: profile,
+    }).then(function (opened) {
+      store = opened;
+      return store.readProfile();
+    }).then(function (read) {
+      if (read && read.ok && read.value) {
+        try {
+          profile = Profile.reconcileProfileV2(read.value).profile;
+        } catch (error) {
+          profile = Profile.createProfileV2(contentIdentity);
+        }
+      }
+      const durable = store.kind !== "session" && probe.durable;
+      state = Shell.transition(context(), {
+        type: "setStorageKind",
+        storageKind: durable ? "durable" : "session",
+      }).state;
+    }).catch(function () {
+      /* an unreadable profile is a session-only start, never a crash */
+    }).then(function () {
+      render();
+      documentObject.body.dataset.ready = "1";
+    });
+
+    windowObject.__gameslop = {
+      preview: true,
+      releaseId: runtime.descriptor.id,
+      abiVersion: runtime.abiVersion,
+      debug: debug,
+      get screen() { return state.screen; },
+      get shellState() { return state; },
+      get profile() { return profile; },
+      get storageKind() { return state.storageKind; },
+      get state() { return battle && battle.session && battle.session.state; },
+      get paused() { return battle && battle.session && battle.session.paused; },
+      get manuallyPaused() { return battle && battle.manuallyPaused; },
+      get storeOpen() { return Boolean(battle && battle.storeOpen); },
+      get lastResultState() { return lastResultState; },
+    };
+    /* A scripted screen driver for developer QA only. It dispatches the exact
+       actions the rendered controls dispatch and is absent without ?debug=1. */
+    if (debug) windowObject.__gameslop.dispatch = dispatch;
+
+    render();
+
+    return Object.freeze({
+      dispose: function () { if (battle) battle.dispose(); },
+      dispatch: dispatch,
+      render: render,
+      get battle() { return battle; },
+      get catalog() { return catalog; },
+      get profile() { return profile; },
+      get shellState() { return state; },
     });
   }
 
@@ -2073,8 +2501,11 @@
     battlefieldView: battlefieldView,
     createHeader: createHeader,
     createSession: createSession,
+    createRunResult: BattleSession.createRunResult,
+    deriveRunFacts: BattleSession.deriveRunFacts,
     defenseView: defenseView,
     mount: mount,
+    mountBattle: mountBattle,
     resultCardModel: resultCardModel,
   });
 });

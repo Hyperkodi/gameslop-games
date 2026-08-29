@@ -25,7 +25,22 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function (root) {
   "use strict";
 
-  const EXPECTED_RELEASE_ID = "slice-dev-v1";
+  /* The release aliases this repository ships. A release id is never accepted
+     from request state: the selector owns the allowlist and this loader owns
+     the field contract every authenticated release record must satisfy. */
+  const PREVIEW_RELEASE_IDS = Object.freeze(["slice-dev-v1", "candidate-v4"]);
+  const RELEASE_ALIAS_PATH = /^content\/generated\/release\.([a-z0-9][a-z0-9-]*)\.js$/;
+  const ABI_VERSIONS = Object.freeze([1, 2]);
+  const ABI_VERSION_BY_SCHEMA = Object.freeze({ 3: 1, 4: 2 });
+  const CONTENT_SCHEMA_VERSIONS = Object.freeze([3, 4]);
+  const REQUIRED_GLOBALS_BY_ABI = Object.freeze({
+    1: Object.freeze(["AegisKernel", "AegisSim", "AegisEconomy", "AegisCommands"]),
+    2: Object.freeze([
+      "AegisKernel", "AegisSim", "AegisEconomy", "AegisCommands",
+      "AegisCommandsV2", "AegisProtocols", "AegisRelics",
+    ]),
+  });
+  const STABLE_ID = /^[a-z0-9][a-z0-9.-]*$/;
   const HASH = /^sha256:([0-9a-f]{64})$/;
   const RELEASE_ARTIFACT = /^aegis-release\.([0-9a-f]{64})\.js$/;
   const IMMUTABLE_ARTIFACT = /^(aegis-sim|aegis-content|aegis-presentation)\.([0-9a-f]{64})\.js$/;
@@ -68,6 +83,18 @@
     return value;
   }
 
+  function allowedFields(value, required, optional, label) {
+    if (!isPlainDataObject(value)) throw new TypeError(label + " must be a plain data object");
+    const allowed = required.concat(optional);
+    Object.keys(value).forEach(function (key) {
+      if (allowed.indexOf(key) === -1) throw new TypeError(label + " contains unknown field " + key);
+    });
+    required.forEach(function (key) {
+      if (!own(value, key)) throw new TypeError(label + " is missing " + key);
+    });
+    return value;
+  }
+
   function requireHash(value, label) {
     if (typeof value !== "string" || !HASH.test(value)) {
       throw new TypeError(label + " must be a lowercase SHA-256 reference");
@@ -84,17 +111,21 @@
   }
 
   function validateSelectedRelease(release) {
-    if (!release || release.id !== EXPECTED_RELEASE_ID || release.channel !== "developer" ||
-        release.developerOnly !== true) {
-      throw new Error("Preview loader accepts only the trusted slice-dev-v1 developer release");
+    if (!release || typeof release.id !== "string" || PREVIEW_RELEASE_IDS.indexOf(release.id) === -1) {
+      throw new Error("Preview loader accepts only a release alias this repository ships");
     }
-    if (!release.artifactPaths || Object.keys(release.artifactPaths).length !== 1 ||
-        release.artifactPaths.releaseRecord !== "content/generated/release.slice-dev-v1.js") {
-      throw new Error("slice-dev-v1 must use its pinned stable release-alias path");
+    if (release.channel !== "developer" || release.developerOnly !== true) {
+      throw new Error("Preview releases must be explicit developer-only descriptors");
     }
-    if (!Array.isArray(release.contentIds) ||
-        release.contentIds.join("\u0000") !== ["m01", "m04", "m05"].join("\u0000")) {
-      throw new Error("slice-dev-v1 mission allowlist does not match the preview contract");
+    if (!release.artifactPaths || Object.keys(release.artifactPaths).length !== 1) {
+      throw new Error(release.id + " must declare exactly one stable release-alias path");
+    }
+    const match = RELEASE_ALIAS_PATH.exec(release.artifactPaths.releaseRecord);
+    if (!match || match[1] !== release.id) {
+      throw new Error(release.id + " must use its pinned stable release-alias path");
+    }
+    if (release.contentIds !== undefined && !Array.isArray(release.contentIds)) {
+      throw new Error(release.id + " content IDs must be an array when declared");
     }
     return release;
   }
@@ -103,8 +134,8 @@
     validateSelectedRelease(selectedRelease);
     exactFields(alias, ALIAS_FIELDS, "Stable preview release alias");
     if (alias.schemaVersion !== 1 || alias.id !== selectedRelease.id ||
-        alias.contentVersion !== EXPECTED_RELEASE_ID) {
-      throw new Error("Stable preview release alias identity does not match slice-dev-v1");
+        typeof alias.contentVersion !== "string" || !STABLE_ID.test(alias.contentVersion)) {
+      throw new Error("Stable preview release alias identity does not match " + selectedRelease.id);
     }
     if (APPROVAL_STATES.indexOf(alias.approvalState) === -1 || alias.releaseEligible !== false) {
       throw new Error("Developer preview alias must remain non-production and release-ineligible");
@@ -119,24 +150,102 @@
     return alias;
   }
 
-  function validateReleaseRecord(release, alias, descriptor) {
+  function stableIdArray(value, label) {
+    if (!Array.isArray(value) || value.length === 0) {
+      throw new Error(label + " must be a non-empty array of stable IDs");
+    }
+    let previous = null;
+    return value.map(function (entry) {
+      if (typeof entry !== "string" || !STABLE_ID.test(entry)) {
+        throw new Error(label + " must contain stable lowercase IDs");
+      }
+      if (previous !== null && entry <= previous) {
+        throw new Error(label + " must be sorted and unique");
+      }
+      previous = entry;
+      return entry;
+    });
+  }
+
+  /* The authenticated release record is the contract. It declares its content
+     schema, its ABI version, the content IDs it ships, and the runtime globals
+     its bundle must install. The descriptor may pin a content-ID allowlist; when
+     it does, the record must match it exactly. */
+  function releaseAbiVersion(release) {
+    if (release.abiVersion !== undefined) {
+      if (ABI_VERSIONS.indexOf(release.abiVersion) === -1) {
+        throw new Error("Immutable release declares an unsupported ABI version");
+      }
+      if (ABI_VERSION_BY_SCHEMA[release.schemaVersion] !== release.abiVersion) {
+        throw new Error("Immutable release ABI version disagrees with its content schema");
+      }
+      return release.abiVersion;
+    }
+    const derived = ABI_VERSION_BY_SCHEMA[release.schemaVersion];
+    if (ABI_VERSIONS.indexOf(derived) === -1) {
+      throw new Error("Immutable release declares an unsupported content schema");
+    }
+    return derived;
+  }
+
+  function releaseContentIds(release) {
+    if (release.contentIds !== undefined) return stableIdArray(release.contentIds, "Release content IDs");
+    if (!release.includedIds || !Array.isArray(release.includedIds.missions)) {
+      throw new Error("Immutable release must declare the content IDs it ships");
+    }
+    return stableIdArray(release.includedIds.missions, "Release content IDs");
+  }
+
+  function releaseRequiredGlobals(release, abiVersion) {
+    if (release.requiredGlobals === undefined) return REQUIRED_GLOBALS_BY_ABI[abiVersion].slice();
+    if (!Array.isArray(release.requiredGlobals) || release.requiredGlobals.some(function (name) {
+      return typeof name !== "string" || !/^Aegis[A-Za-z0-9]+$/.test(name);
+    })) {
+      throw new Error("Immutable release required globals must be Aegis runtime names");
+    }
+    const declared = release.requiredGlobals.slice();
+    REQUIRED_GLOBALS_BY_ABI[abiVersion].forEach(function (name) {
+      if (declared.indexOf(name) === -1) declared.push(name);
+    });
+    return declared;
+  }
+
+  function validateReleaseRecord(release, alias, descriptor, developer) {
     if (!isPlainDataObject(release) || !Object.isFrozen(release)) {
       throw new TypeError("Immutable release record must be frozen plain data");
     }
-    if (release.schemaVersion !== 3 || release.contentVersion !== alias.contentVersion ||
+    if (CONTENT_SCHEMA_VERSIONS.indexOf(release.schemaVersion) === -1 ||
+        release.contentVersion !== alias.contentVersion ||
         release.approvalState !== alias.approvalState || release.releaseEligible !== false) {
       throw new Error("Immutable release record disagrees with the trusted preview alias");
     }
-    if (!release.includedIds || !Array.isArray(release.includedIds.missions) ||
-        release.includedIds.missions.join("\u0000") !== descriptor.contentIds.join("\u0000")) {
-      throw new Error("Immutable release missions disagree with the selected preview release");
+    if (APPROVAL_STATES.indexOf(release.approvalState) === -1) {
+      throw new Error("Immutable release approval state is not a developer preview state");
+    }
+    const developerOnly = release.developerOnly === undefined
+      ? descriptor.developerOnly === true
+      : release.developerOnly === true;
+    if (developerOnly && developer !== true) {
+      throw new Error("A developer-only release requires an explicit trusted developer option");
+    }
+    const abiVersion = releaseAbiVersion(release);
+    const contentIds = releaseContentIds(release);
+    if (Array.isArray(descriptor.contentIds) && descriptor.contentIds.length &&
+        contentIds.join("\u0000") !== descriptor.contentIds.slice().sort().join("\u0000")) {
+      throw new Error("Immutable release content IDs disagree with the selected preview release");
     }
     requireImmutableName(release.simulationArtifact, release.simulationHash, "aegis-sim");
     requireImmutableName(release.contentArtifact, release.contentHash, "aegis-content");
     requireImmutableName(release.presentationArtifact, release.presentationHash, "aegis-presentation");
     requireHash(release.rulesetHash, "Ruleset hash");
     requireHash(release.abiHash, "ABI hash");
-    return release;
+    return deepFreeze({
+      release: release,
+      abiVersion: abiVersion,
+      contentIds: contentIds,
+      developerOnly: developerOnly,
+      requiredGlobals: releaseRequiredGlobals(release, abiVersion),
+    });
   }
 
   function digestIntegrity(hash) {
@@ -232,12 +341,13 @@
     if (typeof scriptLoader !== "function") throw new TypeError("Preview script loader must be a function");
 
     async function load(options) {
-      exactFields(options, ["release", "selector", "baseHref"], "Preview load options");
+      allowedFields(options, ["release", "selector", "baseHref"], ["developer"], "Preview load options");
       const descriptor = validateSelectedRelease(options.release);
+      const developer = options.developer === undefined ? true : options.developer === true;
       if (!options.selector || typeof options.selector.resolveArtifactUrls !== "function") {
         throw new TypeError("Preview loader requires the release selector resolver");
       }
-      if (!options.selector.RELEASES || options.selector.RELEASES[EXPECTED_RELEASE_ID] !== descriptor) {
+      if (!options.selector.RELEASES || options.selector.RELEASES[descriptor.id] !== descriptor) {
         throw new Error("Preview descriptor must be the selector's exact allowlisted release object");
       }
       if (typeof options.baseHref !== "string" || !options.baseHref) {
@@ -253,7 +363,7 @@
         url: selectedUrls.releaseRecord,
         integrity: null,
         globalName: "AegisReleaseAlias",
-        label: "stable slice-dev-v1 release alias",
+        label: "stable " + descriptor.id + " release alias",
       }));
       const alias = validateInstalledApi(aliasApi, "RELEASE_ALIAS", "Stable preview alias");
       validateReleaseAlias(alias, descriptor);
@@ -266,7 +376,7 @@
         label: "immutable Aegis release record",
       }));
       const release = validateInstalledApi(releaseApi, "RELEASE", "Immutable release record");
-      validateReleaseRecord(release, alias, descriptor);
+      const validated = validateReleaseRecord(release, alias, descriptor, developer);
 
       const immutableRequests = [
         {
@@ -315,9 +425,14 @@
         throw new Error("Loaded content companions disagree with the immutable release version");
       }
       if (installed.simulationBundle !== game.AegisKernel ||
-          !game.AegisKernel || typeof game.AegisKernel.createRulesetBinding !== "function" ||
-          !game.AegisSim || !game.AegisEconomy || !game.AegisCommands) {
+          !game.AegisKernel || typeof game.AegisKernel.createRulesetBinding !== "function") {
         throw new Error("Authenticated simulation bundle did not install the required runtime APIs");
+      }
+      const missingGlobal = validated.requiredGlobals.find(function (name) {
+        return !game[name] || (typeof game[name] !== "object" && typeof game[name] !== "function");
+      });
+      if (missingGlobal) {
+        throw new Error("Authenticated simulation bundle did not install Game." + missingGlobal);
       }
       const binding = game.AegisKernel.createRulesetBinding({ release: release, content: content });
       if (!binding || binding.rulesetHash !== release.rulesetHash ||
@@ -327,10 +442,12 @@
       }
 
       return deepFreeze({
+        abiVersion: validated.abiVersion,
         alias: alias,
         binding: binding,
         commands: game.AegisCommands,
         content: content,
+        contentIds: validated.contentIds,
         descriptor: descriptor,
         economy: game.AegisEconomy,
         kernel: game.AegisKernel,
@@ -345,7 +462,9 @@
 
   return deepFreeze({
     ALIAS_FIELDS: ALIAS_FIELDS,
-    EXPECTED_RELEASE_ID: EXPECTED_RELEASE_ID,
+    PREVIEW_RELEASE_IDS: PREVIEW_RELEASE_IDS,
+    ABI_VERSIONS: ABI_VERSIONS,
+    REQUIRED_GLOBALS_BY_ABI: REQUIRED_GLOBALS_BY_ABI,
     APPROVAL_STATES: APPROVAL_STATES,
     artifactUrl: artifactUrl,
     createLoader: createLoader,

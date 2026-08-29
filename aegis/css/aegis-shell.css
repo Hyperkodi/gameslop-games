@@ -1,0 +1,690 @@
+/* Armara Aegis campaign delivery shell.
+   Layout, typography, and state styling for the title, campaign, loadout,
+   briefing, result, settings, and codex screens. Every price, cooldown, and
+   status string is live DOM text from compiled records; this file only styles
+   it. Colour tokens come from the shared GameSlop/Armara preview palette. */
+
+.aegis-shell-root {
+  --shell-ink: var(--preview-ink, #f9f4ec);
+  --shell-muted: var(--preview-muted, #bbb4aa);
+  --shell-gold: var(--preview-gold, #f3ca66);
+  --shell-red: var(--preview-red, #fa170b);
+  --shell-green: var(--preview-green, #8fff45);
+  --shell-cyan: var(--preview-cyan, #53d5ff);
+  --shell-danger: var(--preview-danger, #ff9a7a);
+  --shell-line: var(--preview-line, rgba(255, 255, 255, .15));
+  --shell-panel: var(--preview-panel, #111111);
+  --shell-panel-2: var(--preview-panel-2, #151515);
+  --shell-control: var(--preview-control, #222222);
+  --shell-target-primary: 3rem;
+  --shell-target-secondary: 2.75rem;
+  --shell-gap: 1rem;
+
+  display: block;
+  container-type: inline-size;
+  color: var(--shell-ink);
+}
+
+.aegis-shell-root[hidden] { display: none; }
+
+.aegis-shell-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------------------ chrome */
+
+.aegis-shell-topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem 1rem;
+  margin-bottom: .75rem;
+  border-bottom: 1px solid var(--shell-line);
+  padding-bottom: .6rem;
+}
+
+.aegis-shell-topbar-left {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .75rem;
+  min-width: 0;
+}
+
+.aegis-shell-title {
+  margin: 0;
+  color: var(--shell-gold);
+  font-size: clamp(1.25rem, 1rem + 1.6vw, 2rem);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.aegis-shell-storage {
+  margin: 0;
+  border: 1px solid var(--shell-line);
+  border-radius: .3rem;
+  padding: .3rem .55rem;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+.aegis-shell-storage[data-tone="warning"] {
+  border-color: var(--shell-danger);
+  background: #3a1710;
+  color: #ffd9cb;
+}
+
+.aegis-shell-storage[data-tone="ready"] {
+  border-color: var(--shell-green);
+  color: var(--shell-green);
+}
+
+.aegis-shell-notice {
+  min-height: 1.5em;
+  margin: 0 0 .75rem;
+  color: var(--shell-cyan);
+}
+
+.aegis-shell-notice[data-tone="warning"] { color: var(--shell-danger); }
+.aegis-shell-notice[data-tone="ready"] { color: var(--shell-green); }
+.aegis-shell-notice:empty { min-height: 0; margin-bottom: 0; }
+
+/* ----------------------------------------------------------------- buttons */
+
+.aegis-shell-button {
+  display: inline-grid;
+  align-content: center;
+  gap: .18rem;
+  min-height: var(--shell-target-secondary);
+  border: 1px solid var(--shell-line);
+  border-radius: .4rem;
+  background: var(--shell-control);
+  color: var(--shell-ink);
+  padding: .55rem .8rem;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.aegis-shell-button:hover:not(:disabled) { border-color: var(--preview-yellow, #ffe600); }
+
+.aegis-shell-button:focus-visible {
+  outline: 3px solid var(--preview-focus, #72ff63);
+  outline-offset: 2px;
+}
+
+.aegis-shell-button:disabled {
+  cursor: not-allowed;
+  border-color: #3a3a3a;
+  color: #a49f97;
+  opacity: .72;
+}
+
+.aegis-shell-button--primary {
+  min-height: var(--shell-target-primary);
+  border-color: var(--preview-paper, #f9eed2);
+  background: var(--shell-red);
+  color: #111111;
+  box-shadow: .18rem .18rem 0 var(--preview-paper, #f9eed2);
+  font-weight: 850;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.aegis-shell-button--quiet {
+  background: transparent;
+  color: var(--shell-muted);
+}
+
+.aegis-shell-button[aria-pressed="true"] {
+  border-color: var(--shell-cyan);
+  box-shadow: inset 0 0 0 1px var(--shell-cyan);
+}
+
+.aegis-shell-button.is-selected {
+  border-color: var(--shell-gold);
+  box-shadow: inset 0 0 0 1px var(--shell-gold);
+}
+
+/* ------------------------------------------------------------------ screens */
+
+.aegis-shell-screen { display: grid; gap: var(--shell-gap); }
+
+.aegis-shell-lede {
+  margin: 0;
+  max-width: 68ch;
+  color: var(--shell-ink);
+  line-height: 1.5;
+}
+
+.aegis-shell-hint {
+  margin: 0;
+  max-width: 72ch;
+  color: var(--shell-muted);
+  font-size: .92rem;
+  line-height: 1.45;
+}
+
+.aegis-shell-empty { margin: 0; color: var(--shell-muted); }
+
+.aegis-shell-ribbon {
+  margin: 0;
+  border-left: .3rem solid var(--shell-gold);
+  background: rgba(243, 202, 102, .1);
+  padding: .6rem .85rem;
+  color: var(--shell-ink);
+}
+
+.aegis-shell-hero {
+  display: grid;
+  gap: .35rem;
+  border: 1px solid var(--shell-line);
+  border-radius: .65rem;
+  background: linear-gradient(rgba(17, 17, 17, .92), rgba(5, 5, 5, .96));
+  box-shadow: inset 0 0 0 1px rgba(249, 238, 210, .12), .35rem .35rem 0 rgba(250, 23, 11, .3);
+  padding: clamp(1rem, 3vw, 2rem);
+}
+
+.aegis-shell-hero-title {
+  margin: 0;
+  color: var(--shell-gold);
+  font-size: clamp(1.75rem, 1.2rem + 3vw, 3rem);
+  letter-spacing: .14em;
+}
+
+.aegis-shell-hero-subtitle { margin: 0; color: var(--shell-ink); font-size: 1.1rem; }
+.aegis-shell-hero-progress { margin: 0; color: var(--shell-muted); }
+
+.aegis-shell-hub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: .6rem;
+}
+
+.aegis-shell-hub .aegis-shell-button {
+  justify-items: start;
+  min-height: var(--shell-target-primary);
+  font-weight: 800;
+}
+
+/* ---------------------------------------------------------------- campaign */
+
+.aegis-shell-act {
+  display: grid;
+  gap: .6rem;
+  border: 1px solid var(--shell-line);
+  border-radius: .65rem;
+  background: rgba(17, 17, 17, .72);
+  padding: .85rem;
+}
+
+.aegis-shell-act-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem 1rem;
+}
+
+.aegis-shell-act-title { margin: 0; color: var(--shell-gold); letter-spacing: .1em; }
+.aegis-shell-act-state { color: var(--shell-muted); font-size: .85rem; }
+
+.aegis-shell-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: .6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aegis-shell-mission {
+  display: grid;
+  align-content: start;
+  gap: .4rem;
+  border: 1px solid var(--shell-line);
+  border-radius: .5rem;
+  background: var(--shell-panel-2);
+  padding: .7rem;
+}
+
+.aegis-shell-mission[data-status="completed"] { border-color: rgba(143, 255, 69, .5); }
+.aegis-shell-mission[data-status="current"] { border-color: var(--shell-gold); }
+.aegis-shell-mission[data-status="locked"] { opacity: .82; }
+
+.aegis-shell-mission-button {
+  width: 100%;
+  min-height: var(--shell-target-primary);
+  background: transparent;
+  border-color: transparent;
+  padding: .35rem;
+}
+
+.aegis-shell-mission-number {
+  color: var(--shell-muted);
+  font-size: .74rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.aegis-shell-mission-name {
+  color: var(--shell-ink);
+  font-size: 1.1rem;
+  font-weight: 850;
+}
+
+.aegis-shell-mission-summary { color: var(--shell-muted); font-size: .88rem; line-height: 1.35; }
+.aegis-shell-mission-meta { color: var(--shell-cyan); font-size: .82rem; }
+.aegis-shell-mission-lock { color: var(--shell-danger); font-size: .85rem; }
+.aegis-shell-mission-reward { margin: 0; color: var(--shell-muted); font-size: .82rem; }
+
+.aegis-shell-mission-laurels { display: flex; flex-wrap: wrap; gap: .3rem; }
+
+.aegis-shell-chip {
+  display: inline-block;
+  border: 1px solid var(--shell-line);
+  border-radius: 999px;
+  background: rgba(5, 5, 5, .6);
+  padding: .16rem .55rem;
+  color: var(--shell-muted);
+  font-size: .76rem;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+
+.aegis-shell-chip[data-tone="ready"] { border-color: var(--shell-green); color: var(--shell-green); }
+.aegis-shell-chip[data-tone="gold"] { border-color: var(--shell-gold); color: var(--shell-gold); }
+.aegis-shell-chip[data-tone="cost"] { border-color: var(--shell-cyan); color: var(--shell-cyan); }
+.aegis-shell-chip[data-tone="protocol"] { border-color: #c18cff; color: #d9bcff; }
+.aegis-shell-chip[data-tone="relic"] { border-color: var(--shell-gold); color: var(--shell-gold); }
+.aegis-shell-chip[data-tone="specialization"] { border-color: var(--shell-cyan); color: var(--shell-cyan); }
+.aegis-shell-chip[data-tone="reinforcement"] { border-color: var(--shell-green); color: var(--shell-green); }
+.aegis-shell-chip[data-tone="mechanism"] { border-color: #ffb347; color: #ffd7a1; }
+
+/* ----------------------------------------------------------------- loadout */
+
+.aegis-shell-loadout-summary,
+.aegis-shell-briefing-stats,
+.aegis-shell-result-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: .5rem;
+}
+
+.aegis-shell-stat {
+  display: grid;
+  gap: .1rem;
+  border: 1px solid var(--shell-line);
+  border-radius: .4rem;
+  background: var(--shell-panel);
+  padding: .5rem .6rem;
+}
+
+.aegis-shell-stat-label {
+  color: var(--shell-muted);
+  font-size: .72rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.aegis-shell-stat-value {
+  color: var(--shell-gold);
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.aegis-shell-difficulty {
+  margin: 0;
+  border: 1px solid var(--shell-line);
+  border-radius: .5rem;
+  padding: .6rem .75rem .8rem;
+}
+
+.aegis-shell-difficulty legend {
+  color: var(--shell-gold);
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.aegis-shell-difficulty-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: .5rem;
+}
+
+.aegis-shell-difficulty-name { font-weight: 850; }
+.aegis-shell-difficulty-detail { color: var(--shell-muted); font-size: .8rem; }
+.aegis-shell-difficulty-lock { color: var(--shell-danger); font-size: .8rem; }
+
+.aegis-shell-toggle-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .9rem;
+}
+
+.aegis-shell-loadout-section,
+.aegis-shell-settings-block,
+.aegis-shell-objectives,
+.aegis-shell-waves,
+.aegis-shell-notices,
+.aegis-shell-result-laurels,
+.aegis-shell-result-rewards,
+.aegis-shell-result-mastery,
+.aegis-shell-result-badges {
+  display: grid;
+  gap: .55rem;
+  border: 1px solid var(--shell-line);
+  border-radius: .6rem;
+  background: rgba(17, 17, 17, .68);
+  padding: .85rem;
+}
+
+.aegis-shell-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .4rem .8rem;
+}
+
+.aegis-shell-section-title {
+  margin: 0;
+  flex: 1 1 12rem;
+  color: var(--shell-gold);
+  letter-spacing: .07em;
+}
+
+.aegis-shell-section-slots { color: var(--shell-cyan); font-variant-numeric: tabular-nums; }
+.aegis-shell-section-source { margin: 0; color: var(--shell-muted); font-size: .85rem; }
+
+.aegis-shell-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: .6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aegis-shell-card {
+  display: grid;
+  align-content: start;
+  gap: .35rem;
+  border: 1px solid var(--shell-line);
+  border-radius: .45rem;
+  background: var(--shell-panel-2);
+  box-shadow: .18rem .18rem 0 rgba(250, 23, 11, .28);
+  padding: .7rem;
+}
+
+.aegis-shell-card[data-status="equipped"] { border-color: var(--shell-cyan); }
+.aegis-shell-card[data-status="locked"] { opacity: .86; }
+
+.aegis-shell-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .3rem .6rem;
+}
+
+.aegis-shell-card-title { margin: 0; color: var(--shell-ink); font-size: 1rem; }
+.aegis-shell-card-role { margin: 0; color: var(--shell-cyan); font-size: .88rem; }
+.aegis-shell-card-weakness,
+.aegis-shell-card-lock { margin: 0; color: var(--shell-muted); font-size: .82rem; }
+.aegis-shell-card-stats { margin: 0; color: var(--shell-ink); font-size: .85rem; font-variant-numeric: tabular-nums; }
+.aegis-shell-card-benefit { margin: 0; color: var(--shell-green); font-size: .85rem; }
+.aegis-shell-card-drawback { margin: 0; color: var(--shell-danger); font-size: .85rem; }
+.aegis-shell-card-preview { margin: 0; color: var(--shell-gold); font-size: .85rem; }
+.aegis-shell-card-warning { margin: 0; color: var(--shell-danger); font-size: .85rem; }
+.aegis-shell-card-actions { display: flex; flex-wrap: wrap; gap: .35rem; }
+
+.aegis-shell-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .8rem;
+}
+
+/* ---------------------------------------------------------------- briefing */
+
+.aegis-shell-briefing-head { display: grid; gap: .35rem; }
+
+.aegis-shell-briefing-act {
+  color: var(--shell-gold);
+  font-size: .82rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.aegis-shell-loan {
+  display: grid;
+  gap: .35rem;
+  border: 1px solid var(--shell-gold);
+  border-radius: .6rem;
+  background: rgba(243, 202, 102, .09);
+  padding: .8rem;
+}
+
+.aegis-shell-objective-list,
+.aegis-shell-notice-list,
+.aegis-shell-laurel-list,
+.aegis-shell-reward-list,
+.aegis-shell-mastery-list,
+.aegis-shell-unlock-list,
+.aegis-shell-wave-list,
+.aegis-shell-wave-groups,
+.aegis-shell-wave-boss-phases {
+  display: grid;
+  gap: .35rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aegis-shell-objective,
+.aegis-shell-laurel,
+.aegis-shell-unlock {
+  border-left: .2rem solid var(--shell-line);
+  padding-left: .55rem;
+  color: var(--shell-ink);
+  line-height: 1.4;
+}
+
+.aegis-shell-objective[data-earned="true"],
+.aegis-shell-laurel[data-new="true"] { border-left-color: var(--shell-green); color: var(--shell-green); }
+.aegis-shell-unlock[data-status="next"] { border-left-color: var(--shell-gold); color: var(--shell-gold); }
+.aegis-shell-unlock[data-status="unlocked"] { border-left-color: var(--shell-green); }
+
+.aegis-shell-wave {
+  display: grid;
+  gap: .35rem;
+  border: 1px solid var(--shell-line);
+  border-radius: .45rem;
+  background: rgba(5, 5, 5, .62);
+  padding: .6rem .7rem;
+}
+
+.aegis-shell-wave[data-detail="counts"] { border-color: rgba(83, 213, 255, .45); }
+.aegis-shell-wave[data-detail="timed"] { border-color: rgba(243, 202, 102, .55); }
+
+.aegis-shell-wave-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .25rem .7rem;
+}
+
+.aegis-shell-wave-title { margin: 0; color: var(--shell-ink); font-size: .98rem; }
+.aegis-shell-wave-routes { color: var(--shell-muted); font-size: .82rem; }
+.aegis-shell-wave-group { color: var(--shell-ink); font-size: .86rem; line-height: 1.4; }
+
+.aegis-shell-wave-boss {
+  display: grid;
+  gap: .25rem;
+  border-top: 1px dashed var(--shell-line);
+  padding-top: .45rem;
+}
+
+.aegis-shell-wave-boss-title { margin: 0; color: var(--shell-gold); font-size: .9rem; }
+.aegis-shell-wave-boss-text { margin: 0; color: var(--shell-muted); font-size: .85rem; }
+.aegis-shell-wave-boss-phases { color: var(--shell-ink); font-size: .84rem; }
+
+/* ------------------------------------------------------------------ result */
+
+.aegis-shell-result-head {
+  display: grid;
+  gap: .3rem;
+  border: 2px solid var(--preview-yellow, #ffe600);
+  border-radius: .65rem;
+  background: rgba(17, 17, 17, .96);
+  box-shadow: .3rem .3rem 0 rgba(250, 23, 11, .4);
+  padding: 1rem;
+  text-align: center;
+}
+
+.aegis-shell-result-head[data-outcome="defeat"] { border-color: var(--shell-danger); }
+
+.aegis-shell-result-title {
+  margin: 0;
+  color: var(--shell-gold);
+  font-size: clamp(1.4rem, 1rem + 2vw, 2.2rem);
+  letter-spacing: .14em;
+}
+
+.aegis-shell-badge-row { display: flex; flex-wrap: wrap; gap: .35rem; }
+
+.aegis-shell-persistence {
+  margin: 0;
+  border: 1px solid var(--shell-line);
+  border-radius: .4rem;
+  padding: .55rem .7rem;
+  color: var(--shell-muted);
+}
+
+.aegis-shell-persistence[data-durable="false"] {
+  border-color: var(--shell-danger);
+  color: #ffd9cb;
+}
+
+/* ---------------------------------------------------------------- settings */
+
+.aegis-shell-binding {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem .8rem;
+}
+
+.aegis-shell-binding-label { min-width: 12rem; color: var(--shell-ink); }
+
+.aegis-shell-binding-input {
+  width: 3.5rem;
+  min-height: var(--shell-target-secondary);
+  border: 1px solid var(--shell-line);
+  border-radius: .35rem;
+  background: var(--shell-control);
+  color: var(--shell-ink);
+  padding: .4rem;
+  font: inherit;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.aegis-shell-binding-input:focus-visible {
+  outline: 3px solid var(--preview-focus, #72ff63);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------- host page regions */
+
+.preview-battle-region[hidden],
+.preview-result-card-region[hidden],
+.preview-developer-tools[hidden] { display: none; }
+
+.preview-developer-tools { display: grid; gap: 1rem; margin-top: 1rem; }
+.preview-result-card-region { margin-top: 1rem; }
+
+/* ------------------------------------------------------------- responsive */
+
+@media (max-width: 30rem) {
+  .aegis-shell-root { --shell-gap: .75rem; }
+  .aegis-shell-topbar { align-items: flex-start; }
+  .aegis-shell-mission-grid,
+  .aegis-shell-card-grid,
+  .aegis-shell-difficulty-row,
+  .aegis-shell-hub { grid-template-columns: minmax(0, 1fr); }
+  .aegis-shell-binding-label { min-width: 0; flex: 1 1 100%; }
+  .aegis-shell-actions .aegis-shell-button { flex: 1 1 100%; text-align: center; justify-items: center; }
+}
+
+@media (min-width: 64rem) {
+  .aegis-shell-screen--loadout { grid-template-columns: minmax(0, 1fr); }
+  .aegis-shell-loadout-section { padding: 1rem; }
+}
+
+/* Long wave tables and badge rows scroll inside themselves, never the page. */
+.aegis-shell-wave-groups,
+.aegis-shell-badge-row { overflow-wrap: anywhere; }
+
+/* -------------------------------------------- motion and photosensitivity */
+
+body[data-reduced-motion="true"] .aegis-shell-root *,
+body[data-reduced-motion="true"] .preview-battle-region * {
+  animation-duration: .001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: .001ms !important;
+  scroll-behavior: auto !important;
+}
+
+body[data-photosensitive-safe="true"] .aegis-shell-root,
+body[data-photosensitive-safe="true"] .preview-battle-region {
+  filter: saturate(.92) brightness(.94);
+}
+
+body[data-photosensitive-safe="true"] .aegis-shell-button--primary { box-shadow: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .aegis-shell-root *,
+  .preview-battle-region * {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .aegis-shell-button,
+  .aegis-shell-card,
+  .aegis-shell-chip,
+  .aegis-shell-mission,
+  .aegis-shell-stat,
+  .aegis-shell-wave,
+  .aegis-shell-storage,
+  .aegis-shell-persistence {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    box-shadow: none;
+    color: CanvasText;
+    forced-color-adjust: none;
+  }
+
+  .aegis-shell-button:focus-visible,
+  .aegis-shell-binding-input:focus-visible { outline: 3px solid Highlight; }
+  .aegis-shell-button[aria-pressed="true"],
+  .aegis-shell-button.is-selected { border-color: Highlight; }
+  .aegis-shell-button:disabled { color: GrayText; border-color: GrayText; }
+}

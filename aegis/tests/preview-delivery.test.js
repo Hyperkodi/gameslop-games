@@ -192,6 +192,38 @@ test("loader rejects a descriptor clone even when its fields resemble the allowl
   }), /exact allowlisted release object/);
 });
 
+test("the preview boot is descriptor driven and keeps every developer readout behind ?debug=1", () => {
+  const preview = fs.readFileSync(path.join(__dirname, "..", "preview.html"), "utf8");
+  const controller = fs.readFileSync(
+    path.join(__dirname, "..", "js", "delivery", "preview-controller.js"), "utf8"
+  );
+  // The default release stays slice-dev-v1; only the selector's own allowlist
+  // may widen it, and ?release= never supplies a URL or a hash.
+  assert.match(preview, /DEFAULT_PREVIEW_RELEASE = \{ releaseId: "slice-dev-v1" \}/);
+  assert.match(preview, /new URLSearchParams\(location\.search\)\.get\("release"\)/);
+  assert.match(preview, /releaseId: requested \|\| DEFAULT_PREVIEW_RELEASE\.releaseId/);
+  assert.match(preview, /document\.body\.dataset\.bootError = "1"/,
+    "a refused boot is a stable readable state, not a crash");
+  assert.doesNotMatch(preview, /manifestUrl|releaseUrl/);
+
+  // Developer surfaces exist for diagnostics but never render for an ordinary player.
+  assert.match(preview, /id="previewDeveloperTools" class="preview-developer-tools" hidden/);
+  assert.match(preview, /Developer test options/);
+  assert.match(preview, /Simulation step/);
+  assert.match(controller, /function debugRequested\(search\)/);
+  assert.match(controller, /setHidden\(developerTools, !debug\)/);
+  assert.match(controller, /body\.dataset\.debug = debug \? "1" : "0"/);
+  assert.match(controller, /bootStatus\.hidden = !debug/);
+  assert.match(controller, /documentObject\.body\.dataset\.ready = "1"/);
+  assert.match(controller, /windowObject\.__gameslop = \{/);
+  assert.match(controller, /if \(debug\) windowObject\.__gameslop\.dispatch = dispatch;/,
+    "the scripted screen driver is a developer hook, never part of ordinary play");
+
+  // The local highlight flow stays presentation only and gates nothing.
+  assert.match(controller, /Nothing is uploaded or posted from here/);
+  assert.doesNotMatch(controller, /telegram|twitter\.com|x\.com\/intent|follow us/i);
+});
+
 test("unlinked preview requests only slice-dev-v1 and leaves the public page unwired", () => {
   const preview = fs.readFileSync(path.join(__dirname, "..", "preview.html"), "utf8");
   const controller = fs.readFileSync(path.join(__dirname, "..", "js", "delivery", "preview-controller.js"), "utf8");

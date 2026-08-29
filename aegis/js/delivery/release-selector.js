@@ -180,7 +180,24 @@
       },
       contentIds: ["m01", "m04", "m05"],
     }),
+    // The campaign candidate. Its mission set lives in the authenticated release
+    // record, not here, so authoring a mission never edits the delivery allowlist.
+    "candidate-v4": makeDescriptor({
+      id: "candidate-v4",
+      channel: "developer",
+      developerOnly: true,
+      namespaceRoot: "aegis-candidate-v4",
+      namespaces: namespaceSet("aegis-candidate-v4"),
+      metadataPath: "content/generated/release.candidate-v4.json",
+      artifactPaths: {
+        releaseRecord: "content/generated/release.candidate-v4.js",
+      },
+      contentIds: [],
+    }),
   });
+
+  /* The release aliases this repository ships behind the developer preview. */
+  const PREVIEW_RELEASE_IDS = Object.freeze(["slice-dev-v1", "candidate-v4"]);
 
   function releaseFromSearch(search) {
     if (search === undefined || search === null || search === "") return null;
@@ -263,6 +280,7 @@
 
   return deepFreeze({
     DEFAULT_RELEASE_ID: DEFAULT_RELEASE_ID,
+    PREVIEW_RELEASE_IDS: PREVIEW_RELEASE_IDS,
     RELEASES: RELEASES,
     selectRelease: selectRelease,
     resolveArtifactUrl: resolveArtifactUrl,

@@ -8,6 +8,7 @@
 <link rel="icon" href="skin/armara/logo.png">
 <link rel="stylesheet" href="../_kit/kit.css">
 <link rel="stylesheet" href="css/aegis-art-system.css">
+<link rel="stylesheet" href="css/aegis-shell.css">
 <style>
   :root {
     color-scheme: dark;
@@ -273,37 +274,17 @@
   <header class="preview-title">
     <img class="preview-logo" src="skin/armara/logo.png" width="1254" height="1254" alt="Armara">
     <h1>ARMARA AEGIS</h1>
-    <p>Candidate-BAL deterministic developer preview</p>
+    <p>A GameSlop tower defense. Everything you unlock stays in this browser.</p>
   </header>
 
   <p class="preview-warning"><strong>LOCAL / UNVERIFIED.</strong> This unlinked page cannot issue a verified badge, publish a score, or alter the public Aegis route.</p>
   <p id="previewBootStatus" role="status" aria-live="polite">Authenticating the developer release…</p>
 
+  <div id="shellRoot" class="aegis-shell-root"></div>
+
+  <div id="battleRegion" class="preview-battle-region" hidden>
   <div class="preview-grid">
-    <details class="preview-panel preview-test-options">
-      <summary id="previewSetupTitle">Developer test options <small>Not part of the player interface</small></summary>
-      <div class="preview-test-options-grid" aria-labelledby="previewSetupTitle">
-        <label class="preview-field">Mission
-          <select id="previewMission"></select>
-        </label>
-        <label class="preview-field">Difficulty
-          <select id="previewDifficulty"></select>
-        </label>
-        <label class="preview-field">Replay seed
-          <input id="previewSeed" type="number" min="0" max="4294967295" step="1" value="1" inputmode="numeric">
-        </label>
-        <label class="preview-check"><input id="previewAssist" type="checkbox"> Extra help</label>
-        <fieldset class="preview-field preview-test-options-wide">
-          <legend>Test loadout (choose up to four)</legend>
-          <div id="previewLoadout" class="preview-checks"></div>
-        </fieldset>
-        <p class="preview-muted preview-test-options-wide">These controls let developers test missions, difficulty, replay consistency, assist rules, and compatible towers. They will not appear over the finished game or change profile progression.</p>
-        <div class="preview-actions preview-test-options-wide">
-          <button id="previewReset" type="button">Start fresh test run</button>
-          <button id="previewSkipTutorial" type="button">Unlock upgrades for testing</button>
-        </div>
-      </div>
-    </details>
+
 
     <section class="preview-panel" aria-labelledby="previewCommandTitle">
       <h2 id="previewCommandTitle">Battle controls</h2>
@@ -349,12 +330,7 @@
         <h3 id="previewTowersTitle">Deployed towers</h3>
         <div id="previewTowers" class="preview-tower-list"></div>
       </section>
-      <section id="previewOutcome" class="preview-outcome" aria-labelledby="previewOutcomeTitle" hidden>
-        <h3 id="previewOutcomeTitle"></h3>
-        <canvas id="previewShareCard" class="preview-share-card" width="1200" height="675"></canvas>
-        <p id="previewShareStatus" class="preview-share-status" role="status" aria-live="polite"></p>
-        <button id="previewShareDownload" type="button" disabled>Download 1200 x 675 result card</button>
-      </section>
+
     </section>
   </div>
 
@@ -363,6 +339,43 @@
       <h2 id="previewObjectivesTitle">Objectives</h2>
       <ol id="previewObjectives" class="preview-objectives"></ol>
     </section>
+  </div>
+  </div>
+
+  <div id="resultCardRegion" class="preview-result-card-region" hidden>
+    <section id="previewOutcome" class="preview-outcome" aria-labelledby="previewOutcomeTitle" hidden>
+      <h3 id="previewOutcomeTitle"></h3>
+      <canvas id="previewShareCard" class="preview-share-card" width="1200" height="675"></canvas>
+      <p id="previewShareStatus" class="preview-share-status" role="status" aria-live="polite"></p>
+      <button id="previewShareDownload" type="button" disabled>Download 1200 x 675 result card</button>
+    </section>
+  </div>
+
+  <div id="previewDeveloperTools" class="preview-developer-tools" hidden>
+    <details class="preview-panel preview-test-options">
+      <summary id="previewSetupTitle">Developer test options <small>Not part of the player interface</small></summary>
+      <div class="preview-test-options-grid" aria-labelledby="previewSetupTitle">
+        <label class="preview-field">Mission
+          <select id="previewMission"></select>
+        </label>
+        <label class="preview-field">Difficulty
+          <select id="previewDifficulty"></select>
+        </label>
+        <label class="preview-field">Replay seed
+          <input id="previewSeed" type="number" min="0" max="4294967295" step="1" value="1" inputmode="numeric">
+        </label>
+        <label class="preview-check"><input id="previewAssist" type="checkbox"> Extra help</label>
+        <fieldset class="preview-field preview-test-options-wide">
+          <legend>Test loadout (choose up to four)</legend>
+          <div id="previewLoadout" class="preview-checks"></div>
+        </fieldset>
+        <p class="preview-muted preview-test-options-wide">These controls let developers test missions, difficulty, replay consistency, assist rules, and compatible towers. They will not appear over the finished game or change profile progression.</p>
+        <div class="preview-actions preview-test-options-wide">
+          <button id="previewReset" type="button">Start fresh test run</button>
+          <button id="previewSkipTutorial" type="button">Unlock upgrades for testing</button>
+        </div>
+      </div>
+    </details>
     <details class="preview-panel preview-diagnostics">
       <summary>Developer diagnostics</summary>
       <div class="preview-readout" title="The deterministic replay counter. Sixty simulation steps equal one second of active combat.">
@@ -378,6 +391,15 @@
 <script src="../_kit/shell.js"></script>
 <script src="js/delivery/release-selector.js"></script>
 <script src="js/delivery/preview-loader.js"></script>
+<script src="js/presentation/player-ui.js"></script>
+<script src="js/progression/profile-v2.js"></script>
+<script src="js/progression/progression.js"></script>
+<script src="js/delivery/keybindings.js"></script>
+<script src="js/delivery/run-header-v2.js"></script>
+<script src="js/delivery/session-store.js"></script>
+<script src="js/delivery/shell.js"></script>
+<script src="js/presentation/shell-view.js"></script>
+<script src="js/delivery/battle-session.js"></script>
 <script src="js/presentation/camera.js"></script>
 <script src="js/presentation/road-geometry.js"></script>
 <script src="js/presentation/m01-art.js"></script>
@@ -388,27 +410,37 @@
 <script>
 (function () {
   "use strict";
+  // The release id is never taken from request state beyond the selector's own
+  // allowlist. `?release=candidate-v4` picks the campaign candidate when this
+  // repository ships its alias; a missing alias is a readable refusal, not a crash.
+  const DEFAULT_PREVIEW_RELEASE = { releaseId: "slice-dev-v1" };
   const status = document.getElementById("previewBootStatus");
+  function refuse(prefix, error) {
+    const message = String(error && error.message || error);
+    status.textContent = prefix + " " + message;
+    status.setAttribute("role", "alert");
+    document.body.dataset.ready = "1";
+    document.body.dataset.bootError = "1";
+  }
   try {
     const selector = Game.AegisReleaseSelector;
+    const requested = new URLSearchParams(location.search).get("release");
     const descriptor = selector.selectRelease({
-      releaseId: "slice-dev-v1",
-      search: location.search,
+      releaseId: requested || DEFAULT_PREVIEW_RELEASE.releaseId,
       developer: true,
     });
     Game.AegisPreviewLoader.createLoader().load({
       release: descriptor,
       selector: selector,
       baseHref: location.href,
+      developer: true,
     }).then(function (runtime) {
       Game.AegisPreviewController.mount(runtime);
     }).catch(function (error) {
-      status.textContent = "PREVIEW BOOT REFUSED: " + String(error && error.message || error);
-      status.setAttribute("role", "alert");
+      refuse("This build could not start:", error);
     });
   } catch (error) {
-    status.textContent = "PREVIEW SELECTION REFUSED: " + String(error && error.message || error);
-    status.setAttribute("role", "alert");
+    refuse("This build could not start:", error);
   }
 })();
 </script>
