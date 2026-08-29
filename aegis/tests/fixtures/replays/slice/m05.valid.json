@@ -1,0 +1,29 @@
+{
+  "formatVersion": 1,
+  "rulesetHash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "eventSchemaVersion": 1,
+  "missionId": "m05",
+  "difficultyId": "titan",
+  "assist": false,
+  "seed": 505,
+  "loadoutIds": ["sentinel", "chronos", "siege", "oracle", "hoplite"],
+  "loadoutSlotCap": 5,
+  "campaignModifierIds": ["reserve-1"],
+  "accessGrantIds": ["campaign.sentinel", "campaign.chronos", "campaign.siege", "campaign.oracle", "campaign.hoplite"],
+  "tutorialUpgradeGateMode": "none",
+  "inputs": [
+    { "tick": 0, "seq": 0, "type": "startWave" }
+  ],
+  "checkpoints": [
+    { "tick": 0, "diagnosticHash": "fnv1a32:00f8b215" },
+    { "tick": 1, "diagnosticHash": "fnv1a32:b0a65edb" },
+    { "tick": 5, "diagnosticHash": "fnv1a32:d446898c" }
+  ],
+  "finalClaim": {
+    "outcome": "victory",
+    "score": 334,
+    "laurels": 1,
+    "durationTicks": 5,
+    "finalStateHash": "71bfac6a7bb259194e315520f914e47d21b5875ca974abc270b57d2a8514dd84"
+  }
+}

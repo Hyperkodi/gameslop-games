@@ -8,6 +8,7 @@ const vm = require("node:vm");
 
 const ABI = require("../js/sim/abi.js");
 const Commands = require("../js/sim/commands.js");
+const ReplayRunner = require("../js/sim/replay-runner.js");
 const Replay = require("../js/sim/replay.js");
 
 const ABI_PATH = path.join(__dirname, "..", "js", "sim", "abi.js");
@@ -26,6 +27,7 @@ function validEnvelope(overrides) {
     assist: false,
     seed: 123,
     loadoutIds: ["sentinel", "chronos", "siege"],
+    loadoutSlotCap: 4,
     campaignModifierIds: ["reserve-1"],
     accessGrantIds: ["campaign.chronos", "campaign.siege"],
     tutorialUpgradeGateMode: "none",
@@ -54,7 +56,8 @@ test("replay API and its explicit resource ceilings are frozen", () => {
   assert.equal(Object.isFrozen(Replay), true);
   assert.equal(Object.isFrozen(Replay.DEFAULT_LIMITS), true);
   assert.equal(Replay.FORMAT_VERSION, 1);
-  assert.equal(Replay.EVENT_SCHEMA_VERSION, ABI.DESCRIPTOR.commands.schemaVersion);
+  assert.equal(Replay.EVENT_SCHEMA_VERSION, ABI.EVENT_SCHEMA_VERSION);
+  assert.equal(Replay.COMMAND_SCHEMA_VERSION, Commands.COMMAND_SCHEMA_VERSION);
   assert.deepEqual(
     {
       maxTick: Replay.DEFAULT_LIMITS.maxTick,
@@ -70,6 +73,7 @@ test("replay API and its explicit resource ceilings are frozen", () => {
   assert.equal(Replay.DEFAULT_LIMITS.maxUtf8Bytes, 4 * 1024 * 1024);
   assert.equal(Replay.DEFAULT_LIMITS.maxDurationTicks, 5184000);
   assert.equal(Replay.simulateReplay, undefined);
+  assert.equal(typeof Replay.createBoundSimulator, "function");
 });
 
 test("all advertised replay maxima fit together beneath the tighter four-MiB byte ceiling", () => {
@@ -99,6 +103,7 @@ test("all advertised replay maxima fit together beneath the tighter four-MiB byt
       { length: Replay.DEFAULT_LIMITS.maxLoadoutIds },
       (_, index) => maximumId("l", index)
     ),
+    loadoutSlotCap: Replay.DEFAULT_LIMITS.maxLoadoutIds,
     campaignModifierIds: Array.from(
       { length: Replay.DEFAULT_LIMITS.maxCampaignModifierIds },
       (_, index) => maximumId("m", index)
@@ -184,7 +189,7 @@ test("header versions, hashes, scalar types, seed, IDs, and tutorial gate are ex
   }
 });
 
-test("loadout and access grants preserve authored order while campaign modifiers remain a sorted set", () => {
+test("loadout capacity is canonical while order and grants remain stable", () => {
   assert.deepEqual(
     Replay.normalizeReplayEnvelope(validEnvelope({ loadoutIds: ["siege", "sentinel"] })).loadoutIds,
     ["siege", "sentinel"]
@@ -194,6 +199,13 @@ test("loadout and access grants preserve authored order while campaign modifiers
     /unique/i
   );
   assert.throws(() => Replay.normalizeReplayEnvelope(validEnvelope({ loadoutIds: [] })), /must not be empty/i);
+  assert.equal(Replay.normalizeReplayEnvelope(validEnvelope()).loadoutSlotCap, 4);
+  assert.throws(
+    () => Replay.normalizeReplayEnvelope(validEnvelope({ loadoutIds: ["sentinel", "chronos", "siege"], loadoutSlotCap: 2 })),
+    /slot cap/i
+  );
+  assert.throws(() => Replay.normalizeReplayEnvelope(validEnvelope({ loadoutSlotCap: 0 })), /at least one/i);
+  assert.throws(() => Replay.normalizeReplayEnvelope(validEnvelope({ loadoutSlotCap: 7 })), /limit/i);
   assert.throws(
     () => Replay.normalizeReplayEnvelope(validEnvelope({ campaignModifierIds: ["reserve-2", "reserve-1"] })),
     /strict ASCII order/i
@@ -531,6 +543,7 @@ test("CommonJS and classic installs reject stale Commands identity and cannot si
     require(request) {
       if (request === "./abi.js") return ABI;
       if (request === "./commands.js") return stale;
+      if (request === "./replay-runner.js") return ReplayRunner;
       throw new Error("unexpected require " + request);
     },
   }, {
@@ -539,7 +552,7 @@ test("CommonJS and classic installs reject stale Commands identity and cannot si
   }), /ABI descriptor identity/i);
 
   assert.throws(() => vm.runInNewContext(replaySource, {
-    Game: { AegisSim: ABI, AegisCommands: stale },
+    Game: { AegisSim: ABI, AegisCommands: stale, AegisReplayRunner: ReplayRunner },
   }, {
     filename: "replay.js",
     codeGeneration: { strings: false, wasm: false },
@@ -551,7 +564,10 @@ test("CommonJS and classic installs reject stale Commands identity and cannot si
   vm.runInNewContext(replaySource, {
     module: commonJsModule,
     require(request) {
-      return request === "./abi.js" ? ABI : matchingDropper;
+      if (request === "./abi.js") return ABI;
+      if (request === "./commands.js") return matchingDropper;
+      if (request === "./replay-runner.js") return ReplayRunner;
+      throw new Error("unexpected require " + request);
     },
   }, {
     filename: "replay.js",
@@ -567,7 +583,11 @@ test("CommonJS and classic installs reject stale Commands identity and cannot si
   );
 
   const classicDropContext = vm.createContext({
-    Game: { AegisSim: ABI, AegisCommands: matchingDropper },
+    Game: {
+      AegisSim: ABI,
+      AegisCommands: matchingDropper,
+      AegisReplayRunner: ReplayRunner,
+    },
     replayJson: JSON.stringify(withInput),
   }, { codeGeneration: { strings: false, wasm: false } });
   vm.runInContext(replaySource, classicDropContext, { filename: "replay.js" });
@@ -581,6 +601,7 @@ test("classic scripts match CommonJS canonical bytes and hashes with dynamic cod
   const context = vm.createContext({}, { codeGeneration: { strings: false, wasm: false } });
   vm.runInContext(fs.readFileSync(ABI_PATH, "utf8"), context, { filename: "abi.js" });
   vm.runInContext(fs.readFileSync(COMMANDS_PATH, "utf8"), context, { filename: "commands.js" });
+  context.Game.AegisReplayRunner = ReplayRunner;
   vm.runInContext(fs.readFileSync(REPLAY_PATH, "utf8"), context, { filename: "replay.js" });
 
   assert.ok(context.Game.AegisReplay);

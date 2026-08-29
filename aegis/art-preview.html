@@ -1,0 +1,1175 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07111A">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Armara Aegis · Local Art Preview</title>
+  <link rel="icon" href="skin/armara/logo.png">
+  <link rel="stylesheet" href="css/aegis-art-system.css">
+  <style>
+    @layer aegis-art-preview {
+      html {
+        scroll-behavior: smooth;
+        background: #07111A;
+      }
+
+      body {
+        min-block-size: 100dvb;
+        margin: 0;
+      }
+
+      .showcase-skip-link {
+        position: fixed;
+        z-index: 1000;
+        inset-block-start: 0.5rem;
+        inset-inline-start: 0.5rem;
+        padding: 0.75rem 1rem;
+        color: var(--aegis-color-ink);
+        background: var(--aegis-color-cyan);
+        transform: translateY(-160%);
+      }
+
+      .showcase-skip-link:focus-visible {
+        transform: translateY(0);
+      }
+
+      .showcase-hero {
+        position: relative;
+        display: grid;
+        min-block-size: clamp(36rem, 86dvb, 58rem);
+        place-items: center;
+        overflow: hidden;
+        border-block-end: 0.1875rem solid var(--aegis-color-bronze);
+      }
+
+      .showcase-shell-picture,
+      .showcase-shell-picture img,
+      .showcase-hero-shade {
+        position: absolute;
+        inset: 0;
+        inline-size: 100%;
+        block-size: 100%;
+      }
+
+      .showcase-shell-picture img {
+        object-fit: cover;
+        object-position: center;
+      }
+
+      .showcase-hero-shade {
+        background:
+          linear-gradient(180deg, rgb(7 17 26 / 0.18), rgb(7 17 26 / 0.48) 56%, rgb(7 17 26 / 0.94)),
+          radial-gradient(circle at 50% 38%, transparent 0 18%, rgb(7 17 26 / 0.28) 72%);
+      }
+
+      .showcase-hero-content {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        inline-size: min(100%, 55rem);
+        justify-items: center;
+        gap: 0.9rem;
+        padding: clamp(1rem, 4vw, 3rem);
+        text-align: center;
+        text-shadow: 0 0.125rem 0.45rem #07111A, 0 0 1.6rem #07111A;
+      }
+
+      .showcase-brand-lockup {
+        display: flex;
+        min-inline-size: 0;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: clamp(0.75rem, 3vw, 1.5rem);
+      }
+
+      .showcase-brand-logo {
+        inline-size: clamp(4.75rem, 13vw, 8rem);
+        block-size: auto;
+        filter: drop-shadow(0 0 1rem rgb(247 201 72 / 0.35));
+      }
+
+      .showcase-brand-copy {
+        min-inline-size: 0;
+        text-align: start;
+      }
+
+      .showcase-brand-copy h1 {
+        margin: 0;
+        font-size: clamp(2.25rem, 7vw, 5.75rem);
+        letter-spacing: 0.035em;
+        line-height: 0.95;
+      }
+
+      .showcase-brand-copy p {
+        margin: 0.4rem 0 0;
+        color: var(--aegis-color-cyan);
+        font-family: Cinzel, Georgia, serif;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .showcase-preview-flag {
+        display: inline-flex;
+        min-block-size: var(--aegis-target-secondary);
+        align-items: center;
+        justify-content: center;
+        margin: 0;
+        padding: 0.45rem 0.9rem;
+        color: var(--aegis-color-warning);
+        border: 0.125rem solid var(--aegis-color-warning);
+        border-radius: 999rem;
+        background: var(--aegis-color-warning-surface);
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        font-size: 0.9rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        line-height: 1.2;
+        text-shadow: none;
+      }
+
+      .showcase-hero-lede {
+        max-inline-size: 42rem;
+        margin: 0;
+        color: var(--aegis-color-text);
+        font-size: clamp(1.05rem, 1rem + 0.45vw, 1.35rem);
+      }
+
+      .showcase-hero-nav {
+        inline-size: min(100%, 47rem);
+        margin-block-start: 0.5rem;
+        background: rgb(7 17 26 / 0.84);
+        text-shadow: none;
+        backdrop-filter: blur(0.45rem);
+      }
+
+      .showcase-main {
+        inline-size: min(100%, var(--aegis-content-wide));
+        margin-inline: auto;
+        padding:
+          clamp(1rem, 3vw, 2.5rem)
+          max(clamp(1rem, 3vw, 2.5rem), env(safe-area-inset-right))
+          max(clamp(3rem, 6vw, 6rem), env(safe-area-inset-bottom))
+          max(clamp(1rem, 3vw, 2.5rem), env(safe-area-inset-left));
+      }
+
+      .showcase-section {
+        margin-block: clamp(2.25rem, 7vw, 6rem);
+        scroll-margin-block-start: 1rem;
+      }
+
+      .showcase-section-heading {
+        max-inline-size: 54rem;
+        margin-block-end: 1.5rem;
+      }
+
+      .showcase-section-heading h2 {
+        margin-block-end: 0.5rem;
+        font-size: clamp(1.7rem, 1.25rem + 2vw, 3rem);
+      }
+
+      .showcase-section-heading p:last-child {
+        margin-block-end: 0;
+        color: var(--aegis-color-text-muted);
+      }
+
+      .showcase-kicker {
+        margin-block-end: 0.35rem;
+        color: var(--aegis-color-cyan);
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        font-size: 0.875rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+      }
+
+      .showcase-two-column {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.85fr);
+        gap: clamp(1rem, 3vw, 2rem);
+        align-items: start;
+      }
+
+      .showcase-art-figure {
+        margin: 0;
+        overflow: hidden;
+        border: 0.125rem solid var(--aegis-color-bronze);
+        border-radius: var(--aegis-radius-large);
+        background: var(--aegis-color-surface-quiet);
+        box-shadow: 0 1rem 2.5rem rgb(0 0 0 / 0.3);
+      }
+
+      .showcase-art-figure img {
+        inline-size: 100%;
+        block-size: auto;
+      }
+
+      .showcase-art-figure figcaption {
+        padding: 0.8rem 1rem;
+        color: var(--aegis-color-text-muted);
+        border-block-start: 0.0625rem solid var(--aegis-color-bronze);
+      }
+
+      .showcase-store {
+        gap: var(--aegis-space-4);
+      }
+
+      .showcase-store-balance {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: var(--aegis-space-2);
+      }
+
+      .showcase-store-balance output {
+        color: var(--aegis-color-gold);
+        font-family: Cinzel, Georgia, serif;
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+
+      .showcase-stat-list,
+      .showcase-share-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--aegis-space-2);
+        margin: 0;
+      }
+
+      .showcase-stat-list div,
+      .showcase-share-stats div {
+        min-inline-size: 0;
+        padding: var(--aegis-space-2);
+        border: 0.0625rem solid var(--aegis-color-bronze);
+        border-radius: var(--aegis-radius-small);
+        background: rgb(7 17 26 / 0.72);
+        text-align: center;
+      }
+
+      .showcase-stat-list dt,
+      .showcase-share-stats dt {
+        color: var(--aegis-color-text-muted);
+        font-size: 0.875rem;
+      }
+
+      .showcase-stat-list dd,
+      .showcase-share-stats dd {
+        margin: 0.15rem 0 0;
+        color: var(--aegis-color-marble);
+        font-family: Cinzel, Georgia, serif;
+        font-size: 1.15rem;
+        font-weight: 800;
+      }
+
+      .showcase-control-row {
+        display: flex;
+        min-inline-size: 0;
+        flex-wrap: wrap;
+        gap: var(--aegis-space-2);
+      }
+
+      .showcase-control-row > * {
+        flex: 1 1 9rem;
+      }
+
+      .showcase-state-row {
+        display: flex;
+        min-inline-size: 0;
+        flex-wrap: wrap;
+        gap: var(--aegis-space-2);
+      }
+
+      .showcase-motion-toggle {
+        display: inline-flex;
+        min-block-size: var(--aegis-target-secondary);
+        align-items: center;
+        justify-content: center;
+        margin-block-end: var(--aegis-space-2);
+        padding: var(--aegis-space-2) var(--aegis-space-3);
+        color: var(--aegis-color-text);
+        border: var(--aegis-border-control) solid var(--aegis-color-cyan);
+        border-radius: 999rem;
+        background: var(--aegis-color-surface-quiet);
+        font-family: Cinzel, Georgia, serif;
+        font-weight: 800;
+        line-height: 1.2;
+        cursor: pointer;
+      }
+
+      #unit-motion-paused:focus-visible + .showcase-motion-toggle {
+        outline: var(--aegis-focus-width) solid var(--aegis-color-cyan);
+        outline-offset: 0.1875rem;
+        box-shadow: 0 0 0 0.1875rem var(--aegis-color-canvas);
+      }
+
+      #unit-motion-paused:checked + .showcase-motion-toggle {
+        color: var(--aegis-color-ink);
+        background: var(--aegis-color-cyan);
+      }
+
+      #unit-motion-paused:checked ~ .showcase-enemy-grid .showcase-sprite,
+      #unit-motion-paused:checked ~ .showcase-tower-showcase .showcase-tower-sprite--animated {
+        animation-play-state: paused;
+      }
+
+      .showcase-motion-note {
+        max-inline-size: 52rem;
+        margin-block: 0 var(--aegis-space-4);
+        color: var(--aegis-color-text-muted);
+      }
+
+      .showcase-enemy-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(1rem, 3vw, 2rem);
+      }
+
+      .showcase-enemy-card {
+        gap: var(--aegis-space-4);
+      }
+
+      .showcase-enemy-card h3,
+      .showcase-enemy-card > p {
+        margin-block-end: 0;
+      }
+
+      .showcase-animation-pair {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--aegis-space-3);
+      }
+
+      .showcase-sprite-figure {
+        min-inline-size: 0;
+        margin: 0;
+      }
+
+      .showcase-sprite-stage {
+        display: grid;
+        min-inline-size: 0;
+        padding: clamp(0.25rem, 1.6vw, 0.75rem);
+        place-items: center;
+        overflow: hidden;
+        border: var(--aegis-border-thin) solid var(--aegis-color-bronze);
+        border-radius: var(--aegis-radius-medium);
+        background:
+          radial-gradient(circle at 50% 72%, rgb(39 215 255 / 0.12), transparent 42%),
+          linear-gradient(180deg, var(--aegis-color-surface-elevated), var(--aegis-color-surface-quiet));
+      }
+
+      .showcase-sprite {
+        --showcase-sprite-columns: 4;
+        --showcase-sprite-rows: 2;
+        --showcase-sprite-frame-source: 256px;
+
+        inline-size: min(100%, var(--showcase-sprite-frame-source));
+        aspect-ratio: 1;
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-size: 400% 200%;
+        filter: drop-shadow(0 0.5rem 0.3rem rgb(0 0 0 / 0.42));
+        image-rendering: auto;
+        will-change: background-position;
+        contain: paint;
+      }
+
+      .showcase-sprite--scout {
+        background-image: url("art/v2/m01/enemies/scout-anim-v1.webp");
+      }
+
+      .showcase-sprite--raider {
+        background-image: url("art/v2/m01/enemies/raider-anim-v1.webp");
+      }
+
+      .showcase-sprite--movement {
+        animation: showcase-sprite-row-top 880ms linear infinite;
+      }
+
+      .showcase-sprite--combat {
+        animation: showcase-sprite-row-bottom 1120ms linear infinite;
+      }
+
+      .showcase-sprite-figure figcaption {
+        margin-block-start: var(--aegis-space-2);
+        color: var(--aegis-color-text-muted);
+        font-size: 0.9rem;
+        text-align: center;
+      }
+
+      @keyframes showcase-sprite-row-top {
+        0%, 24.999% { background-position: 0% 0%; }
+        25%, 49.999% { background-position: 33.333333% 0%; }
+        50%, 74.999% { background-position: 66.666667% 0%; }
+        75%, 100% { background-position: 100% 0%; }
+      }
+
+      @keyframes showcase-sprite-row-bottom {
+        0%, 24.999% { background-position: 0% 100%; }
+        25%, 49.999% { background-position: 33.333333% 100%; }
+        50%, 74.999% { background-position: 66.666667% 100%; }
+        75%, 100% { background-position: 100% 100%; }
+      }
+
+      .showcase-tower-showcase {
+        margin-block-start: clamp(2.5rem, 6vw, 5rem);
+        padding-block-start: clamp(2rem, 5vw, 4rem);
+        border-block-start: var(--aegis-border-control) solid var(--aegis-color-bronze);
+        scroll-margin-block-start: 1rem;
+      }
+
+      .showcase-tower-heading {
+        max-inline-size: 58rem;
+        margin-block-end: var(--aegis-space-4);
+      }
+
+      .showcase-tower-heading h3 {
+        margin-block-end: var(--aegis-space-2);
+        font-size: clamp(1.5rem, 1.1rem + 1.8vw, 2.6rem);
+      }
+
+      .showcase-tower-heading p:last-child {
+        margin-block-end: 0;
+        color: var(--aegis-color-text-muted);
+      }
+
+      .showcase-frame-legend {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--aegis-space-2);
+        margin: 0 0 var(--aegis-space-4);
+        padding: 0;
+        list-style: none;
+      }
+
+      .showcase-frame-legend li {
+        min-inline-size: 0;
+        padding: var(--aegis-space-2);
+        color: var(--aegis-color-text-muted);
+        border: var(--aegis-border-thin) solid var(--aegis-color-bronze);
+        border-radius: var(--aegis-radius-small);
+        background: var(--aegis-color-surface-quiet);
+        text-align: center;
+      }
+
+      .showcase-frame-legend strong {
+        display: block;
+        color: var(--aegis-color-cyan);
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+      }
+
+      .showcase-tower-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(1rem, 2.2vw, 1.5rem);
+      }
+
+      .showcase-tower-card {
+        gap: var(--aegis-space-4);
+      }
+
+      .showcase-tower-card h4,
+      .showcase-tower-card > p {
+        margin-block-end: 0;
+      }
+
+      .showcase-tower-card h4 {
+        font-size: 1.35rem;
+      }
+
+      .showcase-tower-levels {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--aegis-space-2);
+      }
+
+      .showcase-tower-level,
+      .showcase-tower-cycle {
+        min-inline-size: 0;
+        margin: 0;
+      }
+
+      .showcase-tower-level figcaption,
+      .showcase-tower-cycle figcaption {
+        margin-block-start: var(--aegis-space-2);
+        color: var(--aegis-color-text-muted);
+        font-size: 0.875rem;
+        text-align: center;
+      }
+
+      .showcase-tower-level .showcase-sprite-stage {
+        padding: var(--aegis-space-1);
+      }
+
+      .showcase-tower-sprite {
+        --showcase-tower-columns: 4;
+        --showcase-tower-rows: 3;
+        --showcase-tower-frame-source: 256px;
+
+        inline-size: min(100%, var(--showcase-tower-frame-source));
+        aspect-ratio: 1;
+        background-color: transparent;
+        background-repeat: no-repeat;
+        background-size: 400% 300%;
+        filter: drop-shadow(0 0.5rem 0.3rem rgb(0 0 0 / 0.42));
+        image-rendering: auto;
+        contain: paint;
+      }
+
+      .showcase-tower-sprite--sentinel {
+        background-image: url("art/v2/m01/towers/sentinel-anim-v1.webp");
+      }
+
+      .showcase-tower-sprite--chronos {
+        background-image: url("art/v2/m01/towers/chronos-anim-v1.webp");
+      }
+
+      .showcase-tower-sprite--siege {
+        background-image: url("art/v2/m01/towers/siege-anim-v1.webp");
+      }
+
+      .showcase-tower-sprite--level-1 {
+        background-position: 0% 0%;
+      }
+
+      .showcase-tower-sprite--level-2 {
+        background-position: 0% 50%;
+      }
+
+      .showcase-tower-sprite--level-3 {
+        background-position: 0% 100%;
+      }
+
+      .showcase-tower-sprite--animated {
+        animation: showcase-tower-row-level-3 1280ms linear infinite;
+        will-change: background-position;
+      }
+
+      @keyframes showcase-tower-row-level-3 {
+        0%, 24.999% { background-position: 0% 100%; }
+        25%, 49.999% { background-position: 33.333333% 100%; }
+        50%, 74.999% { background-position: 66.666667% 100%; }
+        75%, 100% { background-position: 100% 100%; }
+      }
+
+      .showcase-dialog-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(1rem, 3vw, 2rem);
+        margin-block-start: clamp(1rem, 3vw, 2rem);
+        align-items: start;
+      }
+
+      .showcase-static-modal,
+      .showcase-static-sheet {
+        position: relative;
+        inset: auto;
+        inline-size: 100%;
+        max-block-size: none;
+      }
+
+      .showcase-static-modal h3,
+      .showcase-static-sheet h3 {
+        margin-block-end: 0.5rem;
+      }
+
+      .showcase-act-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: clamp(0.75rem, 2vw, 1.5rem);
+      }
+
+      .showcase-act-banner {
+        position: relative;
+        display: grid;
+        min-block-size: clamp(12rem, 25vw, 18rem);
+        margin: 0;
+        place-items: center;
+        overflow: hidden;
+        border-radius: var(--aegis-radius-medium);
+        background: var(--aegis-color-surface-quiet);
+        isolation: isolate;
+      }
+
+      .showcase-act-banner img,
+      .showcase-share-card > img {
+        position: absolute;
+        z-index: -2;
+        inset: 0;
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+      }
+
+      .showcase-act-banner::after,
+      .showcase-share-card::after {
+        position: absolute;
+        z-index: -1;
+        inset: 0;
+        background: radial-gradient(circle at center, rgb(7 17 26 / 0.16), rgb(7 17 26 / 0.78));
+        pointer-events: none;
+        content: "";
+      }
+
+      .showcase-act-banner figcaption {
+        max-inline-size: min(75%, 28rem);
+        padding: 1rem;
+        text-align: center;
+        text-shadow: 0 0.125rem 0.45rem #07111A, 0 0 1.25rem #07111A;
+      }
+
+      .showcase-act-number {
+        margin: 0 0 0.25rem;
+        color: var(--aegis-color-cyan);
+        font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+        font-size: 0.85rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .showcase-act-banner h3 {
+        margin: 0;
+        color: var(--aegis-color-marble);
+        font-size: clamp(1.25rem, 1rem + 1.4vw, 2.2rem);
+      }
+
+      .showcase-act-banner figcaption p:last-child {
+        margin: 0.35rem 0 0;
+        color: var(--aegis-color-text);
+      }
+
+      .showcase-share-card {
+        position: relative;
+        display: grid;
+        min-block-size: clamp(26rem, 52vw, 42rem);
+        margin: 0;
+        place-items: center;
+        overflow: hidden;
+        border-radius: var(--aegis-radius-large);
+        background: var(--aegis-color-surface-quiet);
+        isolation: isolate;
+      }
+
+      .showcase-share-content {
+        display: grid;
+        inline-size: min(76%, 42rem);
+        justify-items: center;
+        gap: clamp(0.6rem, 2vw, 1.25rem);
+        text-align: center;
+        text-shadow: 0 0.125rem 0.45rem #07111A, 0 0 1.25rem #07111A;
+      }
+
+      .showcase-share-logo {
+        inline-size: clamp(3.5rem, 9vw, 6rem);
+        block-size: auto;
+        filter: drop-shadow(0 0 0.75rem rgb(247 201 72 / 0.3));
+      }
+
+      .showcase-share-content h3 {
+        margin: 0;
+        font-size: clamp(1.6rem, 1.1rem + 2.6vw, 3.5rem);
+      }
+
+      .showcase-share-content > p {
+        margin: 0;
+      }
+
+      .showcase-share-stats {
+        inline-size: 100%;
+      }
+
+      .showcase-road-link {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .showcase-road-link:hover img {
+        filter: saturate(1.08) brightness(1.04);
+      }
+
+      .showcase-road-link:focus-visible {
+        border-radius: var(--aegis-radius-large);
+      }
+
+      .showcase-road-caption {
+        display: flex;
+        min-inline-size: 0;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--aegis-space-2) var(--aegis-space-4);
+      }
+
+      .showcase-road-caption span:last-child {
+        color: var(--aegis-color-cyan);
+        font-weight: 800;
+      }
+
+      .showcase-footer {
+        padding:
+          2rem
+          max(1rem, env(safe-area-inset-right))
+          max(2rem, env(safe-area-inset-bottom))
+          max(1rem, env(safe-area-inset-left));
+        color: var(--aegis-color-text-muted);
+        border-block-start: 0.125rem solid var(--aegis-color-bronze);
+        background: var(--aegis-color-surface-quiet);
+        text-align: center;
+      }
+
+      .showcase-footer p {
+        margin: 0;
+      }
+
+      @media (max-width: 80rem) {
+        .showcase-main {
+          --aegis-content-wide: 76rem;
+        }
+
+        .showcase-tower-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 48rem) {
+        .showcase-two-column,
+        .showcase-dialog-grid,
+        .showcase-enemy-grid,
+        .showcase-tower-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .showcase-act-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .showcase-act-banner {
+          min-block-size: clamp(12rem, 44vw, 17rem);
+        }
+
+        .showcase-hero-content {
+          align-self: end;
+          padding-block-end: max(2rem, env(safe-area-inset-bottom));
+        }
+
+        .showcase-brand-copy {
+          text-align: center;
+        }
+      }
+
+      @media (max-width: 24.375rem) {
+        .showcase-animation-pair,
+        .showcase-tower-levels {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .showcase-frame-legend {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .showcase-share-content {
+          inline-size: 84%;
+        }
+
+        .showcase-stat-list,
+        .showcase-share-stats {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .showcase-share-card {
+          min-block-size: 38rem;
+        }
+      }
+
+      @media (max-width: 20rem) {
+        .showcase-hero-content,
+        .showcase-main {
+          padding-inline: 0.75rem;
+        }
+
+        .showcase-preview-flag {
+          border-radius: var(--aegis-radius-small);
+        }
+      }
+
+      @media (orientation: portrait) {
+        .showcase-shell-picture img {
+          object-position: center bottom;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .showcase-skip-link,
+        .showcase-road-link img {
+          transition: none;
+        }
+
+        .showcase-sprite {
+          animation: none !important;
+          will-change: auto;
+        }
+
+        .showcase-sprite--movement {
+          background-position: 33.333333% 0%;
+        }
+
+        .showcase-sprite--combat {
+          background-position: 100% 100%;
+        }
+
+        .showcase-tower-sprite--animated {
+          animation: none !important;
+          background-position: 66.666667% 100%;
+          will-change: auto;
+        }
+      }
+    }
+  </style>
+  <script src="js/presentation/ui-theme.js" defer></script>
+</head>
+<body class="aegis-art" data-preview-only="true">
+  <a class="showcase-skip-link" href="#preview-content">Skip to art specimens</a>
+
+  <header class="showcase-hero aegis-art-safe-area" id="shell">
+    <picture class="showcase-shell-picture" aria-hidden="true">
+      <source media="(orientation: portrait)" srcset="art/v2/ui/shell-portrait-v1.webp">
+      <source media="(orientation: landscape)" srcset="art/v2/ui/shell-landscape-v1.webp">
+      <img src="art/v2/ui/shell-landscape-v1.webp" width="2048" height="1280" alt="" fetchpriority="high">
+    </picture>
+    <div class="showcase-hero-shade" aria-hidden="true"></div>
+    <div class="showcase-hero-content">
+      <p class="showcase-preview-flag" role="note">LOCAL ART PREVIEW / NON-PRODUCTION</p>
+      <div class="showcase-brand-lockup">
+        <img class="showcase-brand-logo" src="skin/armara/logo.png" width="1254" height="1254" alt="Armara">
+        <div class="showcase-brand-copy">
+          <h1>Armara Aegis</h1>
+          <p>Hold the line of dawn</p>
+        </div>
+      </div>
+      <p class="showcase-hero-lede">A responsive presentation study for marble, bronze, living circuitry, campaign art, and readable tower-defense command surfaces.</p>
+      <nav class="aegis-art-nav showcase-hero-nav" aria-label="Art preview sections">
+        <a class="aegis-art-nav-item" href="#components">Interface</a>
+        <a class="aegis-art-nav-item" href="#enemies">Enemies</a>
+        <a class="aegis-art-nav-item" href="#towers">Towers</a>
+        <a class="aegis-art-nav-item" href="#campaign">Campaign</a>
+        <a class="aegis-art-nav-item" href="#victory">Victory</a>
+        <a class="aegis-art-nav-item" href="#road">M01 Road</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="showcase-main" id="preview-content">
+    <section class="showcase-section aegis-art-panel" id="components" aria-labelledby="components-title">
+      <header class="aegis-art-panel-header showcase-section-heading">
+        <div>
+          <p class="showcase-kicker">Interface specimens</p>
+          <h2 id="components-title">Command surfaces</h2>
+          <p>Code-native controls keep labels, costs, statistics, warnings, and descriptions live and legible while the art supplies atmosphere.</p>
+        </div>
+        <span class="aegis-art-chip" data-tone="success">Contrast checked</span>
+      </header>
+
+      <div class="showcase-two-column">
+        <figure class="showcase-art-figure">
+          <img src="art/v2/ui/panel-4x3-v1.webp" width="1024" height="768" alt="" loading="lazy">
+          <figcaption>Text-free 4:3 marble-and-circuit panel frame. Product copy belongs in live HTML, never in the raster.</figcaption>
+        </figure>
+
+        <article class="aegis-art-card showcase-store" aria-labelledby="store-title">
+          <div class="showcase-store-balance">
+            <div>
+              <p class="showcase-kicker">Tower store</p>
+              <h3 id="store-title">Choose a defense</h3>
+            </div>
+            <output aria-label="Available Aether">240 Aether</output>
+          </div>
+          <p><strong>Sentinel</strong> — precise single-target fire for long approach lanes.</p>
+          <dl class="showcase-stat-list">
+            <div><dt>Damage</dt><dd>18</dd></div>
+            <div><dt>Range</dt><dd>5.5</dd></div>
+            <div><dt>Rate</dt><dd>1.2/s</dd></div>
+          </dl>
+          <div class="showcase-state-row" aria-label="Tower traits">
+            <span class="aegis-art-chip">Ground</span>
+            <span class="aegis-art-chip" data-tone="success">Ready</span>
+            <span class="aegis-art-chip" data-state="warning">Line of sight</span>
+          </div>
+          <div class="showcase-control-row">
+            <button class="aegis-art-button" type="button" data-tone="primary">Build · 120</button>
+            <button class="aegis-art-button" type="button" data-affordability="unaffordable" aria-disabled="true">Siege · 360</button>
+          </div>
+        </article>
+      </div>
+
+      <div class="showcase-dialog-grid">
+        <article class="aegis-art-modal showcase-static-modal" role="dialog" aria-modal="false" aria-labelledby="modal-title">
+          <p class="showcase-kicker">Modal specimen</p>
+          <h3 id="modal-title">Wave incoming</h3>
+          <p>Armored raiders are approaching from the western gate. Reposition or reinforce before the horn sounds.</p>
+          <div class="showcase-control-row">
+            <button class="aegis-art-button aegis-art-button--compact" type="button">Inspect route</button>
+            <button class="aegis-art-button aegis-art-button--compact" type="button" data-tone="powered">Ready defenses</button>
+          </div>
+        </article>
+
+        <aside class="aegis-art-sheet showcase-static-sheet" aria-labelledby="sheet-title">
+          <p class="showcase-kicker">Sheet specimen</p>
+          <h3 id="sheet-title">Sentinel · Rank II</h3>
+          <p>Tempered optics improve range and reveal cloaked scouts inside the tower’s firing arc.</p>
+          <div class="showcase-state-row">
+            <span class="aegis-art-chip">Invested · 210</span>
+            <span class="aegis-art-chip" data-tone="success">Sell · 147</span>
+          </div>
+          <p class="aegis-art-live" role="status">Upgrade preview: +2.0 range, +4 damage</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="showcase-section showcase-enemy-preview" id="enemies" aria-labelledby="enemies-title">
+      <header class="showcase-section-heading">
+        <p class="showcase-kicker">M01 motion study</p>
+        <h2 id="enemies-title">Readable enemies in motion</h2>
+        <p>Each accepted atlas is sampled as two four-frame loops: movement from the top row and impact through defeat from the bottom row. Transparent pixels reveal the clean navy stage.</p>
+      </header>
+      <input class="aegis-art-sr-only" id="unit-motion-paused" type="checkbox" aria-describedby="unit-motion-note">
+      <label class="showcase-motion-toggle" for="unit-motion-paused">Pause / resume unit animations</label>
+      <p class="showcase-motion-note" id="unit-motion-note">Enemy motion uses eight 256 × 256 source frames per 4 × 2 atlas; tower motion uses twelve per 4 × 3 atlas. Reduced-motion mode shows meaningful static poses.</p>
+
+      <div class="showcase-enemy-grid">
+        <article class="aegis-art-card showcase-enemy-card" aria-labelledby="scout-title">
+          <div>
+            <p class="showcase-kicker">Fast ground enemy</p>
+            <h3 id="scout-title">Aegis Scout</h3>
+          </div>
+          <p>A bright green crest, hot orange optics, and a low mechanical silhouette keep the scout readable against earth and limestone.</p>
+          <div class="showcase-animation-pair">
+            <figure class="showcase-sprite-figure">
+              <div class="showcase-sprite-stage">
+                <div class="showcase-sprite showcase-sprite--scout showcase-sprite--movement" role="img" aria-label="Animated Aegis Scout movement frames"></div>
+              </div>
+              <figcaption>Idle → run · top row</figcaption>
+            </figure>
+            <figure class="showcase-sprite-figure">
+              <div class="showcase-sprite-stage">
+                <div class="showcase-sprite showcase-sprite--scout showcase-sprite--combat" role="img" aria-label="Animated Aegis Scout hit and defeat frames"></div>
+              </div>
+              <figcaption>Hit → defeat · bottom row</figcaption>
+            </figure>
+          </div>
+        </article>
+
+        <article class="aegis-art-card showcase-enemy-card" aria-labelledby="raider-title">
+          <div>
+            <p class="showcase-kicker">Armored ground enemy</p>
+            <h3 id="raider-title">Aegis Raider</h3>
+          </div>
+          <p>A red-plumed hoplite profile, gold armor edges, and a luminous visor separate the raider from the battlefield at a glance.</p>
+          <div class="showcase-animation-pair">
+            <figure class="showcase-sprite-figure">
+              <div class="showcase-sprite-stage">
+                <div class="showcase-sprite showcase-sprite--raider showcase-sprite--movement" role="img" aria-label="Animated Aegis Raider movement frames"></div>
+              </div>
+              <figcaption>Idle → run · top row</figcaption>
+            </figure>
+            <figure class="showcase-sprite-figure">
+              <div class="showcase-sprite-stage">
+                <div class="showcase-sprite showcase-sprite--raider showcase-sprite--combat" role="img" aria-label="Animated Aegis Raider hit and defeat frames"></div>
+              </div>
+              <figcaption>Hit → defeat · bottom row</figcaption>
+            </figure>
+          </div>
+        </article>
+      </div>
+
+      <div class="showcase-tower-showcase" id="towers" aria-labelledby="towers-title">
+        <header class="showcase-tower-heading">
+          <p class="showcase-kicker">Defense upgrade study</p>
+          <h3 id="towers-title">Three towers, three readable levels</h3>
+          <p>Each card compares the first idle pose across upgrade rows, then animates the Level III row through the shared four-column action language.</p>
+        </header>
+        <ol class="showcase-frame-legend" aria-label="Tower atlas column order">
+          <li><strong>Column 1</strong>Idle A</li>
+          <li><strong>Column 2</strong>Idle B</li>
+          <li><strong>Column 3</strong>Active / fire</li>
+          <li><strong>Column 4</strong>Recovery / hit</li>
+        </ol>
+
+        <div class="showcase-tower-grid">
+          <article class="aegis-art-card showcase-tower-card" aria-labelledby="sentinel-tower-title">
+            <div>
+              <p class="showcase-kicker">Precision defense</p>
+              <h4 id="sentinel-tower-title">Sentinel</h4>
+            </div>
+            <p>Additional limbs, capacitors, and the Level III crown make long-range investment visible without changing its crossbow silhouette.</p>
+            <div class="showcase-tower-levels" aria-label="Sentinel upgrade progression">
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--sentinel showcase-tower-sprite--level-1" role="img" aria-label="Sentinel Level I idle pose"></div></div>
+                <figcaption>Level I</figcaption>
+              </figure>
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--sentinel showcase-tower-sprite--level-2" role="img" aria-label="Sentinel Level II idle pose"></div></div>
+                <figcaption>Level II</figcaption>
+              </figure>
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--sentinel showcase-tower-sprite--level-3" role="img" aria-label="Sentinel Level III idle pose"></div></div>
+                <figcaption>Level III</figcaption>
+              </figure>
+            </div>
+            <figure class="showcase-tower-cycle">
+              <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--sentinel showcase-tower-sprite--level-3 showcase-tower-sprite--animated" role="img" aria-label="Animated Sentinel Level III firing cycle"></div></div>
+              <figcaption>Level III · idle A → idle B → fire → recovery</figcaption>
+            </figure>
+          </article>
+
+          <article class="aegis-art-card showcase-tower-card" aria-labelledby="chronos-tower-title">
+            <div>
+              <p class="showcase-kicker">Temporal control</p>
+              <h4 id="chronos-tower-title">Chronos</h4>
+            </div>
+            <p>Orbiting crystals and expanding armillary rings communicate stronger time control at every upgrade.</p>
+            <div class="showcase-tower-levels" aria-label="Chronos upgrade progression">
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--chronos showcase-tower-sprite--level-1" role="img" aria-label="Chronos Level I idle pose"></div></div>
+                <figcaption>Level I</figcaption>
+              </figure>
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--chronos showcase-tower-sprite--level-2" role="img" aria-label="Chronos Level II idle pose"></div></div>
+                <figcaption>Level II</figcaption>
+              </figure>
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--chronos showcase-tower-sprite--level-3" role="img" aria-label="Chronos Level III idle pose"></div></div>
+                <figcaption>Level III</figcaption>
+              </figure>
+            </div>
+            <figure class="showcase-tower-cycle">
+              <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--chronos showcase-tower-sprite--level-3 showcase-tower-sprite--animated" role="img" aria-label="Animated Chronos Level III activation cycle"></div></div>
+              <figcaption>Level III · idle A → idle B → active → recovery</figcaption>
+            </figure>
+          </article>
+
+          <article class="aegis-art-card showcase-tower-card" aria-labelledby="siege-tower-title">
+            <div>
+              <p class="showcase-kicker">Area bombardment</p>
+              <h4 id="siege-tower-title">Siege</h4>
+            </div>
+            <p>More boilers, reinforced machinery, and a brighter firing chamber make the heavy artillery tiers unmistakable.</p>
+            <div class="showcase-tower-levels" aria-label="Siege upgrade progression">
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--siege showcase-tower-sprite--level-1" role="img" aria-label="Siege Level I idle pose"></div></div>
+                <figcaption>Level I</figcaption>
+              </figure>
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--siege showcase-tower-sprite--level-2" role="img" aria-label="Siege Level II idle pose"></div></div>
+                <figcaption>Level II</figcaption>
+              </figure>
+              <figure class="showcase-tower-level">
+                <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--siege showcase-tower-sprite--level-3" role="img" aria-label="Siege Level III idle pose"></div></div>
+                <figcaption>Level III</figcaption>
+              </figure>
+            </div>
+            <figure class="showcase-tower-cycle">
+              <div class="showcase-sprite-stage"><div class="showcase-tower-sprite showcase-tower-sprite--siege showcase-tower-sprite--level-3 showcase-tower-sprite--animated" role="img" aria-label="Animated Siege Level III firing cycle"></div></div>
+              <figcaption>Level III · idle A → idle B → fire → recovery</figcaption>
+            </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="showcase-section" id="campaign" aria-labelledby="campaign-title">
+      <header class="showcase-section-heading">
+        <p class="showcase-kicker">Campaign atlas</p>
+        <h2 id="campaign-title">Four acts, four horizons</h2>
+        <p>The generated banners remain free of lettering; each act name and description below is live, responsive interface text.</p>
+      </header>
+      <div class="showcase-act-grid">
+        <figure class="showcase-act-banner">
+          <img src="art/v2/ui/act-1-attican-v1.webp" width="1536" height="512" alt="" loading="lazy">
+          <figcaption>
+            <p class="showcase-act-number">Act I</p>
+            <h3>The Attican Front</h3>
+            <p>Sunlit roads and the first breach.</p>
+          </figcaption>
+        </figure>
+        <figure class="showcase-act-banner">
+          <img src="art/v2/ui/act-2-aegean-v1.webp" width="1536" height="512" alt="" loading="lazy">
+          <figcaption>
+            <p class="showcase-act-number">Act II</p>
+            <h3>The Aegean Reach</h3>
+            <p>Island passages under electric skies.</p>
+          </figcaption>
+        </figure>
+        <figure class="showcase-act-banner">
+          <img src="art/v2/ui/act-3-oracle-v1.webp" width="1536" height="512" alt="" loading="lazy">
+          <figcaption>
+            <p class="showcase-act-number">Act III</p>
+            <h3>The Oracle Depths</h3>
+            <p>Violet signals beneath sacred stone.</p>
+          </figcaption>
+        </figure>
+        <figure class="showcase-act-banner">
+          <img src="art/v2/ui/act-4-titan-v1.webp" width="1536" height="512" alt="" loading="lazy">
+          <figcaption>
+            <p class="showcase-act-number">Act IV</p>
+            <h3>The Titan Ascendant</h3>
+            <p>Monumental defenses at the final threshold.</p>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="showcase-section" id="victory" aria-labelledby="victory-title">
+      <header class="showcase-section-heading">
+        <p class="showcase-kicker">End-of-level treatment</p>
+        <h2 id="victory-title">Victory worth sharing</h2>
+        <p>The frame carries the Armara mood while the result, mission, and performance remain live and adaptable.</p>
+      </header>
+      <figure class="showcase-share-card">
+        <img src="art/v2/ui/victory-share-v1.webp" width="1200" height="630" alt="" loading="lazy">
+        <figcaption class="showcase-share-content">
+          <img class="showcase-share-logo" src="skin/armara/logo.png" width="1254" height="1254" alt="">
+          <p class="showcase-kicker">Mission complete</p>
+          <h3>Gate of Dawn secured</h3>
+          <p>Commander, the city stands.</p>
+          <dl class="showcase-share-stats">
+            <div><dt>Integrity</dt><dd><data value="18">18 / 20</data></dd></div>
+            <div><dt>Waves</dt><dd><data value="12">12</data></dd></div>
+            <div><dt>Aether</dt><dd><data value="430">430</data></dd></div>
+          </dl>
+          <button class="aegis-art-button" type="button" data-tone="primary" aria-disabled="true">Share card preview</button>
+        </figcaption>
+      </figure>
+    </section>
+
+    <section class="showcase-section" id="road" aria-labelledby="road-title">
+      <header class="showcase-section-heading">
+        <p class="showcase-kicker">Player-facing map proof</p>
+        <h2 id="road-title">M01 · Gate of Dawn</h2>
+        <p>A single readable route moves from dusty earth through worn limestone into city cobbles, composed over the approved environment at the fixed player camera.</p>
+      </header>
+      <figure class="showcase-art-figure">
+        <a class="showcase-road-link" href="../../docs/aegis/art-guides/m01-player-road-preview.svg" target="_blank" rel="noopener">
+          <img src="../../docs/aegis/art-guides/m01-player-road-preview.png" width="2048" height="1280" alt="Gate of Dawn battlefield with one narrow ancient road transitioning from earth to limestone and city cobbles" loading="lazy">
+          <figcaption class="showcase-road-caption">
+            <span>Deterministic developer render · 2048 × 1280</span>
+            <span>Open self-contained SVG preview →</span>
+          </figcaption>
+        </a>
+      </figure>
+    </section>
+  </main>
+
+  <footer class="showcase-footer">
+    <p><strong>LOCAL ART PREVIEW / NON-PRODUCTION</strong> · Isolated from release selection and gameplay.</p>
+  </footer>
+</body>
+</html>

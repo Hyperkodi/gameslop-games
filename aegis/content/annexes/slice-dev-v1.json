@@ -6,12 +6,12 @@
     {
       "id": "campaign-expansion-spec",
       "repositoryPath": "docs/superpowers/specs/2026-08-26-armara-aegis-campaign-expansion.md",
-      "sha256": "sha256:c01811e923c49af4c5da794f224b68d688d4d705eaf06cbe2c2c298b9533cb1f"
+      "sha256": "sha256:b0b711512cf17e8113d51b7f08a2b186eed24e4358032d9fe83a0ada24598cea"
     },
     {
       "id": "slice-content-spec",
       "repositoryPath": "docs/superpowers/specs/2026-08-27-armara-aegis-slice-content-schema.md",
-      "sha256": "sha256:57ce5a55ff627d7dbeb96707d37ad860936c36c1bb2d589947ab704b79e25f7d"
+      "sha256": "sha256:627b885c8da46fa8729d867a0d7f50b4fa35097ea8ce46a2fa92772197f0f54e"
     }
   ],
   "bindingLocks": [
@@ -301,7 +301,7 @@
       "id": "lock.0048",
       "authorityId": "campaign-expansion-spec",
       "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/0/transitionEventIds",
-      "expectedCanonicalValueHash": "sha256:99897456456d08feaefd353dcc7a0e3dd1d3f3aec7562d0e2019d4cf7521cc9a"
+      "expectedCanonicalValueHash": "sha256:bea9513355c98b3ba69ba83978b039abe1c234208c87892843fd305288d023d9"
     },
     {
       "id": "lock.0049",
@@ -397,7 +397,7 @@
       "id": "lock.0064",
       "authorityId": "campaign-expansion-spec",
       "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/1/transitionEventIds",
-      "expectedCanonicalValueHash": "sha256:99897456456d08feaefd353dcc7a0e3dd1d3f3aec7562d0e2019d4cf7521cc9a"
+      "expectedCanonicalValueHash": "sha256:bea9513355c98b3ba69ba83978b039abe1c234208c87892843fd305288d023d9"
     },
     {
       "id": "lock.0065",
@@ -493,7 +493,7 @@
       "id": "lock.0080",
       "authorityId": "campaign-expansion-spec",
       "jsonPointer": "/bosses/talos-prototype/thresholdScript/parameters/thresholds/2/transitionEventIds",
-      "expectedCanonicalValueHash": "sha256:99897456456d08feaefd353dcc7a0e3dd1d3f3aec7562d0e2019d4cf7521cc9a"
+      "expectedCanonicalValueHash": "sha256:bea9513355c98b3ba69ba83978b039abe1c234208c87892843fd305288d023d9"
     },
     {
       "id": "lock.0081",

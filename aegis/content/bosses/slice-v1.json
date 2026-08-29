@@ -110,9 +110,9 @@
               ],
               "maximumCreateEventsPerTick": 1,
               "transitionEventIds": [
+                "talos.threshold",
                 "talos.expose",
-                "talos.pods",
-                "talos.threshold"
+                "talos.pods"
               ]
             },
             {
@@ -157,9 +157,9 @@
               ],
               "maximumCreateEventsPerTick": 1,
               "transitionEventIds": [
+                "talos.threshold",
                 "talos.expose",
-                "talos.pods",
-                "talos.threshold"
+                "talos.pods"
               ]
             },
             {
@@ -204,9 +204,9 @@
               ],
               "maximumCreateEventsPerTick": 1,
               "transitionEventIds": [
+                "talos.threshold",
                 "talos.expose",
-                "talos.pods",
-                "talos.threshold"
+                "talos.pods"
               ]
             }
           ]

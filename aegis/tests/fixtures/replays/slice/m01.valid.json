@@ -1,0 +1,29 @@
+{
+  "formatVersion": 1,
+  "rulesetHash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "eventSchemaVersion": 1,
+  "missionId": "m01",
+  "difficultyId": "strategos",
+  "assist": false,
+  "seed": 101,
+  "loadoutIds": ["sentinel", "chronos", "siege"],
+  "loadoutSlotCap": 4,
+  "campaignModifierIds": [],
+  "accessGrantIds": ["campaign.sentinel", "campaign.chronos", "campaign.siege"],
+  "tutorialUpgradeGateMode": "m01-wave1",
+  "inputs": [
+    { "tick": 0, "seq": 0, "type": "startWave" }
+  ],
+  "checkpoints": [
+    { "tick": 0, "diagnosticHash": "fnv1a32:2459bed1" },
+    { "tick": 1, "diagnosticHash": "fnv1a32:07fb590f" },
+    { "tick": 3, "diagnosticHash": "fnv1a32:b3a8f5f6" }
+  ],
+  "finalClaim": {
+    "outcome": "victory",
+    "score": 112,
+    "laurels": 3,
+    "durationTicks": 3,
+    "finalStateHash": "9714c6269cb568b1d81b3fa5cfa772907fe35a0c83be16655c98ac0a485909cc"
+  }
+}

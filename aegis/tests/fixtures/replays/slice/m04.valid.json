@@ -1,0 +1,29 @@
+{
+  "formatVersion": 1,
+  "rulesetHash": "sha256:cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+  "eventSchemaVersion": 1,
+  "missionId": "m04",
+  "difficultyId": "story",
+  "assist": true,
+  "seed": 404,
+  "loadoutIds": ["sentinel", "chronos", "siege", "oracle"],
+  "loadoutSlotCap": 4,
+  "campaignModifierIds": ["reserve-1"],
+  "accessGrantIds": ["campaign.sentinel", "campaign.chronos", "campaign.siege", "campaign.oracle"],
+  "tutorialUpgradeGateMode": "none",
+  "inputs": [
+    { "tick": 0, "seq": 0, "type": "startWave" }
+  ],
+  "checkpoints": [
+    { "tick": 0, "diagnosticHash": "fnv1a32:caf8d364" },
+    { "tick": 1, "diagnosticHash": "fnv1a32:99ca962a" },
+    { "tick": 4, "diagnosticHash": "fnv1a32:d6c26a6c" }
+  ],
+  "finalClaim": {
+    "outcome": "victory",
+    "score": 223,
+    "laurels": 2,
+    "durationTicks": 4,
+    "finalStateHash": "062c3e814e2add8ec7d0c7ec36465a7963dfa453e573d3a30b0084a91ce831d1"
+  }
+}

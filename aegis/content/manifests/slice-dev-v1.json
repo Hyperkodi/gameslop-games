@@ -14,7 +14,7 @@
   "annex": {
     "id": "slice-dev-v1",
     "source": "annexes/slice-dev-v1.json",
-    "sha256": "sha256:c97151254e586bbd782aa3d713c1cff7387639504e90a43b445357a1871a892e"
+    "sha256": "sha256:41ab28d2d45cb30e0167accfc48614afc10594d5d6d669b1f505bd95090d2569"
   },
   "campaignRules": {
     "source": "campaign-rules/slice-v1.json",
@@ -30,15 +30,15 @@
   },
   "bosses": {
     "source": "bosses/slice-v1.json",
-    "sha256": "sha256:a26e18afa55d19450f8953dac92c54004abd6e5c96c6f730259fcab0ae0dccbc"
+    "sha256": "sha256:12d6f057308d4968f2bdad36297bdffd784bfadb77a96ea1ba4301b4413dccc5"
   },
   "eventCatalog": {
     "source": "events/slice-v1.json",
-    "sha256": "sha256:92415aa55495d6b2144059aff9362b20ff38ad492f1b4ba00833fbf9870ac506"
+    "sha256": "sha256:4f2af1c4bb2c29da35a298c6bb42d6725efdf82c5afd0b16efa8a41b9412f853"
   },
   "stringCatalog": {
     "source": "strings/en.slice-v1.json",
-    "sha256": "sha256:0e70d08c98b38faea9bd3ce7693342346abd51fa27a81bbe45b3830b166276fb"
+    "sha256": "sha256:e8c271beff0ff322e25a848649dda600fb67d7267e9064fb89866accfec97300"
   },
   "presentationCatalog": {
     "source": "presentation/slice-v1.json",

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "id": "m01-siege-emphasis",
+  "kind": "mission-witness",
+  "header": {
+    "missionId": "m01",
+    "difficultyId": "strategos",
+    "assist": false,
+    "seed": 0,
+    "loadoutIds": [
+      "sentinel",
+      "chronos",
+      "siege"
+    ],
+    "loadoutSlotCap": 3,
+    "campaignModifierIds": [],
+    "accessGrantIds": [
+      "campaign.chronos",
+      "campaign.sentinel",
+      "campaign.siege"
+    ],
+    "tutorialUpgradeGateMode": "m01-wave1"
+  },
+  "strategyVersion": "authored-command-stream-v1",
+  "commands": [
+    {
+      "tick": 0,
+      "seq": 0,
+      "type": "build",
+      "padId": "p03",
+      "defenseId": "siege"
+    },
+    {
+      "tick": 0,
+      "seq": 1,
+      "type": "build",
+      "padId": "p04",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 0,
+      "seq": 2,
+      "type": "startWave"
+    },
+    {
+      "tick": 526,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 2134,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 2134,
+      "seq": 1,
+      "type": "upgrade",
+      "towerId": 1
+    },
+    {
+      "tick": 2911,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 3717,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 3717,
+      "seq": 1,
+      "type": "build",
+      "padId": "p08",
+      "defenseId": "siege"
+    },
+    {
+      "tick": 4806,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 4806,
+      "seq": 1,
+      "type": "build",
+      "padId": "p10",
+      "defenseId": "sentinel"
+    }
+  ],
+  "pair": null,
+  "expectations": {
+    "outcome": "victory",
+    "integrityMin": 18,
+    "integrityMax": 20,
+    "defeatWaveIndexes": [],
+    "requiredGateIds": [
+      "starter-trio-wins-m01",
+      "m01-siege-emphasis",
+      "m01-representative-economy"
+    ]
+  }
+}

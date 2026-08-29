@@ -1,17 +1,26 @@
-/* Armara Aegis deterministic replay envelope v1.
-   Strict, bounded parsing and canonical replay/state identities without simulation or platform I/O. */
+/* Armara Aegis deterministic replay envelope and bound execution API v1.
+   Strict, bounded parsing plus explicit immutable ruleset simulation without platform I/O. */
 (function (root, factory) {
   "use strict";
 
   if (typeof module !== "undefined" && module.exports) {
-    module.exports = factory(require("./abi.js"), require("./commands.js"));
+    module.exports = factory(
+      require("./abi.js"),
+      require("./commands.js"),
+      require("./replay-runner.js")
+    );
     return;
   }
 
   const game = root.Game;
   if (!game || !game.AegisSim) throw new Error("Game.AegisSim must be installed before replay.js");
   if (!game.AegisCommands) throw new Error("Game.AegisCommands must be installed before replay.js");
-  const api = factory(game.AegisSim, game.AegisCommands);
+  if (!game.AegisReplayRunner) throw new Error("Game.AegisReplayRunner must be installed before replay.js");
+  const api = factory(
+    game.AegisSim,
+    game.AegisCommands,
+    game.AegisReplayRunner
+  );
   if (Object.prototype.hasOwnProperty.call(game, "AegisReplay")) {
     if (game.AegisReplay !== api) throw new Error("Game.AegisReplay is already installed");
     return;
@@ -22,7 +31,11 @@
     configurable: false,
     enumerable: true,
   });
-})(typeof globalThis !== "undefined" ? globalThis : this, function (ABI, Commands) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (
+  ABI,
+  Commands,
+  ReplayRunner
+) {
   "use strict";
 
   if (!ABI || !Object.isFrozen(ABI) || !Object.isFrozen(ABI.DESCRIPTOR)) {
@@ -44,9 +57,37 @@
   if (Commands.ABI_DESCRIPTOR_SHA256 !== ABI.DESCRIPTOR_SHA256) {
     throw new Error("Aegis Commands ABI descriptor identity does not match the simulation ABI");
   }
+  if (!ReplayRunner || !Object.isFrozen(ReplayRunner) ||
+      typeof ReplayRunner.createBoundSimulator !== "function") {
+    throw new TypeError("A frozen Aegis ReplayRunner API is required");
+  }
+  if (ReplayRunner.ABI_DESCRIPTOR_SHA256 !== ABI.DESCRIPTOR_SHA256) {
+    throw new Error("Aegis ReplayRunner ABI descriptor identity does not match the simulation ABI");
+  }
+  if (!ReplayRunner.EXECUTION_LIMITS || !Object.isFrozen(ReplayRunner.EXECUTION_LIMITS)) {
+    throw new TypeError("A frozen Aegis ReplayRunner execution-limit record is required");
+  }
+  const EXECUTION_LIMITS = ReplayRunner.EXECUTION_LIMITS;
+  const executionLimitKeys = [
+    "maxAccessGrantIds", "maxCampaignModifierIds", "maxCheckpoints", "maxCommandsPerTick",
+    "maxDurationTicks", "maxLoadoutIds", "maxStringLength", "maxTotalCommands",
+  ];
+  if (Object.keys(EXECUTION_LIMITS).sort().join("\u0000") !== executionLimitKeys.sort().join("\u0000")) {
+    throw new TypeError("Aegis ReplayRunner execution-limit fields are invalid");
+  }
+  executionLimitKeys.forEach(function (key) {
+    if (!Number.isSafeInteger(EXECUTION_LIMITS[key]) || EXECUTION_LIMITS[key] < 1) {
+      throw new RangeError("Aegis ReplayRunner execution limit is invalid: " + key);
+    }
+  });
+  if (EXECUTION_LIMITS.maxCommandsPerTick !== Commands.DEFAULT_LIMITS.maxCommandsPerTick ||
+      EXECUTION_LIMITS.maxDurationTicks !== Commands.DEFAULT_LIMITS.maxTick) {
+    throw new RangeError("Aegis ReplayRunner and Commands execution limits do not match");
+  }
 
   const FORMAT_VERSION = 1;
-  const EVENT_SCHEMA_VERSION = ABI.DESCRIPTOR.commands.schemaVersion;
+  const EVENT_SCHEMA_VERSION = ABI.EVENT_SCHEMA_VERSION;
+  const COMMAND_SCHEMA_VERSION = Commands.COMMAND_SCHEMA_VERSION;
   const MAX_UINT32 = 0xffffffff;
   const STABLE_ID = /^[a-z][a-z0-9._:-]*$/;
   const RULESET_HASH = /^sha256:[0-9a-f]{64}$/;
@@ -62,6 +103,7 @@
     "assist",
     "seed",
     "loadoutIds",
+    "loadoutSlotCap",
     "campaignModifierIds",
     "accessGrantIds",
     "tutorialUpgradeGateMode",
@@ -78,27 +120,27 @@
     "finalStateHash",
   ]);
   // Commands keeps a reusable 100,000-record hard ceiling. A portable replay is deliberately
-  // tighter: every v1 field can simultaneously reach its advertised maximum within these 4 MiB.
-  const REPLAY_MAX_TOTAL_COMMANDS = 4096;
+  // tighter. ReplayRunner owns every normalized-execution ceiling so direct runner callers and
+  // parsed Replay callers cannot diverge; parser-only byte/tree ceilings remain local here.
   const DEFAULT_LIMITS = Object.freeze({
     maxUtf8Bytes: 4 * 1024 * 1024,
     // A 24-hour duration processes command ticks 0..5,183,999 inclusively.
-    maxTick: Commands.DEFAULT_LIMITS.maxTick - 1,
-    maxTotalCommands: REPLAY_MAX_TOTAL_COMMANDS,
-    maxCommandsPerTick: Commands.DEFAULT_LIMITS.maxCommandsPerTick,
+    maxTick: EXECUTION_LIMITS.maxDurationTicks - 1,
+    maxTotalCommands: EXECUTION_LIMITS.maxTotalCommands,
+    maxCommandsPerTick: EXECUTION_LIMITS.maxCommandsPerTick,
     maxArrayLength: 256,
-    maxStringLength: 256,
+    maxStringLength: EXECUTION_LIMITS.maxStringLength,
     maxObjectFields: 64,
     maxNestingDepth: 32,
-    maxLoadoutIds: 15,
-    maxCampaignModifierIds: 64,
-    maxAccessGrantIds: 64,
-    maxCheckpoints: 4096,
-    maxDurationTicks: Commands.DEFAULT_LIMITS.maxTick,
+    maxLoadoutIds: EXECUTION_LIMITS.maxLoadoutIds,
+    maxCampaignModifierIds: EXECUTION_LIMITS.maxCampaignModifierIds,
+    maxAccessGrantIds: EXECUTION_LIMITS.maxAccessGrantIds,
+    maxCheckpoints: EXECUTION_LIMITS.maxCheckpoints,
+    maxDurationTicks: EXECUTION_LIMITS.maxDurationTicks,
   });
   const LIMIT_KEYS = Object.freeze(Object.keys(DEFAULT_LIMITS).sort());
 
-  if (Commands.COMMAND_SCHEMA_VERSION !== EVENT_SCHEMA_VERSION) {
+  if (COMMAND_SCHEMA_VERSION !== ABI.DESCRIPTOR.commands.schemaVersion) {
     throw new Error("Aegis Commands schema does not match the simulation ABI");
   }
 
@@ -600,6 +642,15 @@
       false
     );
     if (loadoutIds.length === 0) throw new RangeError("Replay loadout IDs must not be empty");
+    const loadoutSlotCap = nonnegativeInteger(
+      dataValue(envelope, "loadoutSlotCap", "Replay envelope"),
+      "Replay loadout slot cap",
+      6
+    );
+    if (loadoutSlotCap < 1) throw new RangeError("Replay loadout slot cap must be at least one");
+    if (loadoutIds.length > loadoutSlotCap) {
+      throw new RangeError("Replay loadout IDs exceed the resolved slot cap");
+    }
     const campaignModifierIds = idArray(
       dataValue(envelope, "campaignModifierIds", "Replay envelope"),
       "Replay campaign modifier IDs",
@@ -724,6 +775,7 @@
       assist: assist,
       seed: seed,
       loadoutIds: loadoutIds,
+      loadoutSlotCap: loadoutSlotCap,
       campaignModifierIds: campaignModifierIds,
       accessGrantIds: accessGrantIds,
       tutorialUpgradeGateMode: tutorialUpgradeGateMode,
@@ -775,9 +827,19 @@
     return ABI.sha256Hex(ABI.canonicalBytes(state));
   }
 
+  function createBoundSimulator(input) {
+    exactFields(input, ["content", "release"], "Replay binding input", DEFAULT_LIMITS.maxObjectFields);
+    return ReplayRunner.createBoundSimulator({
+      content: dataValue(input, "content", "Replay binding input"),
+      normalizeReplayEnvelope: normalizeReplayEnvelope,
+      release: dataValue(input, "release", "Replay binding input"),
+    });
+  }
+
   return Object.freeze({
     FORMAT_VERSION: FORMAT_VERSION,
     EVENT_SCHEMA_VERSION: EVENT_SCHEMA_VERSION,
+    COMMAND_SCHEMA_VERSION: COMMAND_SCHEMA_VERSION,
     DEFAULT_LIMITS: DEFAULT_LIMITS,
     createReplayLimits: createReplayLimits,
     parseReplayEnvelope: parseReplayEnvelope,
@@ -786,5 +848,6 @@
     canonicalEnvelopeBytes: canonicalEnvelopeBytes,
     diagnosticStateHash: diagnosticStateHash,
     finalStateHash: finalStateHash,
+    createBoundSimulator: createBoundSimulator,
   });
 });

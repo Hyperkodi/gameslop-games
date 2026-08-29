@@ -775,7 +775,7 @@
           "nullable": false
         },
         {
-          "name": "lineageTag",
+          "name": "lineageId",
           "type": "id",
           "required": true,
           "nullable": false

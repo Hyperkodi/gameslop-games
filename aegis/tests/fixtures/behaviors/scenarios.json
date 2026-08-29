@@ -1,0 +1,52 @@
+{
+  "chronosSecondaries": [
+    { "runtimeId": 31, "routeId": "route.b", "remainingRouteDistance": 9000, "targetKind": "ground", "threatPriority": 10, "x": 4000, "y": 0 },
+    { "runtimeId": 12, "routeId": "route.a", "remainingRouteDistance": 3000, "targetKind": "ground", "threatPriority": 10, "x": 5000, "y": 0 },
+    { "runtimeId": 11, "routeId": "route.a", "remainingRouteDistance": 3000, "targetKind": "ground", "threatPriority": 10, "x": 3000, "y": 0 },
+    { "runtimeId": 44, "routeId": "route.a", "remainingRouteDistance": 1000, "targetKind": "ground", "threatPriority": 10, "x": 7000, "y": 0 }
+  ],
+  "siegeTargets": [
+    { "runtimeId": 8, "routeId": "route.b", "remainingRouteDistance": 5000, "targetKind": "ground", "threatPriority": 10, "x": 2000, "y": 0 },
+    { "runtimeId": 7, "routeId": "route.a", "remainingRouteDistance": 2000, "targetKind": "ground", "threatPriority": 10, "x": 6000, "y": 0 },
+    { "runtimeId": 6, "routeId": "route.a", "remainingRouteDistance": 2000, "targetKind": "ground", "threatPriority": 10, "x": 3000, "y": 0 },
+    { "runtimeId": 9, "routeId": "route.a", "remainingRouteDistance": 1000, "targetKind": "ground", "threatPriority": 10, "x": 8000, "y": 0 }
+  ],
+  "guardMarkers": [
+    {
+      "markerId": "guard.p01.2",
+      "routeDistances": [
+        { "remainingDistance": 70000, "routeDistance": 30000, "routeId": "route.main" }
+      ],
+      "slotIndex": 2
+    },
+    {
+      "markerId": "guard.p01.0",
+      "routeDistances": [
+        { "remainingDistance": 90000, "routeDistance": 10000, "routeId": "route.main" }
+      ],
+      "slotIndex": 0
+    },
+    {
+      "markerId": "guard.p01.1",
+      "routeDistances": [
+        { "remainingDistance": 75000, "routeDistance": 25000, "routeId": "route.alt" },
+        { "remainingDistance": 80000, "routeDistance": 20000, "routeId": "route.main" }
+      ],
+      "slotIndex": 1
+    }
+  ],
+  "guardContacts": [
+    { "enemyRuntimeId": 24, "hardControlActive": false, "hardControlBp": 10000, "nextRouteDistance": 16000, "priorRouteDistance": 8000, "requestedForwardAdvance": 8000, "resolveActive": false, "routeId": "route.main", "tags": ["regular"], "targetKind": "ground" },
+    { "enemyRuntimeId": 21, "hardControlActive": false, "hardControlBp": 10000, "nextRouteDistance": 13000, "priorRouteDistance": 9000, "requestedForwardAdvance": 4000, "resolveActive": true, "routeId": "route.main", "tags": ["regular"], "targetKind": "ground" },
+    { "enemyRuntimeId": 23, "hardControlActive": false, "hardControlBp": 10000, "nextRouteDistance": 22000, "priorRouteDistance": 18000, "requestedForwardAdvance": 4000, "resolveActive": false, "routeId": "route.main", "tags": ["heavy"], "targetKind": "ground" },
+    { "enemyRuntimeId": 22, "hardControlActive": true, "hardControlBp": 10000, "nextRouteDistance": 13000, "priorRouteDistance": 9000, "requestedForwardAdvance": 4000, "resolveActive": false, "routeId": "route.main", "tags": ["regular"], "targetKind": "ground" },
+    { "enemyRuntimeId": 20, "hardControlActive": false, "hardControlBp": 10000, "nextRouteDistance": 13000, "priorRouteDistance": 9000, "requestedForwardAdvance": 4000, "resolveActive": false, "routeId": "route.main", "tags": ["regular"], "targetKind": "air" }
+  ],
+  "oracleTargets": [
+    { "runtimeId": 52, "remainingRouteDistance": 5000, "routeId": "route.b", "targetKind": "ground", "threatPriority": 10 },
+    { "runtimeId": 51, "remainingRouteDistance": 2000, "routeId": "route.a", "targetKind": "ground", "threatPriority": 10 },
+    { "runtimeId": 50, "remainingRouteDistance": 2000, "routeId": "route.a", "targetKind": "air", "threatPriority": 10 },
+    { "runtimeId": 53, "remainingRouteDistance": 9000, "routeId": "route.a", "targetKind": "ground", "threatPriority": 10 },
+    { "runtimeId": 54, "remainingRouteDistance": 1000, "routeId": "route.z", "targetKind": "ground", "threatPriority": 10 }
+  ]
+}

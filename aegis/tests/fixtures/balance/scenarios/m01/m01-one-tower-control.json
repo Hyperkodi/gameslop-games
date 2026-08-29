@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "m01-one-tower-control",
+  "kind": "failure-control",
+  "header": {
+    "missionId": "m01",
+    "difficultyId": "strategos",
+    "assist": false,
+    "seed": 0,
+    "loadoutIds": [
+      "sentinel",
+      "chronos",
+      "siege"
+    ],
+    "loadoutSlotCap": 3,
+    "campaignModifierIds": [],
+    "accessGrantIds": [
+      "campaign.chronos",
+      "campaign.sentinel",
+      "campaign.siege"
+    ],
+    "tutorialUpgradeGateMode": "m01-wave1"
+  },
+  "strategyVersion": "authored-command-stream-v1",
+  "commands": [
+    {
+      "tick": 0,
+      "seq": 0,
+      "type": "build",
+      "padId": "p08",
+      "defenseId": "siege"
+    },
+    {
+      "tick": 0,
+      "seq": 1,
+      "type": "startWave"
+    },
+    {
+      "tick": 1236,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 2555,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 4201,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 5879,
+      "seq": 0,
+      "type": "startWave"
+    }
+  ],
+  "pair": null,
+  "expectations": {
+    "outcome": "defeat",
+    "integrityMin": 0,
+    "integrityMax": 0,
+    "defeatWaveIndexes": [
+      5,
+      6
+    ],
+    "requiredGateIds": [
+      "m01-one-tower-control"
+    ]
+  }
+}

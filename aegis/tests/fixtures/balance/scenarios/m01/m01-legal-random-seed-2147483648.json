@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "m01-legal-random-seed-2147483648",
+  "kind": "failure-control",
+  "header": {
+    "missionId": "m01",
+    "difficultyId": "strategos",
+    "assist": false,
+    "seed": 2147483648,
+    "loadoutIds": [
+      "sentinel",
+      "chronos",
+      "siege"
+    ],
+    "loadoutSlotCap": 3,
+    "campaignModifierIds": [],
+    "accessGrantIds": [
+      "campaign.chronos",
+      "campaign.sentinel",
+      "campaign.siege"
+    ],
+    "tutorialUpgradeGateMode": "m01-wave1"
+  },
+  "strategyVersion": "legal-random-placement-spend-v1",
+  "commands": [],
+  "pair": null,
+  "expectations": {
+    "outcome": "defeat",
+    "integrityMin": 0,
+    "integrityMax": 0,
+    "defeatWaveIndexes": [
+      3
+    ],
+    "requiredGateIds": [
+      "m01-legal-random-control"
+    ]
+  }
+}

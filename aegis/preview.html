@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#091521">
+<title>Armara Aegis · Candidate-BAL Preview</title>
+<link rel="icon" href="skin/armara/logo.png">
+<link rel="stylesheet" href="../_kit/kit.css">
+<link rel="stylesheet" href="css/aegis-art-system.css">
+<style>
+  :root {
+    color-scheme: dark;
+    --preview-bg: #091521;
+    --preview-panel: #102433;
+    --preview-panel-2: #172f40;
+    --preview-line: #7c6738;
+    --preview-gold: #f3ca66;
+    --preview-ink: #fff7df;
+    --preview-muted: #c7bda5;
+    --preview-cyan: #53d5ff;
+    --preview-danger: #ff9a7a;
+  }
+  html, body { min-height: 100%; height: auto; }
+  body {
+    overflow: auto;
+    touch-action: manipulation;
+    user-select: text;
+    background:
+      linear-gradient(rgba(7, 17, 26, .82), rgba(7, 17, 26, .94)),
+      url("art/v2/ui/shell-landscape-v1.webp") center top / cover fixed no-repeat,
+      var(--preview-bg);
+    color: var(--preview-ink);
+    font-family: system-ui, sans-serif;
+  }
+  button, select, input { font: inherit; }
+  button, select, input[type="number"] {
+    border: 1px solid var(--preview-line);
+    border-radius: .35rem;
+    background: #08121b;
+    color: var(--preview-ink);
+    padding: .55rem .7rem;
+  }
+  button { cursor: pointer; }
+  button:hover:not(:disabled), button:focus-visible { border-color: var(--preview-cyan); }
+  button:disabled { cursor: not-allowed; opacity: .48; }
+  .preview-shell { width: min(1440px, 100%); margin: 0 auto; padding: 1rem; }
+  .preview-title { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1.2rem; }
+  .preview-logo { width: clamp(3.75rem, 8vw, 6.75rem); height: auto; filter: drop-shadow(0 .4rem .7rem rgba(0, 0, 0, .58)); }
+  .preview-title h1 { margin: 0; color: var(--preview-gold); letter-spacing: .13em; font-size: clamp(1.5rem, 4vw, 2.7rem); }
+  .preview-title p { margin: 0; color: var(--preview-muted); }
+  .preview-warning {
+    margin: .8rem 0 1rem;
+    border-left: .35rem solid var(--preview-gold);
+    background: #261f12;
+    padding: .8rem 1rem;
+  }
+  .preview-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+  .preview-panel {
+    border: 1px solid var(--preview-line);
+    border-radius: .65rem;
+    background:
+      linear-gradient(rgba(8, 24, 34, .92), rgba(8, 21, 31, .96)),
+      url("art/v2/ui/panel-4x3-v1.webp") center / cover no-repeat,
+      var(--preview-panel);
+    box-shadow: inset 0 0 0 1px rgba(255, 240, 197, .15), 0 .75rem 1.8rem rgba(0, 0, 0, .32);
+    padding: 1rem;
+  }
+  .preview-panel h2, .preview-panel h3, .preview-panel h4 { margin-top: 0; color: var(--preview-gold); }
+  .preview-test-options > summary,
+  .preview-diagnostics > summary { cursor: pointer; color: var(--preview-gold); font-weight: 800; letter-spacing: .06em; }
+  .preview-test-options > summary small { display: inline-block; margin-left: .55rem; color: var(--preview-muted); font-weight: 500; letter-spacing: 0; }
+  .preview-test-options[open] > summary,
+  .preview-diagnostics[open] > summary { margin-bottom: 1rem; }
+  .preview-test-options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); align-items: start; gap: .7rem 1rem; }
+  .preview-test-options-grid .preview-field,
+  .preview-test-options-grid .preview-check { margin: 0; }
+  .preview-test-options-wide { grid-column: 1 / -1; }
+  .preview-rule-hint { margin: -.45rem 0 1rem; color: var(--preview-muted); font-size: .9rem; }
+  .preview-field { display: grid; gap: .25rem; margin-bottom: .7rem; }
+  .preview-checks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .4rem; }
+  .preview-check { border: 1px solid #314858; border-radius: .3rem; padding: .45rem; }
+  .preview-hud { position: sticky; top: 0; z-index: 2; display: grid; grid-template-columns: repeat(4, 1fr); gap: .5rem; margin-bottom: 1rem; }
+  .preview-readout { border: 1px solid var(--preview-line); background: #08121b; padding: .55rem; text-align: center; }
+  .preview-readout span { display: block; color: var(--preview-muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; }
+  .preview-readout output { color: var(--preview-gold); font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+  .preview-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin: .8rem 0; }
+  .preview-actions button:first-child { border-color: var(--preview-gold); }
+  button.is-unaffordable { border-color: #854f42; color: #ffd0c2; opacity: .72; }
+  .preview-feedback { min-height: 1.5em; color: var(--preview-cyan); }
+  .preview-battlefield-region { margin: .8rem 0 1.2rem; }
+  .preview-battlefield-stage { position: relative; }
+  .preview-battlefield-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .5rem 1rem; }
+  .preview-battlefield-heading h3 { margin-bottom: .3rem; }
+  .preview-battlefield-heading p { margin: 0 0 .4rem; }
+  .preview-battlefield {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 8 / 5;
+    border: 3px solid #9a773c;
+    border-radius: .65rem;
+    background-color: #182b2b;
+    background-image:
+      linear-gradient(30deg, rgba(237, 205, 135, .035) 12%, transparent 12.5%, transparent 87%, rgba(237, 205, 135, .035) 87.5%),
+      linear-gradient(150deg, rgba(237, 205, 135, .035) 12%, transparent 12.5%, transparent 87%, rgba(237, 205, 135, .035) 87.5%);
+    background-size: 4rem 7rem;
+    box-shadow: inset 0 0 0 2px #2b1c0d, inset 0 0 3rem #03090d, 0 .7rem 1.4rem rgba(0, 0, 0, .28);
+  }
+  .preview-battlefield-svg { position: relative; z-index: 1; display: block; width: 100%; height: 100%; }
+  .preview-store-panel {
+    position: absolute;
+    z-index: 4;
+    top: 1rem;
+    right: 1rem;
+    width: min(38rem, calc(100% - 2rem));
+    max-height: calc(100% - 2rem);
+    overflow: auto;
+    border: 2px solid var(--preview-cyan);
+    border-radius: .65rem;
+    background: rgba(7, 20, 30, .97);
+    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, .72);
+    padding: .85rem;
+  }
+  .preview-store-panel[hidden] { display: none; }
+  .preview-store-panel-header { position: sticky; top: -.85rem; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin: -.85rem -.85rem .75rem; padding: .75rem .85rem; background: #07141e; border-bottom: 1px solid #31566b; }
+  .preview-store-panel-header h3 { margin: 0; }
+  .preview-store-close { border-color: var(--preview-gold); }
+  .preview-store-panel .preview-card-grid { grid-template-columns: repeat(2, minmax(13rem, 1fr)); }
+  .preview-battlefield-base { fill: #526b58; }
+  .preview-environment-plate, .preview-road-layer { pointer-events: none; }
+  .preview-road-ambient { filter: blur(280px); }
+  .preview-tower-range { fill: rgba(83, 213, 255, .10); stroke: rgba(122, 231, 255, .82); stroke-width: 700; stroke-dasharray: 2500 1700; pointer-events: none; }
+  .preview-anchor { pointer-events: none; }
+  .preview-anchor-sprite {
+    filter: saturate(1.08) brightness(1.06) drop-shadow(0 900px 700px rgba(0, 0, 0, .9));
+  }
+  .preview-map-pad { cursor: pointer; outline: none; }
+  .preview-map-pad-halo { fill: rgba(65, 52, 31, .72); stroke: rgba(195, 151, 78, .92); stroke-width: 650; }
+  .preview-map-pad-core { fill: rgba(202, 185, 144, .78); stroke: rgba(255, 239, 197, .9); stroke-width: 450; }
+  .preview-map-pad-foundation {
+    pointer-events: none;
+    filter: saturate(1.06) brightness(1.03) drop-shadow(0 650px 600px rgba(0, 0, 0, .78));
+  }
+  .preview-map-pad.has-foundation .preview-map-pad-core { fill: rgba(17, 27, 30, .25); stroke: none; }
+  .preview-map-pad.is-unaffordable .preview-map-pad-foundation { filter: saturate(.7) brightness(.72) drop-shadow(0 650px 600px rgba(0, 0, 0, .78)); }
+  .preview-map-pad.is-unaffordable .preview-map-pad-halo { stroke: rgba(171, 100, 82, .9); }
+  .preview-map-pad.is-selected .preview-map-pad-halo,
+  .preview-map-pad:focus .preview-map-pad-halo { fill: rgba(26, 95, 120, .92); stroke: #72e3ff; stroke-width: 1600; }
+  .preview-map-pad.is-occupied .preview-map-pad-core { fill: #332416; }
+  .preview-map-symbol { fill: #fff6d2; font-size: 5800px; font-weight: 950; paint-order: stroke; stroke: #071117; stroke-width: 900px; }
+  .preview-tower-symbol { fill: #59dcff; font-size: 4300px; }
+  .preview-map-level { fill: #101820; stroke: #ffe28a; stroke-width: 700px; paint-order: stroke; font-size: 2700px; font-weight: 950; }
+  .preview-tower-sprite {
+    filter: saturate(1.18) brightness(1.08) contrast(1.04)
+      drop-shadow(0 0 650px rgba(255, 239, 178, .92))
+      drop-shadow(0 1100px 850px rgba(0, 0, 0, .95));
+    pointer-events: none;
+  }
+  .preview-map-enemy { pointer-events: none; }
+  .preview-enemy-contrast { fill: rgba(255, 246, 211, .22); stroke: #fff4cf; stroke-width: 700; }
+  .preview-map-enemy-boss .preview-enemy-contrast { fill: rgba(141, 42, 216, .45); stroke: #ffe38b; stroke-width: 1300; }
+  .preview-enemy-sprite {
+    filter: saturate(1.22) brightness(1.12) contrast(1.06)
+      drop-shadow(0 0 550px rgba(255, 245, 210, .92))
+      drop-shadow(0 1100px 800px #000);
+  }
+  .preview-enemy-symbol { fill: #fff; font-size: 3300px; }
+  .preview-sprite-fallback-disc { fill: rgba(7, 20, 30, .94); stroke: #ffe28a; }
+  .preview-sprite-fallback-glyph { fill: #fff6d2; font-weight: 950; paint-order: stroke; stroke: #071117; }
+  .preview-hp-track { fill: #250b0b; stroke: #fff0d0; stroke-width: 350; }
+  .preview-hp-fill { fill: #6df29c; }
+  .preview-map-enemy-boss .preview-hp-fill { fill: #f2c95d; }
+  .preview-battlefield-status { margin: .45rem 0 0; color: var(--preview-muted); }
+  .preview-site-picker { margin-top: .7rem; border: 1px solid rgba(124, 103, 56, .78); border-radius: .5rem; background: rgba(5, 16, 24, .78); padding: .65rem; }
+  .preview-site-picker-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; margin-bottom: .5rem; }
+  .preview-site-picker-heading h4 { margin: 0; }
+  .preview-site-picker-heading p { margin: 0; color: var(--preview-muted); font-size: .86rem; }
+  .preview-site-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr)); gap: .45rem; margin: 0; padding: 0; list-style: none; }
+  .preview-site-button { display: grid; align-content: center; gap: .12rem; width: 100%; min-height: 3rem; text-align: left; }
+  .preview-site-button.is-selected { border-color: var(--preview-cyan); box-shadow: inset 0 0 0 1px var(--preview-cyan); }
+  .preview-site-button.is-occupied { border-color: var(--preview-gold); }
+  .preview-site-name { color: var(--preview-ink); font-weight: 850; }
+  .preview-site-state { color: var(--preview-muted); font-size: .78rem; line-height: 1.2; }
+  .preview-card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .65rem; }
+  .preview-card { border: 1px solid #3f5a6c; border-radius: .4rem; background: var(--preview-panel-2); padding: .75rem; }
+  .preview-card-heading { display: grid; grid-template-columns: 5.25rem minmax(0, 1fr); align-items: center; gap: .65rem; }
+  .preview-card-heading h3, .preview-card-heading h4 { margin: 0; }
+  .preview-tower-thumbnail-svg,
+  .preview-tower-thumbnail-fallback {
+    display: block;
+    width: 5.25rem;
+    height: 5.25rem;
+    border: 1px solid rgba(218, 174, 88, .72);
+    border-radius: .55rem;
+    background: radial-gradient(circle, rgba(76, 121, 133, .42), rgba(5, 13, 20, .9) 72%);
+    box-shadow: inset 0 0 1rem rgba(83, 213, 255, .12);
+  }
+  .preview-tower-thumbnail-svg { overflow: hidden; }
+  .preview-tower-thumbnail-sprite {
+    pointer-events: none;
+    filter: saturate(1.16) brightness(1.08) contrast(1.04) drop-shadow(0 6px 5px rgba(0, 0, 0, .9));
+  }
+  .preview-tower-thumbnail-fallback { display: grid; place-items: center; color: var(--preview-cyan); font-weight: 950; font-size: 1.35rem; }
+  .preview-card p { margin: .45rem 0; line-height: 1.4; }
+  .preview-upgrade-delta { margin: .65rem 0; border-left: .25rem solid var(--preview-cyan); background: #0b1d29; padding: .65rem .75rem; }
+  .preview-upgrade-delta h4 { margin: 0 0 .35rem; color: var(--preview-cyan); }
+  .preview-role { color: var(--preview-cyan); }
+  .preview-stats { font-variant-numeric: tabular-nums; }
+  .preview-muted, .preview-empty { color: var(--preview-muted); }
+  .preview-ready { color: #8df0b4; }
+  .preview-need { color: var(--preview-danger); }
+  .preview-tower-list { display: grid; gap: .4rem; }
+  .preview-tower-row { text-align: left; }
+  .preview-lower { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
+  .preview-log { max-height: 16rem; overflow: auto; font-family: ui-monospace, monospace; font-size: .82rem; }
+  .preview-log li { margin-bottom: .35rem; overflow-wrap: anywhere; }
+  .preview-objectives .is-complete { color: #8df0b4; }
+  .preview-outcome { margin-top: 1rem; border: 2px solid var(--preview-gold); border-radius: .65rem; background: rgba(5, 14, 22, .96); padding: 1rem; text-align: center; }
+  .preview-outcome h3 { margin: 0 0 .75rem; color: var(--preview-gold); font-size: 1.6rem; letter-spacing: .12em; }
+  .preview-share-card { display: block; width: min(100%, 1200px); height: auto; margin: 0 auto .8rem; border: 1px solid rgba(218, 174, 88, .72); border-radius: .5rem; background: #07111a; box-shadow: 0 .8rem 2rem rgba(0, 0, 0, .45); }
+  .preview-share-status { display: block; margin: .5rem 0; color: var(--preview-muted); font-size: .9rem; letter-spacing: normal; }
+  @media (max-width: 900px) {
+    .preview-grid, .preview-lower { grid-template-columns: 1fr; }
+    .preview-hud { top: .25rem; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .2rem; padding: .25rem; background: var(--preview-panel); box-shadow: 0 .45rem .9rem rgba(0, 0, 0, .5); }
+    .preview-readout { min-width: 0; padding: .3rem .12rem; }
+    .preview-readout span { font-size: .58rem; letter-spacing: .025em; }
+    .preview-readout output { font-size: 1rem; }
+    .preview-store-panel {
+      position: fixed;
+      top: auto;
+      right: max(.5rem, env(safe-area-inset-right));
+      bottom: max(.5rem, env(safe-area-inset-bottom));
+      left: max(.5rem, env(safe-area-inset-left));
+      width: auto;
+      max-height: min(70vh, 40rem);
+      overscroll-behavior: contain;
+    }
+    .preview-store-panel .preview-card-grid { grid-template-columns: 1fr; }
+    .preview-site-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .preview-site-button { min-height: 3rem; padding: .55rem .65rem; }
+  }
+  @media (orientation: portrait) {
+    body {
+      background-image:
+        linear-gradient(rgba(7, 17, 26, .84), rgba(7, 17, 26, .96)),
+        url("art/v2/ui/shell-portrait-v1.webp");
+    }
+  }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body class="aegis-art">
+<main class="preview-shell">
+  <header class="preview-title">
+    <img class="preview-logo" src="skin/armara/logo.png" width="1254" height="1254" alt="Armara">
+    <h1>ARMARA AEGIS</h1>
+    <p>Candidate-BAL deterministic developer preview</p>
+  </header>
+
+  <p class="preview-warning"><strong>LOCAL / UNVERIFIED.</strong> This unlinked page cannot issue a verified badge, publish a score, or alter the public Aegis route.</p>
+  <p id="previewBootStatus" role="status" aria-live="polite">Authenticating the developer release…</p>
+
+  <div class="preview-grid">
+    <details class="preview-panel preview-test-options">
+      <summary id="previewSetupTitle">Developer test options <small>Not part of the player interface</small></summary>
+      <div class="preview-test-options-grid" aria-labelledby="previewSetupTitle">
+        <label class="preview-field">Mission
+          <select id="previewMission"></select>
+        </label>
+        <label class="preview-field">Difficulty
+          <select id="previewDifficulty"></select>
+        </label>
+        <label class="preview-field">Replay seed
+          <input id="previewSeed" type="number" min="0" max="4294967295" step="1" value="1" inputmode="numeric">
+        </label>
+        <label class="preview-check"><input id="previewAssist" type="checkbox"> Extra help</label>
+        <fieldset class="preview-field preview-test-options-wide">
+          <legend>Test loadout (choose up to four)</legend>
+          <div id="previewLoadout" class="preview-checks"></div>
+        </fieldset>
+        <p class="preview-muted preview-test-options-wide">These controls let developers test missions, difficulty, replay consistency, assist rules, and compatible towers. They will not appear over the finished game or change profile progression.</p>
+        <div class="preview-actions preview-test-options-wide">
+          <button id="previewReset" type="button">Start fresh test run</button>
+          <button id="previewSkipTutorial" type="button">Unlock upgrades for testing</button>
+        </div>
+      </div>
+    </details>
+
+    <section class="preview-panel" aria-labelledby="previewCommandTitle">
+      <h2 id="previewCommandTitle">Battle controls</h2>
+      <div class="preview-hud" aria-label="Game status">
+        <div class="preview-readout"><span>Aether</span><output id="previewAether">—</output></div>
+        <div class="preview-readout" title="Enemies that reach the gate reduce this. The mission is lost at zero."><span>Gate Health</span><output id="previewIntegrity">—</output></div>
+        <div class="preview-readout"><span>Wave</span><output id="previewWave">—</output></div>
+        <div class="preview-readout"><span>Score</span><output id="previewScore">—</output></div>
+      </div>
+      <p class="preview-rule-hint">Enemies that reach the gate reduce Gate Health. If it reaches 0, the mission is lost.</p>
+      <div class="preview-actions" aria-label="Simulation controls">
+        <button id="previewStartWave" type="button">Start wave</button>
+        <button id="previewPause" type="button" aria-pressed="false">Pause</button>
+      </div>
+      <p id="previewFeedback" class="preview-feedback" role="status" aria-live="polite"></p>
+
+      <section class="preview-battlefield-region" aria-labelledby="previewBattlefieldTitle">
+        <div class="preview-battlefield-heading">
+          <h3 id="previewBattlefieldTitle">Battlefield</h3>
+          <p class="preview-muted">Click an empty build site to choose a tower. Select a tower to see its attack range.</p>
+        </div>
+        <div class="preview-battlefield-stage">
+          <div id="previewBattlefield" class="preview-battlefield"></div>
+          <aside id="previewStorePanel" class="preview-store-panel" role="dialog" aria-modal="false" aria-labelledby="previewStoreTitle" hidden>
+            <div class="preview-store-panel-header">
+              <h3 id="previewStoreTitle">Tower menu</h3>
+              <button id="previewStoreClose" class="preview-store-close" type="button" aria-label="Close tower management">Close</button>
+            </div>
+            <div id="previewStore"></div>
+          </aside>
+        </div>
+        <nav class="preview-site-picker" aria-labelledby="previewSitePickerTitle">
+          <div class="preview-site-picker-heading">
+            <h4 id="previewSitePickerTitle">Build sites</h4>
+            <p>Large touch and keyboard controls for the same neutral foundations shown on the map.</p>
+          </div>
+          <ol id="previewSiteList" class="preview-site-list"></ol>
+        </nav>
+        <p id="previewBattlefieldStatus" class="preview-battlefield-status" aria-live="polite"></p>
+      </section>
+
+      <section aria-labelledby="previewTowersTitle">
+        <h3 id="previewTowersTitle">Deployed towers</h3>
+        <div id="previewTowers" class="preview-tower-list"></div>
+      </section>
+      <section id="previewOutcome" class="preview-outcome" aria-labelledby="previewOutcomeTitle" hidden>
+        <h3 id="previewOutcomeTitle"></h3>
+        <canvas id="previewShareCard" class="preview-share-card" width="1200" height="675"></canvas>
+        <p id="previewShareStatus" class="preview-share-status" role="status" aria-live="polite"></p>
+        <button id="previewShareDownload" type="button" disabled>Download 1200 x 675 result card</button>
+      </section>
+    </section>
+  </div>
+
+  <div class="preview-lower">
+    <section class="preview-panel" aria-labelledby="previewObjectivesTitle">
+      <h2 id="previewObjectivesTitle">Objectives</h2>
+      <ol id="previewObjectives" class="preview-objectives"></ol>
+    </section>
+    <details class="preview-panel preview-diagnostics">
+      <summary>Developer diagnostics</summary>
+      <div class="preview-readout" title="The deterministic replay counter. Sixty simulation steps equal one second of active combat.">
+        <span>Simulation step</span><output id="previewClock">—</output>
+      </div>
+      <p class="preview-muted">Developer-only replay counter: 60 simulation steps equal one second of active combat. Planning and pauses do not advance it.</p>
+      <h2 id="previewEventsTitle">Event log</h2>
+      <ol id="previewEvents" class="preview-log" aria-labelledby="previewEventsTitle"></ol>
+    </details>
+  </div>
+</main>
+
+<script src="../_kit/shell.js"></script>
+<script src="js/delivery/release-selector.js"></script>
+<script src="js/delivery/preview-loader.js"></script>
+<script src="js/presentation/camera.js"></script>
+<script src="js/presentation/road-geometry.js"></script>
+<script src="js/presentation/m01-art.js"></script>
+<script src="js/presentation/act-i-art.js"></script>
+<script src="js/presentation/sprite-atlas.js"></script>
+<script src="js/presentation/share-card.js"></script>
+<script src="js/delivery/preview-controller.js"></script>
+<script>
+(function () {
+  "use strict";
+  const status = document.getElementById("previewBootStatus");
+  try {
+    const selector = Game.AegisReleaseSelector;
+    const descriptor = selector.selectRelease({
+      releaseId: "slice-dev-v1",
+      search: location.search,
+      developer: true,
+    });
+    Game.AegisPreviewLoader.createLoader().load({
+      release: descriptor,
+      selector: selector,
+      baseHref: location.href,
+    }).then(function (runtime) {
+      Game.AegisPreviewController.mount(runtime);
+    }).catch(function (error) {
+      status.textContent = "PREVIEW BOOT REFUSED: " + String(error && error.message || error);
+      status.setAttribute("role", "alert");
+    });
+  } catch (error) {
+    status.textContent = "PREVIEW SELECTION REFUSED: " + String(error && error.message || error);
+    status.setAttribute("role", "alert");
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,568 @@
+/* Armara Aegis code-native Ancient Greece-meets-AI interface primitives.
+   All labels, prices, statistics, status, and error copy remain live DOM text. */
+
+@layer aegis-art-system {
+  .aegis-art {
+    --aegis-color-canvas: #07111A;
+    --aegis-color-surface: #10212C;
+    --aegis-color-surface-elevated: #16323D;
+    --aegis-color-surface-quiet: #0C1922;
+    --aegis-color-marble: #FFF3D1;
+    --aegis-color-text: #FFF9EA;
+    --aegis-color-text-muted: #D0D3CC;
+    --aegis-color-gold: #F7C948;
+    --aegis-color-bronze: #C98552;
+    --aegis-color-cyan: #27D7FF;
+    --aegis-color-violet: #C18CFF;
+    --aegis-color-danger: #FF6B85;
+    --aegis-color-danger-surface: #321723;
+    --aegis-color-warning: #FFD166;
+    --aegis-color-warning-surface: #352914;
+    --aegis-color-success: #70F0A8;
+    --aegis-color-disabled-surface: #2A3942;
+    --aegis-color-disabled-text: #CED5D7;
+    --aegis-color-ink: #07111A;
+
+    --aegis-space-1: 0.25rem;
+    --aegis-space-2: 0.5rem;
+    --aegis-space-3: 0.75rem;
+    --aegis-space-4: 1rem;
+    --aegis-space-5: 1.5rem;
+    --aegis-space-6: 2rem;
+    --aegis-radius-small: 0.375rem;
+    --aegis-radius-medium: 0.625rem;
+    --aegis-radius-large: 0.875rem;
+    --aegis-border-thin: 0.0625rem;
+    --aegis-border-control: 0.125rem;
+    --aegis-focus-width: 0.1875rem;
+    --aegis-target-primary: 3rem;
+    --aegis-target-secondary: 2.75rem;
+    --aegis-content-wide: 90rem;
+    --aegis-content-dialog: 44rem;
+    --aegis-motion-fast: 120ms;
+    --aegis-motion-standard: 180ms;
+
+    box-sizing: border-box;
+    min-inline-size: 0;
+    color: var(--aegis-color-text);
+    background: var(--aegis-color-canvas);
+    font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+    font-size: clamp(1rem, 0.96rem + 0.2vw, 1.125rem);
+    line-height: 1.5;
+    text-rendering: optimizeLegibility;
+    color-scheme: dark;
+    isolation: isolate;
+  }
+
+  .aegis-art *,
+  .aegis-art *::before,
+  .aegis-art *::after {
+    box-sizing: inherit;
+  }
+
+  .aegis-art :where(h1, h2, h3, h4, p, ul, ol, dl, figure) {
+    min-inline-size: 0;
+    margin-block-start: 0;
+  }
+
+  .aegis-art :where(h1, h2, h3, h4) {
+    color: var(--aegis-color-marble);
+    font-family: Cinzel, Georgia, serif;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+
+  .aegis-art :where(p, li, dd, dt, output, label, button, a) {
+    overflow-wrap: anywhere;
+  }
+
+  .aegis-art :where(img, svg, canvas, video) {
+    display: block;
+    max-inline-size: 100%;
+  }
+
+  .aegis-art :where(button, input, select, textarea) {
+    font: inherit;
+  }
+
+  .aegis-art :where(a) {
+    color: var(--aegis-color-cyan);
+    text-decoration-thickness: 0.125rem;
+    text-underline-offset: 0.2em;
+  }
+
+  .aegis-art :where(a:hover) {
+    color: var(--aegis-color-marble);
+  }
+
+  .aegis-art :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: var(--aegis-focus-width) solid var(--aegis-color-cyan);
+    outline-offset: 0.1875rem;
+    box-shadow: 0 0 0 0.1875rem var(--aegis-color-canvas);
+  }
+
+  .aegis-art-panel,
+  .aegis-art-card,
+  .aegis-art-modal,
+  .aegis-art-sheet,
+  .aegis-art-tooltip {
+    min-inline-size: 0;
+    color: var(--aegis-color-text);
+    border: var(--aegis-border-control) solid var(--aegis-color-bronze);
+    background:
+      linear-gradient(135deg, rgb(255 243 209 / 0.055), transparent 32%),
+      linear-gradient(315deg, rgb(39 215 255 / 0.035), transparent 38%),
+      var(--aegis-color-surface);
+    box-shadow:
+      inset 0 0 0 var(--aegis-border-thin) rgb(255 243 209 / 0.24),
+      inset 0 0 1.5rem rgb(7 17 26 / 0.42),
+      0 0.75rem 1.75rem rgb(0 0 0 / 0.32);
+  }
+
+  .aegis-art-panel {
+    position: relative;
+    padding: clamp(var(--aegis-space-3), 2.4vw, var(--aegis-space-5));
+    border-radius: var(--aegis-radius-large);
+  }
+
+  .aegis-art-panel::before {
+    position: absolute;
+    inset: 0.3rem;
+    border: var(--aegis-border-thin) solid rgb(247 201 72 / 0.34);
+    border-radius: calc(var(--aegis-radius-large) - 0.2rem);
+    pointer-events: none;
+    content: "";
+  }
+
+  .aegis-art-panel-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--aegis-space-2) var(--aegis-space-4);
+    min-inline-size: 0;
+    margin-block-end: var(--aegis-space-4);
+    padding-block-end: var(--aegis-space-3);
+    border-block-end: var(--aegis-border-thin) solid var(--aegis-color-bronze);
+  }
+
+  .aegis-art-panel-header > * {
+    min-inline-size: 0;
+    margin-block-end: 0;
+  }
+
+  .aegis-art-card {
+    display: grid;
+    gap: var(--aegis-space-3);
+    align-content: start;
+    padding: var(--aegis-space-4);
+    border-width: var(--aegis-border-thin);
+    border-radius: var(--aegis-radius-medium);
+    background-color: var(--aegis-color-surface-elevated);
+  }
+
+  .aegis-art-card--interactive {
+    min-block-size: var(--aegis-target-primary);
+    cursor: pointer;
+    transition:
+      border-color var(--aegis-motion-fast) ease,
+      box-shadow var(--aegis-motion-fast) ease,
+      transform var(--aegis-motion-fast) ease;
+  }
+
+  .aegis-art-card--interactive:hover {
+    border-color: var(--aegis-color-gold);
+    box-shadow: inset 0 0 0 var(--aegis-border-thin) var(--aegis-color-gold);
+    transform: translateY(-0.0625rem);
+  }
+
+  .aegis-art-button,
+  .aegis-art-tab,
+  .aegis-art-nav-item {
+    display: inline-flex;
+    min-inline-size: 0;
+    min-block-size: var(--aegis-target-primary);
+    align-items: center;
+    justify-content: center;
+    gap: var(--aegis-space-2);
+    padding: var(--aegis-space-2) var(--aegis-space-4);
+    color: var(--aegis-color-text);
+    border: var(--aegis-border-control) solid var(--aegis-color-bronze);
+    border-radius: var(--aegis-radius-small);
+    background: linear-gradient(180deg, var(--aegis-color-surface-elevated), var(--aegis-color-surface));
+    font-family: Cinzel, Georgia, serif;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    text-decoration: none;
+    touch-action: manipulation;
+    cursor: pointer;
+    transition:
+      color var(--aegis-motion-fast) ease,
+      background-color var(--aegis-motion-fast) ease,
+      border-color var(--aegis-motion-fast) ease,
+      box-shadow var(--aegis-motion-fast) ease,
+      transform var(--aegis-motion-fast) ease;
+  }
+
+  .aegis-art-button:hover,
+  .aegis-art-tab:hover,
+  .aegis-art-nav-item:hover {
+    color: var(--aegis-color-marble);
+    border-color: var(--aegis-color-gold);
+    box-shadow: inset 0 0 0 var(--aegis-border-thin) rgb(247 201 72 / 0.42);
+  }
+
+  .aegis-art-button:active,
+  .aegis-art-tab:active,
+  .aegis-art-nav-item:active {
+    transform: translateY(0.0625rem);
+  }
+
+  .aegis-art-button[data-tone="primary"] {
+    color: var(--aegis-color-ink);
+    border-color: var(--aegis-color-gold);
+    background: var(--aegis-color-gold);
+    box-shadow: inset 0 0 0 var(--aegis-border-thin) rgb(255 249 234 / 0.54);
+  }
+
+  .aegis-art-button[data-tone="powered"] {
+    color: var(--aegis-color-ink);
+    border-color: var(--aegis-color-cyan);
+    background: var(--aegis-color-cyan);
+  }
+
+  .aegis-art-button[data-tone="violet"] {
+    color: var(--aegis-color-ink);
+    border-color: var(--aegis-color-violet);
+    background: var(--aegis-color-violet);
+  }
+
+  .aegis-art-button--compact {
+    min-block-size: var(--aegis-target-secondary);
+    padding-inline: var(--aegis-space-3);
+  }
+
+  .aegis-art-button:disabled,
+  .aegis-art-button[aria-disabled="true"],
+  .aegis-art-button.is-disabled,
+  .aegis-art-tab[aria-disabled="true"],
+  .aegis-art-nav-item[aria-disabled="true"] {
+    color: var(--aegis-color-disabled-text);
+    border-color: var(--aegis-color-disabled-text);
+    background: var(--aegis-color-disabled-surface);
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+  }
+
+  .aegis-art-button[data-affordability="unaffordable"],
+  .aegis-art-button.is-unaffordable,
+  .aegis-art-card[data-affordability="unaffordable"] {
+    color: var(--aegis-color-danger);
+    border-color: var(--aegis-color-danger);
+    background: var(--aegis-color-danger-surface);
+    box-shadow: inset 0 0 0 var(--aegis-border-thin) rgb(255 107 133 / 0.28);
+  }
+
+  .aegis-art-chip {
+    display: inline-flex;
+    min-inline-size: 0;
+    min-block-size: var(--aegis-target-secondary);
+    align-items: center;
+    gap: var(--aegis-space-2);
+    padding: var(--aegis-space-1) var(--aegis-space-3);
+    color: var(--aegis-color-text);
+    border: var(--aegis-border-thin) solid var(--aegis-color-bronze);
+    border-radius: 999rem;
+    background: var(--aegis-color-surface-quiet);
+    line-height: 1.25;
+  }
+
+  .aegis-art-chip[data-tone="success"] {
+    color: var(--aegis-color-success);
+    border-color: var(--aegis-color-success);
+  }
+
+  .aegis-art-warning,
+  .aegis-art [data-state="warning"],
+  .aegis-art .is-warning {
+    color: var(--aegis-color-warning);
+    border-color: var(--aegis-color-warning);
+    background-color: var(--aegis-color-warning-surface);
+  }
+
+  .aegis-art-danger,
+  .aegis-art [data-state="danger"],
+  .aegis-art .is-danger {
+    color: var(--aegis-color-danger);
+    border-color: var(--aegis-color-danger);
+    background-color: var(--aegis-color-danger-surface);
+  }
+
+  .aegis-art-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--aegis-space-2);
+    min-inline-size: 0;
+    padding: var(--aegis-space-1);
+    border-block-end: var(--aegis-border-control) solid var(--aegis-color-bronze);
+  }
+
+  .aegis-art-tab {
+    min-block-size: var(--aegis-target-secondary);
+    flex: 1 1 8rem;
+    border-color: transparent;
+    border-radius: var(--aegis-radius-small) var(--aegis-radius-small) 0 0;
+  }
+
+  .aegis-art-tab[aria-selected="true"],
+  .aegis-art-tab.is-selected {
+    color: var(--aegis-color-ink);
+    border-color: var(--aegis-color-cyan);
+    background: var(--aegis-color-cyan);
+  }
+
+  .aegis-art-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--aegis-space-2);
+    min-inline-size: 0;
+    padding: var(--aegis-space-2);
+    border: var(--aegis-border-thin) solid var(--aegis-color-bronze);
+    border-radius: var(--aegis-radius-medium);
+    background: var(--aegis-color-surface-quiet);
+  }
+
+  .aegis-art-nav-item {
+    flex: 1 1 9rem;
+    min-block-size: var(--aegis-target-secondary);
+  }
+
+  .aegis-art-nav-item[aria-current="page"],
+  .aegis-art-nav-item.is-current {
+    color: var(--aegis-color-ink);
+    border-color: var(--aegis-color-gold);
+    background: var(--aegis-color-gold);
+  }
+
+  .aegis-art-modal-backdrop {
+    position: fixed;
+    z-index: 100;
+    inset: 0;
+    display: grid;
+    min-inline-size: 0;
+    place-items: center;
+    padding:
+      max(var(--aegis-space-4), env(safe-area-inset-top))
+      max(var(--aegis-space-4), env(safe-area-inset-right))
+      max(var(--aegis-space-4), env(safe-area-inset-bottom))
+      max(var(--aegis-space-4), env(safe-area-inset-left));
+    overflow: auto;
+    background: rgb(3 8 13 / 0.78);
+    overscroll-behavior: contain;
+  }
+
+  .aegis-art-modal {
+    inline-size: min(100%, var(--aegis-content-dialog));
+    max-block-size: calc(100dvb - var(--aegis-space-4) - var(--aegis-space-4));
+    padding: clamp(var(--aegis-space-4), 3vw, var(--aegis-space-6));
+    overflow: auto;
+    border-radius: var(--aegis-radius-large);
+  }
+
+  .aegis-art-sheet {
+    position: fixed;
+    z-index: 110;
+    inset-inline: auto max(var(--aegis-space-4), env(safe-area-inset-right));
+    inset-block: max(var(--aegis-space-4), env(safe-area-inset-top)) max(var(--aegis-space-4), env(safe-area-inset-bottom));
+    inline-size: min(32rem, calc(100% - var(--aegis-space-4) - var(--aegis-space-4)));
+    max-block-size: calc(100dvb - var(--aegis-space-4) - var(--aegis-space-4));
+    padding: var(--aegis-space-4);
+    overflow: auto;
+    border-radius: var(--aegis-radius-large);
+    overscroll-behavior: contain;
+  }
+
+  .aegis-art-tooltip {
+    max-inline-size: min(22rem, calc(100vw - var(--aegis-space-4) - var(--aegis-space-4)));
+    padding: var(--aegis-space-2) var(--aegis-space-3);
+    border-width: var(--aegis-border-thin);
+    border-radius: var(--aegis-radius-small);
+    color: var(--aegis-color-text);
+    font-size: 0.9375rem;
+  }
+
+  .aegis-art-divider {
+    block-size: var(--aegis-border-control);
+    inline-size: 100%;
+    margin-block: var(--aegis-space-3);
+    border: 0;
+    background:
+      linear-gradient(90deg, transparent, var(--aegis-color-bronze) 14%, var(--aegis-color-gold) 50%, var(--aegis-color-bronze) 86%, transparent);
+  }
+
+  .aegis-art-live {
+    min-block-size: 1.5em;
+    color: var(--aegis-color-text-muted);
+  }
+
+  .aegis-art-safe-area {
+    padding-block-start: max(var(--aegis-space-3), env(safe-area-inset-top));
+    padding-inline-end: max(var(--aegis-space-3), env(safe-area-inset-right));
+    padding-block-end: max(var(--aegis-space-3), env(safe-area-inset-bottom));
+    padding-inline-start: max(var(--aegis-space-3), env(safe-area-inset-left));
+  }
+
+  .aegis-art-stack {
+    display: flex;
+    min-inline-size: 0;
+    flex-direction: column;
+    gap: var(--aegis-stack-gap, var(--aegis-space-3));
+  }
+
+  .aegis-art-cluster {
+    display: flex;
+    min-inline-size: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--aegis-cluster-gap, var(--aegis-space-2));
+  }
+
+  .aegis-art-grid {
+    display: grid;
+    min-inline-size: 0;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--aegis-grid-min, 15rem)), 1fr));
+    gap: var(--aegis-grid-gap, var(--aegis-space-3));
+  }
+
+  .aegis-art-sr-only {
+    position: absolute !important;
+    inline-size: 0.0625rem !important;
+    block-size: 0.0625rem !important;
+    padding: 0 !important;
+    margin: -0.0625rem !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+  }
+
+  .aegis-art [hidden] {
+    display: none !important;
+  }
+
+  @media (max-width: 48rem) {
+    .aegis-art-sheet {
+      inset-inline: 0;
+      inset-block: auto 0;
+      inline-size: 100%;
+      max-block-size: min(78dvb, 46rem);
+      padding:
+        var(--aegis-space-4)
+        max(var(--aegis-space-4), env(safe-area-inset-right))
+        max(var(--aegis-space-4), env(safe-area-inset-bottom))
+        max(var(--aegis-space-4), env(safe-area-inset-left));
+      border-radius: var(--aegis-radius-large) var(--aegis-radius-large) 0 0;
+    }
+
+    .aegis-art-modal-backdrop {
+      place-items: end center;
+      padding: 0;
+    }
+
+    .aegis-art-modal {
+      inline-size: 100%;
+      max-block-size: 88dvb;
+      border-radius: var(--aegis-radius-large) var(--aegis-radius-large) 0 0;
+    }
+
+    .aegis-art-nav-item,
+    .aegis-art-tab {
+      flex-basis: min(100%, 9rem);
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .aegis-art-panel,
+    .aegis-art-card,
+    .aegis-art-sheet,
+    .aegis-art-modal {
+      padding-inline: var(--aegis-space-3);
+    }
+
+    .aegis-art-button {
+      inline-size: 100%;
+    }
+
+    .aegis-art-cluster > .aegis-art-button {
+      flex: 1 1 100%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aegis-art,
+    .aegis-art *,
+    .aegis-art *::before,
+    .aegis-art *::after {
+      scroll-behavior: auto !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+
+    .aegis-art-card--interactive:hover,
+    .aegis-art-button:active,
+    .aegis-art-tab:active,
+    .aegis-art-nav-item:active {
+      transform: none;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .aegis-art-panel,
+    .aegis-art-card,
+    .aegis-art-button,
+    .aegis-art-tab,
+    .aegis-art-nav-item,
+    .aegis-art-modal,
+    .aegis-art-sheet {
+      border-width: var(--aegis-focus-width);
+    }
+
+    .aegis-art :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+      outline-width: 0.25rem;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .aegis-art,
+    .aegis-art-panel,
+    .aegis-art-card,
+    .aegis-art-button,
+    .aegis-art-tab,
+    .aegis-art-nav,
+    .aegis-art-nav-item,
+    .aegis-art-modal,
+    .aegis-art-sheet,
+    .aegis-art-tooltip {
+      color: CanvasText;
+      border-color: CanvasText;
+      background: Canvas;
+      box-shadow: none;
+    }
+
+    .aegis-art :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+      outline-color: Highlight;
+      box-shadow: none;
+    }
+
+    .aegis-art-button:disabled,
+    .aegis-art-button[aria-disabled="true"] {
+      color: GrayText;
+      border-color: GrayText;
+    }
+  }
+}

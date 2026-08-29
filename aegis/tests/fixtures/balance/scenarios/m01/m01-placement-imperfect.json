@@ -1,0 +1,138 @@
+{
+  "schemaVersion": 1,
+  "id": "m01-placement-imperfect",
+  "kind": "mission-witness",
+  "header": {
+    "missionId": "m01",
+    "difficultyId": "strategos",
+    "assist": false,
+    "seed": 0,
+    "loadoutIds": [
+      "sentinel",
+      "chronos",
+      "siege"
+    ],
+    "loadoutSlotCap": 3,
+    "campaignModifierIds": [],
+    "accessGrantIds": [
+      "campaign.chronos",
+      "campaign.sentinel",
+      "campaign.siege"
+    ],
+    "tutorialUpgradeGateMode": "m01-wave1"
+  },
+  "strategyVersion": "authored-command-stream-v1",
+  "commands": [
+    {
+      "tick": 0,
+      "seq": 0,
+      "type": "build",
+      "padId": "p05",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 0,
+      "seq": 1,
+      "type": "setTargetPolicy",
+      "towerId": 1,
+      "policy": "FAST"
+    },
+    {
+      "tick": 0,
+      "seq": 2,
+      "type": "build",
+      "padId": "p07",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 0,
+      "seq": 3,
+      "type": "setTargetPolicy",
+      "towerId": 2,
+      "policy": "FAST"
+    },
+    {
+      "tick": 0,
+      "seq": 4,
+      "type": "startWave"
+    },
+    {
+      "tick": 1290,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 1290,
+      "seq": 1,
+      "type": "build",
+      "padId": "p03",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 1290,
+      "seq": 2,
+      "type": "setTargetPolicy",
+      "towerId": 3,
+      "policy": "STRONG"
+    },
+    {
+      "tick": 2609,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 3905,
+      "seq": 0,
+      "type": "upgrade",
+      "towerId": 3
+    },
+    {
+      "tick": 3905,
+      "seq": 1,
+      "type": "startWave"
+    },
+    {
+      "tick": 5022,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 5022,
+      "seq": 1,
+      "type": "build",
+      "padId": "p10",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 5022,
+      "seq": 2,
+      "type": "setTargetPolicy",
+      "towerId": 4,
+      "policy": "FRONT"
+    },
+    {
+      "tick": 6649,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 6649,
+      "seq": 1,
+      "type": "upgrade",
+      "towerId": 3
+    }
+  ],
+  "pair": {
+    "id": "m01-sentinel-placement-v1",
+    "role": "imperfect"
+  },
+  "expectations": {
+    "outcome": "victory",
+    "integrityMin": 12,
+    "integrityMax": 17,
+    "defeatWaveIndexes": [],
+    "requiredGateIds": [
+      "m01-placement-pair"
+    ]
+  }
+}

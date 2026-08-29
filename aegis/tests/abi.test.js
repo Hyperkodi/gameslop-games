@@ -119,6 +119,28 @@ test("milli-damage applies internal coefficients before one external coefficient
   assert.throws(() => A.preShieldDamageMilli(8000, [], 2001), /external damage/i);
 });
 
+test("shield, armor, ignore, break, resistance, and minimum HP damage use named floors", () => {
+  assert.equal(A.shieldBoundDamageMilli(8640, 5000), 4320);
+  assert.throws(() => A.shieldBoundDamageMilli(1, -1), /shield coefficient/i);
+
+  assert.deepEqual(
+    A.resolveHpDamageMilli(8000, 4000, 1000, 2500, 1500),
+    {
+      effectiveArmorMilli: 3000,
+      hpDamageMilli: 4887,
+      mitigatingArmorMilli: 2250,
+      postArmorMilli: 5750,
+      postResistanceMilli: 4887,
+    }
+  );
+  assert.equal(A.resolveHpDamageMilli(4000, 4000, 0, 0, 0).hpDamageMilli, 0);
+  assert.equal(A.resolveHpDamageMilli(1, 0, 0, 0, 3500).hpDamageMilli, 1);
+  assert.equal(A.resolveHpDamageMilli(8000, 4000, 9000, 0, 0).hpDamageMilli, 8000);
+  assert.equal(A.resolveHpDamageMilli(8000, 0, 0, 0, 10000).hpDamageMilli, 0);
+  assert.throws(() => A.resolveHpDamageMilli(1, 0, 0, 10001, 0), /armor-ignore/i);
+  assert.throws(() => A.resolveHpDamageMilli(1, 0, 0, 0, 10001), /native resistance/i);
+});
+
 test("seventy-percent refunds use exact integer arithmetic", () => {
   for (const vector of VECTORS.refunds) {
     assert.equal(A.refundSeventyPercent(vector.invested), vector.output, String(vector.invested));

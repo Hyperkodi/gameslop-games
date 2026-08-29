@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "id": "m01-sentinel-emphasis",
+  "kind": "mission-witness",
+  "header": {
+    "missionId": "m01",
+    "difficultyId": "strategos",
+    "assist": false,
+    "seed": 0,
+    "loadoutIds": [
+      "sentinel",
+      "chronos",
+      "siege"
+    ],
+    "loadoutSlotCap": 3,
+    "campaignModifierIds": [],
+    "accessGrantIds": [
+      "campaign.chronos",
+      "campaign.sentinel",
+      "campaign.siege"
+    ],
+    "tutorialUpgradeGateMode": "m01-wave1"
+  },
+  "strategyVersion": "authored-command-stream-v1",
+  "commands": [
+    {
+      "tick": 0,
+      "seq": 0,
+      "type": "build",
+      "padId": "p04",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 0,
+      "seq": 1,
+      "type": "setTargetPolicy",
+      "towerId": 1,
+      "policy": "FAST"
+    },
+    {
+      "tick": 0,
+      "seq": 2,
+      "type": "build",
+      "padId": "p08",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 0,
+      "seq": 3,
+      "type": "setTargetPolicy",
+      "towerId": 2,
+      "policy": "FAST"
+    },
+    {
+      "tick": 0,
+      "seq": 4,
+      "type": "startWave"
+    },
+    {
+      "tick": 970,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 970,
+      "seq": 1,
+      "type": "build",
+      "padId": "p03",
+      "defenseId": "sentinel"
+    },
+    {
+      "tick": 970,
+      "seq": 2,
+      "type": "setTargetPolicy",
+      "towerId": 3,
+      "policy": "STRONG"
+    },
+    {
+      "tick": 2013,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 3225,
+      "seq": 0,
+      "type": "upgrade",
+      "towerId": 3
+    },
+    {
+      "tick": 3225,
+      "seq": 1,
+      "type": "startWave"
+    },
+    {
+      "tick": 4432,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 4432,
+      "seq": 1,
+      "type": "build",
+      "padId": "p10",
+      "defenseId": "chronos"
+    },
+    {
+      "tick": 4432,
+      "seq": 2,
+      "type": "setTargetPolicy",
+      "towerId": 4,
+      "policy": "FRONT"
+    },
+    {
+      "tick": 5744,
+      "seq": 0,
+      "type": "startWave"
+    },
+    {
+      "tick": 5744,
+      "seq": 1,
+      "type": "upgrade",
+      "towerId": 3
+    }
+  ],
+  "pair": null,
+  "expectations": {
+    "outcome": "victory",
+    "integrityMin": 20,
+    "integrityMax": 20,
+    "defeatWaveIndexes": [],
+    "requiredGateIds": [
+      "starter-trio-wins-m01",
+      "m01-sentinel-emphasis",
+      "m01-representative-economy"
+    ]
+  }
+}

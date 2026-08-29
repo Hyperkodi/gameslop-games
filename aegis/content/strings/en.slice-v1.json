@@ -141,7 +141,7 @@
     },
     {
       "key": "defense.hoplite.l3.description",
-      "value": "Projects {slotCount} guards that block for {controlDurationMs} ms and replenish after {replenishMs} ms. First contact bashes for {bashDamage} damage and stuns for {stunDurationMs} ms.",
+      "value": "Projects {slotCount} guards that block for {controlDurationMs} ms and replenish after {replenishMs} ms. First contact bashes for {bashDamage} damage during the opening {stunDurationMs} ms of that same block.",
       "placeholders": [
         {
           "name": "slotCount",

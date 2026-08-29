@@ -14,10 +14,12 @@ const RECORD_ROOT = path.join(__dirname, "fixtures", "compiler", "v3-records", "
 const SYNTHETIC_ROOT = path.join(__dirname, "fixtures", "compiler", "valid-v3-synthetic");
 const ABI_PATH = path.join(__dirname, "..", "content", "abi", "abi-v1.json");
 const BEHAVIOR_PATH = path.join(__dirname, "..", "content", "behavior-contracts.json");
+const GAME_ROOT = path.join(REPO_ROOT, "games", "aegis");
 
 const { canonicalBytes, canonicalEncode } = require(path.join(LIB_ROOT, "canonical.js"));
 const { AegisContentError } = require(path.join(LIB_ROOT, "diagnostics.js"));
 const Annex = require(path.join(LIB_ROOT, "v3-annex.js"));
+const AssetInspector = require(path.join(LIB_ROOT, "asset-inspector.js"));
 const Compiler = require(path.join(LIB_ROOT, "v3-compiler.js"));
 const SharedCompiler = require(path.join(LIB_ROOT, "compiler.js"));
 const V3Artifacts = require(path.join(LIB_ROOT, "v3-artifacts.js"));
@@ -114,6 +116,132 @@ function syntheticPreflight() {
   };
 }
 
+function syntheticV2Presentation(assetHashCharacter) {
+  return {
+    schemaVersion: 2,
+    id: "presentation.slice.v2",
+    cameraRecords: [
+      { id: "camera.overscan-16x10-v1", x: -18000, y: -12000, width: 198400, height: 124000 },
+    ],
+    provenanceRecords: [{
+      id: "provenance.slice.environment",
+      kind: "generated",
+      sourceRef: "prompt.slice.environment.v1",
+      parentIds: [],
+      reviewState: "runtime-ready",
+    }],
+    assetRecords: [{
+      id: "asset.slice.environment",
+      kind: "bitmap",
+      relativeUrl: "art/v2/m01/environment.webp",
+      sha256: "sha256:" + assetHashCharacter.repeat(64),
+      widthPx: 2048,
+      heightPx: 1280,
+      alphaMode: "opaque",
+      transferBytes: 900000,
+      decodedBytes: 2048 * 1280 * 4,
+      usage: "mission-environment",
+      fallbackStyleId: "ancient-greece-ai-procedural",
+      cropRect: null,
+      provenanceId: "provenance.slice.environment",
+    }],
+    placementRecords: [{
+      id: "placement.slice.environment",
+      assetId: "asset.slice.environment",
+      cameraId: "camera.overscan-16x10-v1",
+      layer: "environment",
+      worldRect: { x: -18000, y: -12000, width: 198400, height: 124000 },
+      pivot: { x: 0, y: 0 },
+      anchorId: null,
+      foregroundAssetId: null,
+    }],
+    packRecords: [{
+      id: "pack.slice",
+      kind: "asset-pack",
+      missionIds: ["m01", "m04", "m05"],
+      assetIds: ["asset.slice.environment"],
+      dependencyPackIds: [],
+      preloadAssetIds: ["asset.slice.environment"],
+      criticalAssetIds: ["asset.slice.environment"],
+      fallbackStyleId: "ancient-greece-ai-procedural",
+      maxTransferBytes: 4000000,
+      maxDecodedBytes: 64 * 1024 * 1024,
+    }],
+    cueMappings: [{
+      cueId: "cue.default",
+      kind: "asset-or-fallback",
+      assetId: null,
+      frameId: null,
+      fallbackStyleId: "ancient-greece-ai-procedural",
+    }],
+  };
+}
+
+function measuredV2Presentation() {
+  const presentation = syntheticV2Presentation("0");
+  presentation.assetRecords[0] = {
+    id: "asset.slice.environment",
+    kind: "bitmap",
+    relativeUrl: "art/v2/ui/panel-4x3-v1.webp",
+    sha256: "sha256:c836b8c4361c6b611dcf1ff73ef3de3b36fca2c3c345d6c36692777bf045e540",
+    widthPx: 1024,
+    heightPx: 768,
+    alphaMode: "opaque",
+    transferBytes: 42810,
+    decodedBytes: 3145728,
+    usage: "road-texture",
+    fallbackStyleId: "ancient-greece-ai-procedural",
+    cropRect: null,
+    provenanceId: "provenance.slice.environment",
+  };
+  presentation.placementRecords = [];
+  return presentation;
+}
+
+function fileBackedV2Presentation() {
+  const presentation = measuredV2Presentation();
+  presentation.packRecords = ["m01", "m04", "m05"].map(function (missionId, index) {
+    const ownsAsset = index === 0;
+    return {
+      id: "pack." + missionId,
+      kind: "asset-pack",
+      missionIds: [missionId],
+      assetIds: ownsAsset ? ["asset.slice.environment"] : [],
+      dependencyPackIds: [],
+      preloadAssetIds: ownsAsset ? ["asset.slice.environment"] : [],
+      criticalAssetIds: ownsAsset ? ["asset.slice.environment"] : [],
+      fallbackStyleId: "ancient-greece-ai-procedural",
+      maxTransferBytes: 4000000,
+      maxDecodedBytes: 64 * 1024 * 1024,
+    };
+  });
+  return presentation;
+}
+
+function temporaryFileBackedV2Source(t) {
+  const sourceRoot = fs.mkdtempSync(path.join(os.tmpdir(), "aegis-v3-asset-source-"));
+  fs.cpSync(path.join(GAME_ROOT, "content"), sourceRoot, { recursive: true });
+  t.after(function () { fs.rmSync(sourceRoot, { recursive: true, force: true }); });
+  const presentationPath = path.join(sourceRoot, "presentation", "slice-v1.json");
+  const manifestPath = path.join(sourceRoot, "manifests", "slice-dev-v1.json");
+  const presentation = fileBackedV2Presentation();
+
+  function writePresentation() {
+    const bytes = Buffer.from(JSON.stringify(presentation, null, 2) + "\n", "utf8");
+    fs.writeFileSync(presentationPath, bytes);
+    const manifest = readJson(manifestPath);
+    manifest.presentationCatalog.sha256 = hashBytes(bytes);
+    fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n");
+  }
+  writePresentation();
+  return {
+    manifestPath: manifestPath,
+    presentation: presentation,
+    sourceRoot: sourceRoot,
+    writePresentation: writePresentation,
+  };
+}
+
 function syntheticSimulation(versions) {
   versions = Object.assign({ event: 1, behavior: 1, includeEvent: true, includeBehavior: true }, versions);
   const descriptor = readJson(ABI_PATH);
@@ -145,13 +273,18 @@ function syntheticMapSeam(input) {
   return clone(input.mapSource);
 }
 
-function compile(preflight, simulationBytes, mapSeam, previewValidator) {
-  return Compiler.compileVerifiedV3Source(preflight || syntheticPreflight(), {
+function compile(preflight, simulationBytes, mapSeam, previewValidator, assetOptions) {
+  const options = Object.assign({
     simulationBytes: simulationBytes || syntheticSimulation(),
     simulationLabel: "synthetic-v3-sim.js",
     normalizeAndValidateMap: mapSeam || syntheticMapSeam,
     validatePendingPreviewProofs: previewValidator,
-  });
+  }, assetOptions || {});
+  return Compiler.compileVerifiedV3Source(preflight || syntheticPreflight(), options);
+}
+
+function trustSyntheticAssetClaim(claim) {
+  return claim;
 }
 
 function verifyReleaseRecord(result, release, artifacts) {
@@ -163,6 +296,42 @@ function verifyReleaseRecord(result, release, artifacts) {
     releaseBytes: releaseBytes,
     artifacts: artifacts || result.artifacts.outputs,
   });
+}
+
+function rebuildArtifactsWithPresentation(result, presentation) {
+  const manifest = result.artifacts.manifest;
+  return V3Artifacts.buildV3Artifacts({
+    schemaVersion: 3,
+    abi: result.source.normalizedSource.abiDescriptor,
+    abiBytes: result.artifacts.abiBytes,
+    simulationBytes: result.artifacts.simulationBytes,
+    simulationLabel: "synthetic-v3-sim.js",
+    contentVersion: manifest.contentVersion,
+    approvalState: manifest.approvalState,
+    annexHash: manifest.annexHash,
+    sourceManifestHash: manifest.sourceManifestHash,
+    sourceProvenance: manifest.sourceProvenance,
+    includedIds: manifest.includedIds,
+    content: result.artifacts.content,
+    presentation: presentation,
+  });
+}
+
+function verifyReplacementPresentation(result, presentation) {
+  const presentationBytes = V3Artifacts.renderDataArtifact(
+    "AegisPresentation",
+    "PRESENTATION",
+    presentation,
+    "presentation companion artifact"
+  );
+  const presentationHash = hashBytes(presentationBytes);
+  const presentationName = "aegis-presentation." + presentationHash.slice(7) + ".js";
+  const release = clone(result.artifacts.manifest);
+  release.presentationArtifact = presentationName;
+  release.presentationHash = presentationHash;
+  const artifacts = new Map(result.artifacts.outputs);
+  artifacts.set(presentationName, presentationBytes);
+  return verifyReleaseRecord(result, release, artifacts);
 }
 
 function expectDiagnostic(fn, code, diagnosticPath) {
@@ -275,6 +444,172 @@ test("localized copy changes only presentation and release identities", () => {
   assert.notEqual(first.artifacts.manifest.presentationHash, second.artifacts.manifest.presentationHash);
   assert.notEqual(first.artifacts.manifestName, second.artifacts.manifestName);
   assert.notEqual(first.artifacts.releaseName, second.artifacts.releaseName);
+});
+
+test("schema v2 art identity changes only presentation and release identities", () => {
+  const baseline = syntheticPreflight();
+  baseline.normalizedSource.presentationCatalog = syntheticV2Presentation("1");
+  const changed = syntheticPreflight();
+  changed.normalizedSource.presentationCatalog = syntheticV2Presentation("2");
+  const first = compile(baseline, null, null, null, { verifyAssetClaim: trustSyntheticAssetClaim });
+  const second = compile(changed, null, null, null, { verifyAssetClaim: trustSyntheticAssetClaim });
+
+  assert.equal(first.artifacts.presentation.schemaVersion, 2);
+  assert.equal(second.artifacts.presentation.schemaVersion, 2);
+  assert.equal(first.artifacts.manifest.simulationHash, second.artifacts.manifest.simulationHash);
+  assert.equal(first.artifacts.manifest.contentHash, second.artifacts.manifest.contentHash);
+  assert.equal(first.artifacts.rulesetHash, second.artifacts.rulesetHash);
+  assert.notEqual(first.artifacts.manifest.presentationHash, second.artifacts.manifest.presentationHash);
+  assert.notEqual(first.artifacts.manifestName, second.artifacts.manifestName);
+  assert.notEqual(first.artifacts.releaseName, second.artifacts.releaseName);
+
+  const verified = V3Artifacts.verifyV3ReleaseSelection({
+    pinnedReleaseName: second.artifacts.releaseName,
+    releaseName: second.artifacts.releaseName,
+    releaseBytes: second.artifacts.releaseBytes,
+    artifacts: second.artifacts.outputs,
+  });
+  assert.equal(verified.presentation.schemaVersion, 2);
+});
+
+test("schema v2 build and boot bind exact mission ownership and cue coverage to compiled content", () => {
+  const preflight = syntheticPreflight();
+  preflight.normalizedSource.presentationCatalog = syntheticV2Presentation("1");
+  const result = compile(preflight, null, null, null, { verifyAssetClaim: trustSyntheticAssetClaim });
+
+  let changed = clone(result.artifacts.presentation);
+  changed.packRecords[0].missionIds = [];
+  expectDiagnostic(
+    function () { rebuildArtifactsWithPresentation(result, changed); },
+    "PRESENTATION_MISSION_ASSIGNMENT",
+    "/presentation/packRecords"
+  );
+  expectDiagnostic(
+    function () { verifyReplacementPresentation(result, changed); },
+    "PRESENTATION_MISSION_ASSIGNMENT",
+    "/presentation/packRecords"
+  );
+
+  changed = clone(result.artifacts.presentation);
+  changed.cueMappings = [];
+  expectDiagnostic(
+    function () { rebuildArtifactsWithPresentation(result, changed); },
+    "PRESENTATION_CUE_ASSIGNMENT",
+    "/presentation/cueMappings"
+  );
+  expectDiagnostic(
+    function () { verifyReplacementPresentation(result, changed); },
+    "PRESENTATION_CUE_ASSIGNMENT",
+    "/presentation/cueMappings"
+  );
+});
+
+test("schema v2 compilation attests real asset bytes and rejects nonexistent or mismatched claims", () => {
+  const source = syntheticPreflight();
+  source.normalizedSource.presentationCatalog = measuredV2Presentation();
+  const result = compile(source, null, null, null, { assetRoot: GAME_ROOT });
+  const measured = AssetInspector.inspectAsset(GAME_ROOT, "art/v2/ui/panel-4x3-v1.webp");
+  assert.equal(result.artifacts.presentation.assetRecords[0].sha256, measured.sha256);
+  assert.equal(result.artifacts.presentation.assetRecords[0].transferBytes, measured.transferBytes);
+
+  const missing = syntheticPreflight();
+  missing.normalizedSource.presentationCatalog = measuredV2Presentation();
+  missing.normalizedSource.presentationCatalog.assetRecords[0].relativeUrl =
+    "art/v2/ui/does-not-exist.webp";
+  expectDiagnostic(
+    function () { compile(missing, null, null, null, { assetRoot: GAME_ROOT }); },
+    "ASSET_READ",
+    "/presentationCatalog/assetRecords/0/relativeUrl"
+  );
+
+});
+
+test("file-backed v3 asset attestation cannot be replaced or redirected", () => {
+  const presentation = measuredV2Presentation();
+  const fileBacked = { sourceRoot: path.join(GAME_ROOT, "content"), repositoryRoot: REPO_ROOT };
+  expectDiagnostic(
+    function () { Compiler.verifyPresentationAssetClaims({}, presentation, {}); },
+    "V3_ASSET_VERIFIER",
+    "/presentationCatalog/assetRecords"
+  );
+  [
+    ["relativeUrl", "art/v2/ui/other.webp"],
+    ["sha256", "sha256:" + "f".repeat(64)],
+    ["widthPx", 1025],
+    ["heightPx", 769],
+    ["alphaMode", "alpha"],
+    ["transferBytes", 42811],
+    ["decodedBytes", 3145732],
+  ].forEach(function (mutation) {
+    expectDiagnostic(
+      function () {
+        Compiler.verifyPresentationAssetClaims({}, presentation, {
+          verifyAssetClaim: function (claim) {
+            return Object.assign({}, claim, { [mutation[0]]: mutation[1] });
+          },
+        });
+      },
+      "ASSET_CLAIM_MISMATCH",
+      "/presentationCatalog/assetRecords/0/" + mutation[0]
+    );
+  });
+  expectDiagnostic(
+    function () {
+      Compiler.verifyPresentationAssetClaims(fileBacked, presentation, {
+        verifyAssetClaim: trustSyntheticAssetClaim,
+      });
+    },
+    "V3_ASSET_VERIFIER",
+    "/presentationCatalog/assetRecords"
+  );
+  expectDiagnostic(
+    function () {
+      Compiler.verifyPresentationAssetClaims(fileBacked, presentation, { assetRoot: GAME_ROOT + "-alias" });
+    },
+    "V3_ASSET_ROOT",
+    "/presentationCatalog/assetRecords"
+  );
+  assert.equal(
+    Compiler.verifyPresentationAssetClaims(fileBacked, presentation, { assetRoot: GAME_ROOT }).length,
+    1
+  );
+});
+
+test("shared file-backed compiler derives the repository asset root and fails closed on missing bytes", (t) => {
+  const fixture = temporaryFileBackedV2Source(t);
+  const compileFixture = function () {
+    return SharedCompiler.compileSourceTree({
+      sourceRoot: fixture.sourceRoot,
+      manifestPath: fixture.manifestPath,
+      repositoryRoot: REPO_ROOT,
+      simulationBytes: syntheticSimulation(),
+    });
+  };
+  fixture.presentation.assetRecords[0].relativeUrl = "art/v2/ui/does-not-exist.webp";
+  fixture.writePresentation();
+  expectDiagnostic(
+    compileFixture,
+    "ASSET_READ",
+    "/presentationCatalog/assetRecords/0/relativeUrl"
+  );
+});
+
+test("compiler presentation dispatch rejects missing and unknown schema versions without fallback", () => {
+  let changed = syntheticPreflight();
+  delete changed.normalizedSource.presentationCatalog.schemaVersion;
+  expectDiagnostic(
+    function () { compile(changed); },
+    "PRESENTATION_SCHEMA_VERSION",
+    "/presentationCatalog/schemaVersion"
+  );
+
+  changed = syntheticPreflight();
+  changed.normalizedSource.presentationCatalog.schemaVersion = 3;
+  expectDiagnostic(
+    function () { compile(changed); },
+    "PRESENTATION_SCHEMA_VERSION",
+    "/presentationCatalog/schemaVersion"
+  );
 });
 
 test("provenance sources remain canonical contained portable paths", () => {
@@ -483,7 +818,7 @@ test("release selection binds included IDs to content and forbids production wit
   }, "PRESENTATION_PRODUCTION_FORBIDDEN", "/release/approvalState");
 
   const unsupportedPresentation = clone(result.artifacts.presentation);
-  unsupportedPresentation.schemaVersion = 2;
+  unsupportedPresentation.schemaVersion = 3;
   const presentationBytes = V3Artifacts.renderDataArtifact(
     "AegisPresentation",
     "PRESENTATION",

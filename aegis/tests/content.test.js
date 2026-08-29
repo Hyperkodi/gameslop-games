@@ -24,7 +24,9 @@ const { AegisContentError } = require(path.join(LIB, "diagnostics.js"));
 const { canonicalEncode } = require(path.join(LIB, "canonical.js"));
 const { parseExactDecimal } = require(path.join(LIB, "exact-decimal.js"));
 const { parseStrictJsonBytes } = require(path.join(LIB, "strict-json.js"));
-const { compileSourceTree, writeArtifacts, checkArtifacts, executeBuild } = require(path.join(LIB, "compiler.js"));
+const {
+  compileSourceTree, writeArtifacts, checkArtifacts, executeBuild, releaseAliasEntries,
+} = require(path.join(LIB, "compiler.js"));
 const {
   buildArtifacts,
   frameRulesetBytes,
@@ -141,7 +143,7 @@ function bundleParityExpression(apiExpression, abiExpression) {
     "  ).state;",
     "  const replaySource = {",
     "    formatVersion:1,rulesetHash:\"sha256:\"+\"a\".repeat(64),eventSchemaVersion:1,",
-    "    missionId:\"m01\",difficultyId:\"strategos\",assist:false,seed:123,loadoutIds:[\"sentinel\"],",
+    "    missionId:\"m01\",difficultyId:\"strategos\",assist:false,seed:123,loadoutIds:[\"sentinel\"],loadoutSlotCap:1,",
     "    campaignModifierIds:[],accessGrantIds:[],tutorialUpgradeGateMode:\"none\",inputs:commandSource,",
     "    checkpoints:[],finalClaim:{outcome:\"victory\",score:1,laurels:1,durationTicks:1,finalStateHash:\"b\".repeat(64)}",
     "  };",
@@ -335,6 +337,14 @@ test("production simulation bundle is deterministic, source-byte-bound, and leav
         ["abi", "ABI", "./abi.js"],
         ["geometry", "Geometry", "./geometry.js"],
       ]],
+      ["behaviors", [
+        ["abi", "ABI", "./abi.js"],
+        ["geometry", "Geometry", "./geometry.js"],
+        ["timers", "Timers", "./timers.js"],
+        ["movement", "Movement", "./movement.js"],
+        ["effects", "Effects", "./effects.js"],
+        ["targeting", "Targeting", "./targeting.js"],
+      ]],
       ["commands", [["abi", "ABI", "./abi.js"]]],
       ["management", [
         ["abi", "ABI", "./abi.js"],
@@ -342,9 +352,29 @@ test("production simulation bundle is deterministic, source-byte-bound, and leav
         ["movement", "Movement", "./movement.js"],
         ["commands", "Commands", "./commands.js"],
       ]],
+      ["objectives", [["abi", "ABI", "./abi.js"]]],
+      ["kernel", [
+        ["abi", "ABI", "./abi.js"],
+        ["geometry", "Geometry", "./geometry.js"],
+        ["timers", "Timers", "./timers.js"],
+        ["economy", "Economy", "./economy.js"],
+        ["movement", "Movement", "./movement.js"],
+        ["effects", "Effects", "./effects.js"],
+        ["targeting", "Targeting", "./targeting.js"],
+        ["behaviors", "Behaviors", "./behaviors.js"],
+        ["commands", "Commands", "./commands.js"],
+        ["management", "Management", "./management.js"],
+        ["objectives", "Objectives", "./objectives.js"],
+      ]],
+      ["replay-runner", [
+        ["abi", "ABI", "./abi.js"],
+        ["commands", "Commands", "./commands.js"],
+        ["kernel", "Kernel", "./kernel.js"],
+      ]],
       ["replay", [
         ["abi", "ABI", "./abi.js"],
         ["commands", "Commands", "./commands.js"],
+        ["replay-runner", "ReplayRunner", "./replay-runner.js"],
       ]],
     ]
   );
@@ -394,6 +424,10 @@ test("production simulation bundle exposes all frozen APIs with canonical parity
   ].join(""), commonJsContext), 7);
   assert.equal(typeof commonJs.AegisCommands.normalizeCommandSequence, "function");
   assert.equal(typeof commonJs.AegisManagement.applyCommandBucket, "function");
+  assert.equal(typeof commonJs.AegisBehaviors.dispatchBehavior, "function");
+  assert.equal(typeof commonJs.AegisObjectives.evaluateObjectives, "function");
+  assert.equal(typeof commonJs.AegisKernel.advanceTick, "function");
+  assert.equal(typeof commonJs.AegisReplayRunner.createBoundSimulator, "function");
   assert.equal(typeof commonJs.AegisReplay.canonicalEnvelopeString, "function");
   assert.equal(commonJsContext.Game, undefined, "CommonJS assembly uses a private bundle root");
   assert.equal(commonJsContext.require, undefined);
@@ -588,8 +622,8 @@ test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and dr
   const managementParameterDrift = replaceModuleBytes(
     sources,
     "management",
-    "function (ABI, Economy, Movement, Commands) {",
-    "function (ABI, Movement, Economy, Commands) {"
+    "function (\n  ABI,\n  Economy,\n  Movement,\n  Commands\n) {",
+    "function (\n  ABI,\n  Movement,\n  Economy,\n  Commands\n) {"
   );
   expectDiagnostic(
     () => assembleSimulationBundle(managementParameterDrift),
@@ -612,8 +646,8 @@ test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and dr
   const replayDependencyDrift = replaceModuleBytes(
     sources,
     "replay",
-    'factory(require("./abi.js"), require("./commands.js"))',
-    'factory(require("./commands.js"), require("./abi.js"))'
+    'require("./abi.js"),\n      require("./commands.js"),\n      require("./replay-runner.js")',
+    'require("./commands.js"),\n      require("./abi.js"),\n      require("./replay-runner.js")'
   );
   expectDiagnostic(
     () => assembleSimulationBundle(replayDependencyDrift),
@@ -624,8 +658,8 @@ test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and dr
   const replayClassicCallDrift = replaceModuleBytes(
     sources,
     "replay",
-    "factory(game.AegisSim, game.AegisCommands)",
-    "factory(game.AegisCommands, game.AegisSim)"
+    "game.AegisSim,\n    game.AegisCommands,\n    game.AegisReplayRunner",
+    "game.AegisCommands,\n    game.AegisSim,\n    game.AegisReplayRunner"
   );
   expectDiagnostic(
     () => assembleSimulationBundle(replayClassicCallDrift),
@@ -1197,6 +1231,54 @@ test("checked-in Candidate-BAL slice loads, adapts all maps, compiles, and remai
   assert.equal(checked.files.includes(manifest.contentArtifact), true);
   assert.equal(checked.files.includes(manifest.presentationArtifact), true);
   assert.equal(checked.files.includes(manifest.simulationArtifact), true);
+  assert.equal(checked.files.includes("release.slice-dev-v1.js"), true);
+  assert.equal(checked.files.includes("release.slice-dev-v1.json"), true);
+  const aliases = new Map(releaseAliasEntries(checked.result));
+  const alias = parseStrictJsonBytes(aliases.get("release.slice-dev-v1.json"), "release alias");
+  assert.equal(Object.getPrototypeOf(alias), null, "strict JSON keeps the alias data-only");
+  assert.deepEqual({ ...alias }, {
+    approvalState: "candidate-balance",
+    contentVersion: "slice-dev-v1",
+    id: "slice-dev-v1",
+    releaseArtifact: checked.result.artifacts.releaseName,
+    releaseEligible: false,
+    releaseHash: "sha256:" + checked.result.artifacts.releaseName.slice(14, -3),
+    schemaVersion: 1,
+  });
+  const context = vm.createContext({ module: { exports: {} }, exports: {} });
+  vm.runInContext(aliases.get("release.slice-dev-v1.js").toString("utf8"), context, {
+    filename: "release.slice-dev-v1.js",
+  });
+  assert.equal(vm.runInContext("Object.isFrozen(module.exports.RELEASE_ALIAS)", context), true);
+  assert.equal(vm.runInContext("module.exports.RELEASE_ALIAS.releaseHash", context), alias.releaseHash);
+});
+
+test("stable Candidate-BAL release aliases atomically track the current immutable release", (t) => {
+  const result = compileSourceTree(CLI.materializeBuildOptions(CLI.parseArgs([
+    "--write", "--manifest", "games/aegis/content/manifests/slice-dev-v1.json",
+  ])));
+  const output = fs.mkdtempSync(path.join(os.tmpdir(), "aegis-release-alias-"));
+  t.after(function () { fs.rmSync(output, { recursive: true, force: true }); });
+  const first = writeArtifacts(result, output);
+  assert.equal(first.includes("release.slice-dev-v1.js"), true);
+  assert.equal(first.includes("release.slice-dev-v1.json"), true);
+  assert.deepEqual(writeArtifacts(result, output), first, "an identical rebuild must replace aliases safely");
+  assert.deepEqual(checkArtifacts(result, output), first);
+  const foundation = compileProduction();
+  const foundationNames = writeArtifacts(foundation, output);
+  assert.deepEqual(
+    checkArtifacts(foundation, output), foundationNames,
+    "the public foundation check must authenticate and tolerate the unlinked developer alias"
+  );
+  assert.deepEqual(checkArtifacts(result, output), first);
+  fs.writeFileSync(path.join(output, "release.slice-dev-v1.json"), "stale\n");
+  expectDiagnostic(
+    function () { checkArtifacts(result, output); },
+    "ARTIFACT_STALE",
+    "/generated/release.slice-dev-v1.json"
+  );
+  writeArtifacts(result, output);
+  assert.deepEqual(checkArtifacts(result, output), first);
 });
 
 test("CLI accepts exactly one mode, explicit named fixtures, and contained manifest/simulation overrides", () => {

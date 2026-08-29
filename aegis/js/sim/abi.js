@@ -420,6 +420,60 @@
     return checkedMulDivFloor(baseDamageMilli, numerators, denominators);
   }
 
+  function shieldBoundDamageMilli(preShieldDamage, shieldCoefficientBp) {
+    assertNonnegativeSafeInteger(preShieldDamage, "Pre-shield damage milli");
+    assertNonnegativeSafeInteger(shieldCoefficientBp, "Shield coefficient basis points");
+    return checkedMulDivFloor(
+      preShieldDamage,
+      [shieldCoefficientBp],
+      [BASIS_POINTS]
+    );
+  }
+
+  function resolveHpDamageMilli(
+    shieldOverflowMilli,
+    armorMilli,
+    armorBreakMilli,
+    armorIgnoreBp,
+    nativeResistanceBp
+  ) {
+    assertNonnegativeSafeInteger(shieldOverflowMilli, "Shield overflow damage milli");
+    assertNonnegativeSafeInteger(armorMilli, "Armor milli");
+    assertNonnegativeSafeInteger(armorBreakMilli, "Armor-break milli");
+    assertCappedBasisPoints(armorIgnoreBp, BASIS_POINTS, "Armor-ignore basis points");
+    assertCappedBasisPoints(nativeResistanceBp, BASIS_POINTS, "Native resistance basis points");
+
+    const effectiveArmorMilli = Math.max(0, checkedAdd(armorMilli, -armorBreakMilli));
+    const mitigatingArmorMilli = checkedMulDivFloor(
+      effectiveArmorMilli,
+      [checkedAdd(BASIS_POINTS, -armorIgnoreBp)],
+      [BASIS_POINTS]
+    );
+    const postArmorMilli = Math.max(
+      0,
+      checkedAdd(shieldOverflowMilli, -mitigatingArmorMilli)
+    );
+    const resistanceCoefficientBp = checkedAdd(BASIS_POINTS, -nativeResistanceBp);
+    const postResistanceMilli = postArmorMilli === 0 || resistanceCoefficientBp === 0
+      ? 0
+      : checkedMulDivFloor(
+          postArmorMilli,
+          [resistanceCoefficientBp],
+          [BASIS_POINTS]
+        );
+    const hpDamageMilli = postArmorMilli > 0 && resistanceCoefficientBp > 0
+      ? Math.max(1, postResistanceMilli)
+      : 0;
+
+    return Object.freeze({
+      effectiveArmorMilli: effectiveArmorMilli,
+      hpDamageMilli: hpDamageMilli,
+      mitigatingArmorMilli: mitigatingArmorMilli,
+      postArmorMilli: postArmorMilli,
+      postResistanceMilli: postResistanceMilli,
+    });
+  }
+
   function refundSeventyPercent(invested) {
     assertNonnegativeSafeInteger(invested, "Invested Aether");
     const hundreds = Math.floor(invested / 100);
@@ -745,6 +799,8 @@
     effectiveRangeUnits: effectiveRangeUnits,
     resolveStrongestSlowBp: resolveStrongestSlowBp,
     preShieldDamageMilli: preShieldDamageMilli,
+    shieldBoundDamageMilli: shieldBoundDamageMilli,
+    resolveHpDamageMilli: resolveHpDamageMilli,
     refundSeventyPercent: refundSeventyPercent,
     utf8Bytes: utf8Bytes,
     canonicalEncode: canonicalEncode,

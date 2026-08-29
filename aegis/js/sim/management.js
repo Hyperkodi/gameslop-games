@@ -18,7 +18,12 @@
   if (!game.AegisEconomy) throw new Error("Game.AegisEconomy must be installed before management.js");
   if (!game.AegisMovement) throw new Error("Game.AegisMovement must be installed before management.js");
   if (!game.AegisCommands) throw new Error("Game.AegisCommands must be installed before management.js");
-  const api = factory(game.AegisSim, game.AegisEconomy, game.AegisMovement, game.AegisCommands);
+  const api = factory(
+    game.AegisSim,
+    game.AegisEconomy,
+    game.AegisMovement,
+    game.AegisCommands
+  );
   if (Object.prototype.hasOwnProperty.call(game, "AegisManagement")) {
     if (game.AegisManagement !== api) throw new Error("Game.AegisManagement is already installed");
     return;
@@ -29,7 +34,12 @@
     configurable: false,
     enumerable: true,
   });
-})(typeof globalThis !== "undefined" ? globalThis : this, function (ABI, Economy, Movement, Commands) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (
+  ABI,
+  Economy,
+  Movement,
+  Commands
+) {
   "use strict";
 
   if (!ABI || !Object.isFrozen(ABI) || !Object.isFrozen(ABI.DESCRIPTOR)) {
