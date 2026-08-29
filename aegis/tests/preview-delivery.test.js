@@ -199,6 +199,14 @@ test("unlinked preview requests only slice-dev-v1 and leaves the public page unw
   const actIArt = fs.readFileSync(path.join(__dirname, "..", "js", "presentation", "act-i-art.js"), "utf8");
   const publicPage = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
   assert.match(preview, /releaseId:\s*"slice-dev-v1"/);
+  assert.match(preview, /<meta name="theme-color" content="#050505">/);
+  assert.match(preview, /--preview-bg:\s*#050505/);
+  assert.match(preview, /--preview-panel:\s*#111111/);
+  assert.match(preview, /--preview-paper:\s*#f9eed2/);
+  assert.match(preview, /--preview-red:\s*#fa170b/);
+  assert.match(preview, /--preview-yellow:\s*#ffe600/);
+  assert.match(preview, /--preview-green:\s*#8fff45/);
+  assert.doesNotMatch(preview, /#091521|#102433|#172f40/);
   assert.match(preview, /developer:\s*true/);
   assert.match(preview, /\.\.\/_kit\/shell\.js/);
   assert.match(preview, /id="previewBattlefield"/);
