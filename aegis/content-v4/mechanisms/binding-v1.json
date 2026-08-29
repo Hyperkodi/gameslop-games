@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "id": "aegis-mechanisms-v1",
+  "records": [
+    {
+      "id": "athena-statue-beam",
+      "nameKey": "mechanism.athena-statue-beam.name",
+      "firstMissionId": "m14",
+      "costAether": 90,
+      "cooldownMs": 90000,
+      "maximumActivations": 32,
+      "effect": {
+        "kind": "authored-line-damage",
+        "telegraphMs": 900,
+        "lineWidthWorldUnits": 8,
+        "damage": 100,
+        "bossCoefficientBp": 6000,
+        "targetKinds": [
+          "air",
+          "ground"
+        ],
+        "mutatesRouteTopology": false
+      }
+    },
+    {
+      "id": "bridgefall",
+      "nameKey": "mechanism.bridgefall.name",
+      "firstMissionId": "m17",
+      "costAether": 110,
+      "cooldownMs": 0,
+      "maximumActivations": 1,
+      "effect": {
+        "kind": "blast-rubble-zone",
+        "telegraphMs": 1200,
+        "damage": 80,
+        "movementReductionBp": 2500,
+        "durationPolicyId": "until-wave-clear",
+        "targetKinds": [
+          "ground"
+        ],
+        "mutatesRouteTopology": false
+      }
+    },
+    {
+      "id": "bronze-city-gate",
+      "nameKey": "mechanism.bronze-city-gate.name",
+      "firstMissionId": "m05",
+      "costAether": 55,
+      "cooldownMs": 75000,
+      "maximumActivations": 32,
+      "effect": {
+        "kind": "finite-gate-block",
+        "telegraphMs": 500,
+        "maximumContacts": 3,
+        "durationMs": 4000,
+        "targetKinds": [
+          "ground"
+        ],
+        "mutatesRouteTopology": false
+      }
+    },
+    {
+      "id": "harbor-chain",
+      "nameKey": "mechanism.harbor-chain.name",
+      "firstMissionId": "m07",
+      "costAether": 50,
+      "cooldownMs": 65000,
+      "maximumActivations": 32,
+      "effect": {
+        "kind": "authored-slow-zone",
+        "magnitudeBp": 3000,
+        "durationMs": 8000,
+        "targetKinds": [
+          "ground"
+        ],
+        "mutatesRouteTopology": false
+      }
+    },
+    {
+      "id": "sacred-braziers",
+      "nameKey": "mechanism.sacred-braziers.name",
+      "firstMissionId": "m11",
+      "costAether": 60,
+      "cooldownMs": 70000,
+      "maximumActivations": 32,
+      "effect": {
+        "kind": "authored-damage-zone",
+        "durationMs": 8000,
+        "pulseMs": 500,
+        "pulseDamage": 4,
+        "maximumTargetsPerPulse": 20,
+        "targetKinds": [
+          "ground"
+        ],
+        "mutatesRouteTopology": false
+      }
+    }
+  ]
+}

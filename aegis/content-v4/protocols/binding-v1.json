@@ -1,0 +1,867 @@
+{
+  "schemaVersion": 1,
+  "id": "aegis-protocols-v1",
+  "records": [
+    {
+      "id": "aegis-ward",
+      "nameKey": "protocol.aegis-ward.name",
+      "unlockGrantId": "grant.protocol.aegis-ward",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "none",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 70,
+          "cooldownMs": 85000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "leak-ward",
+            "durationMs": 12000,
+            "charges": 1,
+            "maximumPreventedIntegrityPerLeak": 2,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.aegis-ward.accepted",
+            "protocol.aegis-ward.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 105,
+          "cooldownMs": 100000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "leak-ward",
+            "durationMs": 15000,
+            "charges": 2,
+            "maximumPreventedIntegrityPerLeak": 3,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.aegis-ward.accepted",
+            "protocol.aegis-ward.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 145,
+          "cooldownMs": 115000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "leak-ward",
+            "durationMs": 18000,
+            "charges": 3,
+            "maximumPreventedIntegrityPerLeak": 4,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.aegis-ward.accepted",
+            "protocol.aegis-ward.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.aegis-ward.accepted",
+        "protocol.aegis-ward.resolved"
+      ]
+    },
+    {
+      "id": "armara-ascension",
+      "nameKey": "protocol.armara-ascension.name",
+      "unlockGrantId": "grant.protocol.armara-ascension",
+      "castPolicyId": "once-per-mission",
+      "targetKind": "none",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 220,
+          "cooldownMs": 0,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 1,
+          "effect": {
+            "kind": "global-ascension-field",
+            "durationMs": 8000,
+            "movementReductionBp": 2500,
+            "towerDamageBp": 1500,
+            "towerRateBp": 2500,
+            "towerRangeBp": 0,
+            "affectsFutureSpawns": true,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.armara-ascension.accepted",
+            "protocol.armara-ascension.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 260,
+          "cooldownMs": 0,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 1,
+          "effect": {
+            "kind": "global-ascension-field",
+            "durationMs": 10000,
+            "movementReductionBp": 3500,
+            "towerDamageBp": 2000,
+            "towerRateBp": 3500,
+            "towerRangeBp": 0,
+            "affectsFutureSpawns": true,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.armara-ascension.accepted",
+            "protocol.armara-ascension.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 320,
+          "cooldownMs": 0,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 1,
+          "effect": {
+            "kind": "global-ascension-field",
+            "durationMs": 12000,
+            "movementReductionBp": 4500,
+            "towerDamageBp": 2500,
+            "towerRateBp": 4500,
+            "towerRangeBp": 0,
+            "affectsFutureSpawns": true,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.armara-ascension.accepted",
+            "protocol.armara-ascension.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.armara-ascension.accepted",
+        "protocol.armara-ascension.resolved"
+      ]
+    },
+    {
+      "id": "athena-command",
+      "nameKey": "protocol.athena-command.name",
+      "unlockGrantId": "grant.protocol.athena-command",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "tower",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 85,
+          "cooldownMs": 80000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "tower-cluster-amplification",
+            "radiusWorldUnits": 28,
+            "maximumTowers": 3,
+            "damageBp": 0,
+            "rateBp": 2500,
+            "rangeBp": 0,
+            "durationMs": 8000,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.athena-command.accepted",
+            "protocol.athena-command.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 125,
+          "cooldownMs": 95000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "tower-cluster-amplification",
+            "radiusWorldUnits": 28,
+            "maximumTowers": 4,
+            "damageBp": 0,
+            "rateBp": 3500,
+            "rangeBp": 0,
+            "durationMs": 10000,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.athena-command.accepted",
+            "protocol.athena-command.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 170,
+          "cooldownMs": 110000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "tower-cluster-amplification",
+            "radiusWorldUnits": 28,
+            "maximumTowers": 5,
+            "damageBp": 0,
+            "rateBp": 4000,
+            "rangeBp": 1000,
+            "durationMs": 12000,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.athena-command.accepted",
+            "protocol.athena-command.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.athena-command.accepted",
+        "protocol.athena-command.resolved"
+      ]
+    },
+    {
+      "id": "hades-bargain",
+      "nameKey": "protocol.hades-bargain.name",
+      "unlockGrantId": "grant.protocol.hades-bargain",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "route-point",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 65,
+          "cooldownMs": 80000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "bargain-mark",
+            "radiusWorldUnits": 16,
+            "maximumTargets": 12,
+            "durationMs": 10000,
+            "enemySpeedIncreaseBp": 1000,
+            "bountyIncreaseBp": 2500,
+            "addedLeakIntegrity": 1,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "selectionComparatorId": "distance-progress-id"
+          },
+          "eventIds": [
+            "protocol.hades-bargain.accepted",
+            "protocol.hades-bargain.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 90,
+          "cooldownMs": 95000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "bargain-mark",
+            "radiusWorldUnits": 16,
+            "maximumTargets": 18,
+            "durationMs": 12000,
+            "enemySpeedIncreaseBp": 1200,
+            "bountyIncreaseBp": 3500,
+            "addedLeakIntegrity": 1,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "selectionComparatorId": "distance-progress-id"
+          },
+          "eventIds": [
+            "protocol.hades-bargain.accepted",
+            "protocol.hades-bargain.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 125,
+          "cooldownMs": 110000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "bargain-mark",
+            "radiusWorldUnits": 16,
+            "maximumTargets": 24,
+            "durationMs": 15000,
+            "enemySpeedIncreaseBp": 1500,
+            "bountyIncreaseBp": 5000,
+            "addedLeakIntegrity": 1,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "selectionComparatorId": "distance-progress-id"
+          },
+          "eventIds": [
+            "protocol.hades-bargain.accepted",
+            "protocol.hades-bargain.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.hades-bargain.accepted",
+        "protocol.hades-bargain.resolved"
+      ]
+    },
+    {
+      "id": "hephaestus-overclock",
+      "nameKey": "protocol.hephaestus-overclock.name",
+      "unlockGrantId": "grant.protocol.hephaestus-overclock",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "tower",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 70,
+          "cooldownMs": 75000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "tower-overclock",
+            "damageBp": 4500,
+            "rateBp": 4500,
+            "rangeBp": 0,
+            "durationMs": 10000,
+            "shutdownMs": 4000,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.hephaestus-overclock.accepted",
+            "protocol.hephaestus-overclock.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 105,
+          "cooldownMs": 90000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "tower-overclock",
+            "damageBp": 6500,
+            "rateBp": 6500,
+            "rangeBp": 0,
+            "durationMs": 12000,
+            "shutdownMs": 4000,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.hephaestus-overclock.accepted",
+            "protocol.hephaestus-overclock.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 150,
+          "cooldownMs": 105000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "tower-overclock",
+            "damageBp": 8500,
+            "rateBp": 8500,
+            "rangeBp": 1000,
+            "durationMs": 14000,
+            "shutdownMs": 5000,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.hephaestus-overclock.accepted",
+            "protocol.hephaestus-overclock.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.hephaestus-overclock.accepted",
+        "protocol.hephaestus-overclock.resolved"
+      ]
+    },
+    {
+      "id": "hermes-rewind",
+      "nameKey": "protocol.hermes-rewind.name",
+      "unlockGrantId": "grant.protocol.hermes-rewind",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "route-point",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 80,
+          "cooldownMs": 90000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "route-front-rewind",
+            "maximumTargets": 3,
+            "routeLengthBp": 1200,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "selectionComparatorId": "route-front-id"
+          },
+          "eventIds": [
+            "protocol.hermes-rewind.accepted",
+            "protocol.hermes-rewind.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 120,
+          "cooldownMs": 105000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "route-front-rewind",
+            "maximumTargets": 5,
+            "routeLengthBp": 1800,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "selectionComparatorId": "route-front-id"
+          },
+          "eventIds": [
+            "protocol.hermes-rewind.accepted",
+            "protocol.hermes-rewind.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 170,
+          "cooldownMs": 120000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "route-front-rewind",
+            "maximumTargets": 8,
+            "routeLengthBp": 2500,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "selectionComparatorId": "route-front-id"
+          },
+          "eventIds": [
+            "protocol.hermes-rewind.accepted",
+            "protocol.hermes-rewind.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.hermes-rewind.accepted",
+        "protocol.hermes-rewind.resolved"
+      ]
+    },
+    {
+      "id": "medusa-lock",
+      "nameKey": "protocol.medusa-lock.name",
+      "unlockGrantId": "grant.protocol.medusa-lock",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "world-vector",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 100,
+          "cooldownMs": 100000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "aimed-petrify-cone",
+            "rangeWorldUnits": 36,
+            "fullAngleDegrees": 50,
+            "maximumTargets": 8,
+            "durationMs": 2000,
+            "targetKinds": [
+              "ground"
+            ],
+            "selectionComparatorId": "projection-perpendicular-id"
+          },
+          "eventIds": [
+            "protocol.medusa-lock.accepted",
+            "protocol.medusa-lock.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 145,
+          "cooldownMs": 110000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "aimed-petrify-cone",
+            "rangeWorldUnits": 42,
+            "fullAngleDegrees": 60,
+            "maximumTargets": 12,
+            "durationMs": 3000,
+            "targetKinds": [
+              "ground"
+            ],
+            "selectionComparatorId": "projection-perpendicular-id"
+          },
+          "eventIds": [
+            "protocol.medusa-lock.accepted",
+            "protocol.medusa-lock.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 195,
+          "cooldownMs": 120000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "aimed-petrify-cone",
+            "rangeWorldUnits": 48,
+            "fullAngleDegrees": 70,
+            "maximumTargets": 16,
+            "durationMs": 4000,
+            "targetKinds": [
+              "ground"
+            ],
+            "selectionComparatorId": "projection-perpendicular-id"
+          },
+          "eventIds": [
+            "protocol.medusa-lock.accepted",
+            "protocol.medusa-lock.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.medusa-lock.accepted",
+        "protocol.medusa-lock.resolved"
+      ]
+    },
+    {
+      "id": "poseidon-surge",
+      "nameKey": "protocol.poseidon-surge.name",
+      "unlockGrantId": "grant.protocol.poseidon-surge",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "route-point",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 95,
+          "cooldownMs": 90000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "route-point-surge",
+            "radiusWorldUnits": 18,
+            "maximumTargets": 12,
+            "displacementWorldUnits": 8,
+            "drenchBp": 2000,
+            "durationMs": 4000,
+            "targetKinds": [
+              "ground"
+            ],
+            "selectionComparatorId": "distance-progress-id"
+          },
+          "eventIds": [
+            "protocol.poseidon-surge.accepted",
+            "protocol.poseidon-surge.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 135,
+          "cooldownMs": 100000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "route-point-surge",
+            "radiusWorldUnits": 18,
+            "maximumTargets": 12,
+            "displacementWorldUnits": 12,
+            "drenchBp": 2500,
+            "durationMs": 5000,
+            "targetKinds": [
+              "ground"
+            ],
+            "selectionComparatorId": "distance-progress-id"
+          },
+          "eventIds": [
+            "protocol.poseidon-surge.accepted",
+            "protocol.poseidon-surge.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 180,
+          "cooldownMs": 110000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "route-point-surge",
+            "radiusWorldUnits": 18,
+            "maximumTargets": 12,
+            "displacementWorldUnits": 16,
+            "drenchBp": 3000,
+            "durationMs": 6000,
+            "targetKinds": [
+              "ground"
+            ],
+            "selectionComparatorId": "distance-progress-id"
+          },
+          "eventIds": [
+            "protocol.poseidon-surge.accepted",
+            "protocol.poseidon-surge.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.poseidon-surge.accepted",
+        "protocol.poseidon-surge.resolved"
+      ]
+    },
+    {
+      "id": "temporal-edict",
+      "nameKey": "protocol.temporal-edict.name",
+      "unlockGrantId": "grant.protocol.temporal-edict",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "none",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 75,
+          "cooldownMs": 80000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "global-slow-field",
+            "magnitudeBp": 2500,
+            "durationMs": 10000,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "affectsFutureSpawns": true,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.temporal-edict.accepted",
+            "protocol.temporal-edict.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 115,
+          "cooldownMs": 95000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "global-slow-field",
+            "magnitudeBp": 5000,
+            "durationMs": 10000,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "affectsFutureSpawns": true,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.temporal-edict.accepted",
+            "protocol.temporal-edict.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 165,
+          "cooldownMs": 110000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "global-slow-field",
+            "magnitudeBp": 5000,
+            "durationMs": 15000,
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "affectsFutureSpawns": true,
+            "carryAcrossWave": false
+          },
+          "eventIds": [
+            "protocol.temporal-edict.accepted",
+            "protocol.temporal-edict.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.temporal-edict.accepted",
+        "protocol.temporal-edict.resolved"
+      ]
+    },
+    {
+      "id": "zeus-skyfire",
+      "nameKey": "protocol.zeus-skyfire.name",
+      "unlockGrantId": "grant.protocol.zeus-skyfire",
+      "castPolicyId": "repeat-surcharge",
+      "targetKind": "none",
+      "tiers": [
+        {
+          "tier": 1,
+          "incrementalLaurels": 0,
+          "cumulativeLaurels": 0,
+          "baseCostAether": 90,
+          "cooldownMs": 90000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "scheduled-global-damage",
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "strikes": [
+              {
+                "offsetMs": 900,
+                "damage": 40,
+                "shieldCoefficientBp": 10000,
+                "bossCoefficientBp": 5000,
+                "hardControl": null
+              }
+            ]
+          },
+          "eventIds": [
+            "protocol.zeus-skyfire.accepted",
+            "protocol.zeus-skyfire.resolved"
+          ]
+        },
+        {
+          "tier": 2,
+          "incrementalLaurels": 6,
+          "cumulativeLaurels": 6,
+          "baseCostAether": 135,
+          "cooldownMs": 100000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "scheduled-global-damage",
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "strikes": [
+              {
+                "offsetMs": 900,
+                "damage": 70,
+                "shieldCoefficientBp": 15000,
+                "bossCoefficientBp": 5000,
+                "hardControl": null
+              }
+            ]
+          },
+          "eventIds": [
+            "protocol.zeus-skyfire.accepted",
+            "protocol.zeus-skyfire.resolved"
+          ]
+        },
+        {
+          "tier": 3,
+          "incrementalLaurels": 12,
+          "cumulativeLaurels": 18,
+          "baseCostAether": 190,
+          "cooldownMs": 115000,
+          "sharedCooldownMs": 15000,
+          "maximumAcceptedCasts": 32,
+          "effect": {
+            "kind": "scheduled-global-damage",
+            "targetKinds": [
+              "air",
+              "ground"
+            ],
+            "strikes": [
+              {
+                "offsetMs": 900,
+                "damage": 65,
+                "shieldCoefficientBp": 17500,
+                "bossCoefficientBp": 5000,
+                "hardControl": null
+              },
+              {
+                "offsetMs": 1600,
+                "damage": 65,
+                "shieldCoefficientBp": 17500,
+                "bossCoefficientBp": 5000,
+                "hardControl": {
+                  "statusId": "stun",
+                  "durationMs": 350,
+                  "bossEligible": false
+                }
+              }
+            ]
+          },
+          "eventIds": [
+            "protocol.zeus-skyfire.accepted",
+            "protocol.zeus-skyfire.resolved"
+          ]
+        }
+      ],
+      "eventIds": [
+        "protocol.zeus-skyfire.accepted",
+        "protocol.zeus-skyfire.resolved"
+      ]
+    }
+  ]
+}

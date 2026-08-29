@@ -1,0 +1,70 @@
+{
+  "schemaVersion": 1,
+  "id": "aegis-reinforcements-v1",
+  "records": [
+    {
+      "id": "artemis-scout",
+      "nameKey": "reinforcement.artemis-scout.name",
+      "unlockGrantId": "grant.reinforcement.artemis-scout",
+      "costAether": 90,
+      "cooldownMs": 60000,
+      "lifetimeMs": 18000,
+      "markerKind": "reinforcement-ranged",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "maximumActive": 1,
+      "effect": {
+        "kind": "stationary-direct-unit",
+        "damage": 11,
+        "cooldownMs": 450,
+        "rangeWorldUnits": 32,
+        "armorIgnoreBp": 10000,
+        "targetPolicyId": "FRONT"
+      }
+    },
+    {
+      "id": "spartan-phalanx",
+      "nameKey": "reinforcement.spartan-phalanx.name",
+      "unlockGrantId": "grant.reinforcement.spartan-phalanx",
+      "costAether": 70,
+      "cooldownMs": 50000,
+      "lifetimeMs": 14000,
+      "markerKind": "reinforcement-guard",
+      "targetKinds": [
+        "ground"
+      ],
+      "maximumActive": 1,
+      "effect": {
+        "kind": "finite-guard-contacts",
+        "contactCount": 3,
+        "contactDamage": 12,
+        "blockDurationMs": 1000,
+        "replenishes": false
+      }
+    },
+    {
+      "id": "talos-automaton",
+      "nameKey": "reinforcement.talos-automaton.name",
+      "unlockGrantId": "grant.reinforcement.talos-automaton",
+      "costAether": 155,
+      "cooldownMs": 100000,
+      "lifetimeMs": 22000,
+      "markerKind": "reinforcement-heavy",
+      "targetKinds": [
+        "ground"
+      ],
+      "maximumActive": 1,
+      "effect": {
+        "kind": "stationary-splash-unit",
+        "damage": 42,
+        "cooldownMs": 1200,
+        "rangeWorldUnits": 22,
+        "radiusWorldUnits": 3,
+        "armorBreakAmount": 2,
+        "armorBreakDurationMs": 2500
+      }
+    }
+  ]
+}

@@ -1,0 +1,232 @@
+{
+  "schemaVersion": 1,
+  "id": "aegis-relics-v1",
+  "records": [
+    {
+      "id": "broken-aegis",
+      "nameKey": "relic.broken-aegis.name",
+      "unlockGrantId": "grant.relic.broken-aegis",
+      "benefitKey": "relic.broken-aegis.benefit",
+      "drawbackKey": "relic.broken-aegis.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "starting-integrity",
+          "operation": "add",
+          "amount": 5,
+          "rounding": "none"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "starting-aether",
+          "operation": "add",
+          "amount": -20,
+          "rounding": "none"
+        }
+      ]
+    },
+    {
+      "id": "bronze-obol",
+      "nameKey": "relic.bronze-obol.name",
+      "unlockGrantId": "grant.relic.bronze-obol",
+      "benefitKey": "relic.bronze-obol.benefit",
+      "drawbackKey": "relic.bronze-obol.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "starting-aether",
+          "operation": "add",
+          "amount": 25,
+          "rounding": "none"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "bounty",
+          "operation": "multiply-bp",
+          "amount": 8500,
+          "rounding": "mission-remainder"
+        }
+      ]
+    },
+    {
+      "id": "forge-ember",
+      "nameKey": "relic.forge-ember.name",
+      "unlockGrantId": "grant.relic.forge-ember",
+      "benefitKey": "relic.forge-ember.benefit",
+      "drawbackKey": "relic.forge-ember.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "specialization-cost",
+          "operation": "multiply-bp",
+          "amount": 8800,
+          "rounding": "ceil"
+        },
+        {
+          "statId": "upgrade-cost",
+          "operation": "multiply-bp",
+          "amount": 8800,
+          "rounding": "ceil"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "build-cost",
+          "operation": "multiply-bp",
+          "amount": 10800,
+          "rounding": "ceil"
+        }
+      ]
+    },
+    {
+      "id": "hermes-greaves",
+      "nameKey": "relic.hermes-greaves.name",
+      "unlockGrantId": "grant.relic.hermes-greaves",
+      "benefitKey": "relic.hermes-greaves.benefit",
+      "drawbackKey": "relic.hermes-greaves.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "tower-rate",
+          "operation": "add-bp",
+          "amount": 800,
+          "rounding": "none"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "tower-range",
+          "operation": "add-bp",
+          "amount": -800,
+          "rounding": "floor"
+        }
+      ]
+    },
+    {
+      "id": "laurel-of-ares",
+      "nameKey": "relic.laurel-of-ares.name",
+      "unlockGrantId": "grant.relic.laurel-of-ares",
+      "benefitKey": "relic.laurel-of-ares.benefit",
+      "drawbackKey": "relic.laurel-of-ares.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "tower-direct-damage",
+          "operation": "multiply-bp",
+          "amount": 11200,
+          "rounding": "floor"
+        },
+        {
+          "statId": "tower-dot-damage",
+          "operation": "multiply-bp",
+          "amount": 11200,
+          "rounding": "floor"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "tower-control-duration",
+          "operation": "multiply-bp",
+          "amount": 8500,
+          "rounding": "floor"
+        },
+        {
+          "statId": "tower-control-magnitude",
+          "operation": "multiply-bp",
+          "amount": 8500,
+          "rounding": "floor"
+        }
+      ]
+    },
+    {
+      "id": "owl-lens",
+      "nameKey": "relic.owl-lens.name",
+      "unlockGrantId": "grant.relic.owl-lens",
+      "benefitKey": "relic.owl-lens.benefit",
+      "drawbackKey": "relic.owl-lens.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "tower-range",
+          "operation": "add-bp",
+          "amount": 1000,
+          "rounding": "floor"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "tower-rate",
+          "operation": "add-bp",
+          "amount": -800,
+          "rounding": "none"
+        }
+      ]
+    },
+    {
+      "id": "tideglass",
+      "nameKey": "relic.tideglass.name",
+      "unlockGrantId": "grant.relic.tideglass",
+      "benefitKey": "relic.tideglass.benefit",
+      "drawbackKey": "relic.tideglass.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "tower-control-magnitude",
+          "operation": "multiply-bp",
+          "amount": 12000,
+          "rounding": "floor"
+        },
+        {
+          "statId": "tower-displacement",
+          "operation": "multiply-bp",
+          "amount": 12000,
+          "rounding": "floor"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "tower-direct-damage",
+          "operation": "multiply-bp",
+          "amount": 9200,
+          "rounding": "floor"
+        },
+        {
+          "statId": "tower-dot-damage",
+          "operation": "multiply-bp",
+          "amount": 9200,
+          "rounding": "floor"
+        }
+      ]
+    },
+    {
+      "id": "titan-gear",
+      "nameKey": "relic.titan-gear.name",
+      "unlockGrantId": "grant.relic.titan-gear",
+      "benefitKey": "relic.titan-gear.benefit",
+      "drawbackKey": "relic.titan-gear.drawback",
+      "benefitModifiers": [
+        {
+          "statId": "protocol-cost",
+          "operation": "multiply-bp",
+          "amount": 8500,
+          "rounding": "ceil"
+        }
+      ],
+      "drawbackModifiers": [
+        {
+          "statId": "build-cost",
+          "operation": "multiply-bp",
+          "amount": 10800,
+          "rounding": "ceil"
+        },
+        {
+          "statId": "specialization-cost",
+          "operation": "multiply-bp",
+          "amount": 10800,
+          "rounding": "ceil"
+        },
+        {
+          "statId": "upgrade-cost",
+          "operation": "multiply-bp",
+          "amount": 10800,
+          "rounding": "ceil"
+        }
+      ]
+    }
+  ]
+}

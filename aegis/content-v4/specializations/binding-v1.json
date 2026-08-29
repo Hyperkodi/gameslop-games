@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "id": "aegis-specializations-v1",
+  "records": [
+    {
+      "id": "apollo-forked-ray",
+      "defenseId": "apollo",
+      "nameKey": "specialization.apollo-forked-ray.name",
+      "unlockGrantId": "grant.specialization.apollo-forked-ray",
+      "branchRoleId": "forked-ray",
+      "level3CostAether": 175,
+      "isDefault": true
+    },
+    {
+      "id": "apollo-solar-lance",
+      "defenseId": "apollo",
+      "nameKey": "specialization.apollo-solar-lance.name",
+      "unlockGrantId": "grant.specialization.apollo-solar-lance",
+      "branchRoleId": "solar-lance",
+      "level3CostAether": 175,
+      "isDefault": false
+    },
+    {
+      "id": "artemis-execution-line",
+      "defenseId": "artemis",
+      "nameKey": "specialization.artemis-execution-line.name",
+      "unlockGrantId": "grant.specialization.artemis-execution-line",
+      "branchRoleId": "execution-line",
+      "level3CostAether": 155,
+      "isDefault": true
+    },
+    {
+      "id": "artemis-threader",
+      "defenseId": "artemis",
+      "nameKey": "specialization.artemis-threader.name",
+      "unlockGrantId": "grant.specialization.artemis-threader",
+      "branchRoleId": "threader",
+      "level3CostAether": 155,
+      "isDefault": false
+    },
+    {
+      "id": "athena-command-mesh",
+      "defenseId": "athena",
+      "nameKey": "specialization.athena-command-mesh.name",
+      "unlockGrantId": "grant.specialization.athena-command-mesh",
+      "branchRoleId": "command-mesh",
+      "level3CostAether": 155,
+      "isDefault": false
+    },
+    {
+      "id": "athena-coordinated-fire",
+      "defenseId": "athena",
+      "nameKey": "specialization.athena-coordinated-fire.name",
+      "unlockGrantId": "grant.specialization.athena-coordinated-fire",
+      "branchRoleId": "coordinated-fire",
+      "level3CostAether": 155,
+      "isDefault": true
+    },
+    {
+      "id": "chronos-echo-field",
+      "defenseId": "chronos",
+      "nameKey": "specialization.chronos-echo-field.name",
+      "unlockGrantId": "grant.specialization.chronos-echo-field",
+      "branchRoleId": "echo-field",
+      "level3CostAether": 115,
+      "isDefault": true
+    },
+    {
+      "id": "chronos-time-debt",
+      "defenseId": "chronos",
+      "nameKey": "specialization.chronos-time-debt.name",
+      "unlockGrantId": "grant.specialization.chronos-time-debt",
+      "branchRoleId": "time-debt",
+      "level3CostAether": 115,
+      "isDefault": false
+    },
+    {
+      "id": "hades-soul-tithe",
+      "defenseId": "hades",
+      "nameKey": "specialization.hades-soul-tithe.name",
+      "unlockGrantId": "grant.specialization.hades-soul-tithe",
+      "branchRoleId": "soul-tithe",
+      "level3CostAether": 175,
+      "isDefault": false
+    },
+    {
+      "id": "hades-twin-banish",
+      "defenseId": "hades",
+      "nameKey": "specialization.hades-twin-banish.name",
+      "unlockGrantId": "grant.specialization.hades-twin-banish",
+      "branchRoleId": "twin-banish",
+      "level3CostAether": 175,
+      "isDefault": true
+    },
+    {
+      "id": "hephaestus-molten-field",
+      "defenseId": "hephaestus",
+      "nameKey": "specialization.hephaestus-molten-field.name",
+      "unlockGrantId": "grant.specialization.hephaestus-molten-field",
+      "branchRoleId": "molten-field",
+      "level3CostAether": 165,
+      "isDefault": true
+    },
+    {
+      "id": "hephaestus-triple-foundry",
+      "defenseId": "hephaestus",
+      "nameKey": "specialization.hephaestus-triple-foundry.name",
+      "unlockGrantId": "grant.specialization.hephaestus-triple-foundry",
+      "branchRoleId": "triple-foundry",
+      "level3CostAether": 165,
+      "isDefault": false
+    },
+    {
+      "id": "hermes-sky-swarm",
+      "defenseId": "hermes",
+      "nameKey": "specialization.hermes-sky-swarm.name",
+      "unlockGrantId": "grant.specialization.hermes-sky-swarm",
+      "branchRoleId": "sky-swarm",
+      "level3CostAether": 130,
+      "isDefault": false
+    },
+    {
+      "id": "hermes-wing-command",
+      "defenseId": "hermes",
+      "nameKey": "specialization.hermes-wing-command.name",
+      "unlockGrantId": "grant.specialization.hermes-wing-command",
+      "branchRoleId": "wing-command",
+      "level3CostAether": 130,
+      "isDefault": true
+    },
+    {
+      "id": "hoplite-phalanx",
+      "defenseId": "hoplite",
+      "nameKey": "specialization.hoplite-phalanx.name",
+      "unlockGrantId": "grant.specialization.hoplite-phalanx",
+      "branchRoleId": "phalanx",
+      "level3CostAether": 120,
+      "isDefault": true
+    },
+    {
+      "id": "hoplite-spearwall",
+      "defenseId": "hoplite",
+      "nameKey": "specialization.hoplite-spearwall.name",
+      "unlockGrantId": "grant.specialization.hoplite-spearwall",
+      "branchRoleId": "spearwall",
+      "level3CostAether": 120,
+      "isDefault": false
+    },
+    {
+      "id": "medusa-basilisk-focus",
+      "defenseId": "medusa",
+      "nameKey": "specialization.medusa-basilisk-focus.name",
+      "unlockGrantId": "grant.specialization.medusa-basilisk-focus",
+      "branchRoleId": "basilisk-focus",
+      "level3CostAether": 145,
+      "isDefault": false
+    },
+    {
+      "id": "medusa-gorgon-bloom",
+      "defenseId": "medusa",
+      "nameKey": "specialization.medusa-gorgon-bloom.name",
+      "unlockGrantId": "grant.specialization.medusa-gorgon-bloom",
+      "branchRoleId": "gorgon-bloom",
+      "level3CostAether": 145,
+      "isDefault": true
+    },
+    {
+      "id": "oracle-chorus",
+      "defenseId": "oracle",
+      "nameKey": "specialization.oracle-chorus.name",
+      "unlockGrantId": "grant.specialization.oracle-chorus",
+      "branchRoleId": "chorus",
+      "level3CostAether": 110,
+      "isDefault": true
+    },
+    {
+      "id": "oracle-judgment",
+      "defenseId": "oracle",
+      "nameKey": "specialization.oracle-judgment.name",
+      "unlockGrantId": "grant.specialization.oracle-judgment",
+      "branchRoleId": "judgment",
+      "level3CostAether": 110,
+      "isDefault": false
+    },
+    {
+      "id": "poseidon-maelstrom",
+      "defenseId": "poseidon",
+      "nameKey": "specialization.poseidon-maelstrom.name",
+      "unlockGrantId": "grant.specialization.poseidon-maelstrom",
+      "branchRoleId": "maelstrom",
+      "level3CostAether": 150,
+      "isDefault": true
+    },
+    {
+      "id": "poseidon-undertow",
+      "defenseId": "poseidon",
+      "nameKey": "specialization.poseidon-undertow.name",
+      "unlockGrantId": "grant.specialization.poseidon-undertow",
+      "branchRoleId": "undertow",
+      "level3CostAether": 150,
+      "isDefault": false
+    },
+    {
+      "id": "sentinel-lock-on",
+      "defenseId": "sentinel",
+      "nameKey": "specialization.sentinel-lock-on.name",
+      "unlockGrantId": "grant.specialization.sentinel-lock-on",
+      "branchRoleId": "lock-on",
+      "level3CostAether": 95,
+      "isDefault": true
+    },
+    {
+      "id": "sentinel-twin-lance",
+      "defenseId": "sentinel",
+      "nameKey": "specialization.sentinel-twin-lance.name",
+      "unlockGrantId": "grant.specialization.sentinel-twin-lance",
+      "branchRoleId": "twin-lance",
+      "level3CostAether": 95,
+      "isDefault": false
+    },
+    {
+      "id": "siege-breach-core",
+      "defenseId": "siege",
+      "nameKey": "specialization.siege-breach-core.name",
+      "unlockGrantId": "grant.specialization.siege-breach-core",
+      "branchRoleId": "breach-core",
+      "level3CostAether": 140,
+      "isDefault": true
+    },
+    {
+      "id": "siege-sun-shrapnel",
+      "defenseId": "siege",
+      "nameKey": "specialization.siege-sun-shrapnel.name",
+      "unlockGrantId": "grant.specialization.siege-sun-shrapnel",
+      "branchRoleId": "sun-shrapnel",
+      "level3CostAether": 140,
+      "isDefault": false
+    },
+    {
+      "id": "talos-earthbreaker",
+      "defenseId": "talos",
+      "nameKey": "specialization.talos-earthbreaker.name",
+      "unlockGrantId": "grant.specialization.talos-earthbreaker",
+      "branchRoleId": "earthbreaker",
+      "level3CostAether": 190,
+      "isDefault": false
+    },
+    {
+      "id": "talos-titan-hunter",
+      "defenseId": "talos",
+      "nameKey": "specialization.talos-titan-hunter.name",
+      "unlockGrantId": "grant.specialization.talos-titan-hunter",
+      "branchRoleId": "titan-hunter",
+      "level3CostAether": 190,
+      "isDefault": true
+    },
+    {
+      "id": "zeus-storm-crown",
+      "defenseId": "zeus",
+      "nameKey": "specialization.zeus-storm-crown.name",
+      "unlockGrantId": "grant.specialization.zeus-storm-crown",
+      "branchRoleId": "storm-crown",
+      "level3CostAether": 185,
+      "isDefault": true
+    },
+    {
+      "id": "zeus-thunderhead",
+      "defenseId": "zeus",
+      "nameKey": "specialization.zeus-thunderhead.name",
+      "unlockGrantId": "grant.specialization.zeus-thunderhead",
+      "branchRoleId": "thunderhead",
+      "level3CostAether": 185,
+      "isDefault": false
+    }
+  ]
+}

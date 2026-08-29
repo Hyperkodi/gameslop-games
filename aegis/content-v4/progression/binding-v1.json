@@ -1,0 +1,516 @@
+{
+  "schemaVersion": 1,
+  "id": "aegis-progression-v1",
+  "protocolRules": {
+    "initialSlotCap": 0,
+    "maximumSlotCap": 2,
+    "maximumLaurels": 180,
+    "repeatCostStepBp": 2500,
+    "sharedCooldownMs": 15000,
+    "respecPolicyId": "free-out-of-run-refund",
+    "tierCosts": [
+      {
+        "tier": 1,
+        "incrementalLaurels": 0,
+        "cumulativeLaurels": 0
+      },
+      {
+        "tier": 2,
+        "incrementalLaurels": 6,
+        "cumulativeLaurels": 6
+      },
+      {
+        "tier": 3,
+        "incrementalLaurels": 12,
+        "cumulativeLaurels": 18
+      }
+    ]
+  },
+  "relicRules": {
+    "initialSlotCap": 0,
+    "maximumSlotCap": 2
+  },
+  "reinforcementRules": {
+    "initialSlotCap": 0,
+    "maximumSlotCap": 1,
+    "maximumActive": 1
+  },
+  "reconRules": {
+    "initialTier": 0,
+    "maximumTier": 3,
+    "simulationAffecting": false
+  },
+  "grantRecords": [
+    {
+      "id": "grant.blueprint-reset",
+      "kind": "unlock-campaign-action",
+      "targetId": "blueprint-reset",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.campaign.reserve-1",
+      "kind": "unlock-campaign-modifier",
+      "targetId": "reserve-1",
+      "integerValue": 10
+    },
+    {
+      "id": "grant.campaign.reserve-2",
+      "kind": "unlock-campaign-modifier",
+      "targetId": "reserve-2",
+      "integerValue": 10
+    },
+    {
+      "id": "grant.defense-slots.5",
+      "kind": "set-defense-slot-cap",
+      "targetId": null,
+      "integerValue": 5
+    },
+    {
+      "id": "grant.defense-slots.6",
+      "kind": "set-defense-slot-cap",
+      "targetId": null,
+      "integerValue": 6
+    },
+    {
+      "id": "grant.defense.apollo",
+      "kind": "unlock-defense",
+      "targetId": "apollo",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.artemis",
+      "kind": "unlock-defense",
+      "targetId": "artemis",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.athena",
+      "kind": "unlock-defense",
+      "targetId": "athena",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.hades",
+      "kind": "unlock-defense",
+      "targetId": "hades",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.hephaestus",
+      "kind": "unlock-defense",
+      "targetId": "hephaestus",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.hermes",
+      "kind": "unlock-defense",
+      "targetId": "hermes",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.hoplite",
+      "kind": "unlock-defense",
+      "targetId": "hoplite",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.medusa",
+      "kind": "unlock-defense",
+      "targetId": "medusa",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.oracle",
+      "kind": "unlock-defense",
+      "targetId": "oracle",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.poseidon",
+      "kind": "unlock-defense",
+      "targetId": "poseidon",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.talos",
+      "kind": "unlock-defense",
+      "targetId": "talos",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.defense.zeus",
+      "kind": "unlock-defense",
+      "targetId": "zeus",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.mode.endless-ascension",
+      "kind": "unlock-mode",
+      "targetId": "endless-ascension",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.protocol-slots.1",
+      "kind": "set-protocol-slot-cap",
+      "targetId": null,
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol-slots.2",
+      "kind": "set-protocol-slot-cap",
+      "targetId": null,
+      "integerValue": 2
+    },
+    {
+      "id": "grant.protocol.aegis-ward",
+      "kind": "unlock-protocol",
+      "targetId": "aegis-ward",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.armara-ascension",
+      "kind": "unlock-protocol",
+      "targetId": "armara-ascension",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.athena-command",
+      "kind": "unlock-protocol",
+      "targetId": "athena-command",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.hades-bargain",
+      "kind": "unlock-protocol",
+      "targetId": "hades-bargain",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.hephaestus-overclock",
+      "kind": "unlock-protocol",
+      "targetId": "hephaestus-overclock",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.hermes-rewind",
+      "kind": "unlock-protocol",
+      "targetId": "hermes-rewind",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.medusa-lock",
+      "kind": "unlock-protocol",
+      "targetId": "medusa-lock",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.poseidon-surge",
+      "kind": "unlock-protocol",
+      "targetId": "poseidon-surge",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.temporal-edict",
+      "kind": "unlock-protocol",
+      "targetId": "temporal-edict",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.protocol.zeus-skyfire",
+      "kind": "unlock-protocol",
+      "targetId": "zeus-skyfire",
+      "integerValue": 1
+    },
+    {
+      "id": "grant.recon.1",
+      "kind": "set-recon-tier",
+      "targetId": null,
+      "integerValue": 1
+    },
+    {
+      "id": "grant.recon.2",
+      "kind": "set-recon-tier",
+      "targetId": null,
+      "integerValue": 2
+    },
+    {
+      "id": "grant.recon.3",
+      "kind": "set-recon-tier",
+      "targetId": null,
+      "integerValue": 3
+    },
+    {
+      "id": "grant.reinforcement-slots.1",
+      "kind": "set-reinforcement-slot-cap",
+      "targetId": null,
+      "integerValue": 1
+    },
+    {
+      "id": "grant.reinforcement.artemis-scout",
+      "kind": "unlock-reinforcement",
+      "targetId": "artemis-scout",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.reinforcement.spartan-phalanx",
+      "kind": "unlock-reinforcement",
+      "targetId": "spartan-phalanx",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.reinforcement.talos-automaton",
+      "kind": "unlock-reinforcement",
+      "targetId": "talos-automaton",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic-slots.1",
+      "kind": "set-relic-slot-cap",
+      "targetId": null,
+      "integerValue": 1
+    },
+    {
+      "id": "grant.relic-slots.2",
+      "kind": "set-relic-slot-cap",
+      "targetId": null,
+      "integerValue": 2
+    },
+    {
+      "id": "grant.relic.broken-aegis",
+      "kind": "unlock-relic",
+      "targetId": "broken-aegis",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic.bronze-obol",
+      "kind": "unlock-relic",
+      "targetId": "bronze-obol",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic.forge-ember",
+      "kind": "unlock-relic",
+      "targetId": "forge-ember",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic.hermes-greaves",
+      "kind": "unlock-relic",
+      "targetId": "hermes-greaves",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic.laurel-of-ares",
+      "kind": "unlock-relic",
+      "targetId": "laurel-of-ares",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic.owl-lens",
+      "kind": "unlock-relic",
+      "targetId": "owl-lens",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic.tideglass",
+      "kind": "unlock-relic",
+      "targetId": "tideglass",
+      "integerValue": 0
+    },
+    {
+      "id": "grant.relic.titan-gear",
+      "kind": "unlock-relic",
+      "targetId": "titan-gear",
+      "integerValue": 0
+    }
+  ],
+  "records": [
+    {
+      "missionId": "m01",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.defense.hoplite"
+      ]
+    },
+    {
+      "missionId": "m02",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.defense.oracle"
+      ]
+    },
+    {
+      "missionId": "m03",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.defense.artemis"
+      ]
+    },
+    {
+      "missionId": "m04",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.campaign.reserve-1"
+      ]
+    },
+    {
+      "missionId": "m05",
+      "loanProtocolIds": [
+        "temporal-edict"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense-slots.5",
+        "grant.protocol-slots.1",
+        "grant.protocol.temporal-edict"
+      ]
+    },
+    {
+      "missionId": "m06",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.defense.hermes",
+        "grant.recon.1",
+        "grant.relic-slots.1",
+        "grant.relic.bronze-obol"
+      ]
+    },
+    {
+      "missionId": "m07",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.defense.poseidon",
+        "grant.relic.owl-lens"
+      ]
+    },
+    {
+      "missionId": "m08",
+      "loanProtocolIds": [
+        "zeus-skyfire"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense.medusa",
+        "grant.protocol.zeus-skyfire"
+      ]
+    },
+    {
+      "missionId": "m09",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.blueprint-reset",
+        "grant.reinforcement-slots.1",
+        "grant.reinforcement.spartan-phalanx",
+        "grant.relic.broken-aegis"
+      ]
+    },
+    {
+      "missionId": "m10",
+      "loanProtocolIds": [
+        "aegis-ward"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense-slots.6",
+        "grant.protocol-slots.2",
+        "grant.protocol.aegis-ward"
+      ]
+    },
+    {
+      "missionId": "m11",
+      "loanProtocolIds": [
+        "poseidon-surge"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense.hephaestus",
+        "grant.protocol.poseidon-surge",
+        "grant.relic.forge-ember"
+      ]
+    },
+    {
+      "missionId": "m12",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.defense.athena"
+      ]
+    },
+    {
+      "missionId": "m13",
+      "loanProtocolIds": [
+        "athena-command"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense.apollo",
+        "grant.protocol.athena-command",
+        "grant.relic.tideglass"
+      ]
+    },
+    {
+      "missionId": "m14",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.recon.2",
+        "grant.reinforcement.artemis-scout"
+      ]
+    },
+    {
+      "missionId": "m15",
+      "loanProtocolIds": [
+        "hephaestus-overclock"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.campaign.reserve-2",
+        "grant.protocol.hephaestus-overclock",
+        "grant.relic-slots.2",
+        "grant.relic.laurel-of-ares"
+      ]
+    },
+    {
+      "missionId": "m16",
+      "loanProtocolIds": [
+        "hermes-rewind"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense.hades",
+        "grant.protocol.hermes-rewind"
+      ]
+    },
+    {
+      "missionId": "m17",
+      "loanProtocolIds": [
+        "medusa-lock"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense.talos",
+        "grant.protocol.medusa-lock",
+        "grant.relic.hermes-greaves"
+      ]
+    },
+    {
+      "missionId": "m18",
+      "loanProtocolIds": [
+        "hades-bargain"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.defense.zeus",
+        "grant.protocol.hades-bargain",
+        "grant.recon.3",
+        "grant.reinforcement.talos-automaton"
+      ]
+    },
+    {
+      "missionId": "m19",
+      "loanProtocolIds": [],
+      "firstVictoryGrantIds": [
+        "grant.relic.titan-gear"
+      ]
+    },
+    {
+      "missionId": "m20",
+      "loanProtocolIds": [
+        "armara-ascension"
+      ],
+      "firstVictoryGrantIds": [
+        "grant.mode.endless-ascension",
+        "grant.protocol.armara-ascension"
+      ]
+    }
+  ]
+}
