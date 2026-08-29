@@ -16,7 +16,7 @@
           "baseCostAether": 70,
           "cooldownMs": 85000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "leak-ward",
             "durationMs": 12000,
@@ -36,7 +36,7 @@
           "baseCostAether": 105,
           "cooldownMs": 100000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "leak-ward",
             "durationMs": 15000,
@@ -56,7 +56,7 @@
           "baseCostAether": 145,
           "cooldownMs": 115000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "leak-ward",
             "durationMs": 18000,
@@ -171,7 +171,7 @@
           "baseCostAether": 85,
           "cooldownMs": 80000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "tower-cluster-amplification",
             "radiusWorldUnits": 28,
@@ -194,7 +194,7 @@
           "baseCostAether": 125,
           "cooldownMs": 95000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "tower-cluster-amplification",
             "radiusWorldUnits": 28,
@@ -217,7 +217,7 @@
           "baseCostAether": 170,
           "cooldownMs": 110000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "tower-cluster-amplification",
             "radiusWorldUnits": 28,
@@ -253,7 +253,7 @@
           "baseCostAether": 65,
           "cooldownMs": 80000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "bargain-mark",
             "radiusWorldUnits": 16,
@@ -280,7 +280,7 @@
           "baseCostAether": 90,
           "cooldownMs": 95000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "bargain-mark",
             "radiusWorldUnits": 16,
@@ -307,7 +307,7 @@
           "baseCostAether": 125,
           "cooldownMs": 110000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "bargain-mark",
             "radiusWorldUnits": 16,
@@ -347,7 +347,7 @@
           "baseCostAether": 70,
           "cooldownMs": 75000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "tower-overclock",
             "damageBp": 4500,
@@ -369,7 +369,7 @@
           "baseCostAether": 105,
           "cooldownMs": 90000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "tower-overclock",
             "damageBp": 6500,
@@ -391,7 +391,7 @@
           "baseCostAether": 150,
           "cooldownMs": 105000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "tower-overclock",
             "damageBp": 8500,
@@ -426,7 +426,7 @@
           "baseCostAether": 80,
           "cooldownMs": 90000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "route-front-rewind",
             "maximumTargets": 3,
@@ -449,7 +449,7 @@
           "baseCostAether": 120,
           "cooldownMs": 105000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "route-front-rewind",
             "maximumTargets": 5,
@@ -472,7 +472,7 @@
           "baseCostAether": 170,
           "cooldownMs": 120000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "route-front-rewind",
             "maximumTargets": 8,
@@ -508,7 +508,7 @@
           "baseCostAether": 100,
           "cooldownMs": 100000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "aimed-petrify-cone",
             "rangeWorldUnits": 36,
@@ -532,7 +532,7 @@
           "baseCostAether": 145,
           "cooldownMs": 110000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "aimed-petrify-cone",
             "rangeWorldUnits": 42,
@@ -556,7 +556,7 @@
           "baseCostAether": 195,
           "cooldownMs": 120000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "aimed-petrify-cone",
             "rangeWorldUnits": 48,
@@ -593,7 +593,7 @@
           "baseCostAether": 95,
           "cooldownMs": 90000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "route-point-surge",
             "radiusWorldUnits": 18,
@@ -618,7 +618,7 @@
           "baseCostAether": 135,
           "cooldownMs": 100000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "route-point-surge",
             "radiusWorldUnits": 18,
@@ -643,7 +643,7 @@
           "baseCostAether": 180,
           "cooldownMs": 110000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "route-point-surge",
             "radiusWorldUnits": 18,
@@ -681,7 +681,7 @@
           "baseCostAether": 75,
           "cooldownMs": 80000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "global-slow-field",
             "magnitudeBp": 2500,
@@ -705,7 +705,7 @@
           "baseCostAether": 115,
           "cooldownMs": 95000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "global-slow-field",
             "magnitudeBp": 5000,
@@ -729,7 +729,7 @@
           "baseCostAether": 165,
           "cooldownMs": 110000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "global-slow-field",
             "magnitudeBp": 5000,
@@ -766,7 +766,7 @@
           "baseCostAether": 90,
           "cooldownMs": 90000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "scheduled-global-damage",
             "targetKinds": [
@@ -795,7 +795,7 @@
           "baseCostAether": 135,
           "cooldownMs": 100000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "scheduled-global-damage",
             "targetKinds": [
@@ -824,7 +824,7 @@
           "baseCostAether": 190,
           "cooldownMs": 115000,
           "sharedCooldownMs": 15000,
-          "maximumAcceptedCasts": 32,
+          "maximumAcceptedCasts": null,
           "effect": {
             "kind": "scheduled-global-damage",
             "targetKinds": [
