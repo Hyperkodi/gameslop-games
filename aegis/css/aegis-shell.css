@@ -412,10 +412,41 @@
 .aegis-shell-card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  grid-auto-flow: row;
+  grid-auto-rows: 1fr;
   gap: .6rem;
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+/* The view chooses the largest column count that divides each collection evenly,
+   preserving authored row-major order without an orphaned final row. */
+.aegis-shell-balanced-grid--columns-1 { grid-template-columns: minmax(0, 1fr); }
+.aegis-shell-balanced-grid--columns-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.aegis-shell-balanced-grid--columns-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.aegis-shell-balanced-grid--columns-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.aegis-shell-balanced-grid--columns-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+.aegis-shell-card-grid--protocols .aegis-shell-card {
+  gap: .25rem;
+  min-width: 0;
+  padding: .55rem;
+}
+.aegis-shell-card-grid--protocols .aegis-shell-card-title { font-size: .9rem; }
+.aegis-shell-card-grid--protocols .aegis-shell-chip { padding-inline: .4rem; font-size: .68rem; }
+.aegis-shell-card-grid--protocols .aegis-shell-card-role,
+.aegis-shell-card-grid--protocols .aegis-shell-card-lock,
+.aegis-shell-card-grid--protocols .aegis-shell-card-stats,
+.aegis-shell-card-grid--protocols .aegis-shell-card-preview,
+.aegis-shell-card-grid--protocols .aegis-shell-card-warning { font-size: .76rem; }
+
+@media (max-width: 64rem) {
+  .aegis-shell-balanced-grid--columns-2,
+  .aegis-shell-balanced-grid--columns-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .aegis-shell-balanced-grid--columns-1,
+  .aegis-shell-balanced-grid--columns-3,
+  .aegis-shell-balanced-grid--columns-5 { grid-template-columns: minmax(0, 1fr); }
 }
 
 .aegis-shell-card {
@@ -627,6 +658,9 @@
   .aegis-shell-card-grid,
   .aegis-shell-difficulty-row,
   .aegis-shell-hub { grid-template-columns: minmax(0, 1fr); }
+  .aegis-shell-balanced-grid[class*="aegis-shell-balanced-grid--columns-"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
   .aegis-shell-binding-label { min-width: 0; flex: 1 1 100%; }
   .aegis-shell-actions .aegis-shell-button { flex: 1 1 100%; text-align: center; justify-items: center; }
 }

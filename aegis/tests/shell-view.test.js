@@ -292,7 +292,8 @@ test("ordinary player screens never render a tick, hash, id, pad quality, or gri
 });
 
 test("prices, slot counts, and lock reasons are visible text on the loadout screen", () => {
-  const text = ShellView.renderToText(treeFor("loadout", profileFor(["m01"])));
+  const tree = treeFor("loadout", profileFor(["m01"]));
+  const text = ShellView.renderToText(tree);
   assert.match(text, /60 Aether/);
   assert.match(text, /75 Aether/);
   assert.match(text, /90 Aether/);
@@ -303,6 +304,30 @@ test("prices, slot counts, and lock reasons are visible text on the loadout scre
   assert.match(text, /of 4 slots|of 5 slots|of 6 slots/);
   assert.match(text, /Assist adds 20 starting Aether/);
   assert.match(text, /Read the briefing/);
+  const grids = flatten(tree).filter((node) => node.tag === "ul" && /aegis-shell-card-grid--/.test(node.className));
+  assert.deepEqual(grids.map((grid) => [grid.className.match(/--(towers|protocols)/)[1], grid.children.length]), [
+    ["towers", 3], ["protocols", 10],
+  ]);
+  grids.forEach((grid) => {
+    const columns = Number(grid.className.match(/--columns-(\d)/)[1]);
+    assert.equal(grid.children.length % columns, 0,
+      "every visible loadout collection has complete, ordered rows");
+  });
+  assert.match(grids[0].className, /--columns-3/);
+  assert.match(grids[1].className, /--columns-5/);
+});
+
+test("player-facing collections use complete balanced rows in authored order", () => {
+  const profile = profileFor(["m01"]);
+  SCREENS.concat(["result"]).forEach((screen) => {
+    const tree = screen === "result"
+      ? treeFor("result", profile, {}, RESULT) : treeFor(screen, profile);
+    flatten(tree).filter((node) => /aegis-shell-balanced-grid/.test(node.className)).forEach((grid) => {
+      const columns = Number(grid.className.match(/--columns-(\d)/)[1]);
+      assert.equal(grid.children.length % columns, 0,
+        screen + " collection must not leave an orphaned final row");
+    });
+  });
 });
 
 test("the briefing renders the Recon tier, wave groups, and Laurel targets as text", () => {

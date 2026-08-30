@@ -79,6 +79,25 @@
     return node("ul", { className: className, children: items });
   }
 
+  function balancedColumns(itemCount, maximumColumns) {
+    const upper = Math.min(itemCount, maximumColumns || 5);
+    let columns = upper;
+    while (columns > 1 && itemCount % columns !== 0) columns -= 1;
+    return Math.max(columns, 1);
+  }
+
+  function balancedGridClass(baseClass, itemCount, maximumColumns) {
+    return baseClass + " aegis-shell-balanced-grid aegis-shell-balanced-grid--columns-"
+      + balancedColumns(itemCount, maximumColumns);
+  }
+
+  function balancedCardGrid(layout, items, maximumColumns) {
+    return list([
+      balancedGridClass("aegis-shell-card-grid", items.length, maximumColumns),
+      "aegis-shell-card-grid--" + layout,
+    ].join(" "), items);
+  }
+
   function definition(label, value) {
     return node("div", {
       className: "aegis-shell-stat",
@@ -182,6 +201,14 @@
   }
 
   function titleScreen(model) {
+    const destinations = [
+      button(model.continueLabel, { type: "continueCampaign" }, {
+        className: "aegis-shell-button--primary",
+        ariaLabel: model.continueLabel,
+      }),
+    ].concat(model.destinations.map(function (destination) {
+      return button(destination.label, { type: "navigate", screen: destination.screen });
+    }));
     return node("section", {
       className: "aegis-shell-screen aegis-shell-screen--title",
       attrs: { "aria-labelledby": "shellTitleHeading" },
@@ -198,16 +225,9 @@
         model.nextUnlock && model.nextUnlock.missionId
           ? paragraph("aegis-shell-ribbon", model.nextUnlock.text) : null,
         node("nav", {
-          className: "aegis-shell-hub",
+          className: balancedGridClass("aegis-shell-hub", destinations.length, 5),
           attrs: { "aria-label": "Main menu" },
-          children: [
-            button(model.continueLabel, { type: "continueCampaign" }, {
-              className: "aegis-shell-button--primary",
-              ariaLabel: model.continueLabel,
-            }),
-          ].concat(model.destinations.map(function (destination) {
-            return button(destination.label, { type: "navigate", screen: destination.screen });
-          })),
+          children: destinations,
         }),
       ].filter(Boolean),
     });
@@ -272,7 +292,7 @@
               ].filter(Boolean),
             }),
             act.story ? paragraph("aegis-shell-act-story aegis-shell-hint", act.story) : null,
-            list("aegis-shell-mission-grid", act.missions.map(function (mission) {
+            list(balancedGridClass("aegis-shell-mission-grid", act.missions.length, 5), act.missions.map(function (mission) {
               return missionCard(mission, model.mode);
             })),
           ].filter(Boolean),
@@ -287,7 +307,7 @@
       children: [
         node("legend", { text: "Difficulty" }),
         node("div", {
-          className: "aegis-shell-difficulty-row",
+          className: balancedGridClass("aegis-shell-difficulty-row", difficulties.length, 3),
           children: difficulties.map(function (difficulty) {
             return button(difficulty.label, { type: "setDifficulty", difficultyId: difficulty.id }, {
               className: difficulty.selected ? "is-selected" : "",
@@ -416,7 +436,7 @@
     });
   }
 
-  function loadoutSection(section, cards, clearAction, emptyText) {
+  function loadoutSection(section, cards, clearAction, emptyText, layout) {
     return node("section", {
       className: "aegis-shell-loadout-section",
       attrs: { "aria-label": section.ariaLabel },
@@ -433,7 +453,8 @@
           ],
         }),
         paragraph("aegis-shell-section-source", section.unlockSource),
-        cards.length ? list("aegis-shell-card-grid", cards)
+        cards.length ? balancedCardGrid(layout, cards,
+          layout === "relics" ? 4 : layout === "reinforcements" ? 3 : 5)
           : paragraph("aegis-shell-empty", emptyText),
       ],
     });
@@ -447,7 +468,7 @@
       children: [
         model.trialNotice ? paragraph("aegis-shell-ribbon", model.trialNotice) : null,
         node("div", {
-          className: "aegis-shell-loadout-summary",
+          className: balancedGridClass("aegis-shell-loadout-summary", 3, 3),
           children: [
             definition("Laurels available", String(model.laurels.available)),
             definition("Laurels earned", String(model.laurels.earned)),
@@ -466,13 +487,13 @@
           ],
         }),
         loadoutSection(sections[0], model.towers.map(towerCard), "clearTowers",
-          "No defenses are offered on this mission."),
+          "No defenses are offered on this mission.", "towers"),
         loadoutSection(sections[1], model.protocols.map(protocolCard), "clearProtocols",
-          "Divine Protocols unlock with the mission 5 victory."),
+          "Divine Protocols unlock with the mission 5 victory.", "protocols"),
         loadoutSection(sections[2], model.relics.map(relicCard), "clearRelics",
-          "Relics unlock with the mission 6 victory."),
+          "Relics unlock with the mission 6 victory.", "relics"),
         loadoutSection(sections[3], model.reinforcements.map(reinforcementCard), "clearReinforcement",
-          "Reinforcements unlock with the mission 9 victory."),
+          "Reinforcements unlock with the mission 9 victory.", "reinforcements"),
         node("div", {
           className: "aegis-shell-actions",
           children: [
@@ -556,7 +577,7 @@
           ],
         }) : null,
         node("div", {
-          className: "aegis-shell-briefing-stats",
+          className: balancedGridClass("aegis-shell-briefing-stats", 5, 5),
           children: [
             definition("Waves", String(model.waveCount)),
             definition("Difficulty", model.difficulty ? model.difficulty.label : "-"),
@@ -615,6 +636,12 @@
   }
 
   function resultScreen(model) {
+    const resultStats = [
+      definition("Score", String(model.score)),
+      model.gateHealth === null ? null : definition("Gate Health", String(model.gateHealth)),
+      model.waves === null ? null
+        : definition("Waves", model.waves.cleared + " of " + model.waves.total),
+    ].filter(Boolean);
     return node("section", {
       className: "aegis-shell-screen aegis-shell-screen--result",
       attrs: { "aria-label": model.heading },
@@ -629,13 +656,8 @@
           ],
         }),
         node("div", {
-          className: "aegis-shell-result-stats",
-          children: [
-            definition("Score", String(model.score)),
-            model.gateHealth === null ? null : definition("Gate Health", String(model.gateHealth)),
-            model.waves === null ? null
-              : definition("Waves", model.waves.cleared + " of " + model.waves.total),
-          ].filter(Boolean),
+          className: balancedGridClass("aegis-shell-result-stats", resultStats.length, 3),
+          children: resultStats,
         }),
         node("section", {
           className: "aegis-shell-result-laurels",
@@ -802,7 +824,7 @@
           attrs: { "aria-label": "Defenses" },
           children: [
             heading(3, "Defenses", "aegis-shell-section-title"),
-            list("aegis-shell-card-grid", model.defenses.map(function (defense) {
+            balancedCardGrid("codex", model.defenses.map(function (defense) {
               return node("li", {
                 className: "aegis-shell-card",
                 attrs: { "data-status": defense.unlocked ? "available" : "locked" },
@@ -819,7 +841,7 @@
                     defense.unlocked ? "Unlocked" : "Unlocked by a later campaign victory."),
                 ].filter(Boolean),
               });
-            })),
+            }), 5),
           ],
         }),
         model.unlocks.length ? node("section", {
