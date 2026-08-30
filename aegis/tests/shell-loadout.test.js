@@ -164,6 +164,31 @@ test("the loadout screen shows four named sections with slot counts and unlock s
   });
 });
 
+test("every locked Divine Protocol names its exact campaign milestone", () => {
+  const catalogValue = catalog();
+  const profile = Profile.createProfileV2("candidate-v4");
+  const model = Shell.selectLoadoutScreen({
+    catalog: catalogValue, profile, state: loadoutState(catalogValue, profile),
+  });
+  const expected = {
+    "temporal-edict": ["m05", "Win Mission 5: Bronze Warden to unlock this Divine Protocol."],
+    "zeus-skyfire": ["m08", "Win Mission 8: Poseidon's Clock to unlock this Divine Protocol."],
+    "aegis-ward": ["m10", "Win Mission 10: Cyclops Kernel to unlock this Divine Protocol."],
+    "poseidon-surge": ["m11", "Win Mission 11: Thermopylae Firewall to unlock this Divine Protocol."],
+    "athena-command": ["m13", "Win Mission 13: Forge Perimeter to unlock this Divine Protocol."],
+    "hephaestus-overclock": ["m15", "Win Mission 15: Oracle's Black Box to unlock this Divine Protocol."],
+    "hermes-rewind": ["m16", "Win Mission 16: Styx Packet Loss to unlock this Divine Protocol."],
+    "medusa-lock": ["m17", "Win Mission 17: Trident Convergence to unlock this Divine Protocol."],
+    "hades-bargain": ["m18", "Win Mission 18: Titan Assembly to unlock this Divine Protocol."],
+    "armara-ascension": ["m20", "Win Mission 20: Eternal Singularity to unlock this Divine Protocol."],
+  };
+  assert.equal(model.protocols.length, 10);
+  model.protocols.forEach((entry) => {
+    assert.deepEqual([entry.unlockMissionId, entry.lockReason], expected[entry.protocolId]);
+    assert.doesNotMatch(entry.lockReason, /mission that grants/i);
+  });
+});
+
 test("tower cards state their exact price, role, status, and lock reason", () => {
   const catalogValue = catalog();
   const profile = Profile.createProfileV2("candidate-v4");

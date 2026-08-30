@@ -87,6 +87,31 @@
     "binding-refused": "That shortcut key cannot be used.",
     "setting-unknown": "That setting does not exist.",
   });
+  /* The full campaign is authored before every mission is necessarily shipped in
+     the current slice. These titles keep future reward milestones actionable;
+     a shipped mission's presentation title always takes precedence below. */
+  const CAMPAIGN_MISSION_TITLES = Object.freeze({
+    m01: "Gate of Dawn",
+    m02: "Agora Circuit",
+    m03: "Olive Cipher",
+    m04: "Piraeus Switchyard",
+    m05: "Bronze Warden",
+    m06: "Delos Airspace",
+    m07: "Naxos Labyrinth",
+    m08: "Poseidon's Clock",
+    m09: "Rhodes Ring",
+    m10: "Cyclops Kernel",
+    m11: "Thermopylae Firewall",
+    m12: "Delphi Duplex",
+    m13: "Forge Perimeter",
+    m14: "Acropolis Mesh",
+    m15: "Oracle's Black Box",
+    m16: "Styx Packet Loss",
+    m17: "Trident Convergence",
+    m18: "Titan Assembly",
+    m19: "Olympus Uplink",
+    m20: "Eternal Singularity",
+  });
 
   const TRANSITIONS = Object.freeze({
     title: Object.freeze(["campaign", "training", "settings"]),
@@ -127,6 +152,25 @@
 
   function missionNumber(missionId) {
     return Number(String(missionId).slice(1));
+  }
+
+  function missionGrantSource(grantId) {
+    for (let index = 0; index < Profile.MISSION_IDS.length; index += 1) {
+      const missionId = Profile.MISSION_IDS[index];
+      const grants = Profile.FIRST_VICTORY_GRANTS_BY_MISSION[missionId] || [];
+      if (grants.indexOf(grantId) !== -1) return missionId;
+    }
+    return null;
+  }
+
+  function missionMilestone(catalog, missionId) {
+    if (!missionId) return null;
+    const shipped = catalog.missions[missionId];
+    const title = shipped && shipped.title
+      ? shipped.title
+      : CAMPAIGN_MISSION_TITLES[missionId];
+    if (!title) return null;
+    return "Mission " + missionNumber(missionId) + ": " + title;
   }
 
   function presentationStrings(presentation) {
@@ -1105,6 +1149,8 @@
     const budget = Profile.getLaurelBudget(profile);
     return profile.protocols.map(function (record) {
       const entry = catalog.protocols[record.id] || null;
+      const unlockMissionId = missionGrantSource("grant.protocol." + record.id);
+      const unlockMilestone = missionMilestone(catalog, unlockMissionId);
       const tiers = entry ? entry.tiers : [];
       const nextTier = record.availableTier + 1;
       const nextCost = Progression.PROTOCOL_TIER_INCREMENT_COSTS[nextTier];
@@ -1134,7 +1180,10 @@
           ? "Refunding lowers your equipped " + (entry ? entry.name : titleCase(record.id))
             + " to Tier " + (record.availableTier - 1) + "."
           : null,
-        lockReason: record.granted ? null : "Win the mission that grants this Divine Protocol.",
+        unlockMissionId: unlockMissionId,
+        lockReason: record.granted ? null : (unlockMilestone
+          ? "Win " + unlockMilestone + " to unlock this Divine Protocol."
+          : "Win its listed campaign milestone to unlock this Divine Protocol."),
         minimumTargetSizePx: PlayerUi.SECONDARY_TARGET_SIZE_PX,
       };
     });
