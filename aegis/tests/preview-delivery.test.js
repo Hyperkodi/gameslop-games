@@ -242,7 +242,8 @@ test("unlinked preview requests only slice-dev-v1 and leaves the public page unw
   assert.match(preview, /developer:\s*true/);
   assert.match(preview, /\.\.\/_kit\/shell\.js/);
   assert.match(preview, /id="previewBattlefield"/);
-  assert.match(preview, /id="previewBattlefieldStatus"/);
+  assert.doesNotMatch(preview, /previewBattlefieldStatus|Deployed towers|previewTowers/);
+  assert.doesNotMatch(controller, /enemies on the road|ui\.battlefieldStatus|ui\.towers/i);
   assert.match(preview, /class="preview-site-picker"[^>]+hidden/,
     "the redundant build-site card list must not appear in the player view");
   assert.match(preview, /id="previewSiteList"/,
@@ -332,8 +333,8 @@ test("unlinked preview requests only slice-dev-v1 and leaves the public page unw
   assert.match(controller, /if \(!result\.advanced\) return;/,
     "planning, pause, and terminal no-op ticks must not reconstruct controls");
   assert.match(controller, /cadenceRenderWouldReplaceFocus/);
-  assert.match(controller, /return \[ui\.store, ui\.towers\]\.some/,
-    "SVG foundation focus must not suppress enemy movement repaints");
+  assert.match(controller, /return \[ui\.store\]\.some/,
+    "only the open tower menu may preserve focused controls across a repaint");
   assert.doesNotMatch(controller, /return \[ui\.battlefield[^\]]*\]\.some/);
   assert.match(controller, /try\s*\{\s*ui\.shareCard\.toBlob/);
   assert.match(controller, /clipPathUnits:\s*"userSpaceOnUse"/);

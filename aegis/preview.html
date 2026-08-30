@@ -193,7 +193,6 @@
   .preview-hp-track { fill: #250b0b; stroke: #fff0d0; stroke-width: 350; }
   .preview-hp-fill { fill: #6df29c; }
   .preview-map-enemy-boss .preview-hp-fill { fill: #f2c95d; }
-  .preview-battlefield-status { margin: .45rem 0 0; color: var(--preview-muted); }
   .preview-site-picker { margin-top: .7rem; border: 1px solid rgba(249, 238, 210, .24); border-radius: .5rem; background: rgba(5, 5, 5, .82); padding: .65rem; }
   .preview-site-picker-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .25rem 1rem; margin-bottom: .5rem; }
   .preview-site-picker-heading h4 { margin: 0; }
@@ -232,8 +231,6 @@
   .preview-muted, .preview-empty { color: var(--preview-muted); }
   .preview-ready { color: var(--preview-green); }
   .preview-need { color: var(--preview-danger); }
-  .preview-tower-list { display: grid; gap: .4rem; }
-  .preview-tower-row { text-align: left; }
   .preview-lower { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem; }
   .preview-log { max-height: 16rem; overflow: auto; font-family: ui-monospace, monospace; font-size: .82rem; }
   .preview-log li { margin-bottom: .35rem; overflow-wrap: anywhere; }
@@ -332,14 +329,7 @@
           </div>
           <ol id="previewSiteList" class="preview-site-list"></ol>
         </nav>
-        <p id="previewBattlefieldStatus" class="preview-battlefield-status" aria-live="polite"></p>
       </section>
-
-      <section aria-labelledby="previewTowersTitle">
-        <h3 id="previewTowersTitle">Deployed towers</h3>
-        <div id="previewTowers" class="preview-tower-list"></div>
-      </section>
-
     </section>
   </div>
 

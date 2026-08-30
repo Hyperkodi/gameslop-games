@@ -981,7 +981,6 @@ body[data-screen="battle"] .preview-site-button {
   padding: .35rem .5rem;
 }
 
-body[data-screen="battle"] .preview-battlefield-status { font-size: .78rem; }
 
 /* Keyboard focus never lands under the pinned bar or behind the tower sheet. */
 body[data-screen="battle"] .preview-site-button,

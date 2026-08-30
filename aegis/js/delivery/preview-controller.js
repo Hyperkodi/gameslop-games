@@ -1532,12 +1532,10 @@
       pause: requiredElement(documentObject, "previewPause"),
       skipTutorial: requiredElement(documentObject, "previewSkipTutorial"),
       battlefield: requiredElement(documentObject, "previewBattlefield"),
-      battlefieldStatus: requiredElement(documentObject, "previewBattlefieldStatus"),
       siteList: requiredElement(documentObject, "previewSiteList"),
       storePanel: requiredElement(documentObject, "previewStorePanel"),
       storeClose: requiredElement(documentObject, "previewStoreClose"),
       store: requiredElement(documentObject, "previewStore"),
-      towers: requiredElement(documentObject, "previewTowers"),
       objectives: requiredElement(documentObject, "previewObjectives"),
       events: requiredElement(documentObject, "previewEvents"),
       outcome: requiredElement(documentObject, "previewOutcome"),
@@ -2041,10 +2039,6 @@
       svg.appendChild(enemyLayer);
       replaceChildren(ui.battlefield, [svg]);
       renderSiteSelector(view, state);
-      ui.battlefieldStatus.textContent = view.enemies.length === 0
-        ? "No enemies on the road · click a build site to deploy or manage a tower."
-        : view.enemies.length + (view.enemies.length === 1 ? " enemy" : " enemies") +
-          " on the road · defend the gate.";
       return view;
     }
 
@@ -2247,7 +2241,7 @@
          is rebuilt at visual cadence, so that one node may yield focus after a
          repaint; blocking the repaint made enemies appear permanently parked at
          their spawn point in browsers that retain SVG focus after pointer input. */
-      return [ui.store, ui.towers].some(function (container) {
+      return [ui.store].some(function (container) {
         return typeof container.contains === "function" && container.contains(active);
       });
     }
@@ -2273,19 +2267,6 @@
       const battlefield = renderBattlefield(state);
       renderStore(state, mission, battlefield);
       syncCommandBarHeight();
-
-      const towerNodes = state.management.towers.map(function (tower, index) {
-        const view = defenseView(runtime, tower.defenseId, tower.level);
-        const button = element(documentObject, "button", "preview-tower-row",
-          "Tower " + (index + 1) + " · " + view.name + " · Level " + tower.level +
-          " · " + tower.investedAether + " Aether invested · Targets " +
-          (TARGET_POLICY_LABELS[tower.targetPolicy] || tower.targetPolicy).toLowerCase());
-        button.type = "button";
-        button.setAttribute("data-tower-pad-id", tower.padId);
-        button.addEventListener("click", function () { selectPad(tower.padId, null, "tower"); });
-        return button;
-      });
-      replaceChildren(ui.towers, towerNodes.length ? towerNodes : [element(documentObject, "p", "preview-empty", "No towers built.")]);
 
       const strings = presentationStrings(runtime.presentation);
       replaceChildren(ui.objectives, state.objectiveResults.map(function (objective) {
