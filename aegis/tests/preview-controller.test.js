@@ -676,38 +676,34 @@ function towerState(remainingUnits, tick) {
   });
 }
 
-function towerFrame(state, options) {
+function towerVisual(state, options) {
   return PreviewController.battlefieldView(
     fixtureRuntime(), state, null, options || {}
-  ).pads[1].tower.frameName;
+  ).pads[1].tower;
 }
 
-test("a tower pose follows the kernel attack cooldown, not a free-running frame counter", () => {
+test("tower artwork stays anchored while firing effects follow the kernel cooldown", () => {
   /* Sentinel level 1 cooldown is 450 authored ms, so 27000 canonical time units. */
-  assert.equal(towerFrame(towerState(27000)), "active",
+  assert.equal(towerVisual(towerState(27000)).action, "active",
     "a cooldown that has just reset means the tower fired this tick");
-  assert.equal(towerFrame(towerState(26000)), "active");
-  assert.equal(towerFrame(towerState(20000)), "recover",
-    "the recovery pose follows the firing pose before the tower settles");
-  assert.match(towerFrame(towerState(12000)), /^idle[AB]$/,
-    "a tower that fired long ago returns to its idle cycle");
-  assert.match(towerFrame(towerState(0)), /^idle[AB]$/,
-    "a ready tower with no cooldown left is idle, never mid-attack");
-  assert.match(towerFrame(towerState(null)), /^idle[AB]$/,
-    "a projection without kernel timers still renders a stable idle pose");
-  assert.equal(towerFrame(towerState(12000)), towerFrame(towerState(12000, 0)),
+  assert.equal(towerVisual(towerState(26000)).action, "active");
+  assert.equal(towerVisual(towerState(20000)).action, "recover",
+    "the recovery effect follows the firing burst before the tower settles");
+  assert.equal(towerVisual(towerState(12000)).action, "idle");
+  assert.equal(towerVisual(towerState(0)).action, "idle");
+  assert.equal(towerVisual(towerState(null)).action, "idle");
+  [27000, 26000, 20000, 12000, 0, null].forEach(function (remaining) {
+    assert.equal(towerVisual(towerState(remaining)).frameName, "idleA",
+      "combat effects must never swap the tower body's atlas cell");
+  });
+  assert.deepEqual(towerVisual(towerState(12000)), towerVisual(towerState(12000, 0)),
     "the same canonical facts always produce the same pose");
 });
 
-test("idle towers alternate slowly and stagger so they never pulse in unison", () => {
+test("idle towers hold one clean atlas cell instead of cycling generated poses", () => {
   const frames = [];
-  for (let tick = 0; tick < 240; tick += 1) frames.push(towerFrame(towerState(0, tick)));
-  const flips = frames.filter(function (frame, index) {
-    return index > 0 && frame !== frames[index - 1];
-  }).length;
-  assert.ok(flips >= 4 && flips <= 8,
-    "an idle pose holds for roughly two thirds of a second at sixty ticks per second: " + flips);
-  assert.deepEqual(Array.from(new Set(frames)).sort(), ["idleA", "idleB"]);
+  for (let tick = 0; tick < 240; tick += 1) frames.push(towerVisual(towerState(0, tick)).frameName);
+  assert.deepEqual(Array.from(new Set(frames)), ["idleA"]);
 
   const runtime = fixtureRuntime();
   const state = frozen({
@@ -724,19 +720,22 @@ test("idle towers alternate slowly and stagger so they never pulse in unison", (
     enemies: [],
   });
   const view = PreviewController.battlefieldView(runtime, state, null, {});
-  assert.notEqual(view.pads[0].tower.frameName, view.pads[1].tower.frameName,
-    "neighbouring towers must not share an idle phase");
+  assert.equal(view.pads[0].tower.frameName, "idleA");
+  assert.equal(view.pads[1].tower.frameName, "idleA");
+  assert.equal(view.pads[0].tower.action, "idle");
+  assert.equal(view.pads[1].tower.action, "idle");
 });
 
-test("reduced motion holds one stable tower frame at every tick and cooldown", () => {
+test("reduced motion holds one stable tower frame and suppresses firing effects", () => {
   const options = { reduceMotion: true };
-  const frames = [
-    towerFrame(towerState(27000, 0), options),
-    towerFrame(towerState(20000, 11), options),
-    towerFrame(towerState(0, 97), options),
-    towerFrame(towerState(0, 512), options),
+  const visuals = [
+    towerVisual(towerState(27000, 0), options),
+    towerVisual(towerState(20000, 11), options),
+    towerVisual(towerState(0, 97), options),
+    towerVisual(towerState(0, 512), options),
   ];
-  assert.deepEqual(Array.from(new Set(frames)), ["active"]);
+  assert.deepEqual(Array.from(new Set(visuals.map(function (visual) { return visual.frameName; }))), ["idleA"]);
+  assert.deepEqual(Array.from(new Set(visuals.map(function (visual) { return visual.action; }))), ["idle"]);
 });
 
 /* --------------------------------------------- build-site coverage preview */

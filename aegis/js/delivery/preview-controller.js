@@ -138,10 +138,7 @@
      authoritative cooldown the kernel already publishes, never against frames. */
   const TOWER_ACTIVE_MS = 150;
   const TOWER_RECOVER_MS = 250;
-  const TOWER_IDLE_HOLD_TICKS = 40;
-  const TOWER_IDLE_STAGGER_TICKS = 13;
-  const TOWER_IDLE_FRAMES = Object.freeze(["idleA", "idleB"]);
-  const TOWER_REDUCED_MOTION_FRAME = "active";
+  const TOWER_REST_FRAME = "idleA";
   const ENEMY_WALK_FRAMES = Object.freeze(["runA", "runB", "runC", "runB"]);
   const ENEMY_WALK_HOLD_TICKS = 8;
   const ENEMY_WALK_STAGGER_TICKS = 5;
@@ -647,23 +644,29 @@
     return nearest;
   }
 
-  function towerFrameName(fire, tick, runtimeId, reduceMotion, ticksPerSecond) {
-    if (reduceMotion) return TOWER_REDUCED_MOTION_FRAME;
+  function towerVisualState(fire, reduceMotion, ticksPerSecond) {
+    const resting = { frameName: TOWER_REST_FRAME, action: "idle", progressBp: 0 };
+    if (reduceMotion || !fire) return resting;
     if (fire) {
       const quarterReload = Math.floor(fire.reloadUnits / 4);
       const activeUnits = Math.min(TOWER_ACTIVE_MS * ticksPerSecond, quarterReload);
       const recoverUnits = Math.min(TOWER_RECOVER_MS * ticksPerSecond, quarterReload);
-      if (fire.elapsedUnits < activeUnits) return "active";
-      if (fire.elapsedUnits < activeUnits + recoverUnits) return "recover";
+      if (activeUnits > 0 && fire.elapsedUnits < activeUnits) {
+        return {
+          frameName: TOWER_REST_FRAME,
+          action: "active",
+          progressBp: Math.floor(fire.elapsedUnits * 10000 / activeUnits),
+        };
+      }
+      if (recoverUnits > 0 && fire.elapsedUnits < activeUnits + recoverUnits) {
+        return {
+          frameName: TOWER_REST_FRAME,
+          action: "recover",
+          progressBp: Math.floor((fire.elapsedUnits - activeUnits) * 10000 / recoverUnits),
+        };
+      }
     }
-    /* One whole hold per runtime id puts neighbouring towers on opposite poses,
-       and the coprime remainder moves each tower's flip instant off its
-       neighbour's, so a row of idle towers never breathes in unison. */
-    const id = Number.isFinite(runtimeId) ? Math.abs(Math.trunc(runtimeId)) : 0;
-    const offset = id * TOWER_IDLE_HOLD_TICKS +
-      (id * TOWER_IDLE_STAGGER_TICKS) % TOWER_IDLE_HOLD_TICKS;
-    const phase = Math.floor((tick + offset) / TOWER_IDLE_HOLD_TICKS);
-    return TOWER_IDLE_FRAMES[((phase % 2) + 2) % 2];
+    return resting;
   }
 
   function shortSymbol(id) {
@@ -758,6 +761,11 @@
         const view = defenseView(runtime, tower.defenseId, tower.level);
         const level = runtime.content.defenses[tower.defenseId].levels[tower.level - 1];
         const atlas = TOWER_ATLASES[tower.defenseId];
+        const visual = towerVisualState(
+          towerFireState(runtime, state, tower, level),
+          reduceMotion,
+          runtime.simulation.TICKS_PER_SECOND
+        );
         towerView = {
           id: tower.id,
           defenseId: tower.defenseId,
@@ -765,13 +773,9 @@
           name: view.name,
           range: level.rangeWorldUnits,
           symbol: shortSymbol(tower.defenseId),
-          frameName: towerFrameName(
-            towerFireState(runtime, state, tower, level),
-            state.tick,
-            tower.id,
-            reduceMotion,
-            runtime.simulation.TICKS_PER_SECOND
-          ),
+          frameName: visual.frameName,
+          action: visual.action,
+          actionProgressBp: visual.progressBp,
           asset: atlas ? {
             kind: "atlas",
             href: atlas.href,
@@ -976,6 +980,66 @@
     wrapper.appendChild(image);
     wrapper.appendChild(fallback);
     return wrapper;
+  }
+
+  function towerMotion(tower) {
+    if (!tower || tower.action === "idle") return null;
+    const progress = Math.max(0, Math.min(1, tower.actionProgressBp / 10000));
+    const strength = tower.action === "active" ? 1 - progress * 0.45 : (1 - progress) * 0.45;
+    if (tower.defenseId === "chronos" || tower.defenseId === "oracle") {
+      return "rotate(" + (strength * -3).toFixed(2) + ") scale(" + (1 + strength * 0.025).toFixed(4) + ")";
+    }
+    const recoil = (tower.defenseId === "siege" ? 760 : 430) * strength;
+    return "translate(" + (-recoil).toFixed(1) + " " + (recoil * 0.24).toFixed(1) + ")";
+  }
+
+  function towerAttackEffect(documentObject, tower) {
+    if (!tower || tower.action === "idle") return null;
+    const progress = Math.max(0, Math.min(1, tower.actionProgressBp / 10000));
+    const strength = tower.action === "active" ? 1 - progress * 0.35 : (1 - progress) * 0.65;
+    const group = svgElement(documentObject, "g", {
+      class: "preview-tower-effect preview-tower-effect-" + tower.defenseId,
+      "data-action": tower.action,
+      "data-progress-bp": tower.actionProgressBp,
+      opacity: strength.toFixed(3),
+    });
+    if (tower.defenseId === "chronos" || tower.defenseId === "oracle") {
+      group.appendChild(svgElement(documentObject, "ellipse", {
+        class: "preview-tower-effect-ring preview-tower-effect-ring-a",
+        cx: 0, cy: -1700, rx: 7200 + progress * 800, ry: 2600,
+        transform: "rotate(" + Math.round(progress * 150) + " 0 -1700)",
+      }));
+      group.appendChild(svgElement(documentObject, "ellipse", {
+        class: "preview-tower-effect-ring preview-tower-effect-ring-b",
+        cx: 0, cy: -1700, rx: 4700, ry: 7200 + progress * 500,
+        transform: "rotate(" + Math.round(-progress * 110) + " 0 -1700)",
+      }));
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-tower-effect-core", cx: 0, cy: -1700, r: 1200 + strength * 1050,
+      }));
+    } else if (tower.defenseId === "sentinel" || tower.defenseId === "hoplite") {
+      const reach = 5400 + progress * 4300;
+      group.appendChild(svgElement(documentObject, "line", {
+        class: "preview-tower-effect-bolt", x1: 2400, y1: -3600, x2: reach, y2: -5000,
+      }));
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-tower-effect-muzzle", cx: 2800, cy: -3750, r: 850 + strength * 900,
+      }));
+      group.appendChild(svgElement(documentObject, "path", {
+        class: "preview-tower-effect-spark",
+        d: "M 2800 -6200 L 3300 -4400 L 5100 -4700 L 3600 -3600 L 4400 -1900 L 2850 -3000 L 1500 -1800 L 2200 -3650 L 600 -4500 L 2350 -4450 Z",
+      }));
+    } else {
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-tower-effect-shell", cx: 2500 + progress * 4700, cy: -6500 - progress * 2600,
+        r: 900 + strength * 650,
+      }));
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-tower-effect-shockwave", cx: 1700, cy: -5700,
+        r: 1700 + progress * 3100,
+      }));
+    }
+    return group;
   }
 
   function towerCardThumbnail(documentObject, view, clipKey) {
@@ -1886,14 +1950,20 @@
             pad.tower.level,
             pad.tower.frameName
           );
-          group.appendChild(atlasSprite(documentObject, pad.tower.asset, frame, {
+          const effect = towerAttackEffect(documentObject, pad.tower);
+          if (effect) group.appendChild(effect);
+          const sprite = atlasSprite(documentObject, pad.tower.asset, frame, {
             class: "preview-tower-sprite",
             x: -10500,
             y: -12500,
             width: 21000,
             height: 21000,
             "data-frame": frame.frameName,
-          }, "preview-tower-clip-" + pad.tower.id));
+          }, "preview-tower-clip-" + pad.tower.id);
+          const motion = towerMotion(pad.tower);
+          if (motion) sprite.setAttribute("transform", motion);
+          sprite.setAttribute("data-action", pad.tower.action);
+          group.appendChild(sprite);
         } else if (pad.tower) {
           group.appendChild(svgElement(documentObject, "text", {
             class: "preview-map-symbol preview-tower-symbol",
