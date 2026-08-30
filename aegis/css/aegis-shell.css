@@ -854,8 +854,9 @@ body[data-screen="battle"] #previewBattlefield {
   display: block;
   min-inline-size: 0;
   block-size: auto;
-  inline-size: 100%;
-  max-inline-size: none;
+  inline-size: min(100%, calc(160dvh - 13.6rem));
+  max-inline-size: calc(100vw - 3rem);
+  margin-inline: auto;
   aspect-ratio: 8 / 5;
 }
 
