@@ -43,11 +43,11 @@
   const MAX_UINT32 = 0xffffffff;
   const ROMAN = Object.freeze(["", "I", "II", "III", "IV", "V"]);
   const SCREENS = Object.freeze([
-    "title", "campaign", "training", "codex", "settings",
+    "title", "campaign", "training", "settings",
     "loadout", "briefing", "battle", "result",
   ]);
   const MODES = Object.freeze(["campaign", "training"]);
-  const HUB_SCREENS = Object.freeze(["campaign", "training", "codex", "settings"]);
+  const HUB_SCREENS = Object.freeze(["campaign", "training", "settings"]);
   const DIFFICULTY_LABELS = Object.freeze({
     story: "Story", strategos: "Strategos", titan: "Titan",
   });
@@ -89,12 +89,11 @@
   });
 
   const TRANSITIONS = Object.freeze({
-    title: Object.freeze(["campaign", "training", "codex", "settings"]),
-    campaign: Object.freeze(["title", "loadout", "settings", "codex"]),
-    training: Object.freeze(["title", "loadout", "settings", "codex"]),
-    codex: Object.freeze(["title", "campaign", "training"]),
+    title: Object.freeze(["campaign", "training", "settings"]),
+    campaign: Object.freeze(["title", "loadout", "settings"]),
+    training: Object.freeze(["title", "loadout", "settings"]),
     settings: Object.freeze(["title", "campaign", "training"]),
-    loadout: Object.freeze(["campaign", "training", "briefing", "codex"]),
+    loadout: Object.freeze(["campaign", "training", "briefing"]),
     briefing: Object.freeze(["loadout", "battle"]),
     battle: Object.freeze(["result", "campaign", "training"]),
     result: Object.freeze(["campaign", "training", "loadout"]),
@@ -1003,8 +1002,7 @@
         return {
           screen: screen,
           label: screen === "campaign" ? "Campaign"
-            : (screen === "training" ? "Training Courtyard"
-              : (screen === "codex" ? "Codex" : "Settings")),
+            : (screen === "training" ? "Training Courtyard" : "Settings"),
           minimumTargetSizePx: PlayerUi.PRIMARY_TARGET_SIZE_PX,
         };
       }),
@@ -1665,47 +1663,6 @@
     });
   }
 
-  function selectCodexScreen(context) {
-    const catalog = context.catalog;
-    const profile = context.profile;
-    let unlockCards = [];
-    try {
-      unlockCards = PlayerUi.createUnlockCards({
-        content: { unlocks: catalog.unlocks },
-        state: {
-          unlockedIds: profile.appliedGrantIds.filter(function (id) { return hasOwn(catalog.unlocks, id); }),
-        },
-      });
-    } catch (error) {
-      unlockCards = [];
-    }
-    return deepFreeze({
-      screen: "codex",
-      heading: "Codex",
-      subheading: "Every defense, reward, and unlock path in this build.",
-      defenses: Object.keys(catalog.defenses).map(function (id) {
-        const defense = catalog.defenses[id];
-        return {
-          id: id,
-          name: defense.name,
-          roleText: defense.roleText,
-          weaknessText: defense.weaknessText,
-          costAether: defense.costAether,
-          rangeWorldUnits: defense.rangeWorldUnits,
-          targetKinds: defense.targetKinds,
-          unlocked: profile.defenseGrantIds.indexOf(id) !== -1,
-          inspectable: true,
-        };
-      }),
-      unlocks: unlockCards,
-      recon: {
-        tier: profile.reconTier,
-        label: RECON_LABELS[profile.reconTier] || RECON_LABELS[0],
-        detail: "Recon only reveals compiled wave data earlier. It never changes combat.",
-      },
-    });
-  }
-
   function selectScreen(context) {
     switch (context.state.screen) {
       case "title": return selectTitleScreen(context);
@@ -1715,7 +1672,6 @@
       case "briefing": return selectBriefingScreen(context);
       case "result": return selectResultScreen(context);
       case "settings": return selectSettingsScreen(context);
-      case "codex": return selectCodexScreen(context);
       case "battle": return deepFreeze({
         screen: "battle",
         mode: context.state.mode,
@@ -1758,7 +1714,6 @@
     selectBriefingScreen: selectBriefingScreen,
     selectResultScreen: selectResultScreen,
     selectSettingsScreen: selectSettingsScreen,
-    selectCodexScreen: selectCodexScreen,
     selectWavePreview: selectWavePreview,
     selectDifficultyOptions: selectDifficultyOptions,
     usageBadges: usageBadges,

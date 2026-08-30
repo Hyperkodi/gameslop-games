@@ -822,7 +822,6 @@
     battle: battleScreen,
     result: resultScreen,
     settings: settingsScreen,
-    codex: codexScreen,
   });
 
   function buildScreenTree(model, callerOptions) {

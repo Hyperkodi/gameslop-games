@@ -1,6 +1,6 @@
 /* Armara Aegis campaign delivery shell.
    Layout, typography, and state styling for the title, campaign, loadout,
-   briefing, result, settings, and codex screens. Every price, cooldown, and
+   briefing, result, and settings screens. Every price, cooldown, and
    status string is live DOM text from compiled records; this file only styles
    it. Colour tokens come from the shared GameSlop/Armara preview palette. */
 

@@ -194,6 +194,13 @@ test("the initial state starts on the title screen with Strategos and no run", (
 test("title reaches every hub screen and refuses screens it does not connect to", () => {
   const catalog = catalogFor();
   const profile = Profile.createProfileV2("candidate-v4");
+  assert.deepEqual(Shell.HUB_SCREENS, ["campaign", "training", "settings"]);
+  const title = Shell.selectTitleScreen({
+    catalog, profile, state: Shell.createInitialState({ catalog, profile }),
+  });
+  assert.deepEqual(title.destinations.map((destination) => destination.label), [
+    "Campaign", "Training Courtyard", "Settings",
+  ]);
   Shell.HUB_SCREENS.forEach((screen) => {
     const run = drive(catalog, profile, [{ type: "navigate", screen }]);
     assert.equal(run.last.ok, true, screen);
@@ -205,6 +212,8 @@ test("title reaches every hub screen and refuses screens it does not connect to"
   assert.equal(refused.state.screen, "title");
   const unknown = drive(catalog, profile, [{ type: "navigate", screen: "shop" }]);
   assert.equal(unknown.last.reasonCode, "screen-unknown");
+  const removedCodex = drive(catalog, profile, [{ type: "navigate", screen: "codex" }]);
+  assert.equal(removedCodex.last.reasonCode, "screen-unknown");
 });
 
 test("campaign to loadout to briefing to battle to result to campaign is the whole loop", () => {

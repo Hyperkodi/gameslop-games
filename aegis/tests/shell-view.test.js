@@ -134,7 +134,7 @@ function stateAt(screen, profile, extra) {
     state = Shell.transition({ catalog: CATALOG, profile, state }, action).state;
   };
   if (screen === "title") return state;
-  if (screen === "campaign" || screen === "settings" || screen === "codex" || screen === "training") {
+  if (screen === "campaign" || screen === "settings" || screen === "training") {
     step({ type: "navigate", screen });
     return state;
   }
@@ -180,7 +180,7 @@ const RESULT = Object.freeze({
   persistence: { kind: "session", durable: false, message: "SESSION ONLY. This victory is not saved." },
 });
 
-const SCREENS = ["title", "campaign", "training", "codex", "settings", "loadout", "briefing", "battle"];
+const SCREENS = ["title", "campaign", "training", "settings", "loadout", "briefing", "battle"];
 
 /* --------------------------------------------------------- minimal DOM shim */
 
