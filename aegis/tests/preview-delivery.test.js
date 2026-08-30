@@ -292,6 +292,30 @@ test("unlinked preview requests only slice-dev-v1 and leaves the public page unw
   assert.match(controller, /Nothing was posted or uploaded/);
   assert.match(controller, /SpriteAtlas\.towerFrame\(atlas\.metadata, level, "idleA"\)/,
     "store thumbnails must use the exact level row and idleA column");
+  assert.doesNotMatch(controller, /preview-map-level/,
+    "the battlefield must not paint numeric upgrade markers over tower art");
+  assert.doesNotMatch(preview, /\.preview-map-level\s*\{/);
+  assert.doesNotMatch(controller, /function towerMotion|sprite\.setAttribute\("transform", motion\)/,
+    "firing must use authored action frames instead of shaking the whole tower sprite");
+  assert.match(controller, /frameName:\s*"active"[\s\S]+frameName:\s*"recover"/,
+    "kernel-timed attack phases must select the authored active and recover frames");
+  assert.match(controller, /const managementLocked = fatalPaused;/,
+    "manual and contextual pauses must leave tower-management controls enabled");
+  assert.match(controller, /if \(issue\(\{ type: "build"[\s\S]{0,200}closeStore\(/,
+    "build must close the contextual menu after it successfully queues");
+  assert.match(controller, /if \(issue\(\{ type: "upgrade"[\s\S]{0,200}closeStore\(/,
+    "upgrade must close the contextual menu after it successfully queues");
+  assert.match(controller, /if \(issue\(\{ type: "sell"[\s\S]{0,200}closeStore\(/,
+    "sell must close the contextual menu after it successfully queues");
+  assert.match(controller,
+    /policy\.addEventListener\("change",[\s\S]{0,180}issue\(\{ type: "setTargetPolicy"[\s\S]{0,120}\}\);/);
+  assert.doesNotMatch(controller,
+    /policy\.addEventListener\("change",[\s\S]{0,220}closeStore\(\)/,
+    "target-policy changes keep the contextual panel open");
+  assert.doesNotMatch(controller, /upgrade\.hidden\s*=\s*!upgradeGateOpen/,
+    "the tutorial-gated upgrade remains visible and disabled with its explanation");
+  assert.match(controller, /Upgrades unlock after Wave 1\. You can still build and sell during the wave\./);
+  assert.doesNotMatch(controller, /ORDER READY\. CLOSE THE TOWER MENU TO APPLY IT/);
   assert.match(controller, /class:\s*"preview-map-pad-foundation"/);
   assert.match(controller, /class:\s*"preview-tower-thumbnail-svg"/);
   assert.match(controller, /class:\s*"preview-sprite-fallback"/);

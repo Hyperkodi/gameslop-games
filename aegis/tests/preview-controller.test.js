@@ -682,7 +682,7 @@ function towerVisual(state, options) {
   ).pads[1].tower;
 }
 
-test("tower artwork stays anchored while firing effects follow the kernel cooldown", () => {
+test("tower artwork uses authored firing and recovery frames from the kernel cooldown", () => {
   /* Sentinel level 1 cooldown is 450 authored ms, so 27000 canonical time units. */
   assert.equal(towerVisual(towerState(27000)).action, "active",
     "a cooldown that has just reset means the tower fired this tick");
@@ -692,10 +692,9 @@ test("tower artwork stays anchored while firing effects follow the kernel cooldo
   assert.equal(towerVisual(towerState(12000)).action, "idle");
   assert.equal(towerVisual(towerState(0)).action, "idle");
   assert.equal(towerVisual(towerState(null)).action, "idle");
-  [27000, 26000, 20000, 12000, 0, null].forEach(function (remaining) {
-    assert.equal(towerVisual(towerState(remaining)).frameName, "idleA",
-      "combat effects must never swap the tower body's atlas cell");
-  });
+  assert.deepEqual([27000, 26000, 20000, 12000, 0, null].map(function (remaining) {
+    return towerVisual(towerState(remaining)).frameName;
+  }), ["active", "active", "recover", "idleA", "idleA", "idleA"]);
   assert.deepEqual(towerVisual(towerState(12000)), towerVisual(towerState(12000, 0)),
     "the same canonical facts always produce the same pose");
 });

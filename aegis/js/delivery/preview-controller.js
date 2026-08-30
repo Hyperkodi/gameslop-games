@@ -653,14 +653,14 @@
       const recoverUnits = Math.min(TOWER_RECOVER_MS * ticksPerSecond, quarterReload);
       if (activeUnits > 0 && fire.elapsedUnits < activeUnits) {
         return {
-          frameName: TOWER_REST_FRAME,
+          frameName: "active",
           action: "active",
           progressBp: Math.floor(fire.elapsedUnits * 10000 / activeUnits),
         };
       }
       if (recoverUnits > 0 && fire.elapsedUnits < activeUnits + recoverUnits) {
         return {
-          frameName: TOWER_REST_FRAME,
+          frameName: "recover",
           action: "recover",
           progressBp: Math.floor((fire.elapsedUnits - activeUnits) * 10000 / recoverUnits),
         };
@@ -980,17 +980,6 @@
     wrapper.appendChild(image);
     wrapper.appendChild(fallback);
     return wrapper;
-  }
-
-  function towerMotion(tower) {
-    if (!tower || tower.action === "idle") return null;
-    const progress = Math.max(0, Math.min(1, tower.actionProgressBp / 10000));
-    const strength = tower.action === "active" ? 1 - progress * 0.45 : (1 - progress) * 0.45;
-    if (tower.defenseId === "chronos" || tower.defenseId === "oracle") {
-      return "rotate(" + (strength * -3).toFixed(2) + ") scale(" + (1 + strength * 0.025).toFixed(4) + ")";
-    }
-    const recoil = (tower.defenseId === "siege" ? 760 : 430) * strength;
-    return "translate(" + (-recoil).toFixed(1) + " " + (recoil * 0.24).toFixed(1) + ")";
   }
 
   function towerAttackEffect(documentObject, tower) {
@@ -1742,7 +1731,7 @@
       if (control) control.focus();
     }
 
-    function closeStore() {
+    function closeStore(feedbackMessage) {
       const wasCombat = session && session.state.management.phase === "wave";
       const returnPadId = selectedPadId;
       const returnSource = selectedPadFocusSource;
@@ -1750,9 +1739,9 @@
       selectedPadFocusSource = "map";
       previewDefenseId = null;
       syncPauseState();
-      setFeedback(manuallyPaused
+      setFeedback(feedbackMessage || (manuallyPaused
         ? "Tower menu closed; the battle remains paused."
-        : (wasCombat ? "Tower menu closed; battle resumed." : "Tower menu closed."));
+        : (wasCombat ? "Tower menu closed; battle resumed." : "Tower menu closed.")));
       render();
       const selector = returnSource === "site"
         ? '[data-site-pad-id="' + returnPadId + '"]'
@@ -1766,17 +1755,18 @@
     }
 
     function issue(fields, message) {
+      let queued = false;
       try {
         const beforePending = session.pendingCommandCount;
         session.command(fields);
-        setFeedback(session.pendingCommandCount > beforePending
-          ? "Order ready. Close the tower menu to apply it and resume the battle."
-          : (message || "Action applied."));
+        queued = session.pendingCommandCount > beforePending;
+        setFeedback(message || (queued ? "Action queued." : "Action applied."));
       } catch (error) {
         setFeedback(String(error && error.message || error));
       }
       render();
       if (selectedPadId) focusWithoutScroll(ui.storeClose);
+      return queued;
     }
 
     function renderSiteSelector(view, state) {
@@ -1960,8 +1950,6 @@
             height: 21000,
             "data-frame": frame.frameName,
           }, "preview-tower-clip-" + pad.tower.id);
-          const motion = towerMotion(pad.tower);
-          if (motion) sprite.setAttribute("transform", motion);
           sprite.setAttribute("data-action", pad.tower.action);
           group.appendChild(sprite);
         } else if (pad.tower) {
@@ -1971,14 +1959,6 @@
             y: 1700,
             "text-anchor": "middle",
           }, pad.tower.symbol));
-        }
-        if (pad.tower) {
-          group.appendChild(svgElement(documentObject, "text", {
-            class: "preview-map-level",
-            x: 5200,
-            y: -4300,
-            "text-anchor": "middle",
-          }, String(pad.tower.level)));
         }
         group.addEventListener("click", function () {
           selectPad(pad.id, pad.tower
@@ -2104,8 +2084,7 @@
       if (view.selection) {
         context.appendChild(element(documentObject, "span", "preview-store-reach", view.selection.hint));
       }
-      const commandWaiting = state.management.phase === "wave" && session.pendingCommandCount > 0;
-      const managementLocked = manuallyPaused || fatalPaused || commandWaiting;
+      const managementLocked = fatalPaused;
       const occupied = state.management.towers.find(function (tower) { return tower.padId === selectedPadId; });
       if (occupied) {
         const view = defenseView(runtime, occupied.defenseId, occupied.level);
@@ -2144,13 +2123,16 @@
         upgrade.type = "button";
         const upgradeNeed = next ? next.costAether - state.management.aether : 0;
         upgrade.disabled = !next || !upgradeGateOpen || managementLocked || upgradeNeed > 0;
-        upgrade.hidden = !upgradeGateOpen;
         if (upgradeNeed > 0) {
           upgrade.className = "is-unaffordable";
           upgrade.title = "Need " + upgradeNeed + " more Aether";
         }
         upgrade.addEventListener("click", function () {
-          issue({ type: "upgrade", towerId: occupied.id }, "Tower upgraded.");
+          if (issue({ type: "upgrade", towerId: occupied.id }, "Tower upgrade queued.")) {
+            closeStore(manuallyPaused
+              ? "Tower upgrade queued. The battle remains paused."
+              : "Tower upgrade queued. Battle resumed; applying now.");
+          }
         });
         actions.appendChild(upgrade);
         const policy = element(documentObject, "select");
@@ -2175,22 +2157,23 @@
             "Sell " + view.name + " for " + refund + " Aether?"
           );
           if (confirmed) {
-            issue({ type: "sell", towerId: occupied.id }, "Tower sold.");
+            if (issue({ type: "sell", towerId: occupied.id }, "Tower sale queued.")) {
+              closeStore(manuallyPaused
+                ? "Tower sale queued. The battle remains paused."
+                : "Tower sale queued. Battle resumed; applying now.");
+            }
           }
         });
         actions.appendChild(sell);
         card.appendChild(actions);
         if (!upgradeGateOpen && next) {
           card.appendChild(element(documentObject, "p", "preview-need",
-            "UPGRADES UNLOCK AFTER WAVE 1 OR SKIPPING THE TUTORIAL GATE"));
+            "Upgrades unlock after Wave 1. You can still build and sell during the wave."));
         } else if (next) {
           card.appendChild(element(documentObject, "p", upgradeNeed > 0 ? "preview-need" : "preview-ready",
             upgradeNeed > 0 ? "NEED " + upgradeNeed + " MORE AETHER TO UPGRADE" : "UPGRADE AVAILABLE"));
         }
-        const nodes = [context, card];
-        if (commandWaiting) nodes.push(element(documentObject, "p", "preview-ready",
-          "ORDER READY. CLOSE THE TOWER MENU TO APPLY IT"));
-        replaceChildren(ui.store, nodes);
+        replaceChildren(ui.store, [context, card]);
         return;
       }
 
@@ -2212,7 +2195,11 @@
         }
         build.setAttribute("aria-label", "Build " + view.name + " here for " + view.costAether + " Aether");
         build.addEventListener("click", function () {
-          issue({ type: "build", padId: selectedPadId, defenseId: defenseId }, "Tower built.");
+          if (issue({ type: "build", padId: selectedPadId, defenseId: defenseId }, "Tower construction queued.")) {
+            closeStore(manuallyPaused
+              ? "Tower construction queued. The battle remains paused."
+              : "Tower construction queued. Battle resumed; applying now.");
+          }
         });
         const actions = element(documentObject, "div", "preview-card-actions");
         actions.appendChild(build);
@@ -2234,10 +2221,7 @@
         });
         grid.appendChild(card);
       });
-      const nodes = [context, heading, grid];
-      if (commandWaiting) nodes.push(element(documentObject, "p", "preview-ready",
-        "ORDER READY. CLOSE THE TOWER MENU TO APPLY IT"));
-      replaceChildren(ui.store, nodes);
+      replaceChildren(ui.store, [context, heading, grid]);
       revealPreviewedCard();
     }
 
