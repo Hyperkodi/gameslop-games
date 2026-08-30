@@ -2259,7 +2259,11 @@
     function cadenceRenderWouldReplaceFocus() {
       const active = documentObject.activeElement;
       if (!active || active === documentObject.body) return false;
-      return [ui.battlefield, ui.siteList, ui.store, ui.towers].some(function (container) {
+      /* A focused SVG foundation must never freeze combat presentation. The map
+         is rebuilt at visual cadence, so that one node may yield focus after a
+         repaint; blocking the repaint made enemies appear permanently parked at
+         their spawn point in browsers that retain SVG focus after pointer input. */
+      return [ui.store, ui.towers].some(function (container) {
         return typeof container.contains === "function" && container.contains(active);
       });
     }

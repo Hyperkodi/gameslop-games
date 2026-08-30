@@ -695,19 +695,17 @@ body[data-photosensitive-safe="true"] .aegis-shell-button--primary { box-shadow:
    above the map, which pushes the battlefield below the fold at 1280x800 and
    leaves the tower menu off screen. On the battle screen the battlefield is the
    primary object: the readouts collapse into one pinned command bar, the run
-   controls sit beside them, and the tower menu docks next to the map on desktop
-   or rises as a bottom sheet on small screens so the selected site, its exact
+   controls sit beside them, and the tower menu overlays the map on desktop or
+   rises as a bottom sheet on small screens so the selected site, its exact
    cost, and its Build control are always visible. Every label, price, and status
    string below stays live DOM text; this file only places and sizes it. */
 
 body[data-screen="battle"] {
-  --aegis-battle-stage: min(55vh, 30rem, calc((100vw - 22rem) * 5 / 8));
-  --aegis-battle-menu: min(100%, 21rem);
   --aegis-battle-bar: rgba(9, 9, 9, .96);
 }
 
 /* Page chrome yields to the map once a mission is running. */
-body[data-screen="battle"] .preview-shell { padding: .6rem 1rem 1rem; }
+body[data-screen="battle"] .preview-shell { width: 100%; max-width: none; padding: .6rem 1rem 1rem; }
 body[data-screen="battle"] .preview-title { gap: .35rem .8rem; }
 body[data-screen="battle"] .preview-logo { width: clamp(1.85rem, 3.4vw, 2.6rem); }
 body[data-screen="battle"] .preview-title h1 { font-size: clamp(1rem, 2vw, 1.35rem); }
@@ -847,28 +845,27 @@ body[data-screen="battle"] .preview-battlefield-heading h3 { margin: 0; font-siz
 body[data-screen="battle"] .preview-battlefield-heading p { margin: 0; font-size: .76rem; }
 
 body[data-screen="battle"] .preview-battlefield-stage {
-  display: flex;
-  align-items: flex-start;
-  gap: .55rem;
+  position: relative;
+  display: block;
   margin-top: .3rem;
 }
 
 body[data-screen="battle"] #previewBattlefield {
-  flex: 0 1 auto;
+  display: block;
   min-inline-size: 0;
-  block-size: var(--aegis-battle-stage);
-  inline-size: calc(var(--aegis-battle-stage) * 8 / 5);
-  max-inline-size: 100%;
-  aspect-ratio: auto;
+  block-size: auto;
+  inline-size: 100%;
+  max-inline-size: none;
+  aspect-ratio: 8 / 5;
 }
 
 body[data-screen="battle"] #previewStorePanel {
-  position: static;
-  flex: 1 1 var(--aegis-battle-menu);
-  inline-size: auto;
+  position: absolute;
+  inset: .55rem .55rem auto auto;
+  inline-size: min(30rem, calc(100% - 1.1rem));
   min-inline-size: min(100%, 15rem);
   max-inline-size: 30rem;
-  max-block-size: min(calc(var(--aegis-battle-stage) + 3rem), calc(100vh - 21rem));
+  max-block-size: calc(100% - 1.1rem);
   overflow: auto;
   overscroll-behavior: contain;
   padding: .55rem;
@@ -969,9 +966,10 @@ body[data-screen="battle"] #previewStorePanel .preview-upgrade-delta { margin: .
 
 .preview-site-button.is-multi-cover .preview-site-reach { font-weight: 800; }
 
-/* ------------------------------------------------------- build-site picker */
+/* The foundations on the battlefield are the build-site controls. The legacy
+   companion list remains hidden as a compatibility mount point only. */
 
-body[data-screen="battle"] .preview-site-picker { margin-top: .45rem; padding: .45rem; }
+body[data-screen="battle"] .preview-site-picker { display: none !important; }
 body[data-screen="battle"] .preview-site-picker-heading { margin-bottom: .35rem; }
 body[data-screen="battle"] .preview-site-picker-heading h4 { font-size: .9rem; }
 body[data-screen="battle"] .preview-site-picker-heading p { font-size: .76rem; }
@@ -1001,7 +999,6 @@ body[data-screen="battle"][data-tower-menu="open"] .preview-site-button {
 
 @media (max-width: 56rem) {
   body[data-screen="battle"] {
-    --aegis-battle-stage: auto;
     --aegis-battle-sheet: min(46vh, 25rem);
   }
 

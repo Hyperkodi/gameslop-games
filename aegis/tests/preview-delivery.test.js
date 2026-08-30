@@ -243,7 +243,10 @@ test("unlinked preview requests only slice-dev-v1 and leaves the public page unw
   assert.match(preview, /\.\.\/_kit\/shell\.js/);
   assert.match(preview, /id="previewBattlefield"/);
   assert.match(preview, /id="previewBattlefieldStatus"/);
-  assert.match(preview, /id="previewSiteList"/);
+  assert.match(preview, /class="preview-site-picker"[^>]+hidden/,
+    "the redundant build-site card list must not appear in the player view");
+  assert.match(preview, /id="previewSiteList"/,
+    "the hidden compatibility mount remains available to the controller");
   assert.match(preview, /id="previewStorePanel"/);
   assert.match(preview, /id="previewStoreClose"/);
   assert.match(preview, /id="previewShareCard"[^>]+width="1200" height="675"/);
@@ -296,6 +299,8 @@ test("unlinked preview requests only slice-dev-v1 and leaves the public page unw
   assert.match(preview, /\.preview-map-pad-foundation\s*\{/);
   assert.match(preview, /\.preview-tower-thumbnail-svg\s*\{/);
   assert.match(preview, /\.preview-site-button\s*\{[^}]*min-height:\s*3rem/s);
+  assert.match(fs.readFileSync(path.join(__dirname, "..", "css", "aegis-shell.css"), "utf8"),
+    /body\[data-screen="battle"\] \.preview-shell \{[^}]*width:\s*100%[^}]*max-width:\s*none/s);
   assert.match(controller, /data-site-pad-id/);
   assert.match(controller, /role:\s*"group"/,
     "the battlefield graphic must expose its descendant build-site buttons");
@@ -303,6 +308,9 @@ test("unlinked preview requests only slice-dev-v1 and leaves the public page unw
   assert.match(controller, /if \(!result\.advanced\) return;/,
     "planning, pause, and terminal no-op ticks must not reconstruct controls");
   assert.match(controller, /cadenceRenderWouldReplaceFocus/);
+  assert.match(controller, /return \[ui\.store, ui\.towers\]\.some/,
+    "SVG foundation focus must not suppress enemy movement repaints");
+  assert.doesNotMatch(controller, /return \[ui\.battlefield[^\]]*\]\.some/);
   assert.match(controller, /try\s*\{\s*ui\.shareCard\.toBlob/);
   assert.match(controller, /clipPathUnits:\s*"userSpaceOnUse"/);
   assert.match(controller, /width:\s*width \* asset\.metadata\.columns/);
