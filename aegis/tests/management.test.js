@@ -492,7 +492,7 @@ test("state normalization rejects forged investment, occupancy, phase, gate, and
   assert.throws(() => Management.normalizeManagementState(closedNoneGate, cfg), /must start and remain open/i);
 });
 
-test("CommonJS and classic-script modes expose the same frozen four-dependency API", () => {
+test("CommonJS and classic-script modes expose the same frozen seven-dependency API", () => {
   assert.equal(Object.isFrozen(Management), true);
   assert.equal(Object.isFrozen(Management.PHASES), true);
   assert.equal(Object.isFrozen(Management.TUTORIAL_GATE_MODES), true);
@@ -503,6 +503,10 @@ test("CommonJS and classic-script modes expose the same frozen four-dependency A
       "normalizeManagementState",
       "createManagementState",
       "applyCommandBucket",
+      "applyCommandBucketV2",
+      "addDisableSource",
+      "removeDisableSource",
+      "expireDisableSources",
       "completeActiveWave",
     ]
   );
@@ -512,10 +516,16 @@ test("CommonJS and classic-script modes expose the same frozen four-dependency A
   const source = fs.readFileSync(MANAGEMENT_PATH, "utf8");
   assert.deepEqual(
     Array.from(source.matchAll(/\brequire\("([^"]+)"\)/g), (match) => match[1]),
-    ["./abi.js", "./economy.js", "./movement.js", "./commands.js"]
+    [
+      "./abi.js", "./economy.js", "./movement.js", "./commands.js", "./commands-v2.js",
+      "./protocols.js", "./relics.js",
+    ]
   );
   const context = vm.createContext({}, { codeGeneration: { strings: false, wasm: false } });
-  for (const filename of ["abi.js", "economy.js", "movement.js", "commands.js", "management.js"]) {
+  for (const filename of [
+    "abi.js", "economy.js", "movement.js", "commands.js", "abi-v2.js", "commands-v2.js",
+    "protocols.js", "relics.js", "management.js",
+  ]) {
     vm.runInContext(
       fs.readFileSync(path.join(__dirname, "..", "js", "sim", filename), "utf8"),
       context,

@@ -87,24 +87,33 @@
     });
   }
 
+  /* Spec 8.2: an additive Relic Aether stage resolves after difficulty and before the campaign
+     Reserve/Assist additions. R4: a stage that would resolve below zero clamps to zero instead
+     of throwing, so a low-envelope Broken Aegis loadout remains legal. Omitting the argument
+     keeps the exact ABI v1 arithmetic. */
   function resolveStartAether(
     baseStartAether,
     difficultyAetherBp,
     campaignModifierAether,
-    assistAether
+    assistAether,
+    relicStartAether
   ) {
     nonnegativeInteger(baseStartAether, "Base starting Aether");
     nonnegativeInteger(difficultyAetherBp, "Difficulty Aether basis points");
     nonnegativeInteger(campaignModifierAether, "Campaign modifier Aether");
     nonnegativeInteger(assistAether, "Assist Aether");
+    const relicAether = relicStartAether === undefined ? 0 : relicStartAether;
+    ABI.assertSafeInteger(relicAether, "Relic starting Aether");
 
     const difficultyStartAether = ABI.checkedMulDivFloor(
       baseStartAether,
       [difficultyAetherBp],
       [BASIS_POINTS]
     );
+    const relicSum = ABI.checkedAdd(difficultyStartAether, relicAether);
+    const afterRelicAether = relicSum < 0 ? 0 : relicSum;
     const afterCampaignModifierAether = ABI.checkedAdd(
-      difficultyStartAether,
+      afterRelicAether,
       campaignModifierAether
     );
     const startAether = ABI.checkedAdd(afterCampaignModifierAether, assistAether);
@@ -112,6 +121,8 @@
       baseStartAether: baseStartAether,
       difficultyAetherBp: difficultyAetherBp,
       difficultyStartAether: difficultyStartAether,
+      relicStartAether: relicAether,
+      afterRelicAether: afterRelicAether,
       campaignModifierAether: campaignModifierAether,
       afterCampaignModifierAether: afterCampaignModifierAether,
       assistAether: assistAether,

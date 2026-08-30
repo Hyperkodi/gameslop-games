@@ -124,7 +124,40 @@
     return ABI_V1.utf8Bytes(DESCRIPTOR_CANONICAL);
   }
 
+  /* The ABI-v2 behavior contract registry. It retains every reviewed v1 contract unchanged and
+     adds the version-2 contracts the Level-3 specialization records require. Contracts are not
+     part of the pinned descriptor, so this table does not change DESCRIPTOR_SHA256; compiled v4
+     content declares a byte-equal copy that the kernel authenticates against this authority. */
+  const BEHAVIOR_CONTRACTS = Object.freeze([
+    Object.freeze({ id: "armorBreak", version: 1 }),
+    Object.freeze({ id: "armorBreak", version: 2 }),
+    Object.freeze({ id: "aura", version: 1 }),
+    Object.freeze({ id: "aura", version: 2 }),
+    Object.freeze({ id: "beam", version: 2 }),
+    Object.freeze({ id: "block", version: 1 }),
+    Object.freeze({ id: "block", version: 2 }),
+    Object.freeze({ id: "bossScript", version: 1 }),
+    Object.freeze({ id: "chain", version: 1 }),
+    Object.freeze({ id: "chain", version: 2 }),
+    Object.freeze({ id: "control", version: 2 }),
+    Object.freeze({ id: "direct", version: 1 }),
+    Object.freeze({ id: "direct", version: 2 }),
+    Object.freeze({ id: "dot", version: 1 }),
+    Object.freeze({ id: "drone", version: 2 }),
+    Object.freeze({ id: "execute", version: 1 }),
+    Object.freeze({ id: "execute", version: 2 }),
+    Object.freeze({ id: "link", version: 2 }),
+    Object.freeze({ id: "mine", version: 2 }),
+    Object.freeze({ id: "slow", version: 1 }),
+    Object.freeze({ id: "slow", version: 2 }),
+    Object.freeze({ id: "spawnUnit", version: 1 }),
+    Object.freeze({ id: "spawnUnit", version: 2 }),
+    Object.freeze({ id: "splash", version: 1 }),
+    Object.freeze({ id: "splash", version: 2 }),
+  ]);
+
   return Object.freeze({
+    BEHAVIOR_CONTRACTS: BEHAVIOR_CONTRACTS,
     DESCRIPTOR: DESCRIPTOR,
     DESCRIPTOR_CANONICAL: DESCRIPTOR_CANONICAL,
     DESCRIPTOR_SHA256: DESCRIPTOR_SHA256,

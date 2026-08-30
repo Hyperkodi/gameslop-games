@@ -190,8 +190,86 @@
     }
   }
 
-  function phaseIndex(phaseId) {
-    const index = PHASE_ORDER.indexOf(phaseId);
+  /* ADR-014: one behavior registry serves both ABI versions. A compiled event catalog carries
+     its own event-schema version and phase vocabulary; the owning kernel binds that schema to
+     the exact frozen catalog object once, before any tick. An unbound catalog stays on the
+     immutable ABI v1 schema, so every historical release keeps its exact validation. */
+  const DEFAULT_EVENT_SCHEMA = deepFreeze({
+    eventSchemaVersion: ABI.EVENT_SCHEMA_VERSION,
+    phaseAliases: {},
+    phaseOrder: PHASE_ORDER.slice(),
+  });
+  const EVENT_SCHEMA_FIELDS = Object.freeze([
+    "eventSchemaVersion", "phaseAliases", "phaseOrder",
+  ]);
+  const SUPPORTED_EVENT_SCHEMA_VERSIONS = Object.freeze([1, 2]);
+  const MAX_EVENT_PHASES = 32;
+  const CATALOG_EVENT_SCHEMAS = new WeakMap();
+
+  function normalizeEventSchema(input) {
+    exactFields(input, EVENT_SCHEMA_FIELDS, "Semantic event schema");
+    if (SUPPORTED_EVENT_SCHEMA_VERSIONS.indexOf(input.eventSchemaVersion) === -1) {
+      throw new RangeError("Unsupported semantic event schema version");
+    }
+    const phaseOrder = requireArray(input.phaseOrder, "Semantic event phase order");
+    if (phaseOrder.length === 0 || phaseOrder.length > MAX_EVENT_PHASES) {
+      throw new RangeError("Semantic event phase order must be a bounded nonempty list");
+    }
+    const known = new Set();
+    phaseOrder.forEach(function (phaseId, index) {
+      stableId(phaseId, "Semantic event phase " + index);
+      if (known.has(phaseId)) throw new RangeError("Semantic event phase order must be unique");
+      known.add(phaseId);
+    });
+    if (!input.phaseAliases || typeof input.phaseAliases !== "object" ||
+        Array.isArray(input.phaseAliases)) {
+      throw new TypeError("Semantic event phase aliases must be a plain object");
+    }
+    ABI.canonicalEncode(input.phaseAliases);
+    const aliasNames = Object.keys(input.phaseAliases);
+    if (aliasNames.length > MAX_EVENT_PHASES) {
+      throw new RangeError("Semantic event phase aliases exceed the bounded phase list");
+    }
+    const phaseAliases = {};
+    aliasNames.forEach(function (name) {
+      stableId(name, "Semantic event phase alias");
+      const target = stableId(input.phaseAliases[name], "Semantic event phase alias target");
+      if (!known.has(target)) {
+        throw new RangeError("Semantic event phase alias targets an unknown phase: " + target);
+      }
+      phaseAliases[name] = target;
+    });
+    return deepFreeze({
+      eventSchemaVersion: input.eventSchemaVersion,
+      phaseAliases: phaseAliases,
+      phaseOrder: phaseOrder.slice(),
+    });
+  }
+
+  function bindEventCatalogSchema(eventCatalog, schemaInput) {
+    if (!eventCatalog || typeof eventCatalog !== "object" || Array.isArray(eventCatalog)) {
+      throw new TypeError("Compiled semantic event catalog must be an object");
+    }
+    const schema = normalizeEventSchema(schemaInput);
+    const existing = CATALOG_EVENT_SCHEMAS.get(eventCatalog);
+    if (existing) {
+      if (ABI.canonicalEncode(existing) !== ABI.canonicalEncode(schema)) {
+        throw new RangeError("A semantic event catalog cannot carry two event schemas");
+      }
+      return existing;
+    }
+    CATALOG_EVENT_SCHEMAS.set(eventCatalog, schema);
+    return schema;
+  }
+
+  function catalogEventSchema(eventCatalog) {
+    const schema = CATALOG_EVENT_SCHEMAS.get(eventCatalog);
+    return schema === undefined ? DEFAULT_EVENT_SCHEMA : schema;
+  }
+
+  function phaseIndex(phaseId, schema) {
+    const order = (schema || DEFAULT_EVENT_SCHEMA).phaseOrder;
+    const index = order.indexOf(phaseId);
     if (index === -1) throw new RangeError("Unknown semantic event phase: " + String(phaseId));
     return index;
   }
@@ -231,11 +309,12 @@
     if (!definition || typeof definition !== "object" || Array.isArray(definition)) {
       throw new TypeError("Semantic event definition must be an object");
     }
-    if (definition.id !== eventId || definition.version !== ABI.EVENT_SCHEMA_VERSION) {
+    const schema = catalogEventSchema(eventCatalog);
+    if (definition.id !== eventId || definition.version !== schema.eventSchemaVersion) {
       throw new RangeError("Semantic event definition/version does not match " + eventId);
     }
     const phaseId = stableId(input.phaseId, "Semantic event phase ID");
-    phaseIndex(phaseId);
+    phaseIndex(phaseId, schema);
     if (definition.phaseId !== phaseId) {
       throw new RangeError("Semantic event phase does not match catalog for " + eventId);
     }
@@ -287,9 +366,10 @@
     const events = requireArray(inputs, "Semantic events");
     if (events.length > limits.maxEvents) throw new RangeError("Semantic events exceed the event cap");
     let priorPhase = -1;
+    const schema = catalogEventSchema(eventCatalog);
     const validated = events.map(function (event) {
       const next = validateSemanticEvent(eventCatalog, event);
-      const nextPhase = phaseIndex(next.phaseId);
+      const nextPhase = phaseIndex(next.phaseId, schema);
       if (nextPhase < priorPhase) {
         throw new RangeError("Semantic events violate ABI phase order");
       }
@@ -317,11 +397,15 @@
       throw new RangeError("Unknown semantic event ID: " + eventId);
     }
     const definition = eventCatalog[eventId];
-    if (definition.id !== eventId || definition.version !== ABI.EVENT_SCHEMA_VERSION ||
-        definition.phaseId !== expectedPhaseId) {
+    const schema = catalogEventSchema(eventCatalog);
+    const resolvedPhaseId = Object.prototype.hasOwnProperty.call(schema.phaseAliases, expectedPhaseId)
+      ? schema.phaseAliases[expectedPhaseId]
+      : expectedPhaseId;
+    if (definition.id !== eventId || definition.version !== schema.eventSchemaVersion ||
+        definition.phaseId !== resolvedPhaseId) {
       throw new RangeError("Semantic event-plan phase/version does not match " + eventId);
     }
-    phaseIndex(expectedPhaseId);
+    phaseIndex(resolvedPhaseId, schema);
     return eventId;
   }
 
@@ -2106,6 +2190,7 @@
     dispatchBehavior: dispatchBehavior,
     resolveGuardContactBatch: resolveGuardContactBatch,
     resolveMovementReduction: Effects.resolveMovementReduction,
+    bindEventCatalogSchema: bindEventCatalogSchema,
     validateSemanticEvent: validateSemanticEvent,
     validateSemanticEvents: validateSemanticEvents,
   });

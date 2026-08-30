@@ -69,12 +69,38 @@ test("Mission 1 base and Assist starts resolve after one difficulty floor", () =
   }
 });
 
+test("the Relic starting-Aether stage resolves after difficulty, before Reserve and Assist", () => {
+  const bronzeObol = Economy.resolveStartAether(150, 11900, 10, 20, 25);
+  assert.equal(bronzeObol.difficultyStartAether, 178);
+  assert.equal(bronzeObol.afterRelicAether, 203);
+  assert.equal(bronzeObol.afterCampaignModifierAether, 213);
+  assert.equal(bronzeObol.startAether, 233);
+
+  const brokenAegis = Economy.resolveStartAether(150, 11900, 10, 20, -20);
+  assert.equal(brokenAegis.afterRelicAether, 158);
+  assert.equal(brokenAegis.startAether, 188);
+
+  /* R4: a Relic stage that would resolve below zero clamps to zero and never throws. */
+  const clamped = Economy.resolveStartAether(30, 10000, 0, 0, -100000);
+  assert.equal(clamped.relicStartAether, -100000);
+  assert.equal(clamped.afterRelicAether, 0);
+  assert.equal(clamped.startAether, 0);
+  assert.equal(Object.isFrozen(clamped), true);
+
+  assert.throws(
+    () => Economy.resolveStartAether(150, 10000, 0, 0, 1.5),
+    /Relic starting Aether/
+  );
+});
+
 test("Reserve Capacitors apply after difficulty and Assist applies last", () => {
   const reserveOne = Economy.resolveStartAether(150, 11900, 10, 20);
   assert.deepEqual(reserveOne, {
     baseStartAether: 150,
     difficultyAetherBp: 11900,
     difficultyStartAether: 178,
+    relicStartAether: 0,
+    afterRelicAether: 178,
     campaignModifierAether: 10,
     afterCampaignModifierAether: 188,
     assistAether: 20,
@@ -86,6 +112,8 @@ test("Reserve Capacitors apply after difficulty and Assist applies last", () => 
     baseStartAether: 150,
     difficultyAetherBp: 11900,
     difficultyStartAether: 178,
+    relicStartAether: 0,
+    afterRelicAether: 178,
     campaignModifierAether: 20,
     afterCampaignModifierAether: 198,
     assistAether: 20,

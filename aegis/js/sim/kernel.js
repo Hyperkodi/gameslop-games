@@ -16,7 +16,11 @@
       require("./behaviors.js"),
       require("./commands.js"),
       require("./management.js"),
-      require("./objectives.js")
+      require("./objectives.js"),
+      require("./abi-v2.js"),
+      require("./commands-v2.js"),
+      require("./protocols.js"),
+      require("./relics.js")
     );
     return;
   }
@@ -33,6 +37,10 @@
   if (!game.AegisCommands) throw new Error("Game.AegisCommands must be installed before kernel.js");
   if (!game.AegisManagement) throw new Error("Game.AegisManagement must be installed before kernel.js");
   if (!game.AegisObjectives) throw new Error("Game.AegisObjectives must be installed before kernel.js");
+  if (!game.AegisSimV2) throw new Error("Game.AegisSimV2 must be installed before kernel.js");
+  if (!game.AegisCommandsV2) throw new Error("Game.AegisCommandsV2 must be installed before kernel.js");
+  if (!game.AegisProtocols) throw new Error("Game.AegisProtocols must be installed before kernel.js");
+  if (!game.AegisRelics) throw new Error("Game.AegisRelics must be installed before kernel.js");
   const api = factory(
     game.AegisSim,
     game.AegisGeometry,
@@ -44,7 +52,11 @@
     game.AegisBehaviors,
     game.AegisCommands,
     game.AegisManagement,
-    game.AegisObjectives
+    game.AegisObjectives,
+    game.AegisSimV2,
+    game.AegisCommandsV2,
+    game.AegisProtocols,
+    game.AegisRelics
   );
   if (Object.prototype.hasOwnProperty.call(game, "AegisKernel")) {
     if (game.AegisKernel !== api) throw new Error("Game.AegisKernel is already installed");
@@ -67,7 +79,11 @@
   Behaviors,
   Commands,
   Management,
-  Objectives
+  Objectives,
+  ABIV2,
+  CommandsV2,
+  Protocols,
+  Relics
 ) {
   "use strict";
 
@@ -97,7 +113,32 @@
     throw new Error("Aegis behavior identities do not match the simulation ABI");
   }
 
+  if (!ABIV2 || !Object.isFrozen(ABIV2) || !Object.isFrozen(ABIV2.DESCRIPTOR) ||
+      ABIV2.DESCRIPTOR.version !== 2 ||
+      ABIV2.BASE_ABI_DESCRIPTOR_SHA256 !== ABI.DESCRIPTOR_SHA256 ||
+      ABIV2.DESCRIPTOR_SHA256 !== ABIV2.sha256Hex(ABIV2.DESCRIPTOR_CANONICAL)) {
+    throw new TypeError("The authenticated frozen Aegis simulation ABI v2 is required");
+  }
+  [CommandsV2, Protocols, Relics].forEach(function (dependency, index) {
+    if (!dependency || !Object.isFrozen(dependency) ||
+        dependency.ABI_DESCRIPTOR_SHA256 !== ABIV2.DESCRIPTOR_SHA256) {
+      throw new TypeError("A frozen ABI-v2-matched kernel dependency is required at index " + index);
+    }
+  });
+  if (CommandsV2.COMMAND_SCHEMA_VERSION !== ABIV2.DESCRIPTOR.commands.schemaVersion) {
+    throw new Error("Aegis command-v2 schema identity does not match the simulation ABI v2");
+  }
+  if (typeof Management.applyCommandBucketV2 !== "function" ||
+      typeof Management.expireDisableSources !== "function" ||
+      Management.MANAGEMENT_SCHEMA_VERSION_V2 !== 2) {
+    throw new TypeError("A matching ABI-v2 Aegis management reducer is required");
+  }
+  if (typeof Behaviors.bindEventCatalogSchema !== "function") {
+    throw new TypeError("A matching ABI-v2 Aegis behavior registry is required");
+  }
+
   const KERNEL_SCHEMA_VERSION = 1;
+  const KERNEL_SCHEMA_VERSION_V2 = 2;
   const BALANCE_TELEMETRY_SCHEMA_VERSION = 1;
   const MAX_ACTIVE_ENTITIES = 4096;
   const MAX_BALANCE_TELEMETRY_RECORDS_PER_TICK = 65536;
@@ -114,6 +155,13 @@
     "presentationHash", "releaseEligible", "rulesetHash", "schemaVersion", "simulationArtifact",
     "simulationHash", "sourceManifestHash", "sourceProvenance",
   ]);
+  /* A schema-4 release record additionally declares the versioned contracts it binds and the
+     globals its bundle installs, so the loader can authenticate an ABI-v2 build without inferring
+     anything from filenames. Historical records keep the exact v3 field set above. */
+  const RELEASE_FIELDS_V2 = Object.freeze(RELEASE_FIELDS.concat([
+    "abiVersion", "commandSchemaVersion", "contentIds", "developerOnly",
+    "replayFormatVersion", "requiredGlobals",
+  ]).sort());
   const CONTENT_FIELDS = Object.freeze([
     "abiHash", "behaviorContracts", "behaviorRegistryVersion", "bosses", "campaignRules",
     "contentVersion", "defenseUnlockGrantMappings", "defenses", "enemies", "eventCatalog",
@@ -125,6 +173,63 @@
     "tutorialUpgradeGateMode",
   ]);
   const DIFFICULTY_IDS = Object.freeze(["story", "strategos", "titan"]);
+
+  /* ABI v2 / compiled content schema 4. Every v1 record above is retained byte-identically. */
+  const MAX_PROTOCOL_EFFECTS = 64;
+  const MAX_PROTOCOL_SCHEDULES = 64;
+  const MAX_DISABLE_SOURCES = Management.MAX_DISABLE_SOURCES;
+  const MAX_MECHANISM_ZONES = 16;
+  const MAX_PROTOCOL_SLOTS = Protocols.MAX_PROTOCOL_SLOTS;
+  const MAX_RELIC_IDS = 2;
+  const MAX_SPECIALIZATION_ACCESS_IDS = 128;
+  const MAX_UNLOCK_CATALOG_RECORDS = 128;
+  const V2_UNLOCK_FIELDS = Object.freeze([
+    "behaviorRegistryVersion", "commandSchemaVersion", "eventSchemaVersion", "grantRecords",
+    "mechanisms", "missionProgression", "profileSchemaVersion", "protocolRules", "protocols",
+    "reinforcementRules", "reinforcements", "relicRules", "relics", "replayFormatVersion",
+    "schemaVersion", "specializations",
+  ]);
+  const CONTENT_FIELDS_V2 = Object.freeze(CONTENT_FIELDS.concat([
+    "abiVersion", "commandSchemaVersion", "grantRecords", "mechanisms", "missionProgression",
+    "profileSchemaVersion", "protocolRules", "protocols", "reinforcementRules", "reinforcements",
+    "relicRules", "relics", "replayFormatVersion", "specializations",
+  ]));
+  const HEADER_FIELDS_V2 = Object.freeze(HEADER_FIELDS.concat([
+    "missionProtocolLoan", "protocolAuthority", "protocolLoadout", "protocolSlotCap", "relicIds",
+    "relicSlotCap", "reinforcementId", "specializationAccessIds",
+  ]));
+  const SPECIALIZATION_RECORD_FIELDS = Object.freeze([
+    "behaviors", "branchRoleId", "defenseId", "id", "isDefault", "level", "nameKey", "purchase",
+    "rangeWorldUnits", "ui", "unlockGrantId",
+  ]);
+  const V2_PHASE_IDS = Object.freeze(ABIV2.DESCRIPTOR.phaseOrder.slice());
+  /* Every retained ABI v1 semantic event keeps its authored phase name; the v4 catalog states the
+     v2 phase it now resolves in. The alias table is the sole translation and preserves the exact
+     relative order of every event a single v1 behavior emits. */
+  const V1_TO_V2_PHASE_ALIASES = Object.freeze({
+    "commands": "commands-and-aether-payments",
+    "scheduled-spawns": "spawn-movement-control-and-contact",
+    "status-expiry": "expiry-and-enable-transitions",
+    "movement": "spawn-movement-control-and-contact",
+    "leaks": "leak-arbitration-and-ward",
+    "tower-acquisition-and-attacks": "tower-and-reinforcement-acquisition-and-attacks",
+    "shield-damage-and-status": "persistent-zone-pulses-and-terminal-damage",
+    "guarded-boss-threshold-transition": "persistent-zone-pulses-and-terminal-damage",
+    "terminal-death-execute-children-and-revival": "persistent-zone-pulses-and-terminal-damage",
+    "bounty": "bounty-income-objectives-and-score-facts",
+    "wave-clear": "guarded-boss-wave-mission-transition-and-event-finalization",
+  });
+  const V2_EVENT_SCHEMA = Object.freeze({
+    eventSchemaVersion: ABIV2.EVENT_SCHEMA_VERSION,
+    phaseAliases: V1_TO_V2_PHASE_ALIASES,
+    phaseOrder: V2_PHASE_IDS,
+  });
+  /* K1 resolves the Temporal Edict global field end to end. Every other authored effect kind is
+     the next lane's work and is denied honestly rather than reported as an accepted cast. */
+  const SUPPORTED_PROTOCOL_EFFECT_KINDS = Object.freeze(["global-slow-field"]);
+  const RELIC_STAT_BOUNTY = "bounty";
+  const RELIC_STAT_START_AETHER = "starting-aether";
+  const RELIC_STAT_START_INTEGRITY = "starting-integrity";
   const TELEMETRY_RECORD_FIELDS = Object.freeze({
     "activation": Object.freeze([
       "actionId", "behaviorId", "defenseId", "eligibleTargetRuntimeIds", "kind", "level",
@@ -170,6 +275,7 @@
   });
   const TELEMETRY_AETHER_ACTIONS = Object.freeze([
     "build", "upgrade", "sell", "wave-start-grant", "wave-clear-grant", "bounty",
+    "specialize", "protocol-cast", "reset-plan-refund",
   ]);
   const TELEMETRY_ACTIVATION_ACTIONS = Object.freeze([
     "direct-hit", "splash-blast", "mark-scan", "guard-contact", "guard-create",
@@ -302,11 +408,14 @@
         }
       } else {
         nonnegativeInteger(record.commandSeq, "Aether command sequence");
-        if (["build", "upgrade", "sell", "wave-start-grant"].indexOf(record.action) === -1) {
+        if ([
+          "build", "upgrade", "sell", "wave-start-grant", "specialize", "protocol-cast",
+          "reset-plan-refund",
+        ].indexOf(record.action) === -1) {
           throw new TypeError("Internal Aether actions cannot carry a command sequence");
         }
       }
-      const towerAction = ["build", "upgrade", "sell"].indexOf(record.action) !== -1;
+      const towerAction = ["build", "upgrade", "sell", "specialize"].indexOf(record.action) !== -1;
       ["towerRuntimeId", "levelBefore", "levelAfter"].forEach(function (field) {
         if (towerAction) nonnegativeInteger(record[field], "Aether " + field);
         else if (record[field] !== null) throw new TypeError("Internal Aether identity must be null");
@@ -372,11 +481,22 @@
       return;
     }
     if (record.kind === "damage") {
-      positiveInteger(record.sourceTowerRuntimeId, "Damage source tower runtime ID");
+      /* ADR-014: a damage record carries a tower identity only when its combat source is a
+         `tower`. Protocol, mechanism, and unit sources earn no defense attribution, so their
+         four tower-identity fields are null together and never partially populated. */
       positiveInteger(record.sourceRuntimeId, "Damage source runtime ID");
-      stableId(record.defenseId, "Damage defense ID");
-      positiveInteger(record.level, "Damage level");
-      stableId(record.padId, "Damage pad ID");
+      if (record.sourceTowerRuntimeId === null) {
+        ["defenseId", "level", "padId"].forEach(function (field) {
+          if (record[field] !== null) {
+            throw new TypeError("A non-tower damage source cannot carry tower attribution");
+          }
+        });
+      } else {
+        positiveInteger(record.sourceTowerRuntimeId, "Damage source tower runtime ID");
+        stableId(record.defenseId, "Damage defense ID");
+        positiveInteger(record.level, "Damage level");
+        stableId(record.padId, "Damage pad ID");
+      }
       positiveInteger(record.targetRuntimeId, "Damage target runtime ID");
       stableId(record.targetOwnerId, "Damage target owner ID");
       stableId(record.targetLineageId, "Damage target lineage ID");
@@ -525,32 +645,123 @@
     return String(value).padStart(3, "0");
   }
 
+  /* ADR-014 / plan 20.3: the authenticated compiled content schema selects the ABI version.
+     `3` binds ABI v1 with byte-identical historical outcomes; `4` binds ABI v2. */
+  function bindingAbiVersion(release, content) {
+    if (content.schemaVersion === 3 && release.schemaVersion === 3) return 1;
+    if (content.schemaVersion === 4 && release.schemaVersion === 4) return 2;
+    throw new RangeError("Kernel requires matching release/content schema version 3 or 4");
+  }
+
+  function validateUnlockCollections(content) {
+    V2_UNLOCK_FIELDS.forEach(function (field) {
+      if (!own(content, field)) {
+        throw new RangeError("Compiled v4 content is missing its unlock record " + field);
+      }
+    });
+    if (content.commandSchemaVersion !== ABIV2.COMMAND_SCHEMA_VERSION ||
+        content.replayFormatVersion !== ABIV2.DESCRIPTOR.replay.formatVersion) {
+      throw new RangeError("Compiled v4 content command/replay identities do not match ABI v2");
+    }
+    ["mechanisms", "protocols", "reinforcements", "relics", "grantRecords", "missionProgression"]
+      .forEach(function (field) {
+        if (!Array.isArray(content[field]) || content[field].length > MAX_UNLOCK_CATALOG_RECORDS) {
+          throw new RangeError("Compiled v4 unlock collection " + field + " must be bounded");
+        }
+      });
+    objectRecord(content.specializations, "Compiled specializations");
+    const specializationIds = sortedObjectIds(content.specializations, "Compiled specializations");
+    if (specializationIds.length > MAX_UNLOCK_CATALOG_RECORDS) {
+      throw new RangeError("Compiled specializations exceed the bounded catalog");
+    }
+    specializationIds.forEach(function (specializationId) {
+      const record = content.specializations[specializationId];
+      exactFields(record, SPECIALIZATION_RECORD_FIELDS, "Specialization " + specializationId);
+      if (record.id !== specializationId || record.level !== 3 ||
+          !content.defenses[record.defenseId] ||
+          record.purchase.kind !== "specialize" ||
+          !Array.isArray(record.behaviors)) {
+        throw new RangeError("Specialization record does not match " + specializationId);
+      }
+      positiveInteger(record.purchase.costAether, "Specialization " + specializationId + " cost");
+      positiveInteger(record.rangeWorldUnits, "Specialization " + specializationId + " range");
+      booleanValue(record.isDefault, "Specialization " + specializationId + " default flag");
+    });
+    sortedObjectIds(content.defenses, "Compiled defenses").forEach(function (defenseId) {
+      const defense = content.defenses[defenseId];
+      if (!Array.isArray(defense.levels) || defense.levels.length !== 2) {
+        throw new RangeError("Compiled v4 defense " + defenseId + " must declare two paid levels");
+      }
+      const branchIds = defense.specializationIds;
+      if (!Array.isArray(branchIds) || branchIds.length !== 2) {
+        throw new RangeError("Compiled v4 defense " + defenseId + " must declare two branches");
+      }
+      branchIds.forEach(function (branchId) {
+        const record = content.specializations[branchId];
+        if (!record || record.defenseId !== defenseId) {
+          throw new RangeError("Defense " + defenseId + " references a foreign branch " + branchId);
+        }
+      });
+      if (content.specializations[branchIds[0]].isDefault !== true ||
+          content.specializations[branchIds[1]].isDefault !== false) {
+        throw new RangeError("Defense " + defenseId + " branches must list its default first");
+      }
+    });
+    sortedObjectIds(content.missions, "Compiled missions").forEach(function (missionId) {
+      const mission = content.missions[missionId];
+      if (!own(mission, "protocolLoan") || !own(mission, "mechanism") ||
+          !own(mission, "reinforcementMarkers") || !Array.isArray(mission.reinforcementMarkers)) {
+        throw new RangeError("Compiled v4 mission " + missionId + " is missing its unlock records");
+      }
+      if (mission.protocolLoan !== null) {
+        exactFields(mission.protocolLoan, ["protocolId", "tier"], "Mission " + missionId + " loan");
+        if (mission.protocolLoan.tier !== 1) {
+          throw new RangeError("Mission " + missionId + " Protocol loan must be Tier 1");
+        }
+      }
+    });
+    return Object.freeze(V2_UNLOCK_FIELDS.reduce(function (record, field) {
+      record[field] = content[field];
+      return record;
+    }, {}));
+  }
+
   function validateReleaseAndContent(release, content) {
     requireFrozenArtifact(release, "Release record");
     requireFrozenArtifact(content, "Simulation content");
-    exactFields(release, RELEASE_FIELDS, "Release record");
-    exactFields(content, CONTENT_FIELDS, "Simulation content");
-    if (release.schemaVersion !== 3 || content.schemaVersion !== 3) {
-      throw new RangeError("Kernel requires release/content schema version 3");
-    }
+    const abiVersion = bindingAbiVersion(release, content);
+    exactFields(
+      release,
+      abiVersion === 2 ? RELEASE_FIELDS_V2 : RELEASE_FIELDS,
+      "Release record"
+    );
+    const abi = abiVersion === 2 ? ABIV2 : ABI;
+    exactFields(
+      content,
+      abiVersion === 2 ? CONTENT_FIELDS_V2 : CONTENT_FIELDS,
+      "Simulation content"
+    );
     const releaseAbiHash = hash(release.abiHash, "Release ABI hash");
     if (hash(content.abiHash, "Content ABI hash") !== releaseAbiHash) {
       throw new RangeError("Release and content ABI identities do not match");
+    }
+    if (abiVersion === 2 && releaseAbiHash !== "sha256:" + ABIV2.DESCRIPTOR_SHA256) {
+      throw new RangeError("Release ABI identity does not match the authenticated simulation ABI v2");
     }
     stableId(release.contentVersion, "Release content version");
     if (content.contentVersion !== release.contentVersion) {
       throw new RangeError("Release and content versions do not match");
     }
-    if (release.eventSchemaVersion !== ABI.EVENT_SCHEMA_VERSION ||
-        content.eventSchemaVersion !== ABI.EVENT_SCHEMA_VERSION) {
+    if (release.eventSchemaVersion !== abi.EVENT_SCHEMA_VERSION ||
+        content.eventSchemaVersion !== abi.EVENT_SCHEMA_VERSION) {
       throw new RangeError("Release/content event schema does not match the simulation ABI");
     }
-    if (release.behaviorRegistryVersion !== ABI.BEHAVIOR_REGISTRY_VERSION ||
-        content.behaviorRegistryVersion !== ABI.BEHAVIOR_REGISTRY_VERSION ||
-        release.behaviorRegistryVersion !== Behaviors.BEHAVIOR_REGISTRY_VERSION) {
+    if (release.behaviorRegistryVersion !== abi.BEHAVIOR_REGISTRY_VERSION ||
+        content.behaviorRegistryVersion !== abi.BEHAVIOR_REGISTRY_VERSION ||
+        (abiVersion === 1 && release.behaviorRegistryVersion !== Behaviors.BEHAVIOR_REGISTRY_VERSION)) {
       throw new RangeError("Release/content behavior registry does not match the simulation artifact");
     }
-    if (ABI.canonicalEncode(content.behaviorContracts) !== ABI.canonicalEncode(ABI.BEHAVIOR_CONTRACTS)) {
+    if (ABI.canonicalEncode(content.behaviorContracts) !== ABI.canonicalEncode(abi.BEHAVIOR_CONTRACTS)) {
       throw new RangeError("Compiled behavior contracts do not match the simulation ABI");
     }
     const rulesetHash = hash(release.rulesetHash, "Release ruleset hash");
@@ -566,7 +777,13 @@
         Array.isArray(release.includedIds)) {
       throw new TypeError("Release included IDs must be an object");
     }
-    exactFields(release.includedIds, ["bosses", "defenses", "enemies", "missions"], "Included IDs");
+    exactFields(
+      release.includedIds,
+      abiVersion === 2
+        ? ["bosses", "defenses", "enemies", "missions", "specializations"]
+        : ["bosses", "defenses", "enemies", "missions"],
+      "Included IDs"
+    );
     sameIds(release.includedIds.bosses, sortedObjectIds(content.bosses, "Compiled bosses"), "Included bosses");
     sameIds(
       release.includedIds.defenses,
@@ -578,17 +795,23 @@
     objectRecord(content.maps, "Compiled maps");
     objectRecord(content.campaignRules, "Compiled campaign rules");
     objectRecord(content.eventCatalog, "Compiled semantic event catalog");
+    if (abiVersion === 2) Behaviors.bindEventCatalogSchema(content.eventCatalog, V2_EVENT_SCHEMA);
     Object.keys(content.eventCatalog).forEach(function (eventId) {
       const definition = content.eventCatalog[eventId];
-      if (!definition || definition.id !== eventId || definition.version !== ABI.EVENT_SCHEMA_VERSION) {
+      if (!definition || definition.id !== eventId || definition.version !== abi.EVENT_SCHEMA_VERSION) {
         throw new RangeError("Compiled semantic event identity/version does not match " + eventId);
+      }
+      if (abiVersion === 2 && V2_PHASE_IDS.indexOf(definition.phaseId) === -1) {
+        throw new RangeError("Compiled semantic event phase is not an ABI v2 phase: " + eventId);
       }
     });
     return Object.freeze({
+      abiVersion: abiVersion,
       contentHash: contentHash,
       releaseAbiHash: releaseAbiHash,
       rulesetHash: rulesetHash,
       simulationHash: simulationHash,
+      unlocks: abiVersion === 2 ? validateUnlockCollections(content) : null,
     });
   }
 
@@ -676,16 +899,25 @@
         objectiveBindings: objectiveBindings,
       });
     });
+    const abi = identities.abiVersion === 2 ? ABIV2 : ABI;
     const binding = Object.freeze({
       abiHash: release.abiHash,
-      behaviorRegistryVersion: ABI.BEHAVIOR_REGISTRY_VERSION,
+      abiVersion: identities.abiVersion,
+      behaviorRegistryVersion: abi.BEHAVIOR_REGISTRY_VERSION,
       contentVersion: release.contentVersion,
-      eventSchemaVersion: ABI.EVENT_SCHEMA_VERSION,
+      eventSchemaVersion: abi.EVENT_SCHEMA_VERSION,
       missionIds: Object.freeze(missionIds),
       rulesetHash: identities.rulesetHash,
       simulationHash: identities.simulationHash,
     });
-    bindingRecords.set(binding, Object.freeze({ content: content, missions: missions, release: release }));
+    bindingRecords.set(binding, Object.freeze({
+      abiVersion: identities.abiVersion,
+      content: content,
+      missions: missions,
+      protocolCatalog: identities.abiVersion === 2
+        ? Protocols.adaptCompiledProtocolContent(identities.unlocks) : null,
+      release: release,
+    }));
     return binding;
   }
 
@@ -802,9 +1034,145 @@
     });
   }
 
-  function managementConfig(content, missionRuntime, header, resolvedStartAether) {
-    const mission = missionRuntime.mission;
+  function normalizeHeaderV2(binding, record, input) {
+    exactFields(input, HEADER_FIELDS_V2, "Kernel replay-v2 header");
+    if (input.formatVersion !== 2) throw new RangeError("Kernel replay format version must be 2");
+    if (input.eventSchemaVersion !== ABIV2.EVENT_SCHEMA_VERSION) {
+      throw new RangeError("Replay event schema does not match the simulation ABI");
+    }
+    const base = normalizeHeader(binding, record, {
+      accessGrantIds: input.accessGrantIds,
+      assist: input.assist,
+      campaignModifierIds: input.campaignModifierIds,
+      difficultyId: input.difficultyId,
+      eventSchemaVersion: ABI.EVENT_SCHEMA_VERSION,
+      formatVersion: 1,
+      loadoutIds: input.loadoutIds,
+      loadoutSlotCap: input.loadoutSlotCap,
+      missionId: input.missionId,
+      rulesetHash: input.rulesetHash,
+      seed: input.seed,
+      tutorialUpgradeGateMode: input.tutorialUpgradeGateMode,
+    });
+    const content = record.content;
+    const mission = record.missions[base.missionId].mission;
+    const protocolSlotCap = nonnegativeInteger(input.protocolSlotCap, "Protocol slot cap");
+    if (protocolSlotCap > MAX_PROTOCOL_SLOTS) {
+      throw new RangeError("Protocol slot cap cannot exceed " + MAX_PROTOCOL_SLOTS);
+    }
+    /* Equipped tier <= permanent authority, Tier-1 loans, and unknown IDs are all rejected by
+       the owning Protocol resolver rather than re-implemented here. */
+    const loadout = Protocols.normalizeProtocolLoadout({
+      slotCap: protocolSlotCap,
+      protocolAuthority: input.protocolAuthority,
+      protocols: input.protocolLoadout,
+      missionLoan: input.missionProtocolLoan,
+    }, record.protocolCatalog);
+    const authoredLoan = mission.protocolLoan;
+    if (ABI.canonicalEncode(loadout.missionLoan) !== ABI.canonicalEncode(authoredLoan)) {
+      throw new RangeError("Replay Protocol loan does not match the authored mission loan");
+    }
+    const relicSlotCap = nonnegativeInteger(input.relicSlotCap, "Relic slot cap");
+    if (relicSlotCap > MAX_RELIC_IDS) {
+      throw new RangeError("Relic slot cap cannot exceed " + MAX_RELIC_IDS);
+    }
+    const relicIds = idArray(input.relicIds, "Replay Relic IDs", {
+      maximum: MAX_RELIC_IDS,
+      sorted: true,
+    });
+    if (relicIds.length > relicSlotCap) throw new RangeError("Replay Relics exceed the Relic slot cap");
+    Relics.resolveRelicLoadout(content.relics, relicIds, relicSlotCap);
+    const reinforcementId = nullableStableId(input.reinforcementId, "Replay reinforcement ID");
+    if (reinforcementId !== null && !content.reinforcements.some(function (record2) {
+      return record2.id === reinforcementId;
+    })) {
+      throw new RangeError("Replay reinforcement is not in the bound release");
+    }
+    const specializationAccessIds = idArray(
+      input.specializationAccessIds,
+      "Replay specialization access IDs",
+      { maximum: MAX_SPECIALIZATION_ACCESS_IDS, sorted: true }
+    );
+    specializationAccessIds.forEach(function (specializationId) {
+      if (!content.specializations[specializationId]) {
+        throw new RangeError("Unknown specialization access grant " + specializationId);
+      }
+    });
+    return Object.freeze({
+      accessGrantIds: base.accessGrantIds,
+      assist: base.assist,
+      campaignModifierIds: base.campaignModifierIds,
+      difficultyId: base.difficultyId,
+      eventSchemaVersion: ABIV2.EVENT_SCHEMA_VERSION,
+      formatVersion: 2,
+      loadoutIds: base.loadoutIds,
+      loadoutSlotCap: base.loadoutSlotCap,
+      missionId: base.missionId,
+      missionProtocolLoan: loadout.missionLoan,
+      protocolAuthority: loadout.protocolAuthority,
+      protocolLoadout: loadout.protocols,
+      protocolSlotCap: protocolSlotCap,
+      relicIds: Object.freeze(relicIds),
+      relicSlotCap: relicSlotCap,
+      reinforcementId: reinforcementId,
+      rulesetHash: base.rulesetHash,
+      seed: base.seed,
+      specializationAccessIds: Object.freeze(specializationAccessIds),
+      tutorialUpgradeGateMode: base.tutorialUpgradeGateMode,
+    });
+  }
+
+  function relicModifierByStat(relics, statId) {
+    for (let index = 0; index < relics.modifiers.length; index++) {
+      if (relics.modifiers[index].statId === statId) return relics.modifiers[index];
+    }
+    return null;
+  }
+
+  function relicAdditiveAmount(relics, statId) {
+    const modifier = relicModifierByStat(relics, statId);
+    return modifier === null ? 0 : modifier.amount;
+  }
+
+  function relicBountyBp(relics) {
+    const modifier = relicModifierByStat(relics, RELIC_STAT_BOUNTY);
+    return modifier === null ? null : modifier.amount;
+  }
+
+  function managementConfigV2(content, missionRuntime, header, resolvedStartAether, relics) {
+    const base = managementConfigInput(content, missionRuntime, header, resolvedStartAether);
+    const specializations = Object.keys(content.specializations).sort().map(function (id) {
+      const record = content.specializations[id];
+      return {
+        costAether: record.purchase.costAether,
+        defenseId: record.defenseId,
+        id: record.id,
+      };
+    });
     return Management.normalizeManagementConfig({
+      abiVersion: 2,
+      defenses: base.defenses,
+      missionId: base.missionId,
+      padIds: base.padIds,
+      relicModifiers: relics.modifiers.map(function (modifier) {
+        return {
+          amount: modifier.amount,
+          operation: modifier.operation,
+          rounding: modifier.rounding,
+          statId: modifier.statId,
+        };
+      }),
+      resolvedStartAether: resolvedStartAether,
+      specializationAccessIds: header.specializationAccessIds.slice(),
+      specializations: specializations,
+      tutorialUpgradeGateMode: base.tutorialUpgradeGateMode,
+      waveStartGrants: base.waveStartGrants,
+    });
+  }
+
+  function managementConfigInput(content, missionRuntime, header, resolvedStartAether) {
+    const mission = missionRuntime.mission;
+    return {
       missionId: mission.id,
       resolvedStartAether: resolvedStartAether,
       tutorialUpgradeGateMode: header.tutorialUpgradeGateMode,
@@ -821,7 +1189,13 @@
           }),
         };
       }),
-    });
+    };
+  }
+
+  function managementConfig(content, missionRuntime, header, resolvedStartAether) {
+    return Management.normalizeManagementConfig(
+      managementConfigInput(content, missionRuntime, header, resolvedStartAether)
+    );
   }
 
   function behaviorDispatchId(behavior) {
@@ -859,10 +1233,40 @@
     return Behaviors.createBehaviorState(dispatchId, {});
   }
 
+  /* ADR-002: under content schema v4 the third level is an authored specialization record with
+     the same level-record semantics. ABI v1 content keeps its three linear level records. */
+  function levelRecord(content, defenseId, level, specializationId) {
+    const defense = content.defenses[defenseId];
+    if (!defense) throw new RangeError("Unknown compiled defense " + defenseId);
+    if (level <= defense.levels.length) return defense.levels[level - 1];
+    const record = content.specializations && specializationId
+      ? content.specializations[specializationId] : null;
+    if (!record || record.defenseId !== defenseId || record.level !== level) {
+      throw new RangeError("Tower level has no compiled level or specialization record");
+    }
+    return record;
+  }
+
+  function runtimeLevelRecord(content, runtime) {
+    return levelRecord(content, runtime.defenseId, runtime.level, runtime.specializationId);
+  }
+
+  function freezeTowerRuntime(values) {
+    const record = {
+      behaviorStates: values.behaviorStates,
+      createdTick: values.createdTick,
+      defenseId: values.defenseId,
+      level: values.level,
+      towerRuntimeId: values.towerRuntimeId,
+    };
+    /* ABI v1 towers have no branch field at all, so their canonical bytes never change. */
+    if (values.specializationId !== undefined) record.specializationId = values.specializationId;
+    return Object.freeze(record);
+  }
+
   function createTowerRuntime(content, missionRuntime, tower, currentTick) {
-    const defense = content.defenses[tower.defenseId];
-    const level = defense.levels[tower.level - 1];
-    return Object.freeze({
+    const level = levelRecord(content, tower.defenseId, tower.level, tower.specializationId);
+    return freezeTowerRuntime({
       behaviorStates: Object.freeze(level.behaviors.map(function (behavior, index) {
         return Object.freeze({
           behaviorId: behavior.id,
@@ -875,6 +1279,7 @@
       createdTick: currentTick,
       defenseId: tower.defenseId,
       level: tower.level,
+      specializationId: tower.specializationId,
       towerRuntimeId: tower.id,
     });
   }
@@ -888,7 +1293,7 @@
       if (prior.defenseId !== tower.defenseId) {
         throw new RangeError("A tower runtime cannot change defense identity");
       }
-      const level = content.defenses[tower.defenseId].levels[tower.level - 1];
+      const level = levelRecord(content, tower.defenseId, tower.level, tower.specializationId);
       const statesById = Object.create(null);
       prior.behaviorStates.forEach(function (behaviorState) {
         statesById[behaviorState.behaviorId] = behaviorState;
@@ -916,11 +1321,12 @@
           timer: previous.timer,
         });
       });
-      return Object.freeze({
+      return freezeTowerRuntime({
         behaviorStates: Object.freeze(behaviorStates),
         createdTick: prior.createdTick,
         defenseId: tower.defenseId,
         level: tower.level,
+        specializationId: tower.specializationId,
         towerRuntimeId: tower.id,
       });
     }));
@@ -951,16 +1357,23 @@
     });
   }
 
-  function creditBounty(management, config, baseBounty, difficultyBountyBp) {
-    const result = Economy.resolveBountyEvent(
-      management.bountyRemainder,
-      baseBounty,
-      difficultyBountyBp
-    );
+  /* Spec 8.2 conservation: the mission keeps exactly ONE bounty remainder domain. The authored
+     difficulty and Relic basis points therefore compose once, at the single mission-constant
+     rounding, and every kill then divides by 10000 once and carries the whole fraction forward.
+     No per-kill fraction is discarded, so total awarded Aether is conserved to the last unit. */
+  function creditBounty(management, config, baseBounty, difficultyBountyBp, relicBountyBp) {
+    const result = relicBountyBp === null || relicBountyBp === undefined
+      ? Economy.resolveBountyEvent(management.bountyRemainder, baseBounty, difficultyBountyBp)
+      : Relics.applyBountyWithRemainder(
+          baseBounty,
+          ABI.checkedMulDivFloor(difficultyBountyBp, [relicBountyBp], [ABI.BASIS_POINTS]),
+          management.bountyRemainder
+        );
+    const award = own(result, "bountyAward") ? result.bountyAward : result.aetherAward;
     return Object.freeze({
-      award: result.bountyAward,
+      award: award,
       management: managementWith(management, config, {
-        aether: ABI.checkedAdd(management.aether, result.bountyAward),
+        aether: ABI.checkedAdd(management.aether, award),
         bountyRemainder: result.bountyRemainder,
       }),
     });
@@ -1437,6 +1850,64 @@
           bountyRemainderAfter: remainder,
         };
       }
+      if (event.type === "specialize") {
+        values = {
+          action: "specialize",
+          sourceId: "command.specialize-tower",
+          commandSeq: event.seq,
+          towerRuntimeId: event.towerId,
+          padId: event.padId,
+          defenseId: event.defenseId,
+          levelBefore: ABI.checkedAdd(event.level, -1),
+          levelAfter: event.level,
+          debitAether: event.costAether,
+          creditAether: 0,
+          investedBeforeAether: ABI.checkedAdd(event.investedAether, -event.costAether),
+          investedAfterAether: event.investedAether,
+          bankBeforeAether: bank,
+          bankAfterAether: event.aetherAfter,
+          bountyRemainderBefore: remainder,
+          bountyRemainderAfter: remainder,
+        };
+      } else if (event.type === "activatePower") {
+        values = {
+          action: "protocol-cast",
+          sourceId: event.protocolId,
+          commandSeq: event.seq,
+          towerRuntimeId: null,
+          padId: null,
+          defenseId: null,
+          levelBefore: null,
+          levelAfter: null,
+          debitAether: event.costAether,
+          creditAether: 0,
+          investedBeforeAether: null,
+          investedAfterAether: null,
+          bankBeforeAether: bank,
+          bankAfterAether: event.aetherAfter,
+          bountyRemainderBefore: remainder,
+          bountyRemainderAfter: remainder,
+        };
+      } else if (event.type === "resetPlan") {
+        values = {
+          action: "reset-plan-refund",
+          sourceId: "command.reset-plan",
+          commandSeq: event.seq,
+          towerRuntimeId: null,
+          padId: null,
+          defenseId: null,
+          levelBefore: null,
+          levelAfter: null,
+          debitAether: 0,
+          creditAether: event.refundAether,
+          investedBeforeAether: null,
+          investedAfterAether: null,
+          bankBeforeAether: bank,
+          bankAfterAether: event.aetherAfter,
+          bountyRemainderBefore: remainder,
+          bountyRemainderAfter: remainder,
+        };
+      }
       if (values !== null) {
         telemetry.push("aether-transaction", values);
         bank = values.bankAfterAether;
@@ -1490,7 +1961,7 @@
     let summonCount = activeSummonCount(towerRuntimes);
     const nextRuntimes = towerRuntimes.map(function (runtime) {
       const tower = towerByRuntimeId(towers, runtime.towerRuntimeId);
-      const level = content.defenses[runtime.defenseId].levels[runtime.level - 1];
+      const level = runtimeLevelRecord(content, runtime);
       const behaviorStates = runtime.behaviorStates.map(function (behaviorState) {
         if (behaviorState.dispatchId !== Behaviors.DISPATCH_IDS.GUARD_SLOTS) return behaviorState;
         const behavior = level.behaviors[behaviorState.index];
@@ -1541,11 +2012,12 @@
           timer: behaviorState.timer,
         });
       });
-      return Object.freeze({
+      return freezeTowerRuntime({
         behaviorStates: Object.freeze(behaviorStates),
         createdTick: runtime.createdTick,
         defenseId: runtime.defenseId,
         level: runtime.level,
+        specializationId: runtime.specializationId,
         towerRuntimeId: runtime.towerRuntimeId,
       });
     });
@@ -1859,11 +2331,12 @@
         timer: behaviorState.timer,
       });
     });
-    return Object.freeze({
+    return freezeTowerRuntime({
       behaviorStates: Object.freeze(behaviorStates),
       createdTick: runtime.createdTick,
       defenseId: runtime.defenseId,
       level: runtime.level,
+      specializationId: runtime.specializationId,
       towerRuntimeId: runtime.towerRuntimeId,
     });
   }
@@ -1871,7 +2344,7 @@
   function guardTowerRequests(content, towerRuntimes) {
     const requests = [];
     towerRuntimes.forEach(function (runtime) {
-      const level = content.defenses[runtime.defenseId].levels[runtime.level - 1];
+      const level = runtimeLevelRecord(content, runtime);
       const slotState = runtime.behaviorStates.find(function (behaviorState) {
         return behaviorState.dispatchId === Behaviors.DISPATCH_IDS.GUARD_SLOTS;
       });
@@ -1959,7 +2432,7 @@
         if (!request) return;
         const tower = towerByRuntimeId(management.towers, request.towerRuntimeId);
         if (!tower) throw new RangeError("Guard activation source tower is not owned");
-        const behavior = content.defenses[tower.defenseId].levels[tower.level - 1]
+        const behavior = levelRecord(content, tower.defenseId, tower.level, tower.specializationId)
           .behaviors[request.blockIndex];
         const accepted = request.parameters.contactEventId === event.eventId;
         telemetry.push("activation", {
@@ -2209,7 +2682,7 @@
     towerRuntimes = Object.freeze(towerRuntimes.map(function (runtime) {
       const tower = towerByRuntimeId(towers, runtime.towerRuntimeId);
       const defense = content.defenses[runtime.defenseId];
-      const level = defense.levels[runtime.level - 1];
+      const level = runtimeLevelRecord(content, runtime);
       let nextRuntime = runtime;
       runtime.behaviorStates.forEach(function (behaviorState) {
         const behavior = level.behaviors[behaviorState.index];
@@ -2322,6 +2795,41 @@
     });
   }
 
+  /* ADR-014: one closed combat-source record travels with every hit and status intent.
+     `tower` is the only kind ABI v1 can produce, so v1 outcomes stay byte-identical, and only
+     `tower` sources ever earn defense mastery attribution. */
+  const COMBAT_SOURCE_KINDS = Object.freeze(["mechanism", "protocol", "tower", "unit"]);
+  const NON_TOWER_TELEMETRY_IDENTITY = Object.freeze({
+    defenseId: null,
+    level: null,
+    padId: null,
+    sourceTowerRuntimeId: null,
+  });
+
+  function combatSource(kind, sourceId, runtimeId) {
+    if (COMBAT_SOURCE_KINDS.indexOf(kind) === -1) {
+      throw new RangeError("Unknown combat source kind " + String(kind));
+    }
+    return Object.freeze({
+      kind: kind,
+      runtimeId: runtimeId === null ? null : positiveInteger(runtimeId, "Combat source runtime ID"),
+      sourceId: sourceId === null ? null : stableId(sourceId, "Combat source ID"),
+    });
+  }
+
+  function towerCombatSource(towerRuntimeId) {
+    return combatSource("tower", null, towerRuntimeId);
+  }
+
+  function intentCombatSource(intent) {
+    return intent.source ? intent.source : towerCombatSource(intent.towerRuntimeId);
+  }
+
+  function intentTowerRuntimeId(intent) {
+    const source = intentCombatSource(intent);
+    return source.kind === "tower" ? source.runtimeId : null;
+  }
+
   function directIntent(intent, behaviorIndex, targetOrder) {
     return Object.freeze({
       armorIgnoreBp: intent.armorIgnoreBp,
@@ -2333,6 +2841,7 @@
       isPrimary: true,
       eligibilityMode: "direct",
       shieldCoefficientBp: intent.shieldCoefficientBp,
+      source: towerCombatSource(intent.towerRuntimeId),
       sourceRuntimeId: intent.towerRuntimeId,
       targetOrder: targetOrder,
       targetRuntimeId: intent.targetRuntimeId,
@@ -2351,6 +2860,7 @@
       isPrimary: intent.isPrimary,
       eligibilityMode: intent.isPrimary ? "direct" : "collateral",
       shieldCoefficientBp: ABI.BASIS_POINTS,
+      source: towerCombatSource(towerRuntimeId),
       sourceRuntimeId: towerRuntimeId,
       targetOrder: targetOrder,
       targetRuntimeId: intent.targetRuntimeId,
@@ -2377,8 +2887,11 @@
     const towerRuntimes = towerRuntimesInput.map(function (runtime) {
       const tower = towerByRuntimeId(towers, runtime.towerRuntimeId);
       if (!tower) throw new RangeError("Combat runtime has no owned tower");
+      /* ADR-014: a tower attacks only while its disable-source set is empty. The runtime is
+         frozen rather than retimed, so an in-progress cooldown is never rescaled. */
+      if (tower.disableSources && tower.disableSources.length > 0) return runtime;
       const defense = content.defenses[runtime.defenseId];
-      const level = defense.levels[runtime.level - 1];
+      const level = runtimeLevelRecord(content, runtime);
       const behaviorStates = runtime.behaviorStates.slice();
 
       level.behaviors.forEach(function (behavior, behaviorIndex) {
@@ -2650,11 +3163,12 @@
           );
         }
       });
-      return Object.freeze({
+      return freezeTowerRuntime({
         behaviorStates: Object.freeze(behaviorStates),
         createdTick: runtime.createdTick,
         defenseId: runtime.defenseId,
         level: runtime.level,
+        specializationId: runtime.specializationId,
         towerRuntimeId: runtime.towerRuntimeId,
       });
     });
@@ -2966,7 +3480,10 @@
       if (enemyIndex === undefined) return;
       let enemy = enemies[enemyIndex];
       if (enemy.hpMilli === 0) return;
-      const sourceTower = requiredTowerTelemetryIdentity(content, towers, intent.towerRuntimeId);
+      const source = intentCombatSource(intent);
+      const sourceTower = source.kind === "tower"
+        ? requiredTowerTelemetryIdentity(content, towers, source.runtimeId)
+        : NON_TOWER_TELEMETRY_IDENTITY;
       const targetShieldBeforeMilli = totalShieldMilli(enemy);
       const damage = resolvedDamage(content, enemy, effects, intent);
       const noExternal = resolvedDamage(content, enemy, effects, intent, 0);
@@ -3057,7 +3574,9 @@
           intent
         ),
       });
-      enemy = applyCloakDamage(content, enemy, effects, intent.towerRuntimeId, damage.hpDamageMilli, events);
+      enemy = applyCloakDamage(
+        content, enemy, effects, intentTowerRuntimeId(intent), damage.hpDamageMilli, events
+      );
       enemies[enemyIndex] = enemy;
     });
     pendingBossReleases.sort(compareBossReleases);
@@ -3069,7 +3588,7 @@
 
   function resetWaveBehaviorStates(content, towerRuntimes) {
     return Object.freeze(towerRuntimes.map(function (runtime) {
-      const level = content.defenses[runtime.defenseId].levels[runtime.level - 1];
+      const level = runtimeLevelRecord(content, runtime);
       const behaviorStates = runtime.behaviorStates.map(function (behaviorState) {
         if (behaviorState.dispatchId !== Behaviors.DISPATCH_IDS.SLOW &&
             behaviorState.dispatchId !== Behaviors.DISPATCH_IDS.MARK) return behaviorState;
@@ -3083,11 +3602,12 @@
         }
         return freezeBehaviorStateRecord(behaviorState, result.state, behaviorState.timer);
       });
-      return Object.freeze({
+      return freezeTowerRuntime({
         behaviorStates: Object.freeze(behaviorStates),
         createdTick: runtime.createdTick,
         defenseId: runtime.defenseId,
         level: runtime.level,
+        specializationId: runtime.specializationId,
         towerRuntimeId: runtime.towerRuntimeId,
       });
     }));
@@ -3100,7 +3620,7 @@
     priorRuntimes.filter(function (runtime) {
       return !activeTowerIds.has(runtime.towerRuntimeId);
     }).forEach(function (runtime) {
-      const level = content.defenses[runtime.defenseId].levels[runtime.level - 1];
+      const level = runtimeLevelRecord(content, runtime);
       runtime.behaviorStates.forEach(function (behaviorState) {
         if (behaviorState.dispatchId !== Behaviors.DISPATCH_IDS.REVEAL) return;
         const result = Behaviors.dispatchBehavior(
@@ -3141,7 +3661,7 @@
       const tower = towerByRuntimeId(towers, runtime.towerRuntimeId);
       if (!tower) throw new RangeError("Reveal sync runtime has no owned tower");
       const defense = content.defenses[runtime.defenseId];
-      const level = defense.levels[runtime.level - 1];
+      const level = runtimeLevelRecord(content, runtime);
       let nextRuntime = runtime;
       runtime.behaviorStates.forEach(function (behaviorState) {
         if (behaviorState.dispatchId !== Behaviors.DISPATCH_IDS.REVEAL) return;
@@ -3273,11 +3793,12 @@
         );
       });
       if (!changed) return runtime;
-      return Object.freeze({
+      return freezeTowerRuntime({
         behaviorStates: Object.freeze(behaviorStates),
         createdTick: runtime.createdTick,
         defenseId: runtime.defenseId,
         level: runtime.level,
+        specializationId: runtime.specializationId,
         towerRuntimeId: runtime.towerRuntimeId,
       });
     }));
@@ -3399,7 +3920,8 @@
     });
   }
 
-  function runBounties(deaths, lineagesInput, management, config, difficulty, telemetry) {
+  function runBounties(deaths, lineagesInput, management, config, difficulty, telemetry,
+    relicBountyBp) {
     let nextManagement = management;
     let lineages = lineagesInput.slice();
     deaths.forEach(function (enemy) {
@@ -3417,7 +3939,8 @@
         nextManagement,
         config,
         lineage.baseLineageBountyAether,
-        difficulty.bountyBp
+        difficulty.bountyBp,
+        relicBountyBp === undefined ? null : relicBountyBp
       );
       emitInternalAetherTelemetry(
         telemetry,
@@ -3509,7 +4032,7 @@
     if (events.length > MAX_SEMANTIC_EVENTS_PER_TICK) {
       throw new RangeError("Semantic events exceed the kernel per-tick ceiling");
     }
-    const phaseOrder = ABI.DESCRIPTOR.phaseOrder;
+    const phaseOrder = content.schemaVersion === 4 ? V2_PHASE_IDS : ABI.DESCRIPTOR.phaseOrder;
     const ordered = events.map(function (event, index) {
       return { event: event, index: index, phase: phaseOrder.indexOf(event.phaseId) };
     });
@@ -3527,6 +4050,125 @@
     );
   }
 
+  /* A v4 event catalog owns its payload field set. The kernel offers the complete fact record
+     and the catalog decides which of those facts it publishes; a declared required fact that the
+     kernel cannot supply is a content/kernel disagreement and fails the tick. */
+  function semanticEventWithFacts(content, eventId, facts) {
+    const definition = content.eventCatalog[eventId];
+    if (!definition) throw new RangeError("Unknown compiled semantic event " + eventId);
+    const payload = {};
+    definition.payloadFields.forEach(function (field) {
+      if (own(facts, field.name)) {
+        payload[field.name] = facts[field.name];
+        return;
+      }
+      if (field.required) {
+        throw new RangeError("Semantic event " + eventId + " requires unavailable fact " + field.name);
+      }
+    });
+    return semanticEvent(content, eventId, payload);
+  }
+
+  function protocolTierRecord(catalog, protocolId, tier) {
+    for (let index = 0; index < catalog.protocols.length; index++) {
+      const protocol = catalog.protocols[index];
+      if (protocol.protocolId !== protocolId) continue;
+      const record = protocol.tiers[tier - 1];
+      if (record && record.tier === tier) return record;
+    }
+    throw new RangeError("Accepted Protocol activation has no compiled tier record");
+  }
+
+  function initialProtocolRuntime(header) {
+    const equipped = header.protocolLoadout.map(function (record) {
+      return Object.freeze({
+        acceptedCastCount: 0,
+        loan: false,
+        protocolId: record.protocolId,
+        readyTick: 0,
+        tier: record.tier,
+      });
+    });
+    if (header.missionProtocolLoan !== null) {
+      equipped.push(Object.freeze({
+        acceptedCastCount: 0,
+        loan: true,
+        protocolId: header.missionProtocolLoan.protocolId,
+        readyTick: 0,
+        tier: header.missionProtocolLoan.tier,
+      }));
+    }
+    return Object.freeze({
+      effects: Object.freeze([]),
+      equipped: Object.freeze(equipped),
+      schedules: Object.freeze([]),
+      sharedReadyTick: 0,
+      wardCharges: 0,
+    });
+  }
+
+  /* Every bounded v2 collection is checked before the tick mutates anything at all. */
+  function assertBoundedV2State(state) {
+    if (state.protocols.effects.length > MAX_PROTOCOL_EFFECTS) {
+      throw new RangeError("Protocol effects exceed the kernel ceiling");
+    }
+    if (state.protocols.schedules.length > MAX_PROTOCOL_SCHEDULES) {
+      throw new RangeError("Protocol schedules exceed the kernel ceiling");
+    }
+    if (state.protocols.equipped.length > ABI.checkedAdd(MAX_PROTOCOL_SLOTS, 1)) {
+      throw new RangeError("Protocol runtime records exceed the kernel ceiling");
+    }
+    if (state.mechanism.zones.length > MAX_MECHANISM_ZONES) {
+      throw new RangeError("Mechanism zones exceed the kernel ceiling");
+    }
+    state.management.towers.forEach(function (tower) {
+      if (tower.disableSources.length > MAX_DISABLE_SOURCES) {
+        throw new RangeError("Tower disable sources exceed the kernel ceiling");
+      }
+    });
+  }
+
+  function activeProtocolField(fields, currentTick) {
+    return fields.filter(function (field) { return field.expiryTick > currentTick; });
+  }
+
+  /* Spec 6.1: one field, one movement-reduction instance per affected enemy, and every instance
+     keeps the field's ORIGINAL expiry rather than a fresh full duration from its own start. */
+  function applyGlobalSlowField(field, enemies, effectsInput, managementInput, config,
+    currentTick, telemetry) {
+    let effects = effectsInput;
+    let management = managementInput;
+    const remainingUnits = ABI.checkedMultiply(
+      ABI.checkedAdd(field.expiryTick, -currentTick),
+      ABI.TIME_UNITS_PER_TICK
+    );
+    if (remainingUnits <= 0) {
+      return Object.freeze({ effects: effects, management: management, appliedCount: 0 });
+    }
+    let appliedCount = 0;
+    enemies.forEach(function (enemy) {
+      if (enemy.hpMilli === 0) return;
+      const applied = applyEffect(effects, management, config, {
+        durationTimeUnits: remainingUnits,
+        kind: "status",
+        magnitude: field.magnitudeBp,
+        sourceRuntimeId: field.effectRuntimeId,
+        sourceTypeId: "protocol",
+        statusId: "slow",
+        targetRuntimeId: enemy.id,
+      }, currentTick);
+      effects = applied.effects;
+      management = applied.management;
+      appliedCount += 1;
+      pushAppliedEffectTelemetry(telemetry, applied, null, enemy);
+    });
+    return Object.freeze({
+      appliedCount: appliedCount,
+      effects: effects,
+      management: management,
+    });
+  }
+
   function registerState(binding, state) {
     ABI.canonicalEncode(state);
     deepFreeze(state);
@@ -3534,8 +4176,117 @@
     return state;
   }
 
+  function createInitialStateV2(binding, record, headerInput) {
+    const header = normalizeHeaderV2(binding, record, headerInput);
+    const missionRuntime = record.missions[header.missionId];
+    validateLoadout(record.content, missionRuntime.mission, header);
+    const difficulty = difficultyById(record.content.campaignRules, header.difficultyId);
+    const relics = Relics.resolveRelicLoadout(
+      record.content.relics,
+      header.relicIds,
+      header.relicSlotCap
+    );
+    const start = Economy.resolveStartAether(
+      missionRuntime.mission.baseStartAether,
+      difficulty.startAetherBp,
+      modifierAether(record.content.campaignRules, header.campaignModifierIds),
+      header.assist ? record.content.campaignRules.assistRecord.startAetherAdd : 0,
+      relicAdditiveAmount(relics, RELIC_STAT_START_AETHER)
+    );
+    /* Spec 8.2: Relic integrity is additive on both the starting and maximum pool. */
+    const integrity = Math.max(0, ABI.checkedAdd(
+      difficulty.integrity,
+      relicAdditiveAmount(relics, RELIC_STAT_START_INTEGRITY)
+    ));
+    const config = managementConfigV2(
+      record.content,
+      missionRuntime,
+      header,
+      start.startAether,
+      relics
+    );
+    const management = Management.createManagementState(config);
+    const objectiveBinding = missionRuntime.objectiveBindings[header.difficultyId];
+    const objectiveFacts = deepFreeze(Object.assign(
+      cloneCanonical(initialObjectiveFacts(record.content, missionRuntime, difficulty)),
+      { integrity: integrity }
+    ));
+    const objectiveEvaluation = Objectives.evaluateObjectives(
+      objectiveBinding,
+      objectiveProjection(objectiveBinding, objectiveFacts)
+    );
+    const state = {
+      schemaVersion: KERNEL_SCHEMA_VERSION_V2,
+      rulesetHash: binding.rulesetHash,
+      contentVersion: binding.contentVersion,
+      tick: 0,
+      missionId: header.missionId,
+      difficultyId: header.difficultyId,
+      assist: header.assist,
+      seed: header.seed,
+      loadoutIds: header.loadoutIds.slice(),
+      loadoutSlotCap: header.loadoutSlotCap,
+      campaignModifierIds: header.campaignModifierIds.slice(),
+      accessGrantIds: header.accessGrantIds.slice(),
+      tutorialUpgradeGateMode: header.tutorialUpgradeGateMode,
+      protocolLoadout: header.protocolLoadout.map(function (entry) {
+        return { protocolId: entry.protocolId, slot: entry.slot, tier: entry.tier };
+      }),
+      protocolSlotCap: header.protocolSlotCap,
+      protocolAuthority: header.protocolAuthority.map(function (entry) {
+        return { availableTier: entry.availableTier, protocolId: entry.protocolId };
+      }),
+      missionProtocolLoan: header.missionProtocolLoan === null ? null : {
+        protocolId: header.missionProtocolLoan.protocolId,
+        tier: header.missionProtocolLoan.tier,
+      },
+      relicIds: header.relicIds.slice(),
+      relicSlotCap: header.relicSlotCap,
+      reinforcementId: header.reinforcementId,
+      specializationAccessIds: header.specializationAccessIds.slice(),
+      management: management,
+      routes: initialRoutes(missionRuntime),
+      enemies: [],
+      timers: [],
+      effects: [],
+      lineages: [],
+      pendingSpawns: [],
+      pendingBossReleases: [],
+      rngStreams: [],
+      protocols: initialProtocolRuntime(header),
+      income: {
+        protocolAetherEarned: 0,
+        specializationAetherEarned: 0,
+        wardPreventedIntegrity: 0,
+      },
+      relics: cloneCanonical(relics),
+      reinforcement: {
+        liveUnitId: null,
+        readyTick: 0,
+        reinforcementId: header.reinforcementId,
+      },
+      mechanism: {
+        activationsUsed: 0,
+        mechanismId: missionRuntime.mission.mechanism === null
+          ? null : missionRuntime.mission.mechanism.mechanismId,
+        pending: null,
+        readyTick: 0,
+        zones: [],
+      },
+      objectiveFacts: objectiveFacts,
+      objectiveResults: objectiveEvaluation.objectiveResults,
+      integrity: integrity,
+      score: 0,
+      scoreFacts: { killScore: 0, waveScore: 0 },
+      outcome: "active",
+      waveStartTick: null,
+    };
+    return registerState(binding, state);
+  }
+
   function createInitialState(binding, headerInput) {
     const record = requireBinding(binding);
+    if (record.abiVersion === 2) return createInitialStateV2(binding, record, headerInput);
     const header = normalizeHeader(binding, record, headerInput);
     const missionRuntime = record.missions[header.missionId];
     validateLoadout(record.content, missionRuntime.mission, header);
@@ -3612,10 +4363,522 @@
     };
   }
 
+  function stateHeaderV2(state) {
+    return {
+      accessGrantIds: state.accessGrantIds,
+      assist: state.assist,
+      campaignModifierIds: state.campaignModifierIds,
+      difficultyId: state.difficultyId,
+      eventSchemaVersion: ABIV2.EVENT_SCHEMA_VERSION,
+      formatVersion: 2,
+      loadoutIds: state.loadoutIds,
+      loadoutSlotCap: state.loadoutSlotCap,
+      missionId: state.missionId,
+      missionProtocolLoan: state.missionProtocolLoan,
+      protocolAuthority: state.protocolAuthority,
+      protocolLoadout: state.protocolLoadout,
+      protocolSlotCap: state.protocolSlotCap,
+      relicIds: state.relicIds,
+      relicSlotCap: state.relicSlotCap,
+      reinforcementId: state.reinforcementId,
+      rulesetHash: state.rulesetHash,
+      seed: state.seed,
+      specializationAccessIds: state.specializationAccessIds,
+      tutorialUpgradeGateMode: state.tutorialUpgradeGateMode,
+    };
+  }
+
   function cloneStateWith(state, changes) {
     const output = cloneCanonical(state);
     Object.keys(changes).forEach(function (key) { output[key] = changes[key]; });
     return output;
+  }
+
+  /* ADR-014: ONE reducer, two declared phase tables. Every function called below is the same
+     phase function ABI v1 runs; only the declared order differs, and `phaseTrace` is a
+     noncanonical diagnostic that is excluded from every hash exactly like `telemetry`. */
+  function advanceTickV2(binding, record, state, commandBucket) {
+    const content = record.content;
+    const telemetry = createTelemetryCollector(state.tick);
+    const phaseTrace = [];
+    assertBoundedV2State(state);
+    ABI.canonicalEncode(commandBucket);
+    const commands = CommandsV2.normalizeCommandSequence(commandBucket);
+    commands.forEach(function (command) {
+      if (command.tick !== state.tick) {
+        throw new RangeError("Every command in a kernel bucket must match the current tick");
+      }
+    });
+    const missionRuntime = record.missions[state.missionId];
+    const difficulty = difficultyById(content.campaignRules, state.difficultyId);
+    const relics = state.relics;
+    const start = Economy.resolveStartAether(
+      missionRuntime.mission.baseStartAether,
+      difficulty.startAetherBp,
+      modifierAether(content.campaignRules, state.campaignModifierIds),
+      state.assist ? content.campaignRules.assistRecord.startAetherAdd : 0,
+      relicAdditiveAmount(relics, RELIC_STAT_START_AETHER)
+    );
+    const config = managementConfigV2(
+      content,
+      missionRuntime,
+      stateHeaderV2(state),
+      start.startAether,
+      relics
+    );
+    const liveEnemyRuntimeIds = Object.freeze(state.enemies.filter(function (enemy) {
+      return enemy.hpMilli > 0;
+    }).map(function (enemy) { return enemy.id; }).sort(function (left, right) {
+      return left - right;
+    }));
+    const board = missionRuntime.map.map.board;
+    const boardBounds = Object.freeze({
+      minX: 0,
+      minY: 0,
+      maxX: ABI.checkedMultiply(board.widthWorldUnits, ABI.DISTANCE_SCALE),
+      maxY: ABI.checkedMultiply(board.heightWorldUnits, ABI.DISTANCE_SCALE),
+    });
+    const routes = Object.freeze(state.routes.map(function (route) {
+      return Object.freeze({ routeId: route.id, routeLength: route.length });
+    }).sort(function (left, right) {
+      return left.routeId < right.routeId ? -1 : left.routeId > right.routeId ? 1 : 0;
+    }));
+
+    /* PHASE 1 --------------------------------------- commands-and-aether-payments */
+    phaseTrace.push(V2_PHASE_IDS[0]);
+    const managementResult = Management.applyCommandBucketV2(
+      state.management,
+      config,
+      state.tick,
+      commands,
+      {
+        boardBounds: boardBounds,
+        mechanism: state.mechanism,
+        protocolCatalog: record.protocolCatalog,
+        protocolLoadout: {
+          slotCap: state.protocolSlotCap,
+          protocolAuthority: state.protocolAuthority,
+          protocols: state.protocolLoadout,
+          missionLoan: state.missionProtocolLoan,
+        },
+        protocols: state.protocols,
+        reinforcement: state.reinforcement,
+        routes: routes,
+        /* K1 proves only global (`none`) selections. Route, tower, and cone selections are the
+           next lane's work, so they resolve to no proof and the Protocol resolver denies them
+           with its own `missing-eligible-target` rather than paying for an unproven target. */
+        selectProtocolTargets: function (command) {
+          if (command.target.kind !== "none") return null;
+          return {
+            protocolId: command.protocolId,
+            target: command.target,
+            eligibleTargetIds: liveEnemyRuntimeIds.slice(),
+          };
+        },
+        supportedEffectKinds: SUPPORTED_PROTOCOL_EFFECT_KINDS,
+      }
+    );
+    emitManagementAetherTelemetry(telemetry, state.management, managementResult, missionRuntime);
+    let management = managementResult.state;
+    let protocols = managementResult.protocols;
+    let towerRuntimes = syncTowerRuntimes(
+      content,
+      missionRuntime,
+      state.timers,
+      management.towers,
+      state.tick
+    );
+    const acceptedWaveStarts = managementResult.events.filter(function (event) {
+      return event.type === "waveStart";
+    });
+    if (acceptedWaveStarts.length > 1) {
+      throw new RangeError("A command bucket cannot accept more than one wave start");
+    }
+    const acceptedWaveStart = acceptedWaveStarts.length === 1 ? acceptedWaveStarts[0] : null;
+
+    if (state.management.phase === "planning" && acceptedWaveStart === null) {
+      if (state.enemies.length !== 0 || state.pendingSpawns.length !== 0 ||
+          state.pendingBossReleases.length !== 0) {
+        throw new RangeError("Planning state cannot retain hostile wave blockers");
+      }
+      const planningState = cloneStateWith(state, {
+        management: management,
+        protocols: protocols,
+        timers: towerRuntimes,
+      });
+      return Object.freeze({
+        commandEvents: managementResult.events,
+        events: Object.freeze([]),
+        phaseTrace: Object.freeze(phaseTrace.slice()),
+        state: registerState(binding, planningState),
+        telemetry: telemetry.finish(),
+      });
+    }
+
+    const events = [];
+    let pendingSpawns = state.pendingSpawns;
+    let pendingBossReleases = state.pendingBossReleases;
+    let enemies = state.enemies;
+    let effects = state.effects;
+    let lineages = state.lineages;
+    let objectiveFacts = state.objectiveFacts;
+    let objectiveResults = state.objectiveResults;
+    let integrity = state.integrity;
+    let scoreFacts = state.scoreFacts;
+    let score = state.score;
+    let outcome = state.outcome;
+    let waveStartTick = state.waveStartTick;
+    let protocolFields = protocols.effects.slice();
+
+    if (acceptedWaveStart !== null) {
+      if (state.pendingSpawns.length !== 0 || state.pendingBossReleases.length !== 0 ||
+          state.enemies.length !== 0) {
+        throw new RangeError("Accepted wave start requires an exhausted prior wave");
+      }
+      const wave = missionRuntime.mission.waves[acceptedWaveStart.wave - 1];
+      if (!wave || wave.index !== acceptedWaveStart.wave) {
+        throw new RangeError("Accepted Management wave does not match compiled content");
+      }
+      pendingSpawns = scheduleWaveSpawns(wave, state.tick);
+      towerRuntimes = resetWaveBehaviorStates(content, towerRuntimes);
+      waveStartTick = state.tick;
+      if (wave.deploymentGrantEventId !== null) {
+        events.push(semanticEvent(content, wave.deploymentGrantEventId, {
+          amountAether: acceptedWaveStart.grantAether,
+          waveId: wave.id,
+        }));
+      }
+    }
+
+    /* PHASE 2 ------------------------------- expiry-and-enable-transitions */
+    phaseTrace.push(V2_PHASE_IDS[1]);
+    const enableTransition = Management.expireDisableSources(management, config, state.tick);
+    management = enableTransition.state;
+    const expired = runStatusExpiry(
+      content,
+      missionRuntime,
+      enemies,
+      effects,
+      towerRuntimes,
+      management.towers,
+      mergeTelemetryTowers(state.management.towers, management.towers),
+      state.tick,
+      events,
+      telemetry
+    );
+    enemies = expired.enemies;
+    effects = runRetiredRevealCleanup(
+      content,
+      state.timers,
+      state.management.towers,
+      management.towers,
+      enemies,
+      expired.effects,
+      events,
+      telemetry
+    );
+    towerRuntimes = expired.towerRuntimes;
+
+    /* PHASE 3 ------- scheduled-protocol-mechanism-resolutions-and-spawns */
+    phaseTrace.push(V2_PHASE_IDS[2]);
+    managementResult.protocolActivations.forEach(function (activation) {
+      const tierRecord = protocolTierRecord(
+        record.protocolCatalog,
+        activation.protocolId,
+        activation.tier
+      );
+      const effect = tierRecord.effect;
+      if (SUPPORTED_PROTOCOL_EFFECT_KINDS.indexOf(effect.kind) === -1) {
+        throw new RangeError("Kernel cannot resolve Protocol effect kind " + effect.kind);
+      }
+      const durationUnits = Timers.authoredMillisecondsToTimeUnits(effect.durationMs);
+      const durationTicks = ABI.ceilDivNonnegative(durationUnits, ABI.TIME_UNITS_PER_TICK);
+      if (durationTicks <= 0) throw new RangeError("A Protocol field must last at least one tick");
+      const allocation = allocateRuntimeId(management, config, "effect");
+      management = allocation.management;
+      const field = Object.freeze({
+        appliedTick: state.tick,
+        carryAcrossWave: effect.carryAcrossWave === true,
+        effectRuntimeId: allocation.runtimeId,
+        expiryTick: ABI.checkedAdd(state.tick, durationTicks),
+        kind: effect.kind,
+        magnitudeBp: effect.magnitudeBp,
+        protocolId: activation.protocolId,
+        sourceKind: "protocol",
+        tier: activation.tier,
+      });
+      if (ABI.checkedAdd(protocolFields.length, 1) > MAX_PROTOCOL_EFFECTS) {
+        throw new RangeError("Protocol effects exceed the kernel ceiling");
+      }
+      protocolFields.push(field);
+      const applied = applyGlobalSlowField(
+        field, enemies, effects, management, config, state.tick, telemetry
+      );
+      effects = applied.effects;
+      management = applied.management;
+      events.push(semanticEventWithFacts(content, tierRecord.eventIds[0], {
+        affectedEnemyCount: applied.appliedCount,
+        costAether: activation.costAether,
+        durationTimeUnits: durationUnits,
+        magnitudeBp: field.magnitudeBp,
+        protocolId: field.protocolId,
+        tier: field.tier,
+      }));
+    });
+
+    /* PHASE 4 ------------------------- spawn-movement-control-and-contact */
+    phaseTrace.push(V2_PHASE_IDS[3]);
+    const dueHostileCount = pendingSpawns.filter(function (job) {
+      return job.dueTick === state.tick;
+    }).length;
+    if (ABI.checkedAdd(
+      ABI.checkedAdd(enemies.length, dueHostileCount),
+      activeSummonCount(towerRuntimes)
+    ) > MAX_ACTIVE_ENTITIES) {
+      throw new RangeError("Active hostile and summon entities exceed the kernel ceiling");
+    }
+    const priorEnemyIds = new Set(enemies.map(function (enemy) { return enemy.id; }));
+    const spawned = spawnDueJobs(
+      content, missionRuntime, difficulty, state.assist, pendingSpawns, enemies.slice(),
+      lineages.slice(), management, config, state.tick, events, telemetry
+    );
+    pendingSpawns = spawned.pendingSpawns;
+    enemies = spawned.enemies;
+    lineages = spawned.lineages;
+    management = spawned.management;
+    /* Spec 6.1: a hostile that spawns while the field is live inherits the field's remaining
+       duration, never a fresh full duration. */
+    const freshEnemies = enemies.filter(function (enemy) { return !priorEnemyIds.has(enemy.id); });
+    if (freshEnemies.length > 0) {
+      activeProtocolField(protocolFields, state.tick).forEach(function (field) {
+        const applied = applyGlobalSlowField(
+          field, freshEnemies, effects, management, config, state.tick, telemetry
+        );
+        effects = applied.effects;
+        management = applied.management;
+      });
+    }
+    const guards = runGuardScheduledSpawns(
+      content, towerRuntimes, management.towers, management, config, state.tick,
+      enemies.length, events, telemetry
+    );
+    towerRuntimes = guards.towerRuntimes;
+    management = guards.management;
+    const moved = runMovementAndGuards(
+      content, missionRuntime, enemies, effects, towerRuntimes, management, config,
+      state.tick, events, telemetry
+    );
+    enemies = moved.enemies;
+    effects = moved.effects;
+    towerRuntimes = moved.towerRuntimes;
+    management = moved.management;
+
+    /* PHASE 5 ------- tower-and-reinforcement-acquisition-and-attacks */
+    phaseTrace.push(V2_PHASE_IDS[4]);
+    const revealPlan = planRevealSync(
+      content, missionRuntime, enemies, effects, towerRuntimes, management.towers, events, telemetry
+    );
+    towerRuntimes = revealPlan.towerRuntimes;
+    const attacks = runTowerAttacks(
+      content, missionRuntime, enemies, effects, towerRuntimes, management.towers, events, telemetry
+    );
+    towerRuntimes = attacks.towerRuntimes;
+    const hitIntents = moved.guardDamageIntents.concat(attacks.hitIntents);
+    hitIntents.sort(compareHitIntents);
+
+    /* PHASE 6 ---------- persistent-zone-pulses-and-terminal-damage */
+    phaseTrace.push(V2_PHASE_IDS[5]);
+    const talosRelease = runTalosReleases(
+      content, missionRuntime, pendingBossReleases, pendingSpawns, effects, enemies, management,
+      config, state.tick, events, telemetry
+    );
+    pendingBossReleases = talosRelease.pendingBossReleases;
+    pendingSpawns = talosRelease.pendingSpawns;
+    effects = talosRelease.effects;
+    management = talosRelease.management;
+    if (pendingSpawns.some(function (job) { return job.dueTick <= state.tick; })) {
+      throw new RangeError("Talos child release must schedule strictly after its release tick");
+    }
+    const damaged = runDamage(
+      content, enemies, effects, hitIntents, pendingBossReleases, management.towers, state.tick,
+      events, telemetry
+    );
+    enemies = damaged.enemies;
+    pendingBossReleases = damaged.pendingBossReleases;
+    const statuses = applyTowerStatusIntents(
+      content, management.towers, enemies, effects,
+      revealPlan.statusIntents.concat(attacks.statusIntents), management, config, state.tick,
+      telemetry
+    );
+    effects = statuses.effects;
+    management = statuses.management;
+    const deaths = runTerminalDeaths(
+      content, management.towers, enemies, effects, scoreFacts, telemetry
+    );
+    enemies = deaths.enemies;
+    effects = deaths.effects;
+    scoreFacts = deaths.scoreFacts;
+    towerRuntimes = purgeRevealTargets(
+      towerRuntimes,
+      deaths.deaths.map(function (enemy) { return enemy.id; })
+    );
+
+    /* PHASE 7 ----------------------------------- leak-arbitration-and-ward */
+    phaseTrace.push(V2_PHASE_IDS[6]);
+    const leaked = runLeaks(
+      content, management.towers, enemies, effects, integrity, objectiveFacts, telemetry
+    );
+    enemies = leaked.enemies;
+    effects = leaked.effects;
+    integrity = leaked.integrity;
+    objectiveFacts = leaked.objectiveFacts;
+    towerRuntimes = purgeRevealTargets(towerRuntimes, leaked.removedEnemyIds);
+
+    function finalize(nextOutcome) {
+      /* ADR-008: a terminal tick still enters every remaining declared phase as a
+         deterministic no-op and commits one complete tick boundary. */
+      while (phaseTrace.length < V2_PHASE_IDS.length) {
+        phaseTrace.push(V2_PHASE_IDS[phaseTrace.length]);
+      }
+      const terminal = terminalObjectiveAndScore(
+        content, missionRuntime, difficulty, state, nextOutcome, integrity, objectiveFacts,
+        management, scoreFacts
+      );
+      const terminalState = cloneStateWith(state, {
+        effects: effects,
+        enemies: enemies,
+        integrity: integrity,
+        lineages: lineages,
+        management: management,
+        objectiveFacts: terminal.objectiveFacts,
+        objectiveResults: terminal.objectiveResults,
+        outcome: nextOutcome,
+        pendingBossReleases: pendingBossReleases,
+        pendingSpawns: pendingSpawns,
+        protocols: Object.freeze(Object.assign({}, protocols, {
+          effects: Object.freeze(protocolFields.slice()),
+        })),
+        score: terminal.score,
+        scoreFacts: scoreFacts,
+        tick: ABI.checkedAdd(state.tick, 1),
+        timers: towerRuntimes,
+        waveStartTick: waveStartTick,
+      });
+      return Object.freeze({
+        commandEvents: managementResult.events,
+        events: orderedSemanticEvents(content, events),
+        phaseTrace: Object.freeze(phaseTrace.slice()),
+        state: registerState(binding, terminalState),
+        telemetry: telemetry.finish(),
+      });
+    }
+
+    if (leaked.defeat) return finalize("defeat");
+
+    /* PHASE 8 ---------- bounty-income-objectives-and-score-facts */
+    phaseTrace.push(V2_PHASE_IDS[7]);
+    const bounties = runBounties(
+      deaths.deaths, lineages, management, config, difficulty, telemetry, relicBountyBp(relics)
+    );
+    lineages = bounties.lineages;
+    management = bounties.management;
+
+    /* PHASE 9 ------------------------------- cooldown-and-effect-decrement */
+    phaseTrace.push(V2_PHASE_IDS[8]);
+    const survivingFields = [];
+    protocolFields.forEach(function (field) {
+      if (field.expiryTick > state.tick) {
+        survivingFields.push(field);
+        return;
+      }
+      const tierRecord = protocolTierRecord(record.protocolCatalog, field.protocolId, field.tier);
+      events.push(semanticEventWithFacts(content, tierRecord.eventIds[1], {
+        protocolId: field.protocolId,
+        tier: field.tier,
+      }));
+    });
+    protocolFields = survivingFields;
+
+    /* PHASE 10 --- guarded-boss-wave-mission-transition-and-event-finalization */
+    phaseTrace.push(V2_PHASE_IDS[9]);
+    if (management.phase === "wave") {
+      const activeWave = missionRuntime.mission.waves[management.activeWave - 1];
+      if (!activeWave) throw new RangeError("Management active wave has no compiled wave record");
+      const waveBlocked = enemies.some(function (enemy) { return enemy.waveId === activeWave.id; }) ||
+        pendingSpawns.some(function (job) { return job.waveId === activeWave.id; }) ||
+        pendingBossReleases.some(function (releasePlan) {
+          return releasePlan.waveId === activeWave.id;
+        });
+      if (!waveBlocked) {
+        const managementBeforeClearGrant = management;
+        management = creditGrant(management, config, activeWave.clearGrantAether);
+        emitInternalAetherTelemetry(
+          telemetry, "wave-clear-grant", activeWave.id, managementBeforeClearGrant, management
+        );
+        if (activeWave.clearGrantEventId !== null) {
+          events.push(semanticEvent(content, activeWave.clearGrantEventId, {
+            amountAether: activeWave.clearGrantAether,
+            waveId: activeWave.id,
+          }));
+        }
+        scoreFacts = Object.freeze({
+          killScore: scoreFacts.killScore,
+          waveScore: ABI.checkedAdd(scoreFacts.waveScore, activeWave.waveClearScore),
+        });
+        management = Management.completeActiveWave(management, config, state.tick).state;
+        waveStartTick = null;
+        /* Spec 5.1: temporary effects end at wave clear unless the record carries across. */
+        const carried = [];
+        protocolFields.forEach(function (field) {
+          if (field.carryAcrossWave) {
+            carried.push(field);
+            return;
+          }
+          const tierRecord = protocolTierRecord(
+            record.protocolCatalog, field.protocolId, field.tier
+          );
+          events.push(semanticEventWithFacts(content, tierRecord.eventIds[1], {
+            protocolId: field.protocolId,
+            tier: field.tier,
+          }));
+        });
+        protocolFields = carried;
+        if (management.phase === "complete") return finalize("victory");
+      }
+    }
+
+    const objectiveBinding = missionRuntime.objectiveBindings[state.difficultyId];
+    objectiveResults = Objectives.evaluateObjectives(
+      objectiveBinding,
+      objectiveProjection(objectiveBinding, objectiveFacts)
+    ).objectiveResults;
+    const nextState = cloneStateWith(state, {
+      effects: effects,
+      enemies: enemies,
+      integrity: integrity,
+      lineages: lineages,
+      management: management,
+      objectiveFacts: objectiveFacts,
+      objectiveResults: objectiveResults,
+      outcome: outcome,
+      pendingBossReleases: pendingBossReleases,
+      pendingSpawns: pendingSpawns,
+      protocols: Object.freeze(Object.assign({}, protocols, {
+        effects: Object.freeze(protocolFields.slice()),
+      })),
+      score: score,
+      scoreFacts: scoreFacts,
+      tick: ABI.checkedAdd(state.tick, 1),
+      timers: towerRuntimes,
+      waveStartTick: waveStartTick,
+    });
+    return Object.freeze({
+      commandEvents: managementResult.events,
+      events: orderedSemanticEvents(content, events),
+      phaseTrace: Object.freeze(phaseTrace.slice()),
+      state: registerState(binding, nextState),
+      telemetry: telemetry.finish(),
+    });
   }
 
   function advanceTick(binding, stateInput, commandBucket) {
@@ -3623,6 +4886,7 @@
     const state = requireState(binding, stateInput);
     if (state.outcome !== "active") throw new RangeError("Terminal kernel state cannot advance");
     if (!Array.isArray(commandBucket)) throw new TypeError("Kernel command bucket must be an array");
+    if (record.abiVersion === 2) return advanceTickV2(binding, record, state, commandBucket);
     const telemetry = createTelemetryCollector(state.tick);
     ABI.canonicalEncode(commandBucket);
     const commands = Commands.normalizeCommandSequence(commandBucket);
@@ -4059,6 +5323,20 @@
     MAX_LOADOUT_IDS: MAX_LOADOUT_IDS,
     MAX_SEMANTIC_EVENTS_PER_TICK: MAX_SEMANTIC_EVENTS_PER_TICK,
     MAX_TARGET_CANDIDATES: MAX_TARGET_CANDIDATES,
+    KERNEL_SCHEMA_VERSION_V2: KERNEL_SCHEMA_VERSION_V2,
+    MAX_DISABLE_SOURCES: MAX_DISABLE_SOURCES,
+    MAX_MECHANISM_ZONES: MAX_MECHANISM_ZONES,
+    MAX_PROTOCOL_EFFECTS: MAX_PROTOCOL_EFFECTS,
+    MAX_PROTOCOL_SCHEDULES: MAX_PROTOCOL_SCHEDULES,
+    MAX_PROTOCOL_SLOTS: MAX_PROTOCOL_SLOTS,
+    MAX_RELIC_IDS: MAX_RELIC_IDS,
+    MAX_SPECIALIZATION_ACCESS_IDS: MAX_SPECIALIZATION_ACCESS_IDS,
+    ABI_V2_DESCRIPTOR_SHA256: ABIV2.DESCRIPTOR_SHA256,
+    COMBAT_SOURCE_KINDS: COMBAT_SOURCE_KINDS,
+    SUPPORTED_PROTOCOL_EFFECT_KINDS: SUPPORTED_PROTOCOL_EFFECT_KINDS,
+    V2_PHASE_IDS: V2_PHASE_IDS,
+    addTowerDisableSource: Management.addDisableSource,
+    removeTowerDisableSource: Management.removeDisableSource,
     createRulesetBinding: createRulesetBinding,
     createInitialState: createInitialState,
     advanceTick: advanceTick,

@@ -31,7 +31,11 @@
     configurable: false,
     enumerable: true,
   });
-})(typeof globalThis !== "undefined" ? globalThis : this, function (ABI, CommandsV2, ReplayV1) {
+})(typeof globalThis !== "undefined" ? globalThis : this, function (
+  ABI,
+  CommandsV2,
+  ReplayV1
+) {
   "use strict";
 
   const AUTHENTICATED_ABI_V2_SHA256 =

@@ -153,20 +153,34 @@ test("kernel exposes one frozen authoritative seam and fixed Candidate ceilings"
   assert.equal(Object.isFrozen(Kernel), true);
   assert.deepEqual(Object.keys(Kernel).sort(), [
     "ABI_DESCRIPTOR_SHA256",
+    "ABI_V2_DESCRIPTOR_SHA256",
     "BALANCE_TELEMETRY_SCHEMA_VERSION",
     "BEHAVIOR_REGISTRY_VERSION",
+    "COMBAT_SOURCE_KINDS",
     "COMMAND_SCHEMA_VERSION",
     "EVENT_SCHEMA_VERSION",
     "KERNEL_SCHEMA_VERSION",
+    "KERNEL_SCHEMA_VERSION_V2",
     "MAX_ACTIVE_ENTITIES",
     "MAX_BALANCE_TELEMETRY_RECORDS_PER_TICK",
     "MAX_BALANCE_TELEMETRY_TARGET_IDS",
+    "MAX_DISABLE_SOURCES",
     "MAX_LOADOUT_IDS",
+    "MAX_MECHANISM_ZONES",
+    "MAX_PROTOCOL_EFFECTS",
+    "MAX_PROTOCOL_SCHEDULES",
+    "MAX_PROTOCOL_SLOTS",
+    "MAX_RELIC_IDS",
     "MAX_SEMANTIC_EVENTS_PER_TICK",
+    "MAX_SPECIALIZATION_ACCESS_IDS",
     "MAX_TARGET_CANDIDATES",
+    "SUPPORTED_PROTOCOL_EFFECT_KINDS",
+    "V2_PHASE_IDS",
+    "addTowerDisableSource",
     "advanceTick",
     "createInitialState",
     "createRulesetBinding",
+    "removeTowerDisableSource",
   ].sort());
   assert.equal(Kernel.ABI_DESCRIPTOR_SHA256, ABI.DESCRIPTOR_SHA256);
   assert.equal(Kernel.EVENT_SCHEMA_VERSION, ABI.EVENT_SCHEMA_VERSION);
@@ -179,6 +193,27 @@ test("kernel exposes one frozen authoritative seam and fixed Candidate ceilings"
   assert.equal(Kernel.MAX_LOADOUT_IDS, 6);
   assert.equal(Kernel.MAX_TARGET_CANDIDATES, 4096);
   assert.equal(Kernel.MAX_SEMANTIC_EVENTS_PER_TICK, 16384);
+  assert.equal(Kernel.KERNEL_SCHEMA_VERSION_V2, 2);
+  assert.equal(Kernel.MAX_PROTOCOL_EFFECTS, 64);
+  assert.equal(Kernel.MAX_PROTOCOL_SCHEDULES, 64);
+  assert.equal(Kernel.MAX_DISABLE_SOURCES, 8);
+  assert.equal(Kernel.MAX_MECHANISM_ZONES, 16);
+  assert.equal(Kernel.MAX_PROTOCOL_SLOTS, 2);
+  assert.equal(Kernel.MAX_RELIC_IDS, 2);
+  assert.equal(Kernel.MAX_SPECIALIZATION_ACCESS_IDS, 128);
+  assert.deepEqual(Kernel.COMBAT_SOURCE_KINDS, ["mechanism", "protocol", "tower", "unit"]);
+  assert.deepEqual(Kernel.V2_PHASE_IDS, [
+    "commands-and-aether-payments",
+    "expiry-and-enable-transitions",
+    "scheduled-protocol-mechanism-resolutions-and-spawns",
+    "spawn-movement-control-and-contact",
+    "tower-and-reinforcement-acquisition-and-attacks",
+    "persistent-zone-pulses-and-terminal-damage",
+    "leak-arbitration-and-ward",
+    "bounty-income-objectives-and-score-facts",
+    "cooldown-and-effect-decrement",
+    "guarded-boss-wave-mission-transition-and-event-finalization",
+  ]);
 });
 
 test("telemetry ceilings reject before returning partial tick output", () => {
@@ -278,6 +313,7 @@ test("ruleset binding and Start pin exact immutable identities and canonical fac
   const bound = Kernel.createRulesetBinding({ release: RELEASE, content: CONTENT });
   assert.deepEqual(bound, {
     abiHash: RELEASE.abiHash,
+    abiVersion: 1,
     behaviorRegistryVersion: ABI.BEHAVIOR_REGISTRY_VERSION,
     contentVersion: RELEASE.contentVersion,
     eventSchemaVersion: ABI.EVENT_SCHEMA_VERSION,
@@ -1233,7 +1269,8 @@ test("classic scripts share Node ABI identity and deterministic terminal final h
   const context = vm.createContext({ console: console });
   [
     "abi.js", "geometry.js", "timers.js", "economy.js", "movement.js", "effects.js",
-    "targeting.js", "behaviors.js", "commands.js", "management.js", "objectives.js", "kernel.js",
+    "targeting.js", "behaviors.js", "commands.js", "abi-v2.js", "commands-v2.js", "protocols.js",
+    "relics.js", "management.js", "objectives.js", "kernel.js",
   ].forEach(function (name) {
     const file = path.join(__dirname, "..", "js", "sim", name);
     vm.runInContext(fs.readFileSync(file, "utf8"), context, { filename: file });
