@@ -6,6 +6,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const PreviewController = require("../js/delivery/preview-controller.js");
+const SpriteAtlas = require("../js/presentation/sprite-atlas.js");
 const MapIr = require("../../../tools/lib/aegis/map-ir.js");
 
 const ROLE_PROOF_CONTEXT = Object.freeze({
@@ -305,7 +306,8 @@ test("battlefield projection exposes compiled routes, selectable pads, towers, a
   });
   const projection = PreviewController.battlefieldView(runtime, state, "p02");
 
-  assert.equal(PreviewController.VISUAL_FPS, 30, "presentation renders at a smooth rate below the 60 Hz simulation");
+  assert.equal(PreviewController.VISUAL_FPS, 60,
+    "presentation samples every simulation tick instead of visibly stepping at half rate");
   assert.equal(projection.missionId, "m01");
   assert.equal(projection.tick, 37);
   assert.equal(projection.roadWidth, 12000);
@@ -696,6 +698,37 @@ test("real tower damage telemetry produces one target-linked projectile cue per 
   assert.ok(cues[0].durationTicks > 1);
   assert.equal(Object.isFrozen(cues), true);
   assert.equal(Object.isFrozen(cues[0]), true);
+});
+
+test("tower poses crossfade through firing and recovery instead of hard-cutting atlas cells", () => {
+  assert.deepEqual(PreviewController.towerFrameBlend({ action: "idle", actionProgressBp: 0 }), {
+    from: "idleA", to: "idleA", mixBp: 0, recoilY: 0,
+  });
+  const firing = PreviewController.towerFrameBlend({ action: "active", actionProgressBp: 5000 });
+  assert.equal(firing.from, "idleA");
+  assert.equal(firing.to, "active");
+  assert.ok(firing.mixBp > 8000 && firing.mixBp < 9000);
+  assert.equal(firing.recoilY, 850);
+  const earlyRecovery = PreviewController.towerFrameBlend({ action: "recover", actionProgressBp: 2300 });
+  assert.deepEqual([earlyRecovery.from, earlyRecovery.to, earlyRecovery.mixBp], ["active", "recover", 5000]);
+  const settling = PreviewController.towerFrameBlend({ action: "recover", actionProgressBp: 7300 });
+  assert.equal(settling.from, "recover");
+  assert.equal(settling.to, "idleA");
+  assert.equal(settling.mixBp, 5000);
+});
+
+test("enemy locomotion blends continuously between registered walk poses", () => {
+  const asset = { metadata: SpriteAtlas.createEnemyAtlasMetadata("test.enemy.smooth") };
+  const start = PreviewController.enemyFrameBlend(asset, 0, 0, false);
+  const middle = PreviewController.enemyFrameBlend(asset, 3, 0, false);
+  const boundary = PreviewController.enemyFrameBlend(asset, 7, 0, false);
+  const next = PreviewController.enemyFrameBlend(asset, 8, 0, false);
+  assert.deepEqual([start.from.frameName, start.to.frameName, start.mixBp], ["runA", "runB", 0]);
+  assert.ok(middle.mixBp > 4000 && middle.mixBp < 5000);
+  assert.deepEqual([boundary.from.frameName, boundary.to.frameName, boundary.mixBp], ["runA", "runB", 10000]);
+  assert.deepEqual([next.from.frameName, next.to.frameName, next.mixBp], ["runB", "runC", 0]);
+  const reduced = PreviewController.enemyFrameBlend(asset, 99, 3, true);
+  assert.deepEqual([reduced.from.frameName, reduced.to.frameName, reduced.mixBp], ["idleB", "idleB", 0]);
 });
 
 /* One sentinel on p02 whose kernel cooldown timer is the only animation input. */

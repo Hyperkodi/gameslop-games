@@ -163,7 +163,9 @@
   .preview-map-pad.is-occupied .preview-map-pad-core { fill: #332416; }
   .preview-map-symbol { fill: #fff6d2; font-size: 5800px; font-weight: 950; paint-order: stroke; stroke: #071117; stroke-width: 900px; }
   .preview-tower-symbol { fill: #59dcff; font-size: 4300px; }
-  .preview-tower-sprite {
+  .preview-tower-motion { pointer-events: none; }
+  .preview-tower-sprite,
+  .preview-tower-sprite-blend {
     filter: saturate(1.18) brightness(1.08) contrast(1.04)
       drop-shadow(0 0 650px rgba(255, 239, 178, .92))
       drop-shadow(0 1100px 850px rgba(0, 0, 0, .95));
@@ -201,10 +203,12 @@
   .preview-map-enemy { pointer-events: none; }
   .preview-enemy-contrast { fill: rgba(255, 246, 211, .22); stroke: #fff4cf; stroke-width: 700; }
   .preview-map-enemy-boss .preview-enemy-contrast { fill: rgba(141, 42, 216, .45); stroke: #ffe38b; stroke-width: 1300; }
-  .preview-enemy-sprite {
+  .preview-enemy-sprite,
+  .preview-enemy-sprite-blend {
     filter: saturate(1.22) brightness(1.12) contrast(1.06)
       drop-shadow(0 0 550px rgba(255, 245, 210, .92))
       drop-shadow(0 1100px 800px #000);
+    pointer-events: none;
   }
   .preview-enemy-symbol { fill: #fff; font-size: 3300px; }
   .preview-sprite-fallback-disc { fill: rgba(7, 20, 30, .94); stroke: #ffe28a; }

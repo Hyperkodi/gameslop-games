@@ -65,7 +65,7 @@
   }
 
   const MAX_LOADOUT = 4;
-  const VISUAL_FPS = 30;
+  const VISUAL_FPS = 60;
   const SVG_NAMESPACE = "http://www.w3.org/2000/svg";
   const STARTER_DEFENSE_IDS = Object.freeze(["chronos", "sentinel", "siege"]);
   const TARGET_POLICY_LABELS = Object.freeze({
@@ -672,6 +672,35 @@
     return resting;
   }
 
+  function towerFrameBlend(tower) {
+    if (!tower || tower.action === "idle") {
+      return { from: TOWER_REST_FRAME, to: TOWER_REST_FRAME, mixBp: 0, recoilY: 0 };
+    }
+    const progress = Math.max(0, Math.min(1, tower.actionProgressBp / 10000));
+    if (tower.action === "active") {
+      return {
+        from: TOWER_REST_FRAME,
+        to: "active",
+        mixBp: Math.min(10000, Math.round(progress / 0.58 * 10000)),
+        recoilY: Math.round(Math.sin(Math.PI * progress) * 850),
+      };
+    }
+    if (progress < 0.46) {
+      return {
+        from: "active",
+        to: "recover",
+        mixBp: Math.round(progress / 0.46 * 10000),
+        recoilY: Math.round((1 - progress / 0.46) * 520),
+      };
+    }
+    return {
+      from: "recover",
+      to: TOWER_REST_FRAME,
+      mixBp: Math.round((progress - 0.46) / 0.54 * 10000),
+      recoilY: 0,
+    };
+  }
+
   function shortSymbol(id) {
     return String(id).split(/[.\-_]/).filter(Boolean).map(function (part) {
       return part.charAt(0);
@@ -1196,12 +1225,21 @@
   /* The walk cycle reads as walking, not strobing: one pose is held for roughly
      an eighth of a second at the 60 Hz simulation rate, staggered per runtime so
      a column of hostiles does not march in lockstep. */
-  function enemyAnimationFrame(asset, tick, runtimeId, reduceMotion) {
-    const index = reduceMotion
-      ? 0
-      : Math.floor((tick + runtimeId * ENEMY_WALK_STAGGER_TICKS) / ENEMY_WALK_HOLD_TICKS) %
-        ENEMY_WALK_FRAMES.length;
-    return SpriteAtlas.enemyFrame(asset.metadata, reduceMotion ? "idleB" : ENEMY_WALK_FRAMES[index]);
+  function enemyFrameBlend(asset, tick, runtimeId, reduceMotion) {
+    if (reduceMotion) {
+      const frame = SpriteAtlas.enemyFrame(asset.metadata, "idleB");
+      return { from: frame, to: frame, mixBp: 0 };
+    }
+    const phase = (tick + runtimeId * ENEMY_WALK_STAGGER_TICKS) %
+      (ENEMY_WALK_HOLD_TICKS * ENEMY_WALK_FRAMES.length);
+    const index = Math.floor(phase / ENEMY_WALK_HOLD_TICKS);
+    const frameTick = phase % ENEMY_WALK_HOLD_TICKS;
+    const nextIndex = (index + 1) % ENEMY_WALK_FRAMES.length;
+    return {
+      from: SpriteAtlas.enemyFrame(asset.metadata, ENEMY_WALK_FRAMES[index]),
+      to: SpriteAtlas.enemyFrame(asset.metadata, ENEMY_WALK_FRAMES[nextIndex]),
+      mixBp: Math.round(frameTick * 10000 / (ENEMY_WALK_HOLD_TICKS - 1)),
+    };
   }
 
   function pointsPath(points) {
@@ -2057,23 +2095,44 @@
           }));
         }
         if (pad.tower && pad.tower.asset && pad.tower.asset.kind === "atlas") {
-          const frame = SpriteAtlas.towerFrame(
-            pad.tower.asset.metadata,
-            pad.tower.level,
-            pad.tower.frameName
+          const blend = towerFrameBlend(pad.tower);
+          const fromFrame = SpriteAtlas.towerFrame(
+            pad.tower.asset.metadata, pad.tower.level, blend.from
+          );
+          const toFrame = SpriteAtlas.towerFrame(
+            pad.tower.asset.metadata, pad.tower.level, blend.to
           );
           const effect = towerAttackEffect(documentObject, pad.tower);
           if (effect) group.appendChild(effect);
-          const sprite = atlasSprite(documentObject, pad.tower.asset, frame, {
+          const motion = svgElement(documentObject, "g", {
+            class: "preview-tower-motion",
+            transform: "translate(0 " + blend.recoilY + ")",
+            "data-blend-bp": blend.mixBp,
+          });
+          const sprite = atlasSprite(documentObject, pad.tower.asset, fromFrame, {
             class: "preview-tower-sprite",
             x: -10500,
             y: -12500,
             width: 21000,
             height: 21000,
-            "data-frame": frame.frameName,
+            opacity: ((10000 - blend.mixBp) / 10000).toFixed(3),
+            "data-frame": pad.tower.frameName,
           }, "preview-tower-clip-" + pad.tower.id);
           sprite.setAttribute("data-action", pad.tower.action);
-          group.appendChild(sprite);
+          motion.appendChild(sprite);
+          if (blend.mixBp > 0 && blend.to !== blend.from) {
+            motion.appendChild(atlasSprite(documentObject, pad.tower.asset, toFrame, {
+              class: "preview-tower-sprite-blend",
+              x: -10500,
+              y: -12500,
+              width: 21000,
+              height: 21000,
+              opacity: (blend.mixBp / 10000).toFixed(3),
+              "data-frame": toFrame.frameName,
+              "aria-hidden": "true",
+            }, "preview-tower-blend-clip-" + pad.tower.id));
+          }
+          group.appendChild(motion);
         } else if (pad.tower) {
           group.appendChild(svgElement(documentObject, "text", {
             class: "preview-map-symbol preview-tower-symbol",
@@ -2117,15 +2176,28 @@
           r: Math.floor(size * 0.43),
         }));
         if (enemy.asset && enemy.asset.kind === "atlas") {
-          const frame = enemyAnimationFrame(enemy.asset, view.tick, enemy.id, reduceMotion);
-          group.appendChild(atlasSprite(documentObject, enemy.asset, frame, {
+          const blend = enemyFrameBlend(enemy.asset, view.tick, enemy.id, reduceMotion);
+          group.appendChild(atlasSprite(documentObject, enemy.asset, blend.from, {
             class: "preview-enemy-sprite",
             x: -size * 0.72,
             y: -size * 0.78,
             width: size * 1.44,
             height: size * 1.44,
-            "data-frame": frame.frameName,
+            opacity: ((10000 - blend.mixBp) / 10000).toFixed(3),
+            "data-frame": blend.from.frameName,
           }, "preview-enemy-clip-" + enemy.id));
+          if (blend.mixBp > 0 && blend.to.frameName !== blend.from.frameName) {
+            group.appendChild(atlasSprite(documentObject, enemy.asset, blend.to, {
+              class: "preview-enemy-sprite-blend",
+              x: -size * 0.72,
+              y: -size * 0.78,
+              width: size * 1.44,
+              height: size * 1.44,
+              opacity: (blend.mixBp / 10000).toFixed(3),
+              "data-frame": blend.to.frameName,
+              "aria-hidden": "true",
+            }, "preview-enemy-blend-clip-" + enemy.id));
+          }
         } else if (enemy.asset) {
           group.appendChild(spriteImage(documentObject, enemy.asset, {
             class: "preview-enemy-sprite",
@@ -3150,6 +3222,8 @@
     MAX_LOADOUT: MAX_LOADOUT,
     VISUAL_FPS: VISUAL_FPS,
     battlefieldView: battlefieldView,
+    enemyFrameBlend: enemyFrameBlend,
+    towerFrameBlend: towerFrameBlend,
     projectileCuesForStep: projectileCuesForStep,
     createHeader: createHeader,
     createSession: createSession,
