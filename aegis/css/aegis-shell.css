@@ -688,3 +688,400 @@ body[data-photosensitive-safe="true"] .aegis-shell-button--primary { box-shadow:
   .aegis-shell-button.is-selected { border-color: Highlight; }
   .aegis-shell-button:disabled { color: GrayText; border-color: GrayText; }
 }
+
+/* ------------------------------------------- battle screen: playable layout
+
+   The host page stacks four large readouts, help copy, and the run controls
+   above the map, which pushes the battlefield below the fold at 1280x800 and
+   leaves the tower menu off screen. On the battle screen the battlefield is the
+   primary object: the readouts collapse into one pinned command bar, the run
+   controls sit beside them, and the tower menu docks next to the map on desktop
+   or rises as a bottom sheet on small screens so the selected site, its exact
+   cost, and its Build control are always visible. Every label, price, and status
+   string below stays live DOM text; this file only places and sizes it. */
+
+body[data-screen="battle"] {
+  --aegis-battle-stage: min(55vh, 30rem, calc((100vw - 22rem) * 5 / 8));
+  --aegis-battle-menu: min(100%, 21rem);
+  --aegis-battle-bar: rgba(9, 9, 9, .96);
+}
+
+/* Page chrome yields to the map once a mission is running. */
+body[data-screen="battle"] .preview-shell { padding: .6rem 1rem 1rem; }
+body[data-screen="battle"] .preview-title { gap: .35rem .8rem; }
+body[data-screen="battle"] .preview-logo { width: clamp(1.85rem, 3.4vw, 2.6rem); }
+body[data-screen="battle"] .preview-title h1 { font-size: clamp(1rem, 2vw, 1.35rem); }
+body[data-screen="battle"] .preview-title p { display: none; }
+body[data-screen="battle"] .preview-warning {
+  margin: .35rem 0 .4rem;
+  padding: .3rem .55rem;
+  font-size: .74rem;
+}
+body[data-screen="battle"] #previewBootStatus { margin: 0 0 .35rem; font-size: .74rem; }
+body[data-screen="battle"] .aegis-shell-root { --shell-gap: .5rem; }
+body[data-screen="battle"] .aegis-shell-topbar {
+  margin-bottom: .3rem;
+  padding-bottom: .3rem;
+  gap: .3rem .8rem;
+}
+body[data-screen="battle"] .aegis-shell-title { font-size: clamp(1rem, 1.9vw, 1.3rem); }
+body[data-screen="battle"] .aegis-shell-screen--battle { gap: .3rem; }
+body[data-screen="battle"] .aegis-shell-battle-head { margin: 0; gap: .3rem .6rem; }
+body[data-screen="battle"] .aegis-shell-storage { padding: .2rem .45rem; font-size: .72rem; }
+body[data-screen="battle"] .aegis-shell-battle-meta { font-size: .78rem; }
+body[data-screen="battle"] .aegis-shell-screen--battle .aegis-shell-button,
+body[data-screen="battle"] .aegis-shell-topbar .aegis-shell-button {
+  min-height: var(--shell-target-secondary);
+  padding: .3rem .7rem;
+  font-size: .82rem;
+}
+
+body[data-screen="battle"] .preview-battle-region .preview-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .3rem .8rem;
+  padding: .5rem .7rem .7rem;
+}
+
+body[data-screen="battle"] .preview-command-bar,
+body[data-screen="battle"] .preview-battlefield-region,
+body[data-screen="battle"] .preview-battle-region .preview-panel > section:last-child {
+  flex: 1 1 100%;
+  min-width: 0;
+}
+
+body[data-screen="battle"] .preview-rule-hint { flex: 1 1 22rem; min-width: 0; }
+body[data-screen="battle"] .preview-feedback { flex: 1 1 14rem; min-width: 0; }
+
+/* "Battle controls" still names the region for assistive technology. */
+body[data-screen="battle"] #previewCommandTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ------------------------------------------------------- pinned command bar */
+
+body[data-screen="battle"] .preview-command-bar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .4rem .7rem;
+  border: 1px solid rgba(249, 238, 210, .34);
+  border-radius: .45rem;
+  background: var(--aegis-battle-bar);
+  box-shadow: 0 .4rem .9rem rgba(0, 0, 0, .55);
+  padding: .3rem .45rem;
+}
+
+body[data-screen="battle"] .preview-command-bar .preview-hud {
+  position: static;
+  display: flex;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: .35rem;
+  margin: 0;
+  min-width: 0;
+}
+
+body[data-screen="battle"] .preview-command-bar .preview-readout {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: .35rem;
+  min-width: 0;
+  border-color: rgba(249, 238, 210, .34);
+  border-radius: .3rem;
+  background: rgba(20, 20, 20, .9);
+  padding: .25rem .45rem;
+  text-align: left;
+}
+
+body[data-screen="battle"] .preview-command-bar .preview-readout span {
+  font-size: .62rem;
+  letter-spacing: .06em;
+}
+
+body[data-screen="battle"] .preview-command-bar .preview-readout output {
+  font-size: 1.15rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+body[data-screen="battle"] .preview-command-bar .preview-actions {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: nowrap;
+  gap: .35rem;
+  margin: 0;
+}
+
+body[data-screen="battle"] .preview-command-bar .preview-actions button {
+  min-height: var(--shell-target-secondary);
+  padding: .35rem .7rem;
+  white-space: nowrap;
+}
+
+body[data-screen="battle"] .preview-rule-hint,
+body[data-screen="battle"] .preview-feedback { margin: 0; font-size: .78rem; }
+body[data-screen="battle"] .preview-feedback { min-height: 1.2em; }
+
+/* ----------------------------------------------------- battlefield and menu */
+
+body[data-screen="battle"] .preview-battlefield-region { margin: 0; }
+body[data-screen="battle"] .preview-battlefield-heading { gap: .2rem .8rem; }
+body[data-screen="battle"] .preview-battlefield-heading h3 { margin: 0; font-size: .95rem; }
+body[data-screen="battle"] .preview-battlefield-heading p { margin: 0; font-size: .76rem; }
+
+body[data-screen="battle"] .preview-battlefield-stage {
+  display: flex;
+  align-items: flex-start;
+  gap: .55rem;
+  margin-top: .3rem;
+}
+
+body[data-screen="battle"] #previewBattlefield {
+  flex: 0 1 auto;
+  min-inline-size: 0;
+  block-size: var(--aegis-battle-stage);
+  inline-size: calc(var(--aegis-battle-stage) * 8 / 5);
+  max-inline-size: 100%;
+  aspect-ratio: auto;
+}
+
+body[data-screen="battle"] #previewStorePanel {
+  position: static;
+  flex: 1 1 var(--aegis-battle-menu);
+  inline-size: auto;
+  min-inline-size: min(100%, 15rem);
+  max-inline-size: 30rem;
+  max-block-size: min(calc(var(--aegis-battle-stage) + 3rem), calc(100vh - 21rem));
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: .55rem;
+}
+
+body[data-screen="battle"] .preview-store-panel-header {
+  margin: -.55rem -.55rem .5rem;
+  padding: .45rem .55rem;
+  top: -.55rem;
+}
+
+body[data-screen="battle"] .preview-store-panel-header h3 { font-size: .95rem; }
+body[data-screen="battle"] .preview-store-close { padding: .3rem .55rem; font-size: .8rem; }
+
+/* The selected site and the Aether bank repeat inside the menu so they are
+   readable without leaving the menu at any required viewport. */
+.preview-store-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .2rem .5rem;
+  margin: 0 0 .45rem;
+  border-bottom: 1px solid rgba(249, 238, 210, .2);
+  padding-bottom: .4rem;
+  font-size: .8rem;
+}
+
+.preview-store-site { color: var(--preview-ink, #f9f4ec); font-weight: 800; }
+.preview-store-bank { color: var(--preview-gold, #f3ca66); font-variant-numeric: tabular-nums; }
+.preview-store-reach { flex: 1 1 100%; color: var(--preview-cyan, #53d5ff); }
+.preview-store-heading {
+  margin: 0 0 .4rem;
+  color: var(--preview-gold, #f3ca66);
+  font-size: .82rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+body[data-screen="battle"] #previewStorePanel .preview-card-grid {
+  grid-template-columns: minmax(0, 1fr);
+  gap: .45rem;
+}
+
+body[data-screen="battle"] #previewStorePanel .preview-card { padding: .4rem .45rem; }
+body[data-screen="battle"] #previewStorePanel .preview-card-heading {
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: .45rem;
+}
+
+body[data-screen="battle"] #previewStorePanel .preview-tower-thumbnail-svg,
+body[data-screen="battle"] #previewStorePanel .preview-tower-thumbnail-fallback {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+body[data-screen="battle"] #previewStorePanel .preview-card-heading h4 { font-size: .92rem; }
+body[data-screen="battle"] #previewStorePanel .preview-card p { margin: .2rem 0; font-size: .72rem; }
+body[data-screen="battle"] #previewStorePanel .preview-upgrade-delta { margin: .35rem 0; padding: .4rem .5rem; }
+
+.preview-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .25rem .5rem;
+  margin: .3rem 0 .2rem;
+}
+
+.preview-card-actions button {
+  min-height: var(--shell-target-secondary, 2.75rem);
+  padding: .3rem .7rem;
+}
+.preview-card-actions .preview-ready,
+.preview-card-actions .preview-need { font-size: .74rem; }
+
+.preview-card-details > summary {
+  cursor: pointer;
+  color: var(--preview-muted, #bbb4aa);
+  font-size: .76rem;
+}
+
+.preview-card-details[open] > summary { margin-bottom: .25rem; }
+.preview-build-card.is-previewed { border-color: var(--preview-cyan, #53d5ff); }
+
+/* ------------------------------------------------ coverage and range preview */
+
+.preview-coverage-arc {
+  fill: none;
+  stroke: rgba(114, 227, 255, .5);
+  pointer-events: none;
+}
+
+.preview-site-reach {
+  display: block;
+  color: var(--preview-cyan, #53d5ff);
+  font-size: .74rem;
+  line-height: 1.2;
+}
+
+.preview-site-button.is-multi-cover .preview-site-reach { font-weight: 800; }
+
+/* ------------------------------------------------------- build-site picker */
+
+body[data-screen="battle"] .preview-site-picker { margin-top: .45rem; padding: .45rem; }
+body[data-screen="battle"] .preview-site-picker-heading { margin-bottom: .35rem; }
+body[data-screen="battle"] .preview-site-picker-heading h4 { font-size: .9rem; }
+body[data-screen="battle"] .preview-site-picker-heading p { font-size: .76rem; }
+body[data-screen="battle"] .preview-site-list {
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+  gap: .35rem;
+}
+
+body[data-screen="battle"] .preview-site-button {
+  min-height: var(--shell-target-primary);
+  padding: .35rem .5rem;
+}
+
+body[data-screen="battle"] .preview-battlefield-status { font-size: .78rem; }
+
+/* Keyboard focus never lands under the pinned bar or behind the tower sheet. */
+body[data-screen="battle"] .preview-site-button,
+body[data-screen="battle"] .preview-map-pad {
+  scroll-margin-top: calc(var(--aegis-battle-bar-height, 6rem) + .5rem);
+}
+
+body[data-screen="battle"][data-tower-menu="open"] .preview-site-button {
+  scroll-margin-bottom: calc(var(--aegis-battle-sheet, 0px) + 1rem);
+}
+
+/* --------------------------------------------------------- narrow viewports */
+
+@media (max-width: 56rem) {
+  body[data-screen="battle"] {
+    --aegis-battle-stage: auto;
+    --aegis-battle-sheet: min(46vh, 25rem);
+  }
+
+  body[data-screen="battle"] .preview-command-bar {
+    top: max(0px, env(safe-area-inset-top));
+    padding: .25rem .3rem;
+  }
+
+  body[data-screen="battle"] .preview-command-bar .preview-readout {
+    flex: 1 1 3.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: .2rem .3rem;
+  }
+
+  body[data-screen="battle"] .preview-command-bar .preview-readout span { font-size: .56rem; }
+  body[data-screen="battle"] .preview-command-bar .preview-readout output { font-size: .95rem; }
+  body[data-screen="battle"] .preview-command-bar .preview-actions { flex: 1 1 100%; }
+  body[data-screen="battle"] .preview-command-bar .preview-actions button { flex: 1 1 auto; }
+
+  /* The map stays pinned beneath the bar, so build sites never sit under the
+     tower sheet no matter how far the page below is scrolled. The offset is the
+     measured height of the pinned bar, published by the controller. */
+  body[data-screen="battle"] .preview-battlefield-stage {
+    position: sticky;
+    top: calc(var(--aegis-battle-bar-height, 6rem) + .3rem);
+    z-index: 3;
+    display: block;
+    border-radius: .65rem;
+    background: var(--preview-bg, #050505);
+  }
+
+  body[data-screen="battle"] .preview-title { display: none; }
+  body[data-screen="battle"] .preview-battlefield-heading p { display: none; }
+  body[data-screen="battle"] .preview-site-picker-heading p { display: none; }
+
+  body[data-screen="battle"] #previewBattlefield {
+    block-size: auto;
+    max-inline-size: 100%;
+    aspect-ratio: 8 / 5;
+  }
+
+  body[data-screen="battle"] #previewStorePanel {
+    position: fixed;
+    inset: auto max(.4rem, env(safe-area-inset-right)) max(.4rem, env(safe-area-inset-bottom))
+      max(.4rem, env(safe-area-inset-left));
+    z-index: 8;
+    flex: none;
+    inline-size: auto;
+    max-inline-size: none;
+    max-block-size: var(--aegis-battle-sheet);
+  }
+
+  /* The sheet floats over the page, so the page keeps room to scroll every
+     build-site control out from under it. */
+  body[data-screen="battle"][data-tower-menu="open"] .preview-battle-region {
+    padding-bottom: calc(var(--aegis-battle-sheet) + 1rem);
+  }
+
+  body[data-screen="battle"] .preview-site-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 30rem) {
+  body[data-screen="battle"] .preview-warning { font-size: .7rem; }
+  body[data-screen="battle"] .preview-site-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body[data-screen="battle"] .preview-command-bar { transition: none; }
+}
+
+@media (forced-colors: active) {
+  body[data-screen="battle"] .preview-command-bar,
+  body[data-screen="battle"] #previewStorePanel {
+    border: 1px solid CanvasText;
+    background: Canvas;
+    box-shadow: none;
+    forced-color-adjust: none;
+  }
+
+  .preview-coverage-arc { stroke: Highlight; }
+}

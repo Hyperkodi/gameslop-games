@@ -601,3 +601,253 @@ test("planning recomputes one canonical bucket and pause makes zero advanceTick 
   assert.deepEqual(calls.at(-1).commands.map((command) => command.type), ["sell"]);
   assert.equal(session.state.tick, 2);
 });
+
+/* ------------------------------------------------- tower firing animation */
+
+const M01_PADS = Object.freeze([
+  ["p01", 14000, 38000], ["p02", 62000, 34000], ["p03", 30000, 58000],
+  ["p04", 66000, 58000], ["p05", 62000, 90000], ["p06", 82000, 90000],
+  ["p07", 102000, 90000], ["p08", 98000, 54000], ["p09", 126000, 22000],
+  ["p10", 146000, 54000],
+]);
+
+function m01PadRuntime() {
+  return fixtureRuntime(null, function (content, presentation) {
+    content.maps.m01.pads = M01_PADS.map(function (pad, index) {
+      return {
+        id: pad[0],
+        x: pad[1],
+        y: pad[2],
+        selectionOrder: index,
+        intent: index === 3 || index === 7 ? "double-pass" : "mid",
+        declaredQuality: index === 3 || index === 7 ? "strong" : "standard",
+        claimedRouteIds: ["route.main"],
+      };
+    });
+    content.defenses.shortreach = {
+      id: "shortreach",
+      nameKey: "defense.shortreach.name",
+      roleKey: "defense.shortreach.role",
+      weaknessKey: "defense.shortreach.weakness",
+      targetKinds: ["ground"],
+      allowedTargetPolicyIds: ["FRONT"],
+      defaultTargetPolicyId: "FRONT",
+      levels: [{
+        purchase: { kind: "build", costAether: 40 },
+        rangeWorldUnits: 20000,
+        behaviors: [{
+          id: "shot",
+          contractId: "direct",
+          parameters: { baseDamage: 4000, cooldownMs: 500, consecutiveHitCounter: null },
+        }],
+      }],
+    };
+    presentation.strings.push(
+      { key: "defense.shortreach.name", value: "Short Reach", placeholders: [] },
+      { key: "defense.shortreach.role", value: "Close guard.", placeholders: [] },
+      { key: "defense.shortreach.weakness", value: "Short reach.", placeholders: [] }
+    );
+  });
+}
+
+/* One sentinel on p02 whose kernel cooldown timer is the only animation input. */
+function towerState(remainingUnits, tick) {
+  return frozen({
+    missionId: "m01",
+    tick: tick === undefined ? 0 : tick,
+    routes: [{ id: "route.main", length: 260000 }],
+    management: {
+      towers: [{ id: 3, padId: "p02", defenseId: "sentinel", level: 1, investedAether: 60 }],
+    },
+    timers: remainingUnits === null ? [] : [{
+      towerRuntimeId: 3,
+      createdTick: 0,
+      defenseId: "sentinel",
+      level: 1,
+      behaviorStates: [{
+        behaviorId: "shot",
+        dispatchId: "direct.v1",
+        index: 0,
+        state: {},
+        timer: { remainingUnits: remainingUnits },
+      }],
+    }],
+    enemies: [],
+  });
+}
+
+function towerFrame(state, options) {
+  return PreviewController.battlefieldView(
+    fixtureRuntime(), state, null, options || {}
+  ).pads[1].tower.frameName;
+}
+
+test("a tower pose follows the kernel attack cooldown, not a free-running frame counter", () => {
+  /* Sentinel level 1 cooldown is 450 authored ms, so 27000 canonical time units. */
+  assert.equal(towerFrame(towerState(27000)), "active",
+    "a cooldown that has just reset means the tower fired this tick");
+  assert.equal(towerFrame(towerState(26000)), "active");
+  assert.equal(towerFrame(towerState(20000)), "recover",
+    "the recovery pose follows the firing pose before the tower settles");
+  assert.match(towerFrame(towerState(12000)), /^idle[AB]$/,
+    "a tower that fired long ago returns to its idle cycle");
+  assert.match(towerFrame(towerState(0)), /^idle[AB]$/,
+    "a ready tower with no cooldown left is idle, never mid-attack");
+  assert.match(towerFrame(towerState(null)), /^idle[AB]$/,
+    "a projection without kernel timers still renders a stable idle pose");
+  assert.equal(towerFrame(towerState(12000)), towerFrame(towerState(12000, 0)),
+    "the same canonical facts always produce the same pose");
+});
+
+test("idle towers alternate slowly and stagger so they never pulse in unison", () => {
+  const frames = [];
+  for (let tick = 0; tick < 240; tick += 1) frames.push(towerFrame(towerState(0, tick)));
+  const flips = frames.filter(function (frame, index) {
+    return index > 0 && frame !== frames[index - 1];
+  }).length;
+  assert.ok(flips >= 4 && flips <= 8,
+    "an idle pose holds for roughly two thirds of a second at sixty ticks per second: " + flips);
+  assert.deepEqual(Array.from(new Set(frames)).sort(), ["idleA", "idleB"]);
+
+  const runtime = fixtureRuntime();
+  const state = frozen({
+    missionId: "m01",
+    tick: 0,
+    routes: [{ id: "route.main", length: 260000 }],
+    management: {
+      towers: [
+        { id: 1, padId: "p01", defenseId: "sentinel", level: 1 },
+        { id: 2, padId: "p02", defenseId: "sentinel", level: 1 },
+      ],
+    },
+    timers: [],
+    enemies: [],
+  });
+  const view = PreviewController.battlefieldView(runtime, state, null, {});
+  assert.notEqual(view.pads[0].tower.frameName, view.pads[1].tower.frameName,
+    "neighbouring towers must not share an idle phase");
+});
+
+test("reduced motion holds one stable tower frame at every tick and cooldown", () => {
+  const options = { reduceMotion: true };
+  const frames = [
+    towerFrame(towerState(27000, 0), options),
+    towerFrame(towerState(20000, 11), options),
+    towerFrame(towerState(0, 97), options),
+    towerFrame(towerState(0, 512), options),
+  ];
+  assert.deepEqual(Array.from(new Set(frames)), ["active"]);
+});
+
+/* --------------------------------------------- build-site coverage preview */
+
+test("selecting a site projects its exact range circle and the road arcs it can affect", () => {
+  const runtime = m01PadRuntime();
+  const state = frozen({
+    missionId: "m01",
+    tick: 0,
+    loadoutIds: ["sentinel", "chronos"],
+    routes: [{ id: "route.main", length: 260000 }],
+    management: { aether: 150, towers: [] },
+    timers: [],
+    enemies: [],
+  });
+  const selection = PreviewController.battlefieldView(runtime, state, "p04", {
+    previewDefenseId: "sentinel",
+  }).selection;
+  assert.equal(selection.padId, "p04");
+  assert.deepEqual([selection.x, selection.y], [66000, 58000]);
+  assert.equal(selection.range, 22000, "the circle is the previewed tower's exact compiled range");
+  assert.equal(selection.windowCount, 2);
+  assert.equal(selection.hint, "Covers the road twice");
+  assert.equal(selection.arcs.length, 2, "each covered stretch of road is drawn separately");
+  selection.arcs.forEach(function (arc) {
+    assert.equal(arc.routeId, "route.main");
+    assert.ok(arc.points.length >= 2);
+    arc.points.forEach(function (point) {
+      assert.ok(Math.hypot(point.x - 66000, point.y - 58000) <= 22001,
+        "a highlighted arc point can never fall outside the drawn range circle");
+    });
+  });
+
+  const single = PreviewController.battlefieldView(runtime, state, "p05", {
+    previewDefenseId: "sentinel",
+  }).selection;
+  assert.equal(single.windowCount, 1);
+  assert.equal(single.hint, "Covers one stretch of road");
+  assert.equal(single.arcs.length, 1);
+
+  assert.equal(PreviewController.battlefieldView(runtime, state, null, {}).selection, null);
+});
+
+test("every build site carries a plain-language coverage hint and never the authoring answer key", () => {
+  const runtime = m01PadRuntime();
+  const state = frozen({
+    missionId: "m01",
+    tick: 0,
+    loadoutIds: ["sentinel", "chronos"],
+    routes: [{ id: "route.main", length: 260000 }],
+    management: { aether: 150, towers: [] },
+    timers: [],
+    enemies: [],
+  });
+  const view = PreviewController.battlefieldView(runtime, state, null, {
+    previewDefenseId: "sentinel",
+  });
+  assert.deepEqual(view.pads.map(function (pad) { return pad.coverage.windowCount; }),
+    [1, 1, 1, 2, 1, 1, 1, 2, 1, 1],
+    "the two double-pass pockets are the only sites the compiled route re-enters");
+  assert.deepEqual(view.pads.map(function (pad) { return pad.coverage.hint; }), [
+    "Covers one stretch of road", "Covers one stretch of road", "Covers one stretch of road",
+    "Covers the road twice", "Covers one stretch of road", "Covers one stretch of road",
+    "Covers one stretch of road", "Covers the road twice", "Covers one stretch of road",
+    "Covers one stretch of road",
+  ]);
+  view.pads.forEach(function (pad) {
+    assert.equal(Object.hasOwn(pad.coverage, "exposure"), false);
+    assert.equal(Object.hasOwn(pad.coverage, "quality"), false);
+    assert.equal(Object.hasOwn(pad.coverage, "column"), false);
+    assert.doesNotMatch(pad.coverage.hint, /standard|strong|power|band|exposure|tick/i);
+  });
+
+  /* Twenty-world-unit reach never re-enters the Mission 1 route, so the hint moves with range. */
+  const shortReach = PreviewController.battlefieldView(runtime, state, null,
+    { previewDefenseId: "shortreach" });
+  assert.deepEqual(shortReach.pads.map(function (pad) { return pad.coverage.windowCount; }),
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
+});
+
+test("an occupied site previews the built tower's own reach", () => {
+  const runtime = m01PadRuntime();
+  const state = frozen({
+    missionId: "m01",
+    tick: 0,
+    loadoutIds: ["sentinel", "chronos"],
+    routes: [{ id: "route.main", length: 260000 }],
+    management: {
+      aether: 30,
+      towers: [{ id: 1, padId: "p04", defenseId: "chronos", level: 1, investedAether: 75 }],
+    },
+    timers: [],
+    enemies: [],
+  });
+  const view = PreviewController.battlefieldView(runtime, state, "p04", {
+    previewDefenseId: "sentinel",
+  });
+  assert.equal(view.selection.range, 24000, "a built tower previews its own range, not the menu's");
+  assert.equal(view.selection.windowCount, 2);
+  assert.equal(view.pads[3].coverage.windowCount, 2);
+});
+
+test("no em dash reaches any battle-screen string this lane owns", () => {
+  const emDash = String.fromCharCode(0x2014);
+  [
+    path.join(__dirname, "..", "js", "delivery", "preview-controller.js"),
+    path.join(__dirname, "..", "js", "presentation", "sprite-atlas.js"),
+    path.join(__dirname, "..", "css", "aegis-shell.css"),
+    path.join(__dirname, "..", "css", "aegis-art-system.css"),
+    __filename,
+  ].forEach(function (file) {
+    assert.equal(fs.readFileSync(file, "utf8").includes(emDash), false, file);
+  });
+});

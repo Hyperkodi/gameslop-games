@@ -133,6 +133,18 @@
   const ROAD_GEOMETRY_CACHE = new WeakMap();
   const M01_ART_CACHE = new WeakMap();
   const ACT_I_ART_CACHE = new WeakMap();
+  const COVERAGE_CACHE = new WeakMap();
+  /* Presentation cadence only. Every pose boundary below is measured against the
+     authoritative cooldown the kernel already publishes, never against frames. */
+  const TOWER_ACTIVE_MS = 150;
+  const TOWER_RECOVER_MS = 250;
+  const TOWER_IDLE_HOLD_TICKS = 40;
+  const TOWER_IDLE_STAGGER_TICKS = 13;
+  const TOWER_IDLE_FRAMES = Object.freeze(["idleA", "idleB"]);
+  const TOWER_REDUCED_MOTION_FRAME = "active";
+  const ENEMY_WALK_FRAMES = Object.freeze(["runA", "runB", "runC", "runB"]);
+  const ENEMY_WALK_HOLD_TICKS = 8;
+  const ENEMY_WALK_STAGGER_TICKS = 5;
 
   function own(value, key) {
     return Object.prototype.hasOwnProperty.call(value, key);
@@ -287,7 +299,7 @@
     const placeholders = Array.isArray(record.placeholders) ? record.placeholders : [];
     placeholders.forEach(function (placeholder) {
       const value = values[placeholder.name];
-      output = output.split("{" + placeholder.name + "}").join(value === null || value === undefined ? "—" : String(value));
+      output = output.split("{" + placeholder.name + "}").join(value === null || value === undefined ? "-" : String(value));
     });
     return output;
   }
@@ -411,6 +423,249 @@
     return segments;
   }
 
+  /* ---------------------------------------------------- coverage preview
+
+     Spec 6.6 asks that selecting a site or previewing a build show the exact
+     range circle and the road arc(s) that reach can affect. The windows below
+     are the same merged coverage intervals the authoring analyzer computes, but
+     they are derived here from the compiled route polyline at runtime and are
+     never told to the player as bands, exposure figures, or quality labels. */
+
+  /* Coverage walks the polyline in route-distance space, so each segment carries
+     its own cumulative start recomputed from the compiled points themselves. */
+  function coverageSegments(segments) {
+    let start = 0;
+    return segments.map(function (segment) {
+      const length = Math.hypot(segment.toX - segment.fromX, segment.toY - segment.fromY);
+      const record = {
+        fromX: segment.fromX,
+        fromY: segment.fromY,
+        toX: segment.toX,
+        toY: segment.toY,
+        start: start,
+        length: length,
+      };
+      start += length;
+      return record;
+    });
+  }
+
+  function segmentCoverageWindow(segment, x, y, range) {
+    const deltaX = segment.toX - segment.fromX;
+    const deltaY = segment.toY - segment.fromY;
+    const length = segment.length;
+    if (!(length > 0)) return null;
+    const unitX = deltaX / length;
+    const unitY = deltaY / length;
+    const offsetX = x - segment.fromX;
+    const offsetY = y - segment.fromY;
+    const along = offsetX * unitX + offsetY * unitY;
+    const perpendicular = Math.abs(offsetX * unitY - offsetY * unitX);
+    if (perpendicular > range) return null;
+    const half = Math.sqrt(Math.max(0, range * range - perpendicular * perpendicular));
+    const start = Math.max(0, along - half);
+    const end = Math.min(length, along + half);
+    if (end <= start) return null;
+    return { start: segment.start + start, end: segment.start + end };
+  }
+
+  function mergedCoverageWindows(segments, x, y, range) {
+    const raw = [];
+    segments.forEach(function (segment) {
+      const window = segmentCoverageWindow(segment, x, y, range);
+      if (window) raw.push(window);
+    });
+    raw.sort(function (left, right) { return left.start - right.start; });
+    const merged = [];
+    raw.forEach(function (candidate) {
+      const current = merged[merged.length - 1];
+      if (current && candidate.start <= current.end) {
+        if (candidate.end > current.end) current.end = candidate.end;
+        return;
+      }
+      merged.push({ start: candidate.start, end: candidate.end });
+    });
+    return merged;
+  }
+
+  function coveragePointAt(segments, distance) {
+    for (let index = 0; index < segments.length; index += 1) {
+      const segment = segments[index];
+      if (!(segment.length > 0)) continue;
+      if (distance <= segment.start + segment.length || index === segments.length - 1) {
+        const local = Math.max(0, Math.min(segment.length, distance - segment.start));
+        return {
+          x: Math.round(segment.fromX + (segment.toX - segment.fromX) * local / segment.length),
+          y: Math.round(segment.fromY + (segment.toY - segment.fromY) * local / segment.length),
+        };
+      }
+    }
+    return null;
+  }
+
+  function coverageArcPoints(segments, window) {
+    const points = [];
+    const push = function (point) {
+      if (!point) return;
+      const previous = points[points.length - 1];
+      if (previous && previous.x === point.x && previous.y === point.y) return;
+      points.push(point);
+    };
+    push(coveragePointAt(segments, window.start));
+    segments.forEach(function (segment) {
+      const joint = segment.start + segment.length;
+      if (joint > window.start && joint < window.end) push({ x: segment.toX, y: segment.toY });
+    });
+    push(coveragePointAt(segments, window.end));
+    return points;
+  }
+
+  function coverageHint(routeCount, windowCount) {
+    if (windowCount <= 0) return "No road within reach";
+    if (routeCount > 1) {
+      return windowCount === routeCount
+        ? "Covers " + routeCount + " enemy paths"
+        : "Covers " + windowCount + " stretches across " + routeCount + " enemy paths";
+    }
+    if (windowCount === 1) return "Covers one stretch of road";
+    if (windowCount === 2) return "Covers the road twice";
+    return "Covers the road " + windowCount + " times";
+  }
+
+  function computePadCoverage(routes, x, y, range) {
+    const arcs = [];
+    let routeCount = 0;
+    routes.forEach(function (route) {
+      const windows = mergedCoverageWindows(route.segments, x, y, range);
+      if (windows.length) routeCount += 1;
+      windows.forEach(function (window) {
+        arcs.push({ routeId: route.id, points: coverageArcPoints(route.segments, window) });
+      });
+    });
+    return deepFreeze({
+      range: range,
+      windowCount: arcs.length,
+      hint: coverageHint(routeCount, arcs.length),
+      arcs: arcs,
+    });
+  }
+
+  function cachedPadCoverage(map, routes, pad, range) {
+    let entry = COVERAGE_CACHE.get(map);
+    if (!entry) {
+      entry = {
+        routes: routes.map(function (route) {
+          return { id: route.id, segments: coverageSegments(route.segments) };
+        }),
+        byPad: new Map(),
+      };
+      COVERAGE_CACHE.set(map, entry);
+    }
+    const key = pad.id + "@" + range;
+    let coverage = entry.byPad.get(key);
+    if (!coverage) {
+      coverage = computePadCoverage(entry.routes, pad.x, pad.y, range);
+      entry.byPad.set(key, coverage);
+    }
+    return coverage;
+  }
+
+  const EMPTY_COVERAGE = deepFreeze({
+    range: null,
+    windowCount: 0,
+    hint: "Select a tower to preview its reach",
+    arcs: [],
+  });
+
+  function levelRangeMilliUnits(runtime, defenseId) {
+    const defense = runtime.content.defenses[defenseId];
+    if (!defense || !Array.isArray(defense.levels) || !defense.levels.length) return null;
+    const range = defense.levels[0].rangeWorldUnits;
+    return Number.isFinite(range) ? range : null;
+  }
+
+  /* The reach a build site is previewed at: the tower being inspected in the
+     menu when there is one, otherwise the shortest reach the player could
+     actually place, so an empty site never over-promises. */
+  function previewRangeMilliUnits(runtime, state, previewDefenseId) {
+    if (previewDefenseId) {
+      const previewed = levelRangeMilliUnits(runtime, previewDefenseId);
+      if (previewed !== null) return previewed;
+    }
+    const loadoutIds = Array.isArray(state.loadoutIds) ? state.loadoutIds : [];
+    let shortest = null;
+    loadoutIds.forEach(function (defenseId) {
+      const range = levelRangeMilliUnits(runtime, defenseId);
+      if (range === null) return;
+      if (shortest === null || range < shortest) shortest = range;
+    });
+    return shortest;
+  }
+
+  /* ----------------------------------------------------- tower fire phase
+
+     A tower "just fired" when its authoritative attack cooldown has only just
+     been reloaded. `state.timers` carries the kernel's per-tower runtime record
+     and each cooldown behavior's remaining time units; the authored cooldown of
+     the same compiled behavior gives the full reload, so the elapsed reload is
+     an exact canonical quantity rather than an animation counter. */
+
+  function behaviorCooldownMs(behavior) {
+    const parameters = behavior && behavior.parameters;
+    if (!parameters) return null;
+    if (own(parameters, "cooldownMs") && parameters.cooldownMs) return parameters.cooldownMs;
+    if (own(parameters, "cadenceMs") && parameters.cadenceMs) return parameters.cadenceMs;
+    return null;
+  }
+
+  function towerFireState(runtime, state, tower, level) {
+    const runtimes = Array.isArray(state.timers) ? state.timers : null;
+    if (!runtimes || !level || !Array.isArray(level.behaviors)) return null;
+    const record = runtimes.find(function (candidate) {
+      return candidate && candidate.towerRuntimeId === tower.id;
+    });
+    if (!record || !Array.isArray(record.behaviorStates)) return null;
+    const ticksPerSecond = runtime.simulation.TICKS_PER_SECOND;
+    if (!Number.isFinite(ticksPerSecond) || ticksPerSecond <= 0) return null;
+    let nearest = null;
+    record.behaviorStates.forEach(function (behaviorState) {
+      const timer = behaviorState && behaviorState.timer;
+      const remaining = timer && timer.remainingUnits;
+      if (!Number.isFinite(remaining) || remaining <= 0) return;
+      const behavior = level.behaviors[behaviorState.index] ||
+        level.behaviors.find(function (candidate) { return candidate.id === behaviorState.behaviorId; });
+      const cooldownMs = behaviorCooldownMs(behavior);
+      if (!cooldownMs) return;
+      /* An external rate source can shorten or lengthen the scheduled reload, so
+         the reload actually in flight is never assumed shorter than what is left. */
+      const reloadUnits = Math.max(cooldownMs * ticksPerSecond, remaining);
+      const elapsedUnits = reloadUnits - remaining;
+      if (nearest === null || elapsedUnits < nearest.elapsedUnits) {
+        nearest = { elapsedUnits: elapsedUnits, reloadUnits: reloadUnits };
+      }
+    });
+    return nearest;
+  }
+
+  function towerFrameName(fire, tick, runtimeId, reduceMotion, ticksPerSecond) {
+    if (reduceMotion) return TOWER_REDUCED_MOTION_FRAME;
+    if (fire) {
+      const quarterReload = Math.floor(fire.reloadUnits / 4);
+      const activeUnits = Math.min(TOWER_ACTIVE_MS * ticksPerSecond, quarterReload);
+      const recoverUnits = Math.min(TOWER_RECOVER_MS * ticksPerSecond, quarterReload);
+      if (fire.elapsedUnits < activeUnits) return "active";
+      if (fire.elapsedUnits < activeUnits + recoverUnits) return "recover";
+    }
+    /* One whole hold per runtime id puts neighbouring towers on opposite poses,
+       and the coprime remainder moves each tower's flip instant off its
+       neighbour's, so a row of idle towers never breathes in unison. */
+    const id = Number.isFinite(runtimeId) ? Math.abs(Math.trunc(runtimeId)) : 0;
+    const offset = id * TOWER_IDLE_HOLD_TICKS +
+      (id * TOWER_IDLE_STAGGER_TICKS) % TOWER_IDLE_HOLD_TICKS;
+    const phase = Math.floor((tick + offset) / TOWER_IDLE_HOLD_TICKS);
+    return TOWER_IDLE_FRAMES[((phase % 2) + 2) % 2];
+  }
+
   function shortSymbol(id) {
     return String(id).split(/[.\-_]/).filter(Boolean).map(function (part) {
       return part.charAt(0);
@@ -443,8 +698,10 @@
     };
   }
 
-  function battlefieldView(runtimeInput, state, selectedPadId) {
+  function battlefieldView(runtimeInput, state, selectedPadId, viewOptions) {
     const runtime = assertRuntime(runtimeInput);
+    const options = viewOptions || {};
+    const reduceMotion = options.reduceMotion === true;
     if (!state || typeof state !== "object" || !state.management || !Array.isArray(state.management.towers) ||
         !Array.isArray(state.enemies) || !Array.isArray(state.routes)) {
       throw new TypeError("Preview battlefield requires an authoritative kernel state");
@@ -488,6 +745,8 @@
     });
     const towerByPad = Object.create(null);
     state.management.towers.forEach(function (tower) { towerByPad[tower.padId] = tower; });
+    const menuRange = previewRangeMilliUnits(runtime, state, options.previewDefenseId);
+    let selection = null;
     const pads = map.pads.slice().sort(function (left, right) {
       const leftOrder = Number.isSafeInteger(left.selectionOrder) ? left.selectionOrder : Number.MAX_SAFE_INTEGER;
       const rightOrder = Number.isSafeInteger(right.selectionOrder) ? right.selectionOrder : Number.MAX_SAFE_INTEGER;
@@ -506,6 +765,13 @@
           name: view.name,
           range: level.rangeWorldUnits,
           symbol: shortSymbol(tower.defenseId),
+          frameName: towerFrameName(
+            towerFireState(runtime, state, tower, level),
+            state.tick,
+            tower.id,
+            reduceMotion,
+            runtime.simulation.TICKS_PER_SECOND
+          ),
           asset: atlas ? {
             kind: "atlas",
             href: atlas.href,
@@ -514,13 +780,34 @@
           } : null,
         };
       }
+      const reach = towerView ? towerView.range : menuRange;
+      const coverage = Number.isFinite(reach) && reach > 0
+        ? cachedPadCoverage(map, routes, pad, reach)
+        : EMPTY_COVERAGE;
+      const selected = selectedPadId === pad.id;
+      if (selected && coverage !== EMPTY_COVERAGE) {
+        selection = {
+          padId: pad.id,
+          x: pad.x,
+          y: pad.y,
+          range: coverage.range,
+          windowCount: coverage.windowCount,
+          hint: coverage.hint,
+          arcs: coverage.arcs,
+        };
+      }
       return {
         id: pad.id,
         x: pad.x,
         y: pad.y,
-        selected: selectedPadId === pad.id,
+        selected: selected,
         foundation: !tower && missionArt ? SHARED_FOUNDATION_ASSET : null,
         tower: towerView,
+        coverage: {
+          range: coverage.range,
+          windowCount: coverage.windowCount,
+          hint: coverage.hint,
+        },
       };
     });
     const strings = presentationStrings(runtime.presentation);
@@ -582,6 +869,7 @@
       routes: routes,
       anchors: anchors,
       pads: pads,
+      selection: selection,
       enemies: enemies,
     });
   }
@@ -730,16 +1018,15 @@
     card.appendChild(heading);
   }
 
-  function towerAnimationFrame(asset, level, tick, runtimeId, reduceMotion) {
-    const frameNames = ["idleA", "idleB", "active", "recover"];
-    const index = reduceMotion ? 2 : Math.floor((tick + runtimeId * 7) / 9) % frameNames.length;
-    return SpriteAtlas.towerFrame(asset.metadata, level, frameNames[index]);
-  }
-
+  /* The walk cycle reads as walking, not strobing: one pose is held for roughly
+     an eighth of a second at the 60 Hz simulation rate, staggered per runtime so
+     a column of hostiles does not march in lockstep. */
   function enemyAnimationFrame(asset, tick, runtimeId, reduceMotion) {
-    const frameNames = ["runA", "runB", "runC", "runB"];
-    const index = reduceMotion ? 0 : Math.floor((tick + runtimeId * 5) / 7) % frameNames.length;
-    return SpriteAtlas.enemyFrame(asset.metadata, reduceMotion ? "idleB" : frameNames[index]);
+    const index = reduceMotion
+      ? 0
+      : Math.floor((tick + runtimeId * ENEMY_WALK_STAGGER_TICKS) / ENEMY_WALK_HOLD_TICKS) %
+        ENEMY_WALK_FRAMES.length;
+    return SpriteAtlas.enemyFrame(asset.metadata, reduceMotion ? "idleB" : ENEMY_WALK_FRAMES[index]);
   }
 
   function pointsPath(points) {
@@ -1210,6 +1497,10 @@
     let session = null;
     let selectedPadId = null;
     let selectedPadFocusSource = "map";
+    /* Which tower the tower menu is currently previewing. It only steers the
+       range circle, the covered-road highlight, and the plain-language coverage
+       hint; it never touches a command or the authoritative state. */
+    let previewDefenseId = null;
     let timer = null;
     let visualTicksSinceRender = 0;
     let manuallyPaused = false;
@@ -1350,12 +1641,41 @@
       else session.resume();
     }
 
+    /* The menu opens already previewing something buildable, so an empty site
+       shows a real range circle and covered road the moment it is chosen. */
+    function defaultPreviewDefenseId(state, padId) {
+      if (state.management.towers.some(function (tower) { return tower.padId === padId; })) return null;
+      const loadoutIds = Array.isArray(state.loadoutIds) ? state.loadoutIds : [];
+      const affordable = loadoutIds.find(function (defenseId) {
+        return defenseView(runtime, defenseId, 1).costAether <= state.management.aether;
+      });
+      return affordable || loadoutIds[0] || null;
+    }
+
     function selectPad(padId, message, focusSource) {
       selectedPadId = padId;
       selectedPadFocusSource = focusSource || "map";
+      previewDefenseId = session ? defaultPreviewDefenseId(session.state, padId) : null;
       setFeedback(message || "Build site selected. Battle is paused while the tower menu is open.");
       render();
-      ui.storeClose.focus();
+      revealBattlefield();
+      focusWithoutScroll(ui.storeClose);
+    }
+
+    /* Previewing redraws the menu, so keyboard focus is put back on the same
+       tower's Build control instead of falling out to the document. */
+    function previewDefense(defenseId) {
+      if (previewDefenseId === defenseId) return;
+      const active = documentObject.activeElement;
+      const focusedCard = active && typeof active.closest === "function"
+        ? active.closest("[data-build-defense-id]") : null;
+      const focusedDefenseId = focusedCard ? focusedCard.getAttribute("data-build-defense-id") : null;
+      previewDefenseId = defenseId;
+      render();
+      if (!focusedDefenseId) return;
+      const card = documentObject.querySelector('[data-build-defense-id="' + focusedDefenseId + '"]');
+      const control = card && card.querySelector("button");
+      if (control) control.focus();
     }
 
     function closeStore() {
@@ -1364,6 +1684,7 @@
       const returnSource = selectedPadFocusSource;
       selectedPadId = null;
       selectedPadFocusSource = "map";
+      previewDefenseId = null;
       syncPauseState();
       setFeedback(manuallyPaused
         ? "Tower menu closed; the battle remains paused."
@@ -1391,7 +1712,7 @@
         setFeedback(String(error && error.message || error));
       }
       render();
-      if (selectedPadId) ui.storeClose.focus();
+      if (selectedPadId) focusWithoutScroll(ui.storeClose);
     }
 
     function renderSiteSelector(view, state) {
@@ -1405,16 +1726,21 @@
         const status = pad.tower
           ? pad.tower.name + " · Level " + pad.tower.level
           : (canAffordBuild ? "Empty" : "Empty · save more Aether");
+        /* Plain-language geometry only: how much road this reach touches, never
+           the authored intent, quality, or exposure that decided it. */
+        const reach = pad.coverage.hint;
         button.type = "button";
         button.setAttribute("data-site-pad-id", pad.id);
         button.setAttribute("data-site-number", String(index + 1));
         button.setAttribute("aria-pressed", String(pad.selected));
-        button.setAttribute("aria-label", siteName + ". " + status + ". Open tower menu.");
+        button.setAttribute("aria-label", siteName + ". " + status + ". " + reach + ". Open tower menu.");
         if (pad.selected) button.classList.add("is-selected");
         if (pad.tower) button.classList.add("is-occupied");
+        if (pad.coverage.windowCount > 1) button.classList.add("is-multi-cover");
         if (!pad.tower && !canAffordBuild) button.classList.add("is-unaffordable");
         button.appendChild(element(documentObject, "span", "preview-site-name", siteName));
         button.appendChild(element(documentObject, "span", "preview-site-state", status));
+        button.appendChild(element(documentObject, "span", "preview-site-reach", reach));
         button.addEventListener("click", function () {
           selectPad(
             pad.id,
@@ -1430,7 +1756,10 @@
     }
 
     function renderBattlefield(state) {
-      const view = battlefieldView(runtime, state, selectedPadId);
+      const view = battlefieldView(runtime, state, selectedPadId, {
+        reduceMotion: reduceMotion,
+        previewDefenseId: previewDefenseId,
+      });
       const svg = svgElement(documentObject, "svg", {
         class: "preview-battlefield-svg",
         viewBox: [view.viewBox.minX, view.viewBox.minY, view.viewBox.width, view.viewBox.height].join(" "),
@@ -1467,14 +1796,32 @@
         appendFallbackRoad(documentObject, svg, view.roadGeometry);
       }
 
-      const selected = view.pads.find(function (pad) { return pad.selected && pad.tower; });
-      if (selected) {
-        svg.appendChild(svgElement(documentObject, "circle", {
+      /* Spec 6.6: the selected site or previewed build shows its exact reach and
+         the stretches of road that reach can affect. Nothing here names a band,
+         a quality, a grid cell, or an exposure figure. */
+      if (view.selection) {
+        const coverageLayer = svgElement(documentObject, "g", {
+          class: "preview-coverage-layer",
+          "aria-hidden": "true",
+        });
+        view.selection.arcs.forEach(function (arc, index) {
+          coverageLayer.appendChild(svgElement(documentObject, "path", {
+            class: "preview-coverage-arc",
+            d: pointsPath(arc.points),
+            fill: "none",
+            "stroke-width": view.roadWidth,
+            "stroke-linecap": "round",
+            "stroke-linejoin": "round",
+            "data-coverage-index": String(index),
+          }));
+        });
+        coverageLayer.appendChild(svgElement(documentObject, "circle", {
           class: "preview-tower-range",
-          cx: selected.x,
-          cy: selected.y,
-          r: selected.tower.range,
+          cx: view.selection.x,
+          cy: view.selection.y,
+          r: view.selection.range,
         }));
+        svg.appendChild(coverageLayer);
       }
 
       const anchorLayer = svgElement(documentObject, "g", { class: "preview-anchor-layer", "aria-hidden": "true" });
@@ -1534,12 +1881,10 @@
           }));
         }
         if (pad.tower && pad.tower.asset && pad.tower.asset.kind === "atlas") {
-          const frame = towerAnimationFrame(
-            pad.tower.asset,
+          const frame = SpriteAtlas.towerFrame(
+            pad.tower.asset.metadata,
             pad.tower.level,
-            view.tick,
-            pad.tower.id,
-            reduceMotion
+            pad.tower.frameName
           );
           group.appendChild(atlasSprite(documentObject, pad.tower.asset, frame, {
             class: "preview-tower-sprite",
@@ -1650,15 +1995,45 @@
         ? "No enemies on the road · click a build site to deploy or manage a tower."
         : view.enemies.length + (view.enemies.length === 1 ? " enemy" : " enemies") +
           " on the road · defend the gate.";
+      return view;
     }
 
-    function renderStore(state, mission) {
+    /* Secondary reading stays reachable but never pushes the name, the exact
+       cost, and the Build control off the visible part of the menu. */
+    function appendTowerDetails(card, rows) {
+      const details = element(documentObject, "details", "preview-card-details");
+      details.appendChild(element(documentObject, "summary", "", "Tower details"));
+      rows.forEach(function (row) {
+        details.appendChild(element(documentObject, "p", row[0], row[1]));
+      });
+      card.appendChild(details);
+    }
+
+    function setTowerMenuFlag(open) {
+      const body = documentObject.body;
+      if (body && body.dataset) body.dataset.towerMenu = open ? "open" : "closed";
+    }
+
+    function renderStore(state, mission, view) {
       if (!selectedPadId) {
         ui.storePanel.hidden = true;
+        setTowerMenuFlag(false);
         replaceChildren(ui.store, [element(documentObject, "p", "preview-empty", "Select a build site to open the tower menu.")]);
         return;
       }
       ui.storePanel.hidden = false;
+      setTowerMenuFlag(true);
+      const selectedIndex = view.pads.findIndex(function (pad) { return pad.id === selectedPadId; });
+      const siteName = selectedIndex === -1 ? "Selected site" : "Site " + (selectedIndex + 1);
+      /* Spec 15.2: the Aether bank and the selected-site context stay readable at
+         every viewport, so the sheet repeats them instead of relying on scroll. */
+      const context = element(documentObject, "p", "preview-store-context");
+      context.appendChild(element(documentObject, "span", "preview-store-site", siteName));
+      context.appendChild(element(documentObject, "span", "preview-store-bank",
+        state.management.aether + " Aether available"));
+      if (view.selection) {
+        context.appendChild(element(documentObject, "span", "preview-store-reach", view.selection.hint));
+      }
       const commandWaiting = state.management.phase === "wave" && session.pendingCommandCount > 0;
       const managementLocked = manuallyPaused || fatalPaused || commandWaiting;
       const occupied = state.management.towers.find(function (tower) { return tower.padId === selectedPadId; });
@@ -1674,12 +2049,14 @@
           view.name + " · LEVEL " + occupied.level,
           "manage-" + occupied.id + "-l" + occupied.level
         );
-        card.appendChild(element(documentObject, "p", "", view.description));
         card.appendChild(element(documentObject, "p", "preview-stats",
           "Damage " + view.damage + " · " + attackRateLabel(view) + " · Range " + view.range +
           " · Targets " + view.targetKinds.join(" + ")));
-        card.appendChild(element(documentObject, "p", "preview-muted", "Role: " + view.role));
-        card.appendChild(element(documentObject, "p", "preview-muted", "Weakness: " + view.weakness));
+        appendTowerDetails(card, [
+          ["", view.description],
+          ["preview-muted", "Role: " + view.role],
+          ["preview-muted", "Weakness: " + view.weakness],
+        ]);
         const next = occupied.level < view.levelCount ? defenseView(runtime, occupied.defenseId, occupied.level + 1) : null;
         if (next) {
           const delta = element(documentObject, "section", "preview-upgrade-delta");
@@ -1691,7 +2068,7 @@
           delta.appendChild(element(documentObject, "p", "", next.description));
           card.appendChild(delta);
         }
-        const actions = element(documentObject, "div", "preview-actions");
+        const actions = element(documentObject, "div", "preview-actions preview-card-actions");
         const upgrade = element(documentObject, "button", "", next
           ? "Upgrade for " + next.costAether + " Aether" : "Maximum level");
         upgrade.type = "button";
@@ -1740,25 +2117,21 @@
           card.appendChild(element(documentObject, "p", upgradeNeed > 0 ? "preview-need" : "preview-ready",
             upgradeNeed > 0 ? "NEED " + upgradeNeed + " MORE AETHER TO UPGRADE" : "UPGRADE AVAILABLE"));
         }
-        const nodes = [card];
+        const nodes = [context, card];
         if (commandWaiting) nodes.push(element(documentObject, "p", "preview-ready",
-          "ORDER READY — CLOSE THE TOWER MENU TO APPLY IT"));
+          "ORDER READY. CLOSE THE TOWER MENU TO APPLY IT"));
         replaceChildren(ui.store, nodes);
         return;
       }
 
-      const heading = element(documentObject, "h3", "", "CHOOSE A TOWER");
+      const heading = element(documentObject, "p", "preview-store-heading", "Choose a tower for " + siteName);
       const grid = element(documentObject, "div", "preview-card-grid");
       state.loadoutIds.forEach(function (defenseId) {
         const view = defenseView(runtime, defenseId, 1);
-        const card = element(documentObject, "article", "preview-card");
+        const card = element(documentObject, "article", "preview-card preview-build-card");
+        card.setAttribute("data-build-defense-id", defenseId);
+        if (defenseId === previewDefenseId) card.classList.add("is-previewed");
         appendTowerCardHeading(documentObject, card, view, "h4", view.name, "build-" + defenseId);
-        card.appendChild(element(documentObject, "p", "preview-role", "Role: " + view.role));
-        card.appendChild(element(documentObject, "p", "", view.description));
-        card.appendChild(element(documentObject, "p", "preview-stats",
-          "Damage " + view.damage + " · " + attackRateLabel(view) + " · Range " + view.range +
-          " · Targets " + view.targetKinds.join(" + ")));
-        card.appendChild(element(documentObject, "p", "preview-muted", "Weakness: " + view.weakness));
         const build = element(documentObject, "button", "", "Build · " + view.costAether + " Aether");
         build.type = "button";
         const need = view.costAether - state.management.aether;
@@ -1771,15 +2144,46 @@
         build.addEventListener("click", function () {
           issue({ type: "build", padId: selectedPadId, defenseId: defenseId }, "Tower built.");
         });
-        card.appendChild(build);
-        card.appendChild(element(documentObject, "p", need > 0 ? "preview-need" : "preview-ready",
-          need > 0 ? "NEED " + need + " MORE AETHER" : "AVAILABLE"));
+        const actions = element(documentObject, "div", "preview-card-actions");
+        actions.appendChild(build);
+        actions.appendChild(element(documentObject, "span", need > 0 ? "preview-need" : "preview-ready",
+          need > 0 ? "Need " + need + " more Aether" : "Affordable"));
+        card.appendChild(actions);
+        card.appendChild(element(documentObject, "p", "preview-stats",
+          "Damage " + view.damage + " · " + attackRateLabel(view) + " · Range " + view.range +
+          " · Targets " + view.targetKinds.join(" + ")));
+        appendTowerDetails(card, [
+          ["preview-role", "Role: " + view.role],
+          ["", view.description],
+          ["preview-muted", "Weakness: " + view.weakness],
+        ]);
+        /* Hovering or tabbing a tower previews its exact reach on the map. It
+           moves the range circle and the covered-road highlight only. */
+        ["mouseenter", "focusin"].forEach(function (eventName) {
+          card.addEventListener(eventName, function () { previewDefense(defenseId); });
+        });
         grid.appendChild(card);
       });
-      const nodes = [heading, grid];
+      const nodes = [context, heading, grid];
       if (commandWaiting) nodes.push(element(documentObject, "p", "preview-ready",
-        "ORDER READY — CLOSE THE TOWER MENU TO APPLY IT"));
+        "ORDER READY. CLOSE THE TOWER MENU TO APPLY IT"));
       replaceChildren(ui.store, nodes);
+      revealPreviewedCard();
+    }
+
+    /* The menu can hold more towers than fit at once, so the tower being
+       previewed is always scrolled inside the menu rather than off it. */
+    function revealPreviewedCard() {
+      if (!previewDefenseId) return;
+      const card = typeof ui.store.querySelector === "function"
+        ? ui.store.querySelector('[data-build-defense-id="' + previewDefenseId + '"]') : null;
+      if (!card || typeof card.getBoundingClientRect !== "function") return;
+      const panel = ui.storePanel;
+      if (typeof panel.getBoundingClientRect !== "function") return;
+      const cardBox = card.getBoundingClientRect();
+      const panelBox = panel.getBoundingClientRect();
+      if (cardBox.top >= panelBox.top && cardBox.bottom <= panelBox.bottom) return;
+      panel.scrollTop += cardBox.top - panelBox.top - 8;
     }
 
     function cadenceRenderWouldReplaceFocus() {
@@ -1808,8 +2212,9 @@
       ui.pause.setAttribute("aria-pressed", String(manuallyPaused));
       ui.skipTutorial.hidden = state.management.tutorialUpgradeGateOpen;
       ui.skipTutorial.disabled = manuallyPaused || fatalPaused;
-      renderBattlefield(state);
-      renderStore(state, mission);
+      const battlefield = renderBattlefield(state);
+      renderStore(state, mission, battlefield);
+      syncCommandBarHeight();
 
       const towerNodes = state.management.towers.map(function (tower, index) {
         const view = defenseView(runtime, tower.defenseId, tower.level);
@@ -1878,6 +2283,72 @@
       }
     }
 
+    /* The battlefield is this screen's primary object, so the readouts and the
+       run controls are grouped once into a single pinned command bar. Nothing is
+       renamed, removed, or relabelled: the existing groups keep their headings,
+       aria labels, and tab order inside the new wrapper. */
+    let commandBar = null;
+
+    function groupCommandBar() {
+      const hud = ui.aether.closest ? ui.aether.closest(".preview-hud") : null;
+      const actions = ui.startWave.closest ? ui.startWave.closest(".preview-actions") : null;
+      if (!hud || !actions || !hud.parentNode) return;
+      if (hud.parentNode.classList && hud.parentNode.classList.contains("preview-command-bar")) {
+        commandBar = hud.parentNode;
+        return;
+      }
+      const bar = element(documentObject, "div", "preview-command-bar");
+      hud.parentNode.insertBefore(bar, hud);
+      bar.appendChild(hud);
+      bar.appendChild(actions);
+      commandBar = bar;
+    }
+
+    /* Small screens pin the map directly under the command bar. The bar wraps at
+       narrow widths, so its measured height, not a guessed one, is the offset. */
+    function syncCommandBarHeight() {
+      if (!commandBar || typeof commandBar.getBoundingClientRect !== "function") return;
+      const region = optionalElement(documentObject, "battleRegion");
+      if (!region || !region.style || typeof region.style.setProperty !== "function") return;
+      const height = Math.round(commandBar.getBoundingClientRect().height);
+      if (height > 0) region.style.setProperty("--aegis-battle-bar-height", height + "px");
+    }
+
+    /* Opening the tower menu brings the map into the band between the pinned bar
+       and the sheet, so a build site is never hidden behind either of them. */
+    function revealBattlefield() {
+      const stage = ui.battlefield.parentNode;
+      if (!stage || typeof stage.getBoundingClientRect !== "function") return;
+      if (typeof windowObject.scrollBy !== "function") return;
+      const box = stage.getBoundingClientRect();
+      const barBox = commandBar && typeof commandBar.getBoundingClientRect === "function"
+        ? commandBar.getBoundingClientRect() : null;
+      /* The bar pins to the top of the viewport, so the band below it is measured
+         against where the bar comes to rest, not where it happens to sit now. */
+      const pinnedTop = (barBox ? Math.min(Math.max(0, barBox.bottom), barBox.height) : 0) + 8;
+      const sheetStyle = typeof windowObject.getComputedStyle === "function"
+        ? windowObject.getComputedStyle(ui.storePanel) : null;
+      const viewportHeight = windowObject.innerHeight || 0;
+      const sheetTop = sheetStyle && sheetStyle.position === "fixed" && !ui.storePanel.hidden
+        ? ui.storePanel.getBoundingClientRect().top : viewportHeight;
+      const safeBottom = Math.min(sheetTop, viewportHeight) - 8;
+      if (box.bottom <= safeBottom && box.top >= pinnedTop) return;
+      const delta = box.top - pinnedTop;
+      if (Math.abs(delta) < 2) return;
+      windowObject.scrollBy(0, delta);
+    }
+
+    function focusWithoutScroll(node) {
+      if (!node || typeof node.focus !== "function") return;
+      try {
+        node.focus({ preventScroll: true });
+      } catch (error) {
+        node.focus();
+      }
+    }
+
+    groupCommandBar();
+    setTowerMenuFlag(false);
     populateMissions();
     populateLoadout();
     ui.mission.addEventListener("change", populateLoadout);
