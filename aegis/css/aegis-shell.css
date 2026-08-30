@@ -378,7 +378,6 @@
 .aegis-shell-loadout-section,
 .aegis-shell-settings-block,
 .aegis-shell-objectives,
-.aegis-shell-waves,
 .aegis-shell-notices,
 .aegis-shell-result-laurels,
 .aegis-shell-result-rewards,
@@ -514,10 +513,7 @@
 .aegis-shell-laurel-list,
 .aegis-shell-reward-list,
 .aegis-shell-mastery-list,
-.aegis-shell-unlock-list,
-.aegis-shell-wave-list,
-.aegis-shell-wave-groups,
-.aegis-shell-wave-boss-phases {
+.aegis-shell-unlock-list {
   display: grid;
   gap: .35rem;
   margin: 0;
@@ -538,41 +534,6 @@
 .aegis-shell-laurel[data-new="true"] { border-left-color: var(--shell-green); color: var(--shell-green); }
 .aegis-shell-unlock[data-status="next"] { border-left-color: var(--shell-gold); color: var(--shell-gold); }
 .aegis-shell-unlock[data-status="unlocked"] { border-left-color: var(--shell-green); }
-
-.aegis-shell-wave {
-  display: grid;
-  gap: .35rem;
-  border: 1px solid var(--shell-line);
-  border-radius: .45rem;
-  background: rgba(5, 5, 5, .62);
-  padding: .6rem .7rem;
-}
-
-.aegis-shell-wave[data-detail="counts"] { border-color: rgba(83, 213, 255, .45); }
-.aegis-shell-wave[data-detail="timed"] { border-color: rgba(243, 202, 102, .55); }
-
-.aegis-shell-wave-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: .25rem .7rem;
-}
-
-.aegis-shell-wave-title { margin: 0; color: var(--shell-ink); font-size: .98rem; }
-.aegis-shell-wave-routes { color: var(--shell-muted); font-size: .82rem; }
-.aegis-shell-wave-group { color: var(--shell-ink); font-size: .86rem; line-height: 1.4; }
-
-.aegis-shell-wave-boss {
-  display: grid;
-  gap: .25rem;
-  border-top: 1px dashed var(--shell-line);
-  padding-top: .45rem;
-}
-
-.aegis-shell-wave-boss-title { margin: 0; color: var(--shell-gold); font-size: .9rem; }
-.aegis-shell-wave-boss-text { margin: 0; color: var(--shell-muted); font-size: .85rem; }
-.aegis-shell-wave-boss-phases { color: var(--shell-ink); font-size: .84rem; }
 
 /* ------------------------------------------------------------------ result */
 
@@ -670,8 +631,7 @@
   .aegis-shell-loadout-section { padding: 1rem; }
 }
 
-/* Long wave tables and badge rows scroll inside themselves, never the page. */
-.aegis-shell-wave-groups,
+/* Long badge rows wrap inside themselves, never the page. */
 .aegis-shell-badge-row { overflow-wrap: anywhere; }
 
 /* -------------------------------------------- motion and photosensitivity */
@@ -706,7 +666,6 @@ body[data-photosensitive-safe="true"] .aegis-shell-button--primary { box-shadow:
   .aegis-shell-chip,
   .aegis-shell-mission,
   .aegis-shell-stat,
-  .aegis-shell-wave,
   .aegis-shell-storage,
   .aegis-shell-persistence {
     border: 1px solid CanvasText;

@@ -508,37 +508,6 @@
     });
   }
 
-  /* Spec 18.3: the projection already wrote each group as one readable sentence and each wave
-     as one short note, so the view prints them and never assembles a field dump of its own. */
-  function waveRow(wave) {
-    return node("li", {
-      className: "aegis-shell-wave",
-      attrs: { "data-detail": wave.detailLevel },
-      children: [
-        node("div", {
-          className: "aegis-shell-wave-head",
-          children: [
-            heading(4, wave.title, "aegis-shell-wave-title"),
-          ],
-        }),
-        wave.note ? paragraph("aegis-shell-wave-note aegis-shell-hint", wave.note) : null,
-        list("aegis-shell-wave-groups", wave.groups.map(function (group) {
-          return node("li", { className: "aegis-shell-wave-group", text: group.sentence });
-        })),
-        wave.boss ? node("div", {
-          className: "aegis-shell-wave-boss",
-          children: [
-            heading(5, "Boss: " + wave.boss.name, "aegis-shell-wave-boss-title"),
-            paragraph("aegis-shell-wave-boss-text", wave.boss.description),
-            list("aegis-shell-wave-boss-phases", wave.boss.phaseText.map(function (phase) {
-              return node("li", { text: phase });
-            })),
-          ],
-        }) : null,
-      ].filter(Boolean),
-    });
-  }
-
   function briefingScreen(model) {
     return node("section", {
       className: "aegis-shell-screen aegis-shell-screen--briefing",
@@ -607,21 +576,6 @@
                   + (target.earned ? " (already earned on this difficulty)" : ""),
               });
             })),
-          ],
-        }),
-        node("section", {
-          className: "aegis-shell-waves",
-          attrs: { "aria-label": "Wave preview" },
-          children: [
-            node("div", {
-              className: "aegis-shell-section-head",
-              children: [
-                heading(3, "Wave preview", "aegis-shell-section-title"),
-                chip(model.wavePreview.reconLabel, "gold"),
-              ],
-            }),
-            paragraph("aegis-shell-hint", model.wavePreview.reconDetail),
-            list("aegis-shell-wave-list", model.wavePreview.waves.map(waveRow)),
           ],
         }),
         node("div", {

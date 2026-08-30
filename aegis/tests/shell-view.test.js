@@ -330,17 +330,18 @@ test("player-facing collections use complete balanced rows in authored order", (
   });
 });
 
-test("the briefing renders the Recon tier, wave groups, and Laurel targets as text", () => {
+test("the player briefing omits the wave preview while retaining mission essentials", () => {
   const text = ShellView.renderToText(treeFor("briefing", profileFor(["m01"])));
-  assert.match(text, /Baseline scouting/);
-  assert.match(text, /First Footsteps/);
-  assert.match(text, /A large group of Scouts\./);
+  assert.doesNotMatch(text, /Wave preview/);
+  assert.doesNotMatch(text, /Baseline scouting/);
+  assert.doesNotMatch(text, /First Footsteps/);
+  assert.doesNotMatch(text, /A large group of Scouts\./);
   assert.match(text, /Win the mission/);
   assert.match(text, /Start mission/);
   assert.match(text, /Gate Health/);
 });
 
-test("the briefing reads in the spec order and never repeats or field-dumps (spec 18.3)", () => {
+test("the briefing reads in narrative order without repetition or wave intelligence", () => {
   const model = modelFor("briefing", profileFor(["m01"]));
   assert.deepEqual(model.narrative.map((line) => line.id), [
     "act-era", "act-premise", "battlefield-story", "battlefield-summary", "objective",
@@ -374,7 +375,8 @@ test("the briefing reads in the spec order and never repeats or field-dumps (spe
     "a mission rule is stated exactly once");
   assert.doesNotMatch(text, /ground/, "ground movement is the default and is never named");
   assert.doesNotMatch(text, /route\.main/, "no runtime route ID reaches a player");
-  assert.match(text, /Scouts only\. Fast, fragile/, "each wave carries its authored note");
+  assert.doesNotMatch(text, /Scouts only\. Fast, fragile/,
+    "authored wave notes remain outside the player briefing");
 });
 
 test("the campaign screen names each act era and story from the compiled acts", () => {
