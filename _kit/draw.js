@@ -31,7 +31,7 @@
     ctx.globalAlpha = 1;
   }
 
-  // Square tile — thin wrapper over drawBevelRect for the common w === h === size case.
+  // Square tile, a thin wrapper over drawBevelRect for the common w === h === size case.
   function drawTile(ctx, px, py, s, tone, alpha) {
     drawBevelRect(ctx, px, py, s, s, tone, alpha);
   }
@@ -59,7 +59,7 @@
     ctx.restore();
   }
 
-  // Shared well-sizing math (title height, touch bar, mobile strip, frame border, paddings) —
+  // Shared well-sizing math (title height, touch bar, mobile strip, frame border, paddings):
   // every renderer's resize() calls this, then applies its own aspect-specific cell/scale line
   // to {availW, availH}.
   function wellViewport(wrapEl) {

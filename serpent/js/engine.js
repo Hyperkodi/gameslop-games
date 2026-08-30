@@ -1,4 +1,4 @@
-/* Armara Serpent engine — pure game logic. No DOM, no timers.
+/* Armara Serpent engine: pure game logic. No DOM, no timers.
    Classic script that attaches to window.Game.createEngine, plus a CommonJS export for Node tests. */
 (function (global) {
   "use strict";
@@ -38,7 +38,7 @@
 
     // Uniform pick among empty cells via the engine's own rng stream, so seed + inputLog replays it.
     // A full board (no empty cell) is unreachable at the 20x20 grid size in practice, but leaves
-    // pickup null rather than crashing rng()'s index math against an empty list — step() below
+    // pickup null rather than crashing rng()'s index math against an empty list, step() below
     // tolerates a null pickup by skipping the eat check.
     function spawnPickup() {
       const cells = emptyCells();
@@ -67,7 +67,7 @@
     }
 
     // Advances the snake by one cell in state.dir (applying at most one queued turn first).
-    // Wall/self collisions leave state.snake untouched — the engine keeps the snake as it was.
+    // Wall/self collisions leave state.snake untouched, the engine keeps the snake as it was.
     function step(events) {
       if (turnQueue.length) state.dir = turnQueue.shift();
 
@@ -81,7 +81,7 @@
 
       const ate = state.pickup !== null && newHead.x === state.pickup.x && newHead.y === state.pickup.y;
       // Eating keeps the tail (the snake grows); otherwise the tail cell is vacated this step,
-      // so moving into it is legal — collision is checked against the post-move body below.
+      // so moving into it is legal, collision is checked against the post-move body below.
       const newSnake = ate
         ? [newHead].concat(state.snake)
         : [newHead].concat(state.snake.slice(0, state.snake.length - 1));

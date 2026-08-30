@@ -1,5 +1,5 @@
 /* Input: keyboard (DAS/ARR), touch gestures on the well, on-screen buttons. Emits actions; never touches
-   the engine directly. Generalized from armaratris/js/input.js — configurable per game via createInput(cfg). */
+   the engine directly. Generalized from armaratris/js/input.js, configurable per game via createInput(cfg). */
 (function (global) {
   "use strict";
   const K = global.GameSlopKit = global.GameSlopKit || {};

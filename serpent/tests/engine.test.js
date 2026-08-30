@@ -75,7 +75,7 @@ test("hitting yourself ends the game", () => {
 test("moving into the cell the tail is vacating is allowed", () => {
   const e = playing();
   e.setSnake([{ x: 5, y: 5 }, { x: 5, y: 6 }, { x: 4, y: 6 }, { x: 4, y: 5 }], { x: 0, y: -1 });
-  e.dispatch("left"); // head will go to (4,5)? no — (4,5) is body. Use tail cell: set dir so next is (4,5)... tail is (4,5) → allowed
+  e.dispatch("left"); // head will go to (4,5)? no, (4,5) is body. Use tail cell: set dir so next is (4,5)... tail is (4,5) → allowed
   const ev = e.tick(200);
   assert.ok(!ev.some((x) => x.type === "gameover"));
   assert.deepEqual(e.state.snake[0], { x: 4, y: 5 });

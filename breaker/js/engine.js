@@ -1,4 +1,4 @@
-/* Armara Breaker engine — pure game logic. No DOM, no timers.
+/* Armara Breaker engine: pure game logic. No DOM, no timers.
    Classic script that attaches to window.Game.createEngine, plus a CommonJS export for Node tests.
    World is 100 (w) x 150 (h) units. No randomness is used by gameplay (brick layout, paddle and
    ball motion are all deterministic from formulas), but the rng/hash machinery is still wired up
@@ -100,7 +100,7 @@
 
     // Circle-vs-AABB: find the closest point on the brick rect to the ball centre; if within the
     // ball's radius, resolve on the axis the ball actually crossed to get here, determined from
-    // its pre-sub-step position (prevX, prevY) — robust against a ball that is already deeply
+    // its pre-sub-step position (prevX, prevY), robust against a ball that is already deeply
     // embedded in the brick by the time it's checked (a purely geometric "axis of least
     // penetration" test picks the wrong side in that case and can ping-pong through neighbouring
     // bricks). Falls back to the dominant velocity component only if the ball was already
@@ -146,7 +146,7 @@
       b.x += b.vx * subDt / 1000;
       b.y += b.vy * subDt / 1000;
 
-      // walls: x (left/right) and top only — the bottom is the life-loss boundary, not a wall.
+      // walls: x (left/right) and top only, the bottom is the life-loss boundary, not a wall.
       if (b.x - b.r < 0) {
         b.x = b.r; b.vx = Math.abs(b.vx); events.push({ type: "bounce" });
       } else if (b.x + b.r > W) {

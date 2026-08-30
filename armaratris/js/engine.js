@@ -1,4 +1,4 @@
-/* Armaratris engine — pure game logic. No DOM, no timers.
+/* Armaratris engine: pure game logic. No DOM, no timers.
    Classic script that attaches to window.Armaratris, plus a CommonJS export for Node tests. */
 (function (global) {
   "use strict";

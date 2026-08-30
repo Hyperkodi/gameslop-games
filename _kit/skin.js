@@ -30,7 +30,7 @@
       try {
         const r = await fetch(base + "skin.json", { cache: "no-store" });
         if (r.ok) return await r.json();
-      } catch (e) { /* offline — fall through */ }
+      } catch (e) { /* offline, fall through */ }
     }
     try { await loadScript(base + "skin.js"); } catch (e) { /* missing */ }
     return registeredSkin(name);

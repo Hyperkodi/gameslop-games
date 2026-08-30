@@ -1,6 +1,6 @@
 # Armara Arcade
 
-Six browser games — Armaratris, Serpent, Breaker, Aegis, Flight, Starfall — sharing one kit
+Six browser games (Armaratris, Serpent, Breaker, Aegis, Flight, Starfall) sharing one kit
 (`_kit/`: `rng.js`, `draw.js`, `skin.js`, `audio.js`, `input.js`, `shell.js`, `kit.css`). Static,
 no build step, no server-side code. `index.html` is the arcade hub.
 
@@ -32,36 +32,36 @@ cd games/flight && node --test
 cd games/starfall && node --test
 ```
 
-Run from inside each folder (not `node --test games/<id>/tests/` — passing a path fails on
+Run from inside each folder (not `node --test games/<id>/tests/`, because passing a path fails on
 Node 24; passing none discovers `tests/` from the cwd).
 
-Current expected total: 268 tests — kit 12, Armaratris 35, Serpent 11, Breaker 9, Aegis 185,
+Current expected total: 268 tests: kit 12, Armaratris 35, Serpent 11, Breaker 9, Aegis 185,
 Flight 7, and Starfall 9.
 
 ## Add a game
 
 Every game lives at `games/<id>/` with exactly:
 
-1. **`skin/armara/skin.json`** — copy an existing game's `skin.json`, change `title`, add
+1. **`skin/armara/skin.json`**: copy an existing game's `skin.json`, change `title`, add
    `"wordmark": "ARMARA"`, replace `strings` labels with the new game's stat labels (keep
    `best,start,paused,resume,gameOver,restart`), replace `tiles` with the game's `sprites`
-   (tones drawn from the shared palette: gold, bronze, marble, obsidian, deep gold — each a
+   (tones drawn from the shared palette: gold, bronze, marble, obsidian, deep gold, each a
    `{base,hi,lo,edge?}` triple). Games may also declare optional `background` and `art` assets;
    keep their filenames in the skin manifest so another sponsor can replace them without touching
    game logic. Generate `skin.js` from `skin.json` with the one-liner in `armaratris/README.md`;
-   copy `logo.png` (identical across every game — same sponsor mark).
-2. **`js/engine.js`** — pure, `require`-able, attaches `window.Game.createEngine` and exports
+   copy `logo.png` (identical across every game, the same sponsor mark).
+2. **`js/engine.js`**: pure, `require`-able, attaches `window.Game.createEngine` and exports
    `module.exports = { createEngine, ...constants }`. Uses `GameSlopKit.mulberry32/fnv1a` in the
    browser, `require("../../_kit/rng.js")` in Node.
-3. **`tests/engine.test.js`** — write first, watch it fail, implement, watch it pass.
-4. **`js/renderer.js`** — `Game.createRenderer({skin, wellCanvas, wrapEl})` →
+3. **`tests/engine.test.js`**: write first, watch it fail, implement, watch it pass.
+4. **`js/renderer.js`**: `Game.createRenderer({skin, wellCanvas, wrapEl})` →
    `{ resize(), draw(state, extras), cell }`, using `GameSlopKit.drawTile/drawBevelRect/
    setupCanvas/hexToRgba/drawLogo`; presentation art must have a procedural fallback.
-5. **`js/game.js`** — `Game.config` for `GameSlopKit.createShell` (game id, sounds, events, stats,
+5. **`js/game.js`**: `Game.config` for `GameSlopKit.createShell` (game id, sounds, events, stats,
    input map, a game-appropriate `startsOnAnyAction` value, and optional `endOverlay`) plus the
    `DOMContentLoaded` call. Coordinate-driven games can map a normalized `gestures.tapAt(point)` to a stable semantic
    action string; only that string should reach the deterministic engine.
-6. **`index.html`** — title/tagline/logo header, stats panel, framed well, brand + mute button,
+6. **`index.html`**: title/tagline/logo header, stats panel, framed well, brand + mute button,
    `#touch` nav. Script order: `_kit/rng.js`, `_kit/draw.js`, `_kit/skin.js`, `_kit/audio.js`,
    `_kit/input.js`, `_kit/shell.js`, then `js/engine.js`, `js/renderer.js`, `js/game.js`.
 7. **Verify**: `cd games/<id> && node --test` (pristine pass); `node --check` every `.js`;
@@ -116,7 +116,7 @@ This splits `games/` out of the monorepo history onto a `games-mirror` branch an
 to `https://github.com/Hyperkodi/gameslop-games.git:main`. Pass a different remote URL as `$1` to
 publish elsewhere. Run it from the monorepo after committing hub/game changes; GitHub Pages (once
 enabled, `main` branch, `/` root) picks up the new commit automatically. `games/.nojekyll` rides
-along in the subtree split — without it, GitHub Pages runs the Jekyll build, which drops any
+along in the subtree split. Without it, GitHub Pages runs the Jekyll build, which drops any
 directory starting with `_` (including `_kit/`) and the whole site breaks.
 
 **Verify the publish landed** once Pages has rebuilt (can take a minute or two):

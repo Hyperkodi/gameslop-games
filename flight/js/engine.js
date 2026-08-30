@@ -1,4 +1,4 @@
-/* Armara Flight engine — pure game logic. No DOM, no timers.
+/* Armara Flight engine: pure game logic. No DOM, no timers.
    Classic script that attaches to window.Game.createEngine, plus a CommonJS export for Node tests.
    World is 62.5 (w) x 100 (h) units, portrait 5:8. Bird flies at a fixed x=20, hovering at y=50
    with no gravity while "ready"; on "start" gravity and column spawning begin. */
@@ -12,9 +12,9 @@
   const GRAVITY = 160, FLAP_VY = -52, TERMINAL_VY = 90;
   const BASE_SPEED = 38, SPEED_STEP = 0.04, SPEED_STEP_POINTS = 10, SPEED_CAP = 1.4;
   const COLUMN_W = 10, GAP_H = 28, GAP_HALF = GAP_H / 2, GAP_MIN = 28, GAP_RANGE = 44;
-  const SPAWN_X = W + COLUMN_W; // 72.5 — a full column-width off the right edge
+  const SPAWN_X = W + COLUMN_W; // 72.5, a full column-width off the right edge
   const FIRST_SPAWN_MS = 1000, SPAWN_INTERVAL_MS = 1900;
-  const FLOOR_Y = 96, FLOOR_LIMIT = FLOOR_Y - BIRD_R; // 93 — bird centre at/above this dies
+  const FLOOR_Y = 96, FLOOR_LIMIT = FLOOR_Y - BIRD_R; // 93, bird centre at/above this dies
 
   function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
 
@@ -55,10 +55,10 @@
 
     function columnHits(b, c) {
       // 1D interval overlap on x (bird's circle bounding box vs the column's rect), AND the bird's
-      // centre y outside the gap band — per the task decisions, using the raw centre y (not
+      // centre y outside the gap band, per the task decisions, using the raw centre y (not
       // radius-adjusted) against [gapY - 14, gapY + 14].
       // Convention: the x overlap test is an open/closed mix (<=/<=) so touching edges count as a
-      // hit, while the y gap test is centre-only (bird's y, not its circle) — the gap band is
+      // hit, while the y gap test is centre-only (bird's y, not its circle), the gap band is
       // exactly [gapY - GAP_HALF, gapY + GAP_HALF] with no radius padding on either bound.
       const overlapsX = (b.x - b.r) <= (c.x + c.w) && c.x <= (b.x + b.r);
       if (!overlapsX) return false;
@@ -72,7 +72,7 @@
 
       state.speed = speedForScore(state.score);
 
-      // Bird physics: gravity integrates over the full dt (spec §4.4) — no internal cap.
+      // Bird physics: gravity integrates over the full dt (spec §4.4), no internal cap.
       const bird = state.bird;
       const dtS = dt / 1000;
       bird.vy = Math.min(TERMINAL_VY, bird.vy + GRAVITY * dtS);

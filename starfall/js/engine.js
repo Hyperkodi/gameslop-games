@@ -1,4 +1,4 @@
-/* Armara Starfall engine — pure game logic. No DOM, no timers.
+/* Armara Starfall engine: pure game logic. No DOM, no timers.
    Classic script that attaches to window.Game.createEngine, plus a CommonJS export for Node tests.
    World is 100 (w) x 140 (h) units, portrait 5:7. Ship sits near the bottom and moves left/right
    while held; bullets fire upward while held (rate-limited); asteroids and drones fall from the
@@ -52,7 +52,7 @@
     }
 
     // One seeded enemy. rng call order (fixed, for determinism): kind, then (asteroid: r, vy |
-    // drone: phase), then x. droneShare = min(0.5, 0.1*(wave-1)) — 0% at wave 1, 10% at wave 2, …
+    // drone: phase), then x. droneShare = min(0.5, 0.1*(wave-1)), 0% at wave 1, 10% at wave 2, …
     function spawnOneEnemy() {
       const droneShare = Math.min(0.5, 0.1 * (state.wave - 1));
       const kind = rng() < droneShare ? "drone" : "asteroid";
@@ -147,14 +147,14 @@
       state.bullets = survivingBullets;
 
       // ship-vs-enemy: gated on invulnMs already reading 0 coming INTO this tick (i.e. the check
-      // uses the value carried over from the previous tick, not this tick's own decay) — a hit
+      // uses the value carried over from the previous tick, not this tick's own decay), a hit
       // resets invulnMs to 1500 without also applying this tick's decay on top of that fresh
       // value. This is the one place this engine's tick() deliberately checks-before-decaying
       // rather than decaying-before-checking (contrast the fire-cooldown block above, which does
       // decay first): a single big tick(dt) that spans an entire 1.5 s invulnerability window
       // (dt > 1500, used by the engine test to fast-forward) must let that window fully elapse
       // without also immediately re-triggering a hit against the same still-present enemy in that
-      // same call — the test spawns a fresh enemy right after each such fast-forward specifically
+      // same call, the test spawns a fresh enemy right after each such fast-forward specifically
       // to be the thing that registers next tick. Decaying-then-checking (using the post-decay,
       // now-zero value) would instead resolve that hit one tick early, inside the very call whose
       // return value the test discards, and the final scripted life-loss/game-over would never

@@ -7,7 +7,7 @@
   const WORLD_W = 62.5, WORLD_H = 100;
   const CAP_H = 2; // gold cap height at each gap edge
   const FLOOR_H = 4; // floor band height
-  const FLOOR_TOP = G.FLOOR_Y; // 96 — top edge of the floor band, from the engine's api
+  const FLOOR_TOP = G.FLOOR_Y; // 96, top edge of the floor band, from the engine's api
   const BIRD_SIZE = 8;
 
   function createRenderer(o) {

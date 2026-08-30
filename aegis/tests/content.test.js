@@ -828,7 +828,7 @@ test("production map identity is semantic while unreferenced report and SVG byte
   assert.deepEqual(reportEdited.artifacts.contentBytes, baseline.artifacts.contentBytes);
   assert.equal(reportEdited.artifacts.rulesetHash, baseline.artifacts.rulesetHash);
 
-  reversed.title = "Gate of Dawn — identity mutation";
+  reversed.title = "Gate of Dawn identity mutation";
   fs.writeFileSync(mapPath, JSON.stringify(reversed, null, 2) + "\n");
   const changed = compileProduction(root);
   assert.notDeepEqual(changed.artifacts.contentBytes, baseline.artifacts.contentBytes);

@@ -1,9 +1,9 @@
 /* Shared layout for every GameSlop kit game: title, side panels, framed well, overlays, touch bar.
-   From games/armaratris/css/game.css — identical rules, generalized: panels/boxes collapse when
+   From games/armaratris/css/game.css, identical rules, generalized: panels/boxes collapse when
    empty (games that skip hold/next-style boxes), the touch bar accepts 1-5 buttons, and no rule
    here sizes any canvas (each renderer sizes its own well/side canvases in JS). */
 :root {
-  /* Fallbacks only — skin.js overwrites every one of these at load. */
+  /* Fallbacks only. skin.js overwrites every one of these at load. */
   --c-bg: #0B0A0A; --c-bg2: #151210; --c-marble: #E9E2D3; --c-gold: #C9A24A; --c-goldDeep: #8A6A23;
   --c-bronze: #7A5230; --c-ink: #EFE8D8; --c-muted: #9A8E78; --c-well: #0E0D0C; --c-grid: #1E1A15;
   --c-frame: #C9A24A; --c-ghost: #C9A24A;

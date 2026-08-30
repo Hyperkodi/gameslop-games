@@ -757,8 +757,8 @@
       setText(ui.inspectorName, info.label); setText(ui.inspectorLevel, "LEVEL " + level); setText(ui.inspectorRole, info.role);
       setText(ui.inspectorDamage, Number(current.damage) || 0); setText(ui.inspectorRate, attacksPerSecond(current));
       setText(ui.inspectorRange, Number(current.range) || 0); setText(ui.inspectorSpecial, specialStat(type, current));
-      setText(ui.inspectorNextDamage, next ? (Number(next.damage) || 0) : "—"); setText(ui.inspectorNextRate, next ? attacksPerSecond(next) : "—");
-      setText(ui.inspectorNextRange, next ? (Number(next.range) || 0) : "—"); setText(ui.inspectorNextSpecial, next ? specialStat(type, next) : "—");
+      setText(ui.inspectorNextDamage, next ? (Number(next.damage) || 0) : "-"); setText(ui.inspectorNextRate, next ? attacksPerSecond(next) : "-");
+      setText(ui.inspectorNextRange, next ? (Number(next.range) || 0) : "-"); setText(ui.inspectorNextSpecial, next ? specialStat(type, next) : "-");
       const cost = upgradeCost(tower), maxLevel = level >= 3, affordable = Number(state.gold) >= cost;
       if (ui.upgradeButton) { ui.upgradeButton.disabled = maxLevel || !affordable || state.status !== "playing"; ui.upgradeButton.setAttribute("aria-disabled", String(ui.upgradeButton.disabled)); ui.upgradeButton.setAttribute("aria-label", maxLevel ? info.label + " is max level" : "Upgrade " + info.label + " for " + cost + " Aether"); }
       setText(ui.upgradePrice, maxLevel ? "" : cost); setHidden(ui.upgradeMax, !maxLevel);

@@ -17,7 +17,7 @@
     const skin = o.skin, sprites = skin.sprites, pal = skin.palette;
     const r = { cell: 4 };
     let wellCtx, dpr = 1;
-    let particles = []; // { x, y, angle, speed, born } — world units; explode() feeds this list
+    let particles = []; // { x, y, angle, speed, born }, world units; explode() feeds this list
 
     r.resize = function () {
       const vp = K.wellViewport(o.wrapEl);
@@ -29,7 +29,7 @@
     };
 
     // Fed by js/game.js's onEvent hook on every "explode" engine event. No-op under reduced
-    // motion (spec: "Reduced motion: no particles") — the burst is purely decorative.
+    // motion (spec: "Reduced motion: no particles"), the burst is purely decorative.
     r.explode = function (kind, x, y) {
       if (reducedMotion()) return;
       const now = performance.now();

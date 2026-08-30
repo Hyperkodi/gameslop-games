@@ -1,6 +1,6 @@
 /* Armara Aegis IndexedDB profile-store adapter.
    Implements the closed adapter contract consumed by storage-adapter.js over four object
-   stores — journal, profile, replays, results — in one versioned database per release
+   stores (journal, profile, replays, results) in one versioned database per release
    namespace. Every victory commit is a single readwrite transaction across all four stores:
    any request failure aborts the whole transaction, so a half-written unlock cannot exist.
    Quota exhaustion and aborts are reported as closed reasons, never thrown. The adapter

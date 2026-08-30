@@ -60,7 +60,7 @@ test("left/right move one column and are blocked by walls", () => {
   e.setActive({ type: "O", rot: 0, x: 1, y: 5 }); // O occupies cols x+1, x+2 → cols 2,3
   assert.deepEqual(e.dispatch("left"), [{ type: "move" }]); // cols 1,2
   assert.equal(e.state.active.x, 0);
-  assert.deepEqual(e.dispatch("left"), [{ type: "move" }]); // cols 0,1 — still inside
+  assert.deepEqual(e.dispatch("left"), [{ type: "move" }]); // cols 0,1, still inside
   assert.equal(e.state.active.x, -1);
   assert.deepEqual(e.dispatch("left"), []); // x=-2 would use col -1 → blocked
   assert.equal(e.state.active.x, -1);
