@@ -341,38 +341,17 @@ test("the player briefing omits the wave preview while retaining mission essenti
   assert.match(text, /Gate Health/);
 });
 
-test("the briefing reads in narrative order without repetition or wave intelligence", () => {
+test("the briefing renders one story synopsis without segmented instructions or mechanic box", () => {
   const model = modelFor("briefing", profileFor(["m01"]));
-  assert.deepEqual(model.narrative.map((line) => line.id), [
-    "act-era", "act-premise", "battlefield-story", "battlefield-summary", "objective",
-  ]);
-  assert.deepEqual(model.narrative.map((line) => line.text), [
-    "The plain of Marathon, 490 BC",
-    "This act restores that defense. Hold one road and finish standing.",
-    "The first ships beach at first light.",
-    "Hold the eastern gate.",
-    "Finish above the gate threshold.",
-  ]);
   assert.equal(model.actEra, "The plain of Marathon, 490 BC");
-  assert.equal(model.actPremise, "This act restores that defense. Hold one road and finish standing.");
-  assert.equal(model.missionStory, "The first ships beach at first light.");
-  assert.deepEqual(model.newHere, ["Upgrades unlock after wave one."]);
+  assert.equal(model.synopsis, "The first ships beach at first light.");
 
   const text = ShellView.renderToText(treeFor("briefing", profileFor(["m01"])));
-  let cursor = -1;
-  model.narrative.concat([{ text: "What is new here" }, { text: "Upgrades unlock after wave one." }])
-    .forEach((line) => {
-      const position = text.indexOf(line.text);
-      assert.ok(position >= 0, "the briefing is missing " + JSON.stringify(line.text));
-      assert.ok(position > cursor, JSON.stringify(line.text) + " is out of the spec order");
-      cursor = position;
-    });
-  model.narrative.forEach((line) => {
-    assert.equal(text.split(line.text).length - 1, 1,
-      "no briefing fact is stated twice: " + JSON.stringify(line.text));
-  });
-  assert.equal(text.split("Upgrades unlock after wave one.").length - 1, 1,
-    "a mission rule is stated exactly once");
+  assert.equal(text.split(model.synopsis).length - 1, 1, "the story appears exactly once");
+  assert.doesNotMatch(text, /What is new here/);
+  assert.doesNotMatch(text, /The situation|The road|Your task|This battlefield/);
+  assert.doesNotMatch(text, /Upgrades unlock after wave one\./);
+  assert.match(text, /Attican Boot Sequence · The plain of Marathon, 490 BC/);
   assert.doesNotMatch(text, /ground/, "ground movement is the default and is never named");
   assert.doesNotMatch(text, /route\.main/, "no runtime route ID reaches a player");
   assert.doesNotMatch(text, /Scouts only\. Fast, fragile/,

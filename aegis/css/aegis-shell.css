@@ -378,7 +378,6 @@
 .aegis-shell-loadout-section,
 .aegis-shell-settings-block,
 .aegis-shell-objectives,
-.aegis-shell-notices,
 .aegis-shell-result-laurels,
 .aegis-shell-result-rewards,
 .aegis-shell-result-mastery,
@@ -499,6 +498,12 @@
   text-transform: uppercase;
 }
 
+.aegis-shell-briefing-synopsis {
+  max-width: 70ch;
+  margin: 0;
+  line-height: 1.58;
+}
+
 .aegis-shell-loan {
   display: grid;
   gap: .35rem;
@@ -509,7 +514,6 @@
 }
 
 .aegis-shell-objective-list,
-.aegis-shell-notice-list,
 .aegis-shell-laurel-list,
 .aegis-shell-reward-list,
 .aegis-shell-mastery-list,

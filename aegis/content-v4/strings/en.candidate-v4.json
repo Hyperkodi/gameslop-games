@@ -744,7 +744,7 @@
     },
     {
       "key": "m01.story",
-      "value": "The first ships beach at first light. Nothing about this road is complicated, which is the only reason you will survive learning it.",
+      "value": "Before word of Marathon reaches Athens, a second hostile column appears on the dawn road. Miltiades' exhausted runners reach the gate first, and the city's hastily raised defenders must hold until the army returns.",
       "placeholders": []
     },
     {
@@ -889,7 +889,7 @@
     },
     {
       "key": "m04.story",
-      "value": "The fleet turns for the harbour. Two landings, one road home, and no time to favour either.",
+      "value": "With Piraeus still half wall and half shipyard, enemy detachments strike both unfinished harbours at once. Themistocles turns cranes, ramps, and causeways into a switching defense long enough to launch the fleet.",
       "placeholders": []
     },
     {
@@ -1044,7 +1044,7 @@
     },
     {
       "key": "m05.story",
-      "value": "Crete's bronze guardian was said to circle its island three times a day and let nothing come ashore. Something like it is awake in the foundry, and nobody told it the war ended.",
+      "value": "Pheidias receives bronze from captured weapons for a guardian commission, but an ancient core awakens inside the mould. The defenders descend through the foundry spiral as Talos tears free piece by piece.",
       "placeholders": []
     },
     {

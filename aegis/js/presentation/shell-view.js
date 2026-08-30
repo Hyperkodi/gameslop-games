@@ -516,35 +516,14 @@
         node("div", {
           className: "aegis-shell-briefing-head",
           children: [
-            span("aegis-shell-briefing-act", model.actTitle + " · " + model.environmentLabel),
+            span("aegis-shell-briefing-act", model.actTitle + " · " + model.actEra),
           ],
         }),
         node("section", {
           className: "aegis-shell-briefing-narrative",
           attrs: { "aria-label": "Briefing" },
-          children: model.narrative.map(function (line) {
-            return node("div", {
-              className: "aegis-shell-briefing-line",
-              attrs: { "data-line": line.id },
-              children: [
-                line.label
-                  ? span("aegis-shell-briefing-line-label aegis-shell-stat-label", line.label)
-                  : null,
-                paragraph("aegis-shell-briefing-line-text aegis-shell-lede", line.text),
-              ].filter(Boolean),
-            });
-          }),
+          children: [paragraph("aegis-shell-briefing-synopsis aegis-shell-lede", model.synopsis)],
         }),
-        model.newHere.length ? node("section", {
-          className: "aegis-shell-notices",
-          attrs: { "aria-label": "What is new here" },
-          children: [
-            heading(3, "What is new here", "aegis-shell-section-title"),
-            list("aegis-shell-notice-list", model.newHere.map(function (notice) {
-              return node("li", { text: notice });
-            })),
-          ],
-        }) : null,
         node("div", {
           className: balancedGridClass("aegis-shell-briefing-stats", 5, 5),
           children: [

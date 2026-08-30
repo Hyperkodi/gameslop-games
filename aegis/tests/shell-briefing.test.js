@@ -216,7 +216,7 @@ test("the briefing names the mission, act, environment, objectives, and loadout"
   assert.equal(model.actTitle, "Attican Boot Sequence");
   assert.equal(model.actEra, "The plain of Marathon, 490 BC");
   assert.equal(model.actPremise, "This act restores that defense. Hold one road and finish standing.");
-  assert.equal(model.missionStory, "The first ships beach at first light.");
+  assert.equal(model.synopsis, "The first ships beach at first light.");
   assert.equal(model.environmentLabel, "Gate of Dawn Terrace");
   assert.equal(model.summary, "Hold the eastern gate through four waves.");
   assert.equal(model.objectiveText, "Finish with the gate above the threshold.");
@@ -234,34 +234,15 @@ test("the briefing names the mission, act, environment, objectives, and loadout"
   assert.equal(Object.isFrozen(model), true);
 });
 
-test("the briefing orders act era, act premise, battlefield, and task without repeating itself", () => {
+test("the briefing exposes one story synopsis and keeps mechanics as non-player metadata", () => {
   const model = briefing(catalogFor(), Profile.createProfileV2("candidate-v4"));
-  assert.deepEqual(model.narrative.map((line) => line.id), [
-    "act-era", "act-premise", "battlefield-story", "battlefield-summary",
-    "battlefield-route-0", "objective",
-  ]);
-  assert.deepEqual(model.narrative.map((line) => line.text), [
-    "The plain of Marathon, 490 BC",
-    "This act restores that defense. Hold one road and finish standing.",
-    "The first ships beach at first light.",
-    "Hold the eastern gate through four waves.",
-    "One road enters from the east.",
-    "Finish with the gate above the threshold.",
-  ]);
-  assert.deepEqual(model.narrative.map((line) => line.label), [
-    "Era", "This act", "This battlefield", "The situation", "The road", "Your task",
-  ]);
-  /* The briefing header already names the act and the battlefield, so no label repeats them. */
-  model.narrative.forEach((line) => {
-    assert.notEqual(line.label, model.actTitle);
-    assert.notEqual(line.label, model.environmentLabel);
-  });
-  assert.deepEqual(model.newHere, ["Upgrades unlock after wave one."]);
-  const texts = model.narrative.map((line) => line.text);
-  assert.equal(new Set(texts).size, texts.length, "a briefing never states the same fact twice");
+  assert.equal(model.synopsis, "The first ships beach at first light.");
+  assert.equal("narrative" in model, false);
+  assert.equal("newHere" in model, false);
+  assert.deepEqual(model.mechanicNotices, ["Upgrades unlock after wave one."]);
 });
 
-test("a briefing drops an act premise that only repeats the mission summary", () => {
+test("the mission story remains the sole synopsis when structured briefing facts overlap", () => {
   const content = fixtureContent();
   const catalog = Shell.createCatalog({
     content,
@@ -272,13 +253,9 @@ test("a briefing drops an act premise that only repeats the mission summary", ()
     },
   });
   const model = briefing(catalog, Profile.createProfileV2("candidate-v4"), content);
-  assert.deepEqual(model.narrative.map((line) => line.id), [
-    "act-era", "act-premise", "battlefield-story", "battlefield-route-0", "objective",
-  ]);
-  assert.equal(
-    model.narrative.filter((line) => line.text === "Hold the eastern gate through four waves.").length,
-    1
-  );
+  assert.equal(model.synopsis, "The first ships beach at first light.");
+  assert.equal("narrative" in model, false);
+  assert.equal("newHere" in model, false);
 });
 
 test("each wave carries one authored note and each group one readable sentence", () => {

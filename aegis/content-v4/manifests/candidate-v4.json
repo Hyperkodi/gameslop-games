@@ -42,7 +42,7 @@
   },
   "stringCatalog": {
     "source": "strings/en.candidate-v4.json",
-    "sha256": "sha256:b658a5096ab39fa068a3cdd005c1adae47a724250a35e8dd199535374e581113"
+    "sha256": "sha256:b2e128a3f66224c46a92ff57de19ce040e10f9b9d5615a721864da96cf2708f0"
   },
   "presentationCatalog": {
     "source": "presentation/candidate-v4.json",

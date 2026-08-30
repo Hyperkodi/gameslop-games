@@ -1427,33 +1427,6 @@
     });
   }
 
-  /* Spec 18.3: a briefing states, in this order and without repeating itself, the act era,
-     the act premise, what this battlefield is, what the player must do, and what is new here.
-     The order and the deduplication are decided here so the view only renders what it is
-     given. Nothing here may expose pad quality, exposure, grid coordinates, ticks, hashes,
-     or runtime IDs. */
-  function briefingNarrative(act, mission) {
-    const lines = [];
-    const seen = new Set();
-    function add(id, label, value) {
-      const body = typeof value === "string" ? value.trim() : "";
-      if (!body || seen.has(body)) return;
-      seen.add(body);
-      lines.push({ id: id, label: label, text: body });
-    }
-    /* Labels are short scanning tags, never a second copy of a fact the screen already
-       states: the act title and the battlefield name are in the briefing header. */
-    add("act-era", "Era", act ? act.era : "");
-    add("act-premise", "This act", act ? act.premise : "");
-    add("battlefield-story", "This battlefield", mission.story);
-    add("battlefield-summary", "The situation", mission.summary);
-    mission.routeNotices.forEach(function (notice, index) {
-      add("battlefield-route-" + index, "The road", notice);
-    });
-    add("objective", "Your task", mission.objectiveText);
-    return lines;
-  }
-
   function selectBriefingScreen(context) {
     const catalog = context.catalog;
     const profile = context.profile;
@@ -1464,11 +1437,6 @@
     const loan = mission.protocolLoan;
     const loanProtocol = loan && catalog.protocols[loan.protocolId] ? catalog.protocols[loan.protocolId] : null;
     const act = catalog.acts.find(function (record) { return record.index === mission.actIndex; }) || null;
-    const narrative = briefingNarrative(act, mission);
-    const narrativeTexts = new Set(narrative.map(function (line) { return line.text; }));
-    const newHere = mission.mechanicNotices.filter(function (notice, index, all) {
-      return notice && !narrativeTexts.has(notice) && all.indexOf(notice) === index;
-    });
     return deepFreeze({
       screen: "briefing",
       mode: state.mode,
@@ -1477,9 +1445,7 @@
       actTitle: act ? act.title : "",
       actEra: act ? act.era : "",
       actPremise: act ? act.premise : "",
-      missionStory: mission.story,
-      narrative: narrative,
-      newHere: newHere,
+      synopsis: mission.story,
       environmentLabel: mission.environmentLabel,
       summary: mission.summary,
       objectiveText: mission.objectiveText,
