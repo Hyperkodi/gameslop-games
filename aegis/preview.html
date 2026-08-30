@@ -421,6 +421,8 @@
     status.setAttribute("role", "alert");
     document.body.dataset.ready = "1";
     document.body.dataset.bootError = "1";
+    /* Developer diagnostic only: the stack never reaches the visible refusal text. */
+    if (error && error.stack) window.__aegisBootErrorStack = String(error.stack);
   }
   try {
     const selector = Game.AegisReleaseSelector;

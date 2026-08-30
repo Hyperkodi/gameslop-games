@@ -322,6 +322,7 @@
 
   return deepFreeze({
     MAX_LOADOUT: MAX_LOADOUT,
+    missionIdsFor: missionIdsFor,
     STARTER_DEFENSE_IDS: STARTER_DEFENSE_IDS,
     assertRuntime: assertRuntime,
     createHeader: createHeader,

@@ -387,6 +387,7 @@
 
   /* The run header and the session live in battle-session.js so the shell can
      own navigation while one module owns the authoritative run. */
+  const missionIdsFor = BattleSession.missionIdsFor;
   const createHeader = BattleSession.createHeader;
   const createSession = BattleSession.createSession;
 
@@ -1224,7 +1225,7 @@
     }
 
     function populateMissions() {
-      replaceChildren(ui.mission, runtime.descriptor.contentIds.map(function (missionId) {
+      replaceChildren(ui.mission, missionIdsFor(runtime).map(function (missionId) {
         const option = element(documentObject, "option", "", missionTitle(runtime, missionId));
         option.value = missionId;
         return option;
