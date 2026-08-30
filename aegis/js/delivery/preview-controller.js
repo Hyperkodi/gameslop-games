@@ -142,6 +142,9 @@
   const ENEMY_WALK_FRAMES = Object.freeze(["runA", "runB", "runC", "runB"]);
   const ENEMY_WALK_HOLD_TICKS = 8;
   const ENEMY_WALK_STAGGER_TICKS = 5;
+  const PROJECTILE_TRAVEL_MS = 320;
+  const PROJECTILE_IMPACT_FRACTION = 0.24;
+  const MAX_PROJECTILE_CUES = 48;
 
   function own(value, key) {
     return Object.prototype.hasOwnProperty.call(value, key);
@@ -701,6 +704,56 @@
     };
   }
 
+  /* Converts real kernel damage telemetry into short-lived presentation cues.
+     The cue keeps its event-time endpoint so a killing shot still visibly lands
+     after the authoritative enemy has been removed from the next state. Splash
+     attacks emit one readable projectile per tower activation, not one per
+     collateral target. */
+  function projectileCuesForStep(runtimeInput, priorState, stepResult) {
+    const runtime = assertRuntime(runtimeInput);
+    const diagnostics = stepResult && stepResult.telemetry;
+    const telemetry = Array.isArray(diagnostics) ? diagnostics
+      : (diagnostics && Array.isArray(diagnostics.records) ? diagnostics.records : []);
+    if (!priorState || !priorState.management || !Array.isArray(priorState.management.towers) ||
+        !Array.isArray(priorState.enemies)) return deepFreeze([]);
+    const mission = runtime.content.missions[priorState.missionId];
+    const map = mission && runtime.content.maps[mission.mapId];
+    if (!map || !Array.isArray(map.pads) || !Array.isArray(map.routes)) return deepFreeze([]);
+    const towers = new Map(priorState.management.towers.map(function (tower) { return [tower.id, tower]; }));
+    const pads = new Map(map.pads.map(function (pad) { return [pad.id, pad]; }));
+    const enemies = new Map(priorState.enemies.map(function (enemy) { return [enemy.id, enemy]; }));
+    const seenTowers = new Set();
+    const durationTicks = Math.max(2, Math.round(
+      PROJECTILE_TRAVEL_MS * runtime.simulation.TICKS_PER_SECOND / 1000
+    ));
+    const cues = [];
+    telemetry.forEach(function (record) {
+      if (!record || record.kind !== "damage" || !Number.isSafeInteger(record.sourceTowerRuntimeId) ||
+          seenTowers.has(record.sourceTowerRuntimeId)) return;
+      const tower = towers.get(record.sourceTowerRuntimeId);
+      const pad = tower && pads.get(tower.padId);
+      const enemy = enemies.get(record.targetRuntimeId);
+      if (!tower || !pad || !enemy) return;
+      const route = map.routes.find(function (candidate) { return candidate.id === enemy.routeId; });
+      const segments = route ? routeSegments(map, route) : null;
+      const target = presentationLanePosition(enemy.position, segments, enemy.id);
+      seenTowers.add(tower.id);
+      cues.push({
+        id: priorState.tick + "-" + tower.id + "-" + enemy.id,
+        bornTick: priorState.tick,
+        durationTicks: durationTicks,
+        towerRuntimeId: tower.id,
+        targetRuntimeId: enemy.id,
+        defenseId: tower.defenseId,
+        fromX: pad.x,
+        fromY: pad.y - 3600,
+        toX: target.x,
+        toY: target.y - 800,
+      });
+    });
+    return deepFreeze(cues);
+  }
+
   function battlefieldView(runtimeInput, state, selectedPadId, viewOptions) {
     const runtime = assertRuntime(runtimeInput);
     const options = viewOptions || {};
@@ -857,6 +910,16 @@
     }).filter(function (anchor) {
       return Number.isSafeInteger(anchor.x) && Number.isSafeInteger(anchor.y);
     }) : [];
+    const projectiles = (Array.isArray(options.projectiles) ? options.projectiles : []).map(function (cue) {
+      const progress = Math.max(0, Math.min(1, (state.tick - cue.bornTick) / cue.durationTicks));
+      const arc = cue.defenseId === "siege" ? 10500 : 2200;
+      return Object.assign({}, cue, {
+        progressBp: Math.round(progress * 10000),
+        x: Math.round(cue.fromX + (cue.toX - cue.fromX) * progress),
+        y: Math.round(cue.fromY + (cue.toY - cue.fromY) * progress - Math.sin(Math.PI * progress) * arc),
+        impacting: progress >= 1 - PROJECTILE_IMPACT_FRACTION,
+      });
+    });
     return deepFreeze({
       missionId: state.missionId,
       tick: state.tick,
@@ -875,6 +938,7 @@
       pads: pads,
       selection: selection,
       enemies: enemies,
+      projectiles: projectiles,
     });
   }
 
@@ -1026,6 +1090,64 @@
       group.appendChild(svgElement(documentObject, "circle", {
         class: "preview-tower-effect-shockwave", cx: 1700, cy: -5700,
         r: 1700 + progress * 3100,
+      }));
+    }
+    return group;
+  }
+
+  function projectileEffect(documentObject, projectile, reduceMotion) {
+    const progress = projectile.progressBp / 10000;
+    const group = svgElement(documentObject, "g", {
+      class: "preview-projectile preview-projectile-" + projectile.defenseId,
+      "data-projectile-id": projectile.id,
+      "data-tower-id": projectile.towerRuntimeId,
+      "data-target-id": projectile.targetRuntimeId,
+      "data-progress-bp": projectile.progressBp,
+      "aria-hidden": "true",
+    });
+    if (!reduceMotion && !projectile.impacting) {
+      group.appendChild(svgElement(documentObject, "line", {
+        class: "preview-projectile-trail",
+        x1: projectile.fromX,
+        y1: projectile.fromY,
+        x2: projectile.x,
+        y2: projectile.y,
+      }));
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-projectile-core",
+        cx: projectile.x,
+        cy: projectile.y,
+        r: projectile.defenseId === "siege" ? 1450 : 1050,
+      }));
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-projectile-glow",
+        cx: projectile.x,
+        cy: projectile.y,
+        r: projectile.defenseId === "siege" ? 2600 : 1950,
+      }));
+    }
+    if (progress < 0.28) {
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-projectile-muzzle",
+        cx: projectile.fromX,
+        cy: projectile.fromY,
+        r: 900 + Math.round((0.28 - progress) * 5200),
+      }));
+    }
+    if (projectile.impacting || reduceMotion) {
+      const impactProgress = reduceMotion ? 0.55
+        : (progress - (1 - PROJECTILE_IMPACT_FRACTION)) / PROJECTILE_IMPACT_FRACTION;
+      group.appendChild(svgElement(documentObject, "circle", {
+        class: "preview-projectile-impact",
+        cx: projectile.toX,
+        cy: projectile.toY,
+        r: 1700 + Math.round(Math.max(0, impactProgress) * 4300),
+      }));
+      group.appendChild(svgElement(documentObject, "path", {
+        class: "preview-projectile-impact-star",
+        transform: "translate(" + projectile.toX + " " + projectile.toY + ") scale(" +
+          (0.7 + Math.max(0, impactProgress) * 0.55).toFixed(2) + ")",
+        d: "M 0 -4300 L 950 -1250 L 4100 -1500 L 1550 450 L 2650 3400 L 0 1750 L -2650 3400 L -1550 450 L -4100 -1500 L -950 -1250 Z",
       }));
     }
     return group;
@@ -1554,6 +1676,7 @@
     let previewDefenseId = null;
     let timer = null;
     let visualTicksSinceRender = 0;
+    let projectileCues = [];
     let manuallyPaused = false;
     let fatalPaused = false;
     let renderedShareState = null;
@@ -1811,6 +1934,7 @@
       const view = battlefieldView(runtime, state, selectedPadId, {
         reduceMotion: reduceMotion,
         previewDefenseId: previewDefenseId,
+        projectiles: projectileCues,
       });
       const svg = svgElement(documentObject, "svg", {
         class: "preview-battlefield-svg",
@@ -2037,6 +2161,14 @@
         enemyLayer.appendChild(group);
       });
       svg.appendChild(enemyLayer);
+      const projectileLayer = svgElement(documentObject, "g", {
+        class: "preview-projectile-layer",
+        "aria-hidden": "true",
+      });
+      view.projectiles.forEach(function (projectile) {
+        projectileLayer.appendChild(projectileEffect(documentObject, projectile, reduceMotion));
+      });
+      svg.appendChild(projectileLayer);
       replaceChildren(ui.battlefield, [svg]);
       renderSiteSelector(view, state);
       return view;
@@ -2315,6 +2447,7 @@
         renderedShareState = null;
         renderedShareModel = null;
         visualTicksSinceRender = 0;
+        projectileCues = [];
         setFeedback("Plan your defense. Choose an empty build site to place a tower.");
         render();
       } catch (error) {
@@ -2428,8 +2561,15 @@
       try {
         const priorPhase = session.state.management.phase;
         const priorOutcome = session.state.outcome;
+        const priorState = session.state;
         const result = session.step();
         if (!result.advanced) return;
+        projectileCues = projectileCues
+          .concat(projectileCuesForStep(runtime, priorState, result))
+          .filter(function (cue) {
+            return session.state.tick - cue.bornTick <= cue.durationTicks;
+          })
+          .slice(-MAX_PROJECTILE_CUES);
         const commandEvent = result.events.slice().reverse().find(function (event) {
           return ["build", "upgrade", "sell", "targetPolicy", "denied"].includes(event.type);
         });
@@ -3010,6 +3150,7 @@
     MAX_LOADOUT: MAX_LOADOUT,
     VISUAL_FPS: VISUAL_FPS,
     battlefieldView: battlefieldView,
+    projectileCuesForStep: projectileCuesForStep,
     createHeader: createHeader,
     createSession: createSession,
     createRunResult: BattleSession.createRunResult,

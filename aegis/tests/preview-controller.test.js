@@ -591,6 +591,7 @@ test("planning recomputes one canonical bucket and pause makes zero advanceTick 
   const beforePauseStep = calls.length;
   const pausedResult = session.step();
   assert.equal(pausedResult.advanced, false);
+  assert.deepEqual(pausedResult.telemetry, []);
   assert.equal(calls.length, beforePauseStep, "pause must be implemented by not calling advanceTick");
   session.command({ type: "sell", towerId: 1 });
   assert.equal(session.pendingCommandCount, 1, "management commands queue at the suspended simulation tick");
@@ -600,6 +601,7 @@ test("planning recomputes one canonical bucket and pause makes zero advanceTick 
   session.resume();
   const resumedResult = session.step();
   assert.equal(resumedResult.advanced, true);
+  assert.deepEqual(resumedResult.telemetry, []);
   assert.equal(calls.length, beforePauseStep + 1);
   assert.deepEqual(calls.at(-1).commands.map((command) => command.type), ["sell"]);
   assert.equal(session.state.tick, 2);
@@ -652,6 +654,49 @@ function m01PadRuntime() {
     );
   });
 }
+
+test("real tower damage telemetry produces one target-linked projectile cue per activation", () => {
+  const runtime = m01PadRuntime();
+  const priorState = frozen({
+    tick: 120,
+    missionId: "m01",
+    management: {
+      towers: [
+        { id: 7, padId: "p01", defenseId: "sentinel", level: 1 },
+        { id: 8, padId: "p02", defenseId: "siege", level: 1 },
+      ],
+    },
+    enemies: [
+      { id: 31, routeId: "route.main", position: { x: 35000, y: 38000 } },
+      { id: 32, routeId: "route.main", position: { x: 37000, y: 38000 } },
+    ],
+  });
+  const cues = PreviewController.projectileCuesForStep(runtime, priorState, {
+    telemetry: {
+      schemaVersion: 1,
+      tick: 120,
+      records: [
+        { kind: "damage", sourceTowerRuntimeId: 7, targetRuntimeId: 31 },
+        /* Collateral damage from the same activation must not become a confusing
+           second shell leaving the same tower on the same tick. */
+        { kind: "damage", sourceTowerRuntimeId: 7, targetRuntimeId: 32 },
+        { kind: "damage", sourceTowerRuntimeId: 8, targetRuntimeId: 32 },
+        { kind: "damage", sourceTowerRuntimeId: null, targetRuntimeId: 31 },
+      ],
+    },
+  });
+
+  assert.equal(cues.length, 2);
+  assert.deepEqual(cues.map((cue) => [cue.towerRuntimeId, cue.targetRuntimeId, cue.defenseId]), [
+    [7, 31, "sentinel"],
+    [8, 32, "siege"],
+  ]);
+  assert.deepEqual([cues[0].fromX, cues[0].fromY], [14000, 34400]);
+  assert.equal(cues[0].bornTick, 120);
+  assert.ok(cues[0].durationTicks > 1);
+  assert.equal(Object.isFrozen(cues), true);
+  assert.equal(Object.isFrozen(cues[0]), true);
+});
 
 /* One sentinel on p02 whose kernel cooldown timer is the only animation input. */
 function towerState(remainingUnits, tick) {

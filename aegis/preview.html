@@ -179,6 +179,25 @@
   .preview-tower-effect-spark { color: #ffe451; fill: rgba(255, 227, 75, .72); stroke: #fff7c5; stroke-width: 320; }
   .preview-tower-effect-shell { color: #ff8b31; fill: #fff0a3; stroke: #ff6b1a; stroke-width: 760; }
   .preview-tower-effect-shockwave { color: #ff9b45; fill: none; stroke: #ffc269; stroke-width: 720; }
+  .preview-projectile { pointer-events: none; color: #ffe86a; }
+  .preview-projectile-layer { pointer-events: none; }
+  .preview-projectile-trail {
+    stroke: currentColor;
+    stroke-width: 620;
+    stroke-linecap: round;
+    opacity: .72;
+    filter: drop-shadow(0 0 850px currentColor);
+  }
+  .preview-projectile-core { fill: #fffbd2; stroke: currentColor; stroke-width: 620; }
+  .preview-projectile-glow { fill: currentColor; opacity: .28; filter: drop-shadow(0 0 1200px currentColor); }
+  .preview-projectile-muzzle { fill: #fffbd2; stroke: currentColor; stroke-width: 650; opacity: .9; }
+  .preview-projectile-impact { fill: none; stroke: currentColor; stroke-width: 900; opacity: .9; }
+  .preview-projectile-impact-star { fill: currentColor; stroke: #fffbd2; stroke-width: 380; opacity: .88; }
+  .preview-projectile-chronos, .preview-projectile-oracle { color: #c47bff; }
+  .preview-projectile-sentinel, .preview-projectile-hoplite { color: #63e9ff; }
+  .preview-projectile-siege { color: #ff7b2f; }
+  .preview-projectile-siege .preview-projectile-core { fill: #2b1a12; stroke: #ffb052; }
+  .preview-projectile-siege .preview-projectile-trail { stroke-dasharray: 1250 900; }
   .preview-map-enemy { pointer-events: none; }
   .preview-enemy-contrast { fill: rgba(255, 246, 211, .22); stroke: #fff4cf; stroke-width: 700; }
   .preview-map-enemy-boss .preview-enemy-contrast { fill: rgba(141, 42, 216, .45); stroke: #ffe38b; stroke-width: 1300; }

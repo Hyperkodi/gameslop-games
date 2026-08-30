@@ -160,7 +160,12 @@
 
     function step() {
       if (paused || state.outcome !== "active" || state.management.phase === "planning") {
-        return Object.freeze({ advanced: false, events: Object.freeze([]), state: state });
+        return Object.freeze({
+          advanced: false,
+          events: Object.freeze([]),
+          state: state,
+          telemetry: Object.freeze([]),
+        });
       }
       const bucket = pendingCommands;
       pendingCommands = [];
@@ -171,7 +176,14 @@
         planningBaseState = state;
         planningCommands = [];
       }
-      return Object.freeze({ advanced: true, events: result.events, state: state });
+      return Object.freeze({
+        advanced: true,
+        events: result.events,
+        state: state,
+        /* Noncanonical diagnostics are exposed only so presentation can draw
+           real attacks. They are never stored in the session or replay. */
+        telemetry: result.telemetry || Object.freeze([]),
+      });
     }
 
     function pause() {
