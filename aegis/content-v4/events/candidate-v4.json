@@ -1,0 +1,1793 @@
+{
+  "schemaVersion": 2,
+  "id": "candidate-v4-events",
+  "records": [
+    {
+      "id": "armor.break",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "beam.fork",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "beam.pulse",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "boss.spawn",
+      "version": 1,
+      "phaseId": "scheduled-spawns",
+      "payloadFields": [
+        {
+          "name": "waveId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "bossId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "bossRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "routeId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "boss",
+        "spawn"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "chain.burst",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "chain.hit",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "chain.storm",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "direct.collateral",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "direct.combo",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "targetRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "acceptedHitCount",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "damageCoefficientBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "damage",
+        "tower"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "direct.crit",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "drone.attack",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "drone.bonus",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "drone.create",
+      "version": 2,
+      "phaseId": "scheduled-spawns",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "echo.cloak",
+      "version": 1,
+      "phaseId": "status-expiry",
+      "payloadFields": [
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "cloak",
+        "enemy"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "echo.exposed",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "sourceRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "cloak",
+        "enemy"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "enemy.spawn",
+      "version": 1,
+      "phaseId": "scheduled-spawns",
+      "payloadFields": [
+        {
+          "name": "waveId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "routeId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "lineageTags",
+          "type": "id-array",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "spawn"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "execute.banish",
+      "version": 2,
+      "phaseId": "terminal-death-execute-children-and-revival",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "execute.kill",
+      "version": 2,
+      "phaseId": "terminal-death-execute-children-and-revival",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "execute.tithe",
+      "version": 2,
+      "phaseId": "bounty",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "guard.bash",
+      "version": 1,
+      "phaseId": "movement",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "summonRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "damageMilli",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "control",
+        "damage",
+        "guard"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "guard.consume",
+      "version": 1,
+      "phaseId": "movement",
+      "payloadFields": [
+        {
+          "name": "summonRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "markerId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "guard"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "guard.contact",
+      "version": 1,
+      "phaseId": "movement",
+      "payloadFields": [
+        {
+          "name": "summonRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "markerId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "control",
+        "guard"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "guard.create",
+      "version": 1,
+      "phaseId": "scheduled-spawns",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "summonRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "markerId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "slotIndex",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "guard",
+        "spawn"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "guard.rejected",
+      "version": 1,
+      "phaseId": "movement",
+      "payloadFields": [
+        {
+          "name": "summonRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "markerId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "reasonId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "control",
+        "guard"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "line.hit",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "line.maelstrom",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "link.apply",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "link.coordinated",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "link.remove",
+      "version": 2,
+      "phaseId": "status-expiry",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mark.apply",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "sourceTypeId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "amountBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "mark",
+        "support"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mark.echo",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "scanCount",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "targetCount",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "mark",
+        "support"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mark.expire",
+      "version": 1,
+      "phaseId": "status-expiry",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "mark",
+        "support"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mark.scan",
+      "version": 1,
+      "phaseId": "tower-acquisition-and-attacks",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "scanCount",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "targetCount",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "mark",
+        "support"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mine.burn",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mine.create",
+      "version": 2,
+      "phaseId": "scheduled-spawns",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mine.detonate",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "mine.field",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "petrify.apply",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "petrify.rejected",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "pierce.hit",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.aegis-ward.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.aegis-ward.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.armara-ascension.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.armara-ascension.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.athena-command.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.athena-command.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.hades-bargain.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.hades-bargain.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.hephaestus-overclock.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.hephaestus-overclock.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.hermes-rewind.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.hermes-rewind.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.medusa-lock.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.medusa-lock.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.poseidon-surge.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.poseidon-surge.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.temporal-edict.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.temporal-edict.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.zeus-skyfire.accepted",
+      "version": 2,
+      "phaseId": "commands-and-aether-payments",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "protocol.zeus-skyfire.resolved",
+      "version": 2,
+      "phaseId": "scheduled-protocol-mechanism-resolutions-and-spawns",
+      "payloadFields": [
+        {
+          "name": "protocolId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "tier",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "protocol"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "reveal.apply",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "reveal",
+        "support"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "reveal.remove",
+      "version": 1,
+      "phaseId": "status-expiry",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "reveal",
+        "support"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "slow.debt",
+      "version": 2,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "slow.echo",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "primaryTargetRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "secondaryTargetCount",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "magnitudeBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "control",
+        "tower"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "splash.center",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "towerRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "targetRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "damageCoefficientBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "damage",
+        "tower"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "talos.expose",
+      "version": 1,
+      "phaseId": "guarded-boss-threshold-transition",
+      "payloadFields": [
+        {
+          "name": "bossRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "thresholdId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "damageCoefficientBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "boss",
+        "damage"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "talos.phase-enter",
+      "version": 1,
+      "phaseId": "guarded-boss-threshold-transition",
+      "payloadFields": [
+        {
+          "name": "bossRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "phaseId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "hpRatioBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "boss",
+        "phase"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "talos.phase-exit",
+      "version": 1,
+      "phaseId": "guarded-boss-threshold-transition",
+      "payloadFields": [
+        {
+          "name": "bossRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "phaseId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "hpRatioBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "boss",
+        "phase"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "talos.pods",
+      "version": 1,
+      "phaseId": "terminal-death-execute-children-and-revival",
+      "payloadFields": [
+        {
+          "name": "bossRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "thresholdId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "enemyId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "podCount",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "lineageId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "boss",
+        "spawn"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "talos.status",
+      "version": 1,
+      "phaseId": "shield-damage-and-status",
+      "payloadFields": [
+        {
+          "name": "bossRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "thresholdId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "statusId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "magnitudeBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "durationMs",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "boss",
+        "status"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "talos.threshold",
+      "version": 1,
+      "phaseId": "guarded-boss-threshold-transition",
+      "payloadFields": [
+        {
+          "name": "bossRuntimeId",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "thresholdId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "thresholdHpBp",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "warningDelayTicks",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "boss",
+        "phase"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "tutorial.step",
+      "version": 1,
+      "phaseId": "commands",
+      "payloadFields": [
+        {
+          "name": "stepId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "stepIndex",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "totalSteps",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "skipped",
+          "type": "boolean",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "tutorial"
+      ],
+      "presentationCueId": "cue.default"
+    },
+    {
+      "id": "wave.deploy",
+      "version": 1,
+      "phaseId": "commands",
+      "payloadFields": [
+        {
+          "name": "waveId",
+          "type": "id",
+          "required": true,
+          "nullable": false
+        },
+        {
+          "name": "amountAether",
+          "type": "integer",
+          "required": true,
+          "nullable": false
+        }
+      ],
+      "highlightTags": [
+        "economy",
+        "wave"
+      ],
+      "presentationCueId": "cue.default"
+    }
+  ]
+}

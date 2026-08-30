@@ -1,0 +1,114 @@
+{
+  "schemaVersion": 4,
+  "contentVersion": "candidate-v4",
+  "sourceKind": "campaign",
+  "approvalState": "candidate-balance",
+  "abiDescriptor": {
+    "source": "abi/abi-v2.json",
+    "sha256": "sha256:5f02c369c5331f65196090e00cdf09a7aa4458376f35057c0b5750202a0ea76b"
+  },
+  "behaviorContracts": {
+    "source": "behavior-contracts.json",
+    "sha256": "sha256:4f7e02af3c1765237cc90580e9771e8f2da64eb513608b8516501bc975da3da2"
+  },
+  "annex": {
+    "id": "candidate-v4",
+    "source": "annexes/candidate-v4.json",
+    "sha256": "sha256:7d30d8c49ea4371f58432b43d1c4fe067c12d91e99dbb75423ae74c3de3e67b6"
+  },
+  "campaignRules": {
+    "source": "campaign-rules/candidate-v4.json",
+    "sha256": "sha256:e3aa165a01dfaf8fa5f7c4eb9d227ffe85b8a4b8f4b147d11de327f47f18f516"
+  },
+  "defenses": {
+    "source": "defenses/candidate-v4.json",
+    "sha256": "sha256:0d7fef9ccc6f9b0be86a06012e565b9315af6273d3e213235ae7e01641f4f283"
+  },
+  "enemies": {
+    "source": "enemies/candidate-v4.json",
+    "sha256": "sha256:bef5497e8e231a477e2587c23f937c42318471f2393bd788d45a9a7607bbb01f"
+  },
+  "bosses": {
+    "source": "bosses/candidate-v4.json",
+    "sha256": "sha256:12d6f057308d4968f2bdad36297bdffd784bfadb77a96ea1ba4301b4413dccc5"
+  },
+  "eventCatalog": {
+    "source": "events/candidate-v4.json",
+    "sha256": "sha256:5492c1ca20bf474d8324e2c9e5a3e761cf1a52772a7f6183f54e7db053524e31"
+  },
+  "stringCatalog": {
+    "source": "strings/en.candidate-v4.json",
+    "sha256": "sha256:ac57648f3e86ba1a625d38d5c1b5142104c5458775a8abd2bb75de977bfc5449"
+  },
+  "presentationCatalog": {
+    "source": "presentation/candidate-v4.json",
+    "sha256": "sha256:530ad0499846fde4971aa91e0123517d0d4cecf03cbaa70fed68773b3b0e56c4"
+  },
+  "protocols": {
+    "source": "protocols/binding-v1.json",
+    "sha256": "sha256:fb5fac2ecbb04ce7eac13175bf14b24e7932a1a9525ceba553fd7c0e8cd07674"
+  },
+  "relics": {
+    "source": "relics/binding-v1.json",
+    "sha256": "sha256:e7417212c79aa2c1a144bc0f0b7f69df070da3a3dac6bc547b608ed96c3d8fdb"
+  },
+  "specializations": {
+    "source": "specializations/binding-v1.json",
+    "sha256": "sha256:4dde428f16d71bd6ef7ff1191116dfc9e43863da93413a813502f68c8fa1452f"
+  },
+  "reinforcements": {
+    "source": "reinforcements/binding-v1.json",
+    "sha256": "sha256:fd6e19f96d709b42bbda53f0e7ddbed78d953f0389b5ad8b6a06902e31ef8b92"
+  },
+  "mechanisms": {
+    "source": "mechanisms/binding-v1.json",
+    "sha256": "sha256:95e25c36190f8e09398f0c8cc544008e972c28517d37e893e66975a71386681a"
+  },
+  "progression": {
+    "source": "progression/binding-v1.json",
+    "sha256": "sha256:7a153af4bcbdbed6e66576e0f26fd3843064e30984007f314dc93c447c33297d"
+  },
+  "missions": [
+    {
+      "id": "m01",
+      "definition": {
+        "source": "missions/m01.candidate-v4.json",
+        "sha256": "sha256:9061a30395a12f02fce0f02be578bd3d83dbb5233dafa041038fcfefd940b8d3"
+      },
+      "map": {
+        "schemaVersion": 1,
+        "source": "maps/m01.candidate-v4.json",
+        "sha256": "sha256:8ba6f77e11a4c0b2e9ba99ee1bd345dbb1529e6ec34906c3499a8af42b010c76"
+      },
+      "mapProofSupplement": {
+        "schemaVersion": 1,
+        "source": "map-proofs/m01.guard-v1.json",
+        "sha256": "sha256:68189b6e481ca39b2be445d518d7b51d6d380204934ddd07484d598545a59a8a"
+      }
+    },
+    {
+      "id": "m04",
+      "definition": {
+        "source": "missions/m04.candidate-v4.json",
+        "sha256": "sha256:4ecdf2757518a7de202227c5310c216ca4b7e04de6ac1096a36d7907929d15aa"
+      },
+      "map": {
+        "schemaVersion": 2,
+        "source": "maps/m04.candidate-v4.json",
+        "sha256": "sha256:8555d6ea8dd079cd1ff10869011b8439012d6d7fe645b1f2c202b4f462c1d712"
+      }
+    },
+    {
+      "id": "m05",
+      "definition": {
+        "source": "missions/m05.candidate-v4.json",
+        "sha256": "sha256:a3131dde68f78e79c69a23b62ca1acd8573aafa03c6605bd3a572d8ee4003ae9"
+      },
+      "map": {
+        "schemaVersion": 2,
+        "source": "maps/m05.candidate-v4.json",
+        "sha256": "sha256:5f0bd22a887d494e3ec6aedf61b6f1f09d17f261a12c8f32c70caddd55eaa457"
+      }
+    }
+  ]
+}

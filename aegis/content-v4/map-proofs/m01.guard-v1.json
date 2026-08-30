@@ -1,0 +1,368 @@
+{
+  "schemaVersion": 1,
+  "id": "m01.guard-v1",
+  "mapId": "m01",
+  "normalizedMapSchemaVersion": 2,
+  "roleProofs": [
+    {
+      "id": "proof.guard.p01",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p01",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p01.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 5000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p01.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 20000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p01.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 35000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p02",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p02",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p02.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 50000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p02.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 65000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p02.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 79000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p03",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p03",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p03.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 73000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p03.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 88000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p03.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 103000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p04",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p04",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p04.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 79000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p04.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 112000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p04.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 139000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p05",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p05",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p05.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 105000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p05.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 120000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p05.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 135000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p06",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p06",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p06.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 125000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p06.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 140000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p06.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 155000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p07",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p07",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p07.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 145000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p07.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 159000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p07.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 174000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p08",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p08",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p08.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 147000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p08.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 180000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p08.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 207000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p09",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p09",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p09.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 206000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p09.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 221000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p09.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 235000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "proof.guard.p10",
+      "kind": "guard",
+      "version": 1,
+      "padId": "p10",
+      "projectionRangeWorldUnits": 22,
+      "markers": [
+        {
+          "id": "marker.p10.0",
+          "slotIndex": 0,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 225000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p10.1",
+          "slotIndex": 1,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 240000,
+          "routeIds": [
+            "route.main"
+          ]
+        },
+        {
+          "id": "marker.p10.2",
+          "slotIndex": 2,
+          "laneSegmentId": "lane.migrated.route.main",
+          "laneOffsetMilliUnits": 255000,
+          "routeIds": [
+            "route.main"
+          ]
+        }
+      ]
+    }
+  ]
+}

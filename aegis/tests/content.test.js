@@ -346,11 +346,26 @@ test("production simulation bundle is deterministic, source-byte-bound, and leav
         ["targeting", "Targeting", "./targeting.js"],
       ]],
       ["commands", [["abi", "ABI", "./abi.js"]]],
+      /* Ruling R16: one declared module list serves every content schema, because `management.js`
+         and `kernel.js` are single files whose static ABI-v2 dependencies must all be installed. */
+      ["abi-v2", [["abi", "ABI_V1", "./abi.js"]]],
+      ["commands-v2", [
+        ["abi-v2", "ABI", "./abi-v2.js"],
+        ["commands", "CommandsV1", "./commands.js"],
+      ]],
+      ["protocols", [
+        ["abi-v2", "ABI", "./abi-v2.js"],
+        ["commands-v2", "CommandsV2", "./commands-v2.js"],
+      ]],
+      ["relics", [["abi-v2", "ABI", "./abi-v2.js"]]],
       ["management", [
         ["abi", "ABI", "./abi.js"],
         ["economy", "Economy", "./economy.js"],
         ["movement", "Movement", "./movement.js"],
         ["commands", "Commands", "./commands.js"],
+        ["commands-v2", "CommandsV2", "./commands-v2.js"],
+        ["protocols", "Protocols", "./protocols.js"],
+        ["relics", "Relics", "./relics.js"],
       ]],
       ["objectives", [["abi", "ABI", "./abi.js"]]],
       ["kernel", [
@@ -365,6 +380,10 @@ test("production simulation bundle is deterministic, source-byte-bound, and leav
         ["commands", "Commands", "./commands.js"],
         ["management", "Management", "./management.js"],
         ["objectives", "Objectives", "./objectives.js"],
+        ["abi-v2", "ABIV2", "./abi-v2.js"],
+        ["commands-v2", "CommandsV2", "./commands-v2.js"],
+        ["protocols", "Protocols", "./protocols.js"],
+        ["relics", "Relics", "./relics.js"],
       ]],
       ["replay-runner", [
         ["abi", "ABI", "./abi.js"],
@@ -375,6 +394,15 @@ test("production simulation bundle is deterministic, source-byte-bound, and leav
         ["abi", "ABI", "./abi.js"],
         ["commands", "Commands", "./commands.js"],
         ["replay-runner", "ReplayRunner", "./replay-runner.js"],
+      ]],
+      ["replay-v2", [
+        ["abi-v2", "ABI", "./abi-v2.js"],
+        ["commands-v2", "CommandsV2", "./commands-v2.js"],
+        ["replay", "ReplayV1", "./replay.js"],
+      ]],
+      ["replay-formats", [
+        ["replay", "ReplayV1", "./replay.js"],
+        ["replay-v2", "ReplayV2", "./replay-v2.js"],
       ]],
     ]
   );
@@ -619,11 +647,14 @@ test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and dr
     "/simulationBundle/management"
   );
 
+  /* Ruling R16 bundles the ABI-v2 modules into every schema, so management.js now declares seven
+     factory parameters. The sentinel is re-derived from the current root-capture seam and keeps the
+     original intent: swapping two declared parameters must be caught as seam drift. */
   const managementParameterDrift = replaceModuleBytes(
     sources,
     "management",
-    "function (\n  ABI,\n  Economy,\n  Movement,\n  Commands\n) {",
-    "function (\n  ABI,\n  Movement,\n  Economy,\n  Commands\n) {"
+    "function (\n  ABI,\n  Economy,\n  Movement,\n  Commands,\n  CommandsV2,\n  Protocols,\n  Relics\n) {",
+    "function (\n  ABI,\n  Movement,\n  Economy,\n  Commands,\n  CommandsV2,\n  Protocols,\n  Relics\n) {"
   );
   expectDiagnostic(
     () => assembleSimulationBundle(managementParameterDrift),
@@ -665,6 +696,20 @@ test("simulation bundle fails closed on missing, duplicate, unsafe, CRLF, and dr
     () => assembleSimulationBundle(replayClassicCallDrift),
     "SIMULATION_BUNDLE_SEAM",
     "/simulationBundle/replay"
+  );
+
+  /* Ruling R16 also bundles the ABI-v2 replay envelope, whose three declared dependencies use the
+     multi-line CommonJS seam form. Cover that seam the same way the v1 modules are covered. */
+  const replayV2DependencyDrift = replaceModuleBytes(
+    sources,
+    "replay-v2",
+    'require("./abi-v2.js"),\n      require("./commands-v2.js"),\n      require("./replay.js")',
+    'require("./commands-v2.js"),\n      require("./abi-v2.js"),\n      require("./replay.js")'
+  );
+  expectDiagnostic(
+    () => assembleSimulationBundle(replayV2DependencyDrift),
+    "SIMULATION_BUNDLE_SEAM",
+    "/simulationBundle/replay-v2"
   );
 
   const rogueImport = copySimulationSources(sources);

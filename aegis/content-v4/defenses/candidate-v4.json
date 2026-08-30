@@ -1,0 +1,4057 @@
+{
+  "schemaVersion": 2,
+  "id": "candidate-v4-defenses",
+  "summonRecords": [
+    {
+      "id": "hephaestus-mine",
+      "kind": "proximity-mine",
+      "targetKinds": [
+        "ground"
+      ],
+      "acceptedContactsBeforeConsume": 1,
+      "semanticEventIds": [
+        "mine.burn",
+        "mine.create",
+        "mine.detonate",
+        "mine.field"
+      ]
+    },
+    {
+      "id": "hermes-drone",
+      "kind": "patrol-drone",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "acceptedContactsBeforeConsume": 0,
+      "semanticEventIds": [
+        "drone.attack",
+        "drone.bonus",
+        "drone.create"
+      ]
+    },
+    {
+      "id": "hoplite-guard",
+      "kind": "fixed-marker-guard",
+      "targetKinds": [
+        "ground"
+      ],
+      "acceptedContactsBeforeConsume": 1,
+      "semanticEventIds": [
+        "guard.consume",
+        "guard.contact",
+        "guard.create",
+        "guard.rejected"
+      ]
+    }
+  ],
+  "records": [
+    {
+      "id": "apollo",
+      "nameKey": "defense.apollo.name",
+      "roleKey": "defense.apollo.role",
+      "weaknessKey": "defense.apollo.weakness",
+      "unlockId": "campaign.apollo",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "direct"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 120
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "beam",
+              "contractId": "beam",
+              "version": 2,
+              "deliveryKind": "ramping-pulse",
+              "parameters": {
+                "pulseIntervalMs": 250,
+                "startDamage": "4",
+                "incrementDamage": "1",
+                "peakDamage": "14",
+                "damageTypeId": "solar",
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 15000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "resetRuleId": "counter-reset-on-gap-or-target-change",
+                "resetAfterNoTargetMs": 1000,
+                "fork": null,
+                "pulseEventId": "beam.pulse"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.apollo.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 110
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "beam",
+              "contractId": "beam",
+              "version": 2,
+              "deliveryKind": "ramping-pulse",
+              "parameters": {
+                "pulseIntervalMs": 250,
+                "startDamage": "4",
+                "incrementDamage": "2",
+                "peakDamage": "16",
+                "damageTypeId": "solar",
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 15000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "resetRuleId": "counter-reset-on-gap-or-target-change",
+                "resetAfterNoTargetMs": 1000,
+                "fork": null,
+                "pulseEventId": "beam.pulse"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.apollo.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "apollo-forked-ray",
+          "defenseId": "apollo",
+          "isDefault": true,
+          "branchRoleId": "forked-ray",
+          "nameKey": "specialization.apollo-forked-ray.name",
+          "unlockGrantId": "grant.specialization.apollo-forked-ray",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 175
+          },
+          "rangeWorldUnits": "32",
+          "behaviors": [
+            {
+              "id": "beam",
+              "contractId": "beam",
+              "version": 2,
+              "deliveryKind": "ramping-pulse",
+              "parameters": {
+                "pulseIntervalMs": 250,
+                "startDamage": "4",
+                "incrementDamage": "2",
+                "peakDamage": "18",
+                "damageTypeId": "solar",
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 15000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "resetRuleId": "counter-reset-on-gap-or-target-change",
+                "resetAfterNoTargetMs": 1000,
+                "fork": {
+                  "kind": "secondary-fork",
+                  "maximumTargets": 1,
+                  "damageBp": 4500,
+                  "shieldedTargetDamageBp": 7000,
+                  "comparatorId": "secondary-route-front-v1",
+                  "eligibilityRuleId": "direct-visible-or-exposed",
+                  "recursive": false,
+                  "semanticEventId": "beam.fork"
+                },
+                "pulseEventId": "beam.pulse"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.apollo-forked-ray.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "apollo-solar-lance",
+          "defenseId": "apollo",
+          "isDefault": false,
+          "branchRoleId": "solar-lance",
+          "nameKey": "specialization.apollo-solar-lance.name",
+          "unlockGrantId": "grant.specialization.apollo-solar-lance",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 175
+          },
+          "rangeWorldUnits": "32",
+          "behaviors": [
+            {
+              "id": "beam",
+              "contractId": "beam",
+              "version": 2,
+              "deliveryKind": "ramping-pulse",
+              "parameters": {
+                "pulseIntervalMs": 250,
+                "startDamage": "4",
+                "incrementDamage": "4",
+                "peakDamage": "24",
+                "damageTypeId": "solar",
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 20000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "resetRuleId": "counter-reset-on-gap-or-target-change",
+                "resetAfterNoTargetMs": 1000,
+                "fork": null,
+                "pulseEventId": "beam.pulse"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.apollo-solar-lance.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "beam.fork",
+        "beam.pulse"
+      ]
+    },
+    {
+      "id": "artemis",
+      "nameKey": "defense.artemis.name",
+      "roleKey": "defense.artemis.role",
+      "weaknessKey": "defense.artemis.weakness",
+      "unlockId": "campaign.artemis",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "direct"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 110
+          },
+          "rangeWorldUnits": "38",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 2000,
+                "baseDamage": "52",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 10000,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.artemis.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 100
+          },
+          "rangeWorldUnits": "42",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 1900,
+                "baseDamage": "80",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 10000,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": {
+                  "kind": "aligned-pierce-chain",
+                  "maximumAdditionalTargets": 1,
+                  "falloffBp": [
+                    5000
+                  ],
+                  "inheritsInternalCoefficients": false,
+                  "comparatorId": "secondary-route-front-v1",
+                  "eligibilityRuleId": "direct-visible-or-exposed",
+                  "semanticEventId": "pierce.hit"
+                },
+                "stackConsumption": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.artemis.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "artemis-execution-line",
+          "defenseId": "artemis",
+          "isDefault": true,
+          "branchRoleId": "execution-line",
+          "nameKey": "specialization.artemis-execution-line.name",
+          "unlockGrantId": "grant.specialization.artemis-execution-line",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 155
+          },
+          "rangeWorldUnits": "46",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 1800,
+                "baseDamage": "118",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 10000,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": {
+                  "kind": "every-n-accepted-primary-attacks",
+                  "requiredAttacks": 4,
+                  "damageBp": 15000,
+                  "appliesToSecondaryTargets": false,
+                  "emptyActivationAdvances": false,
+                  "resetRuleId": "counter-reset-on-wave-start",
+                  "recursive": false,
+                  "semanticEventId": "direct.crit"
+                },
+                "collateral": null,
+                "pierce": {
+                  "kind": "aligned-pierce-chain",
+                  "maximumAdditionalTargets": 1,
+                  "falloffBp": [
+                    5000
+                  ],
+                  "inheritsInternalCoefficients": false,
+                  "comparatorId": "secondary-route-front-v1",
+                  "eligibilityRuleId": "direct-visible-or-exposed",
+                  "semanticEventId": "pierce.hit"
+                },
+                "stackConsumption": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.artemis-execution-line.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "artemis-threader",
+          "defenseId": "artemis",
+          "isDefault": false,
+          "branchRoleId": "threader",
+          "nameKey": "specialization.artemis-threader.name",
+          "unlockGrantId": "grant.specialization.artemis-threader",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 155
+          },
+          "rangeWorldUnits": "44",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 1650,
+                "baseDamage": "96",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 10000,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": {
+                  "kind": "aligned-pierce-chain",
+                  "maximumAdditionalTargets": 2,
+                  "falloffBp": [
+                    6500,
+                    4000
+                  ],
+                  "inheritsInternalCoefficients": false,
+                  "comparatorId": "secondary-route-front-v1",
+                  "eligibilityRuleId": "direct-visible-or-exposed",
+                  "semanticEventId": "pierce.hit"
+                },
+                "stackConsumption": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.artemis-threader.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "direct.crit",
+        "pierce.hit"
+      ]
+    },
+    {
+      "id": "athena",
+      "nameKey": "defense.athena.name",
+      "roleKey": "defense.athena.role",
+      "weaknessKey": "defense.athena.weakness",
+      "unlockId": "campaign.athena",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FRONT"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "support"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 90
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "links",
+              "contractId": "link",
+              "version": 2,
+              "deliveryKind": "friendly-link-amplification",
+              "parameters": {
+                "statusId": "link",
+                "affectedSide": "friendly",
+                "maximumLinks": 3,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "rangeBp": 1000,
+                "rateBp": 0,
+                "selectionPolicyId": "nearest-eligible-then-tower-id",
+                "eligibilityRuleId": "target-kind-and-state-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "sourceTypeId": "athena-link",
+                "coordinatedFire": null,
+                "applyEventId": "link.apply",
+                "removeEventId": "link.remove"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.athena.l1.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 95
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "links",
+              "contractId": "link",
+              "version": 2,
+              "deliveryKind": "friendly-link-amplification",
+              "parameters": {
+                "statusId": "link",
+                "affectedSide": "friendly",
+                "maximumLinks": 4,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "rangeBp": 1000,
+                "rateBp": 1000,
+                "selectionPolicyId": "nearest-eligible-then-tower-id",
+                "eligibilityRuleId": "target-kind-and-state-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "sourceTypeId": "athena-link",
+                "coordinatedFire": null,
+                "applyEventId": "link.apply",
+                "removeEventId": "link.remove"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.athena.l2.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "athena-command-mesh",
+          "defenseId": "athena",
+          "isDefault": false,
+          "branchRoleId": "command-mesh",
+          "nameKey": "specialization.athena-command-mesh.name",
+          "unlockGrantId": "grant.specialization.athena-command-mesh",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 155
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "links",
+              "contractId": "link",
+              "version": 2,
+              "deliveryKind": "friendly-link-amplification",
+              "parameters": {
+                "statusId": "link",
+                "affectedSide": "friendly",
+                "maximumLinks": 5,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "rangeBp": 1200,
+                "rateBp": 1500,
+                "selectionPolicyId": "nearest-eligible-then-tower-id",
+                "eligibilityRuleId": "target-kind-and-state-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "sourceTypeId": "athena-link",
+                "coordinatedFire": null,
+                "applyEventId": "link.apply",
+                "removeEventId": "link.remove"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.athena-command-mesh.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "athena-coordinated-fire",
+          "defenseId": "athena",
+          "isDefault": true,
+          "branchRoleId": "coordinated-fire",
+          "nameKey": "specialization.athena-coordinated-fire.name",
+          "unlockGrantId": "grant.specialization.athena-coordinated-fire",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 155
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "links",
+              "contractId": "link",
+              "version": 2,
+              "deliveryKind": "friendly-link-amplification",
+              "parameters": {
+                "statusId": "link",
+                "affectedSide": "friendly",
+                "maximumLinks": 4,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "rangeBp": 1000,
+                "rateBp": 1000,
+                "selectionPolicyId": "nearest-eligible-then-tower-id",
+                "eligibilityRuleId": "target-kind-and-state-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "sourceTypeId": "athena-link",
+                "coordinatedFire": {
+                  "kind": "shared-target-damage-bonus",
+                  "requiredSharedLinks": 2,
+                  "damageBp": 800,
+                  "semanticEventId": "link.coordinated"
+                },
+                "applyEventId": "link.apply",
+                "removeEventId": "link.remove"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.athena-coordinated-fire.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "link.apply",
+        "link.coordinated",
+        "link.remove"
+      ]
+    },
+    {
+      "id": "chronos",
+      "nameKey": "defense.chronos.name",
+      "roleKey": "defense.chronos.role",
+      "weaknessKey": "defense.chronos.weakness",
+      "unlockId": "campaign.chronos",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "control"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 75
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 1,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 900,
+                "baseDamage": "2",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "consecutiveHitCounter": null
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 1,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "slow",
+                "magnitudeBp": 3200,
+                "durationMs": 1200,
+                "controlKind": "slow",
+                "echoCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.chronos.l1.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 70
+          },
+          "rangeWorldUnits": "25",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 1,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 800,
+                "baseDamage": "4",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "consecutiveHitCounter": null
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 1,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "slow",
+                "magnitudeBp": 4000,
+                "durationMs": 1350,
+                "controlKind": "slow",
+                "echoCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.chronos.l2.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "chronos-echo-field",
+          "defenseId": "chronos",
+          "isDefault": true,
+          "branchRoleId": "echo-field",
+          "nameKey": "specialization.chronos-echo-field.name",
+          "unlockGrantId": "grant.specialization.chronos-echo-field",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 115
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 720,
+                "baseDamage": "6",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 2,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "slow",
+                "magnitudeBp": 4800,
+                "durationMs": 1500,
+                "controlKind": "slow",
+                "echoCounter": {
+                  "kind": "every-n-accepted-primary-hits",
+                  "requiredAcceptedHits": 5,
+                  "maximumSecondaryTargets": 2,
+                  "radiusWorldUnits": "6",
+                  "magnitudeBp": 2400,
+                  "durationMs": 1000,
+                  "comparatorId": "secondary-route-front-v1",
+                  "emptyActivationAdvances": false,
+                  "recursive": false,
+                  "resetRuleId": "counter-reset-on-wave-start",
+                  "semanticEventId": "slow.echo"
+                }
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.chronos-echo-field.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "chronos-time-debt",
+          "defenseId": "chronos",
+          "isDefault": false,
+          "branchRoleId": "time-debt",
+          "nameKey": "specialization.chronos-time-debt.name",
+          "unlockGrantId": "grant.specialization.chronos-time-debt",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 115
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 760,
+                "baseDamage": "5",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": {
+                  "kind": "consume-source-stacks-on-consecutive-hit",
+                  "requiredAcceptedHits": 3,
+                  "damage": "18",
+                  "damageTypeId": "temporal",
+                  "consumedStatusId": "slow",
+                  "emptyActivationAdvances": false,
+                  "resetOnTargetChange": true,
+                  "resetRuleId": "counter-reset-on-gap-or-target-change",
+                  "semanticEventId": "slow.debt"
+                }
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 2,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "slow",
+                "magnitudeBp": 5500,
+                "durationMs": 1800,
+                "controlKind": "slow",
+                "echoCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.chronos-time-debt.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "slow.debt",
+        "slow.echo"
+      ]
+    },
+    {
+      "id": "hades",
+      "nameKey": "defense.hades.name",
+      "roleKey": "defense.hades.role",
+      "weaknessKey": "defense.hades.weakness",
+      "unlockId": "campaign.hades",
+      "targetKinds": [
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "direct"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 120
+          },
+          "rangeWorldUnits": "22",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 1250,
+                "baseDamage": "14",
+                "damageTypeId": "void",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "execute",
+              "contractId": "execute",
+              "version": 2,
+              "deliveryKind": "threshold-terminal",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "thresholdBp": 1000,
+                "bossEligible": false,
+                "reviveSuppressedStatusId": "reviveSuppressed",
+                "banish": null,
+                "income": null,
+                "semanticEventId": "execute.kill"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hades.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 110
+          },
+          "rangeWorldUnits": "23",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 1200,
+                "baseDamage": "20",
+                "damageTypeId": "void",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "execute",
+              "contractId": "execute",
+              "version": 2,
+              "deliveryKind": "threshold-terminal",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "thresholdBp": 1400,
+                "bossEligible": false,
+                "reviveSuppressedStatusId": "reviveSuppressed",
+                "banish": null,
+                "income": null,
+                "semanticEventId": "execute.kill"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hades.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "hades-soul-tithe",
+          "defenseId": "hades",
+          "isDefault": false,
+          "branchRoleId": "soul-tithe",
+          "nameKey": "specialization.hades-soul-tithe.name",
+          "unlockGrantId": "grant.specialization.hades-soul-tithe",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 175
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 1000,
+                "baseDamage": "30",
+                "damageTypeId": "void",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "execute",
+              "contractId": "execute",
+              "version": 2,
+              "deliveryKind": "threshold-terminal",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "thresholdBp": 2000,
+                "bossEligible": false,
+                "reviveSuppressedStatusId": "reviveSuppressed",
+                "banish": null,
+                "income": {
+                  "kind": "per-execute-aether",
+                  "aetherPerExecute": 2,
+                  "maximumPerWave": 6,
+                  "ledgerId": "specializationAetherEarned",
+                  "excludeFromUnspentScore": true,
+                  "resetRuleId": "counter-reset-on-wave-start",
+                  "semanticEventId": "execute.tithe"
+                },
+                "semanticEventId": "execute.kill"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hades-soul-tithe.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "hades-twin-banish",
+          "defenseId": "hades",
+          "isDefault": true,
+          "branchRoleId": "twin-banish",
+          "nameKey": "specialization.hades-twin-banish.name",
+          "unlockGrantId": "grant.specialization.hades-twin-banish",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 175
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 1100,
+                "baseDamage": "28",
+                "damageTypeId": "void",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "execute",
+              "contractId": "execute",
+              "version": 2,
+              "deliveryKind": "threshold-terminal",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "thresholdBp": 1800,
+                "bossEligible": false,
+                "reviveSuppressedStatusId": "reviveSuppressed",
+                "banish": {
+                  "kind": "every-n-executes",
+                  "requiredExecutes": 3,
+                  "cooldownMs": 8000,
+                  "maximumTargets": 1,
+                  "maximumTargetHpBp": 5000,
+                  "comparatorId": "secondary-route-front-v1",
+                  "bossEligible": false,
+                  "recursive": false,
+                  "semanticEventId": "execute.banish"
+                },
+                "income": null,
+                "semanticEventId": "execute.kill"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hades-twin-banish.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "execute.banish",
+        "execute.kill",
+        "execute.tithe"
+      ]
+    },
+    {
+      "id": "hephaestus",
+      "nameKey": "defense.hephaestus.name",
+      "roleKey": "defense.hephaestus.role",
+      "weaknessKey": "defense.hephaestus.weakness",
+      "unlockId": "campaign.hephaestus",
+      "targetKinds": [
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FRONT"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "area"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 110
+          },
+          "rangeWorldUnits": "22",
+          "behaviors": [
+            {
+              "id": "mines",
+              "contractId": "mine",
+              "version": 2,
+              "deliveryKind": "proximity-slots",
+              "parameters": {
+                "summonRecordId": "hephaestus-mine",
+                "activeSlotCount": 1,
+                "replenishMs": 5500,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "armingRadiusWorldUnits": "2",
+                "blastDamage": "30",
+                "blastRadiusWorldUnits": "3",
+                "damageTypeId": "thermal",
+                "slotPolicyId": "arming-marker-order-then-mine-id",
+                "maximumCreateEventsPerTick": 3,
+                "burn": {
+                  "statusId": "burn",
+                  "damagePerSecond": "4",
+                  "durationMs": 3000,
+                  "stackRuleId": "refresh-same-source",
+                  "semanticEventId": "mine.burn"
+                },
+                "persistentField": null,
+                "createEventId": "mine.create",
+                "detonateEventId": "mine.detonate"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hephaestus.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 105
+          },
+          "rangeWorldUnits": "23",
+          "behaviors": [
+            {
+              "id": "mines",
+              "contractId": "mine",
+              "version": 2,
+              "deliveryKind": "proximity-slots",
+              "parameters": {
+                "summonRecordId": "hephaestus-mine",
+                "activeSlotCount": 2,
+                "replenishMs": 5000,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "armingRadiusWorldUnits": "2",
+                "blastDamage": "44",
+                "blastRadiusWorldUnits": "3",
+                "damageTypeId": "thermal",
+                "slotPolicyId": "arming-marker-order-then-mine-id",
+                "maximumCreateEventsPerTick": 3,
+                "burn": {
+                  "statusId": "burn",
+                  "damagePerSecond": "5",
+                  "durationMs": 3500,
+                  "stackRuleId": "refresh-same-source",
+                  "semanticEventId": "mine.burn"
+                },
+                "persistentField": null,
+                "createEventId": "mine.create",
+                "detonateEventId": "mine.detonate"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hephaestus.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "hephaestus-molten-field",
+          "defenseId": "hephaestus",
+          "isDefault": true,
+          "branchRoleId": "molten-field",
+          "nameKey": "specialization.hephaestus-molten-field.name",
+          "unlockGrantId": "grant.specialization.hephaestus-molten-field",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 165
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "mines",
+              "contractId": "mine",
+              "version": 2,
+              "deliveryKind": "proximity-slots",
+              "parameters": {
+                "summonRecordId": "hephaestus-mine",
+                "activeSlotCount": 2,
+                "replenishMs": 4500,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "armingRadiusWorldUnits": "2",
+                "blastDamage": "60",
+                "blastRadiusWorldUnits": "3",
+                "damageTypeId": "thermal",
+                "slotPolicyId": "arming-marker-order-then-mine-id",
+                "maximumCreateEventsPerTick": 3,
+                "burn": {
+                  "statusId": "burn",
+                  "damagePerSecond": "6",
+                  "durationMs": 4000,
+                  "stackRuleId": "refresh-same-source",
+                  "semanticEventId": "mine.burn"
+                },
+                "persistentField": {
+                  "kind": "anti-regeneration-field",
+                  "statusId": "burn",
+                  "durationMs": 2500,
+                  "radiusWorldUnits": "3",
+                  "semanticEventId": "mine.field"
+                },
+                "createEventId": "mine.create",
+                "detonateEventId": "mine.detonate"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hephaestus-molten-field.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "hephaestus-triple-foundry",
+          "defenseId": "hephaestus",
+          "isDefault": false,
+          "branchRoleId": "triple-foundry",
+          "nameKey": "specialization.hephaestus-triple-foundry.name",
+          "unlockGrantId": "grant.specialization.hephaestus-triple-foundry",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 165
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "mines",
+              "contractId": "mine",
+              "version": 2,
+              "deliveryKind": "proximity-slots",
+              "parameters": {
+                "summonRecordId": "hephaestus-mine",
+                "activeSlotCount": 3,
+                "replenishMs": 3800,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "armingRadiusWorldUnits": "2",
+                "blastDamage": "46",
+                "blastRadiusWorldUnits": "3",
+                "damageTypeId": "thermal",
+                "slotPolicyId": "arming-marker-order-then-mine-id",
+                "maximumCreateEventsPerTick": 3,
+                "burn": {
+                  "statusId": "burn",
+                  "damagePerSecond": "5",
+                  "durationMs": 3500,
+                  "stackRuleId": "refresh-same-source",
+                  "semanticEventId": "mine.burn"
+                },
+                "persistentField": null,
+                "createEventId": "mine.create",
+                "detonateEventId": "mine.detonate"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hephaestus-triple-foundry.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "mine.burn",
+        "mine.create",
+        "mine.detonate",
+        "mine.field"
+      ]
+    },
+    {
+      "id": "hermes",
+      "nameKey": "defense.hermes.name",
+      "roleKey": "defense.hermes.role",
+      "weaknessKey": "defense.hermes.weakness",
+      "unlockId": "campaign.hermes",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "direct"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 85
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "drones",
+              "contractId": "drone",
+              "version": 2,
+              "deliveryKind": "patrol-slots",
+              "parameters": {
+                "summonRecordId": "hermes-drone",
+                "activeSlotCount": 1,
+                "replenishMs": 6000,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "patrolRadiusWorldUnits": "6",
+                "travelSpeedWorldUnitsPerSecond": "18",
+                "slotPolicyId": "patrol-slot-index-then-drone-id",
+                "maximumCreateEventsPerTick": 3,
+                "attack": {
+                  "cooldownMs": 450,
+                  "baseDamage": "8",
+                  "damageTypeId": "kinetic",
+                  "targetKinds": [
+                    "air",
+                    "ground"
+                  ],
+                  "airPriority": true,
+                  "airCoefficientBp": 10000,
+                  "shieldCoefficientBp": 10000,
+                  "armorIgnoreBp": 0,
+                  "bossCoefficientBp": 10000,
+                  "targetPolicySource": {
+                    "kind": "fixed",
+                    "targetPolicyId": "FRONT"
+                  },
+                  "bonusShotCounter": null,
+                  "attackEventId": "drone.attack"
+                },
+                "createEventId": "drone.create"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hermes.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 80
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "drones",
+              "contractId": "drone",
+              "version": 2,
+              "deliveryKind": "patrol-slots",
+              "parameters": {
+                "summonRecordId": "hermes-drone",
+                "activeSlotCount": 2,
+                "replenishMs": 6000,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "patrolRadiusWorldUnits": "6",
+                "travelSpeedWorldUnitsPerSecond": "18",
+                "slotPolicyId": "patrol-slot-index-then-drone-id",
+                "maximumCreateEventsPerTick": 3,
+                "attack": {
+                  "cooldownMs": 450,
+                  "baseDamage": "7",
+                  "damageTypeId": "kinetic",
+                  "targetKinds": [
+                    "air",
+                    "ground"
+                  ],
+                  "airPriority": true,
+                  "airCoefficientBp": 10000,
+                  "shieldCoefficientBp": 10000,
+                  "armorIgnoreBp": 0,
+                  "bossCoefficientBp": 10000,
+                  "targetPolicySource": {
+                    "kind": "fixed",
+                    "targetPolicyId": "FRONT"
+                  },
+                  "bonusShotCounter": null,
+                  "attackEventId": "drone.attack"
+                },
+                "createEventId": "drone.create"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hermes.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "hermes-sky-swarm",
+          "defenseId": "hermes",
+          "isDefault": false,
+          "branchRoleId": "sky-swarm",
+          "nameKey": "specialization.hermes-sky-swarm.name",
+          "unlockGrantId": "grant.specialization.hermes-sky-swarm",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 130
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "drones",
+              "contractId": "drone",
+              "version": 2,
+              "deliveryKind": "patrol-slots",
+              "parameters": {
+                "summonRecordId": "hermes-drone",
+                "activeSlotCount": 3,
+                "replenishMs": 6000,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "patrolRadiusWorldUnits": "6",
+                "travelSpeedWorldUnitsPerSecond": "18",
+                "slotPolicyId": "patrol-slot-index-then-drone-id",
+                "maximumCreateEventsPerTick": 3,
+                "attack": {
+                  "cooldownMs": 450,
+                  "baseDamage": "7",
+                  "damageTypeId": "kinetic",
+                  "targetKinds": [
+                    "air",
+                    "ground"
+                  ],
+                  "airPriority": true,
+                  "airCoefficientBp": 15000,
+                  "shieldCoefficientBp": 10000,
+                  "armorIgnoreBp": 0,
+                  "bossCoefficientBp": 10000,
+                  "targetPolicySource": {
+                    "kind": "fixed",
+                    "targetPolicyId": "FRONT"
+                  },
+                  "bonusShotCounter": null,
+                  "attackEventId": "drone.attack"
+                },
+                "createEventId": "drone.create"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hermes-sky-swarm.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "hermes-wing-command",
+          "defenseId": "hermes",
+          "isDefault": true,
+          "branchRoleId": "wing-command",
+          "nameKey": "specialization.hermes-wing-command.name",
+          "unlockGrantId": "grant.specialization.hermes-wing-command",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 130
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "drones",
+              "contractId": "drone",
+              "version": 2,
+              "deliveryKind": "patrol-slots",
+              "parameters": {
+                "summonRecordId": "hermes-drone",
+                "activeSlotCount": 2,
+                "replenishMs": 6000,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "patrolRadiusWorldUnits": "6",
+                "travelSpeedWorldUnitsPerSecond": "18",
+                "slotPolicyId": "patrol-slot-index-then-drone-id",
+                "maximumCreateEventsPerTick": 3,
+                "attack": {
+                  "cooldownMs": 400,
+                  "baseDamage": "8",
+                  "damageTypeId": "kinetic",
+                  "targetKinds": [
+                    "air",
+                    "ground"
+                  ],
+                  "airPriority": true,
+                  "airCoefficientBp": 10000,
+                  "shieldCoefficientBp": 10000,
+                  "armorIgnoreBp": 0,
+                  "bossCoefficientBp": 10000,
+                  "targetPolicySource": {
+                    "kind": "fixed",
+                    "targetPolicyId": "FRONT"
+                  },
+                  "bonusShotCounter": {
+                    "kind": "every-n-drone-attacks",
+                    "requiredAttacks": 6,
+                    "bonusShots": 1,
+                    "emptyActivationAdvances": false,
+                    "recursive": false,
+                    "resetRuleId": "counter-reset-on-wave-start",
+                    "semanticEventId": "drone.bonus"
+                  },
+                  "attackEventId": "drone.attack"
+                },
+                "createEventId": "drone.create"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hermes-wing-command.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "drone.attack",
+        "drone.bonus",
+        "drone.create"
+      ]
+    },
+    {
+      "id": "hoplite",
+      "nameKey": "defense.hoplite.name",
+      "roleKey": "defense.hoplite.role",
+      "weaknessKey": "defense.hoplite.weakness",
+      "unlockId": "campaign.hoplite",
+      "targetKinds": [
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FRONT"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "guard"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 80
+          },
+          "rangeWorldUnits": "22",
+          "behaviors": [
+            {
+              "id": "guard-slots",
+              "contractId": "spawnUnit",
+              "version": 1,
+              "deliveryKind": "guard-slots",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "activeSlotCount": 1,
+                "replenishMs": 6000,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "markerProofKind": "guard",
+                "markerProofVersion": 1,
+                "slotComparatorId": "guard-contact-v1",
+                "maximumCreateEventsPerTick": 1,
+                "createEventId": "guard.create"
+              }
+            },
+            {
+              "id": "guard-contact",
+              "contractId": "block",
+              "version": 1,
+              "deliveryKind": "marker-contact-control",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "statusId": "stun",
+                "durationMs": 1000,
+                "contactDamage": "0",
+                "damageTypeId": "kinetic",
+                "prefilterRuleId": "guard-ground-control-resolve-eligible",
+                "contactComparatorId": "guard-contact-v1",
+                "resolveStatusId": "resolve",
+                "bash": null,
+                "contactEventId": "guard.contact",
+                "rejectedEventId": "guard.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hoplite.l1.description",
+            "statFieldIds": [
+              "summon-slots",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 75
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "guard-slots",
+              "contractId": "spawnUnit",
+              "version": 1,
+              "deliveryKind": "guard-slots",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "activeSlotCount": 2,
+                "replenishMs": 5500,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "markerProofKind": "guard",
+                "markerProofVersion": 1,
+                "slotComparatorId": "guard-contact-v1",
+                "maximumCreateEventsPerTick": 2,
+                "createEventId": "guard.create"
+              }
+            },
+            {
+              "id": "guard-contact",
+              "contractId": "block",
+              "version": 1,
+              "deliveryKind": "marker-contact-control",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "statusId": "stun",
+                "durationMs": 1100,
+                "contactDamage": "0",
+                "damageTypeId": "kinetic",
+                "prefilterRuleId": "guard-ground-control-resolve-eligible",
+                "contactComparatorId": "guard-contact-v1",
+                "resolveStatusId": "resolve",
+                "bash": null,
+                "contactEventId": "guard.contact",
+                "rejectedEventId": "guard.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.hoplite.l2.description",
+            "statFieldIds": [
+              "summon-slots",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "hoplite-phalanx",
+          "defenseId": "hoplite",
+          "isDefault": true,
+          "branchRoleId": "phalanx",
+          "nameKey": "specialization.hoplite-phalanx.name",
+          "unlockGrantId": "grant.specialization.hoplite-phalanx",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 120
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "guard-slots",
+              "contractId": "spawnUnit",
+              "version": 2,
+              "deliveryKind": "guard-slots",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "activeSlotCount": 3,
+                "replenishMs": 5000,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "markerProofKind": "guard",
+                "markerProofVersion": 1,
+                "slotComparatorId": "guard-contact-v1",
+                "maximumCreateEventsPerTick": 3,
+                "createEventId": "guard.create"
+              }
+            },
+            {
+              "id": "guard-contact",
+              "contractId": "block",
+              "version": 2,
+              "deliveryKind": "marker-contact-control",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "statusId": "stun",
+                "durationMs": 1200,
+                "contactDamage": "0",
+                "damageTypeId": "kinetic",
+                "prefilterRuleId": "guard-ground-control-resolve-eligible",
+                "contactComparatorId": "guard-contact-v1",
+                "resolveStatusId": "resolve",
+                "bash": {
+                  "kind": "first-eligible-contact-per-summon",
+                  "damage": "12",
+                  "damageTypeId": "kinetic",
+                  "statusId": "stun",
+                  "durationMs": 250,
+                  "hardControlBucketId": "hard-control",
+                  "semanticEventId": "guard.bash"
+                },
+                "contactEventId": "guard.contact",
+                "rejectedEventId": "guard.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hoplite-phalanx.description",
+            "statFieldIds": [
+              "summon-slots",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "hoplite-spearwall",
+          "defenseId": "hoplite",
+          "isDefault": false,
+          "branchRoleId": "spearwall",
+          "nameKey": "specialization.hoplite-spearwall.name",
+          "unlockGrantId": "grant.specialization.hoplite-spearwall",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 120
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "guard-slots",
+              "contractId": "spawnUnit",
+              "version": 2,
+              "deliveryKind": "guard-slots",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "activeSlotCount": 2,
+                "replenishMs": 4250,
+                "initialReady": true,
+                "projectionRangeSource": {
+                  "kind": "level-range"
+                },
+                "markerProofKind": "guard",
+                "markerProofVersion": 1,
+                "slotComparatorId": "guard-contact-v1",
+                "maximumCreateEventsPerTick": 3,
+                "createEventId": "guard.create"
+              }
+            },
+            {
+              "id": "guard-contact",
+              "contractId": "block",
+              "version": 2,
+              "deliveryKind": "marker-contact-control",
+              "parameters": {
+                "summonRecordId": "hoplite-guard",
+                "statusId": "stun",
+                "durationMs": 1000,
+                "contactDamage": "24",
+                "damageTypeId": "kinetic",
+                "prefilterRuleId": "guard-ground-control-resolve-eligible",
+                "contactComparatorId": "guard-contact-v1",
+                "resolveStatusId": "resolve",
+                "bash": null,
+                "contactEventId": "guard.contact",
+                "rejectedEventId": "guard.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.hoplite-spearwall.description",
+            "statFieldIds": [
+              "summon-slots",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "guard.bash",
+        "guard.contact",
+        "guard.create",
+        "guard.rejected"
+      ]
+    },
+    {
+      "id": "medusa",
+      "nameKey": "defense.medusa.name",
+      "roleKey": "defense.medusa.role",
+      "weaknessKey": "defense.medusa.weakness",
+      "unlockId": "campaign.medusa",
+      "targetKinds": [
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "control"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 95
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 650,
+                "baseDamage": "8",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "petrify",
+              "contractId": "control",
+              "version": 2,
+              "deliveryKind": "counted-hard-control",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "petrify",
+                "requiredAttacks": 6,
+                "primaryDurationMs": 750,
+                "emptyActivationAdvances": false,
+                "resetRuleId": "counter-reset-on-wave-start",
+                "resolveStatusId": "resolve",
+                "hardControlBucketId": "hard-control",
+                "secondary": null,
+                "applyEventId": "petrify.apply",
+                "rejectedEventId": "petrify.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.medusa.l1.description",
+            "statFieldIds": [
+              "damage",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 90
+          },
+          "rangeWorldUnits": "25",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 600,
+                "baseDamage": "12",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "petrify",
+              "contractId": "control",
+              "version": 2,
+              "deliveryKind": "counted-hard-control",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "petrify",
+                "requiredAttacks": 5,
+                "primaryDurationMs": 900,
+                "emptyActivationAdvances": false,
+                "resetRuleId": "counter-reset-on-wave-start",
+                "resolveStatusId": "resolve",
+                "hardControlBucketId": "hard-control",
+                "secondary": null,
+                "applyEventId": "petrify.apply",
+                "rejectedEventId": "petrify.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.medusa.l2.description",
+            "statFieldIds": [
+              "damage",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "medusa-basilisk-focus",
+          "defenseId": "medusa",
+          "isDefault": false,
+          "branchRoleId": "basilisk-focus",
+          "nameKey": "specialization.medusa-basilisk-focus.name",
+          "unlockGrantId": "grant.specialization.medusa-basilisk-focus",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 145
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 600,
+                "baseDamage": "19",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "petrify",
+              "contractId": "control",
+              "version": 2,
+              "deliveryKind": "counted-hard-control",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "petrify",
+                "requiredAttacks": 4,
+                "primaryDurationMs": 1500,
+                "emptyActivationAdvances": false,
+                "resetRuleId": "counter-reset-on-wave-start",
+                "resolveStatusId": "resolve",
+                "hardControlBucketId": "hard-control",
+                "secondary": null,
+                "applyEventId": "petrify.apply",
+                "rejectedEventId": "petrify.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.medusa-basilisk-focus.description",
+            "statFieldIds": [
+              "damage",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "medusa-gorgon-bloom",
+          "defenseId": "medusa",
+          "isDefault": true,
+          "branchRoleId": "gorgon-bloom",
+          "nameKey": "specialization.medusa-gorgon-bloom.name",
+          "unlockGrantId": "grant.specialization.medusa-gorgon-bloom",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 145
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 550,
+                "baseDamage": "16",
+                "damageTypeId": "arcane",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "petrify",
+              "contractId": "control",
+              "version": 2,
+              "deliveryKind": "counted-hard-control",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "petrify",
+                "requiredAttacks": 5,
+                "primaryDurationMs": 1000,
+                "emptyActivationAdvances": false,
+                "resetRuleId": "counter-reset-on-wave-start",
+                "resolveStatusId": "resolve",
+                "hardControlBucketId": "hard-control",
+                "secondary": {
+                  "kind": "radius-secondary-control",
+                  "radiusWorldUnits": "2.5",
+                  "durationMs": 350,
+                  "maximumTargets": 4,
+                  "comparatorId": "secondary-route-front-v1",
+                  "recursive": false
+                },
+                "applyEventId": "petrify.apply",
+                "rejectedEventId": "petrify.rejected"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.medusa-gorgon-bloom.description",
+            "statFieldIds": [
+              "damage",
+              "control-duration-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "petrify.apply",
+        "petrify.rejected"
+      ]
+    },
+    {
+      "id": "oracle",
+      "nameKey": "defense.oracle.name",
+      "roleKey": "defense.oracle.role",
+      "weaknessKey": "defense.oracle.weakness",
+      "unlockId": "campaign.oracle",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FRONT"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "support"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 70
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "reveal",
+              "contractId": "aura",
+              "version": 1,
+              "deliveryKind": "continuous-range-status",
+              "parameters": {
+                "statusId": "reveal",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "eligibilityRuleId": "continuous-reveal-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "acquisition-reveal",
+                  "collateralEligibilityRuleId": "collateral-cloak-eligible"
+                },
+                "applyEventId": "reveal.apply",
+                "removeEventId": "reveal.remove"
+              }
+            },
+            {
+              "id": "mark",
+              "contractId": "aura",
+              "version": 1,
+              "deliveryKind": "periodic-targeted-status",
+              "parameters": {
+                "statusId": "mark",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "cadenceMs": 1000,
+                "initialReady": true,
+                "maximumTargets": 1,
+                "durationMs": 1500,
+                "targetPolicySource": {
+                  "kind": "fixed",
+                  "targetPolicyId": "FRONT"
+                },
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "external-damage-amplification",
+                  "amountBp": 800,
+                  "sourceTypeId": "oracle-mark"
+                },
+                "scanCounter": null,
+                "scanEventId": "mark.scan",
+                "applyEventId": "mark.apply",
+                "expireEventId": "mark.expire"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.oracle.l1.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 70
+          },
+          "rangeWorldUnits": "29",
+          "behaviors": [
+            {
+              "id": "reveal",
+              "contractId": "aura",
+              "version": 1,
+              "deliveryKind": "continuous-range-status",
+              "parameters": {
+                "statusId": "reveal",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "eligibilityRuleId": "continuous-reveal-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "acquisition-reveal",
+                  "collateralEligibilityRuleId": "collateral-cloak-eligible"
+                },
+                "applyEventId": "reveal.apply",
+                "removeEventId": "reveal.remove"
+              }
+            },
+            {
+              "id": "mark",
+              "contractId": "aura",
+              "version": 1,
+              "deliveryKind": "periodic-targeted-status",
+              "parameters": {
+                "statusId": "mark",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "cadenceMs": 1000,
+                "initialReady": true,
+                "maximumTargets": 2,
+                "durationMs": 1500,
+                "targetPolicySource": {
+                  "kind": "fixed",
+                  "targetPolicyId": "FRONT"
+                },
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "external-damage-amplification",
+                  "amountBp": 1100,
+                  "sourceTypeId": "oracle-mark"
+                },
+                "scanCounter": null,
+                "scanEventId": "mark.scan",
+                "applyEventId": "mark.apply",
+                "expireEventId": "mark.expire"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.oracle.l2.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "oracle-chorus",
+          "defenseId": "oracle",
+          "isDefault": true,
+          "branchRoleId": "chorus",
+          "nameKey": "specialization.oracle-chorus.name",
+          "unlockGrantId": "grant.specialization.oracle-chorus",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 110
+          },
+          "rangeWorldUnits": "32",
+          "behaviors": [
+            {
+              "id": "reveal",
+              "contractId": "aura",
+              "version": 2,
+              "deliveryKind": "continuous-range-status",
+              "parameters": {
+                "statusId": "reveal",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "eligibilityRuleId": "continuous-reveal-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "acquisition-reveal",
+                  "collateralEligibilityRuleId": "collateral-cloak-eligible"
+                },
+                "applyEventId": "reveal.apply",
+                "removeEventId": "reveal.remove"
+              }
+            },
+            {
+              "id": "mark",
+              "contractId": "aura",
+              "version": 2,
+              "deliveryKind": "periodic-targeted-status",
+              "parameters": {
+                "statusId": "mark",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "cadenceMs": 1000,
+                "initialReady": true,
+                "maximumTargets": 2,
+                "durationMs": 1500,
+                "targetPolicySource": {
+                  "kind": "fixed",
+                  "targetPolicyId": "FRONT"
+                },
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "external-damage-amplification",
+                  "amountBp": 1100,
+                  "sourceTypeId": "oracle-mark"
+                },
+                "scanCounter": {
+                  "kind": "every-n-scans",
+                  "requiredScans": 5,
+                  "emptyScanAdvances": false,
+                  "maximumTargets": 5,
+                  "durationMs": 2000,
+                  "targetPolicySource": {
+                    "kind": "fixed",
+                    "targetPolicyId": "FRONT"
+                  },
+                  "resetRuleId": "counter-reset-on-wave-start",
+                  "recursive": false,
+                  "semanticEventId": "mark.echo"
+                },
+                "scanEventId": "mark.scan",
+                "applyEventId": "mark.apply",
+                "expireEventId": "mark.expire"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.oracle-chorus.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "oracle-judgment",
+          "defenseId": "oracle",
+          "isDefault": false,
+          "branchRoleId": "judgment",
+          "nameKey": "specialization.oracle-judgment.name",
+          "unlockGrantId": "grant.specialization.oracle-judgment",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 110
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "reveal",
+              "contractId": "aura",
+              "version": 2,
+              "deliveryKind": "continuous-range-status",
+              "parameters": {
+                "statusId": "reveal",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "eligibilityRuleId": "continuous-reveal-eligible",
+                "removalRuleId": "source-out-of-range-or-removed",
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "acquisition-reveal",
+                  "collateralEligibilityRuleId": "collateral-cloak-eligible"
+                },
+                "applyEventId": "reveal.apply",
+                "removeEventId": "reveal.remove"
+              }
+            },
+            {
+              "id": "mark",
+              "contractId": "aura",
+              "version": 2,
+              "deliveryKind": "periodic-targeted-status",
+              "parameters": {
+                "statusId": "mark",
+                "affectedSide": "enemy",
+                "targetKinds": [
+                  "air",
+                  "ground"
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "cadenceMs": 1000,
+                "initialReady": true,
+                "maximumTargets": 3,
+                "durationMs": 1500,
+                "targetPolicySource": {
+                  "kind": "fixed",
+                  "targetPolicyId": "FRONT"
+                },
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "statusPayload": {
+                  "kind": "external-damage-amplification",
+                  "amountBp": 1500,
+                  "sourceTypeId": "oracle-mark"
+                },
+                "scanCounter": null,
+                "scanEventId": "mark.scan",
+                "applyEventId": "mark.apply",
+                "expireEventId": "mark.expire"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.oracle-judgment.description",
+            "statFieldIds": [
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "mark.apply",
+        "mark.echo",
+        "mark.expire",
+        "mark.scan",
+        "reveal.apply",
+        "reveal.remove"
+      ]
+    },
+    {
+      "id": "poseidon",
+      "nameKey": "defense.poseidon.name",
+      "roleKey": "defense.poseidon.role",
+      "weaknessKey": "defense.poseidon.weakness",
+      "unlockId": "campaign.poseidon",
+      "targetKinds": [
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "control"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 100
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "line",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "line-multi-target",
+              "parameters": {
+                "cooldownMs": 1250,
+                "baseDamage": "16",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 3,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "lineWidthWorldUnits": "3",
+                "comparatorId": "secondary-route-front-v1",
+                "displacementWorldUnits": "1.5",
+                "displacementCooldownMs": 1500,
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "burstOnCount": null,
+                "semanticEventId": "line.hit"
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 2,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "line",
+                "statusId": "drench",
+                "magnitudeBp": 1000,
+                "durationMs": 2000,
+                "controlKind": "drench",
+                "echoCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.poseidon.l1.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 95
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "line",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "line-multi-target",
+              "parameters": {
+                "cooldownMs": 1150,
+                "baseDamage": "24",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 4,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "lineWidthWorldUnits": "3",
+                "comparatorId": "secondary-route-front-v1",
+                "displacementWorldUnits": "2",
+                "displacementCooldownMs": 1500,
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "burstOnCount": null,
+                "semanticEventId": "line.hit"
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 2,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "line",
+                "statusId": "drench",
+                "magnitudeBp": 1200,
+                "durationMs": 2200,
+                "controlKind": "drench",
+                "echoCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.poseidon.l2.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "poseidon-maelstrom",
+          "defenseId": "poseidon",
+          "isDefault": true,
+          "branchRoleId": "maelstrom",
+          "nameKey": "specialization.poseidon-maelstrom.name",
+          "unlockGrantId": "grant.specialization.poseidon-maelstrom",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 150
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "line",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "line-multi-target",
+              "parameters": {
+                "cooldownMs": 1050,
+                "baseDamage": "30",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 5,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "lineWidthWorldUnits": "3",
+                "comparatorId": "secondary-route-front-v1",
+                "displacementWorldUnits": "2.5",
+                "displacementCooldownMs": 1500,
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "burstOnCount": {
+                  "kind": "every-n-accepted-primary-attacks",
+                  "requiredAttacks": 5,
+                  "damage": "40",
+                  "damageTypeId": "kinetic",
+                  "radiusWorldUnits": "6",
+                  "maximumTargets": 6,
+                  "comparatorId": "secondary-route-front-v1",
+                  "emptyActivationAdvances": false,
+                  "recursive": false,
+                  "resetRuleId": "counter-reset-on-wave-start",
+                  "semanticEventId": "line.maelstrom"
+                },
+                "semanticEventId": "line.hit"
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 2,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "line",
+                "statusId": "drench",
+                "magnitudeBp": 1500,
+                "durationMs": 2500,
+                "controlKind": "drench",
+                "echoCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.poseidon-maelstrom.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "poseidon-undertow",
+          "defenseId": "poseidon",
+          "isDefault": false,
+          "branchRoleId": "undertow",
+          "nameKey": "specialization.poseidon-undertow.name",
+          "unlockGrantId": "grant.specialization.poseidon-undertow",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 150
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "line",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "line-multi-target",
+              "parameters": {
+                "cooldownMs": 1100,
+                "baseDamage": "24",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 4,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "lineWidthWorldUnits": "3",
+                "comparatorId": "secondary-route-front-v1",
+                "displacementWorldUnits": "3.5",
+                "displacementCooldownMs": 1500,
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "burstOnCount": null,
+                "semanticEventId": "line.hit"
+              }
+            },
+            {
+              "id": "slow",
+              "contractId": "slow",
+              "version": 2,
+              "deliveryKind": "primary-status",
+              "parameters": {
+                "triggerBehaviorId": "line",
+                "statusId": "drench",
+                "magnitudeBp": 2500,
+                "durationMs": 3500,
+                "controlKind": "drench",
+                "echoCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.poseidon-undertow.description",
+            "statFieldIds": [
+              "damage",
+              "slow-bp",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "line.hit",
+        "line.maelstrom"
+      ]
+    },
+    {
+      "id": "sentinel",
+      "nameKey": "defense.sentinel.name",
+      "roleKey": "defense.sentinel.role",
+      "weaknessKey": "defense.sentinel.weakness",
+      "unlockId": "campaign.sentinel",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "direct"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 60
+          },
+          "rangeWorldUnits": "22",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 1,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 450,
+                "baseDamage": "8",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "consecutiveHitCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.sentinel.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 55
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 1,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 410,
+                "baseDamage": "12",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "consecutiveHitCounter": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.sentinel.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "sentinel-lock-on",
+          "defenseId": "sentinel",
+          "isDefault": true,
+          "branchRoleId": "lock-on",
+          "nameKey": "specialization.sentinel-lock-on.name",
+          "unlockGrantId": "grant.specialization.sentinel-lock-on",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 95
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 360,
+                "baseDamage": "18",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": {
+                  "kind": "same-target-accepted-hits",
+                  "requiredAcceptedHits": 3,
+                  "bonusDamageBp": 1500,
+                  "bonusAppliesToThresholdHit": false,
+                  "resetOnTargetChange": true,
+                  "resetAfterNoTargetMs": 1000,
+                  "emptyActivationAdvances": false,
+                  "secondaryEffectsAdvance": false,
+                  "semanticEventId": "direct.combo"
+                },
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.sentinel-lock-on.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "sentinel-twin-lance",
+          "defenseId": "sentinel",
+          "isDefault": false,
+          "branchRoleId": "twin-lance",
+          "nameKey": "specialization.sentinel-twin-lance.name",
+          "unlockGrantId": "grant.specialization.sentinel-twin-lance",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 95
+          },
+          "rangeWorldUnits": "25",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 340,
+                "baseDamage": "15",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": {
+                  "kind": "nearest-additional-target",
+                  "maximumTargets": 1,
+                  "radiusWorldUnits": "6",
+                  "damageBp": 6000,
+                  "advancesInternalCounters": false,
+                  "inheritsInternalCoefficients": false,
+                  "comparatorId": "secondary-route-front-v1",
+                  "eligibilityRuleId": "direct-visible-or-exposed",
+                  "semanticEventId": "direct.collateral"
+                },
+                "pierce": null,
+                "stackConsumption": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.sentinel-twin-lance.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "direct.collateral",
+        "direct.combo"
+      ]
+    },
+    {
+      "id": "siege",
+      "nameKey": "defense.siege.name",
+      "roleKey": "defense.siege.role",
+      "weaknessKey": "defense.siege.weakness",
+      "unlockId": "campaign.siege",
+      "targetKinds": [
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "area"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 90
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "blast",
+              "contractId": "splash",
+              "version": 1,
+              "deliveryKind": "primary-centered-radius",
+              "parameters": {
+                "cooldownMs": 1500,
+                "baseDamage": "22",
+                "damageTypeId": "kinetic",
+                "maximumPrimaryTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "radiusWorldUnits": "4.5",
+                "primaryFirst": true,
+                "secondaryComparatorId": "secondary-route-front-v1",
+                "centerBonus": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.siege.l1.description",
+            "statFieldIds": [
+              "damage",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 85
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "blast",
+              "contractId": "splash",
+              "version": 1,
+              "deliveryKind": "primary-centered-radius",
+              "parameters": {
+                "cooldownMs": 1350,
+                "baseDamage": "34",
+                "damageTypeId": "kinetic",
+                "maximumPrimaryTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "radiusWorldUnits": "5.5",
+                "primaryFirst": true,
+                "secondaryComparatorId": "secondary-route-front-v1",
+                "centerBonus": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.siege.l2.description",
+            "statFieldIds": [
+              "damage",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "siege-breach-core",
+          "defenseId": "siege",
+          "isDefault": true,
+          "branchRoleId": "breach-core",
+          "nameKey": "specialization.siege-breach-core.name",
+          "unlockGrantId": "grant.specialization.siege-breach-core",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 140
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "burst",
+              "contractId": "splash",
+              "version": 2,
+              "deliveryKind": "primary-centered-radius",
+              "parameters": {
+                "cooldownMs": 1200,
+                "baseDamage": "52",
+                "damageTypeId": "kinetic",
+                "maximumPrimaryTargets": 1,
+                "maximumSecondaryTargets": null,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "radiusWorldUnits": "6.5",
+                "primaryFirst": true,
+                "secondaryComparatorId": "secondary-route-front-v1",
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "centerBonus": {
+                  "kind": "central-radius-bonus",
+                  "radiusWorldUnits": "2.5",
+                  "bonusDamageBp": 3500,
+                  "semanticEventId": "splash.center"
+                }
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.siege-breach-core.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "siege-sun-shrapnel",
+          "defenseId": "siege",
+          "isDefault": false,
+          "branchRoleId": "sun-shrapnel",
+          "nameKey": "specialization.siege-sun-shrapnel.name",
+          "unlockGrantId": "grant.specialization.siege-sun-shrapnel",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 140
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "burst",
+              "contractId": "splash",
+              "version": 2,
+              "deliveryKind": "primary-centered-radius",
+              "parameters": {
+                "cooldownMs": 1050,
+                "baseDamage": "42",
+                "damageTypeId": "kinetic",
+                "maximumPrimaryTargets": 1,
+                "maximumSecondaryTargets": 8,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "radiusWorldUnits": "8",
+                "primaryFirst": true,
+                "secondaryComparatorId": "secondary-route-front-v1",
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "centerBonus": null
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.siege-sun-shrapnel.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "splash.center"
+      ]
+    },
+    {
+      "id": "talos",
+      "nameKey": "defense.talos.name",
+      "roleKey": "defense.talos.role",
+      "weaknessKey": "defense.talos.weakness",
+      "unlockId": "campaign.talos",
+      "targetKinds": [
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "direct"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 130
+          },
+          "rangeWorldUnits": "24",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 2300,
+                "baseDamage": "68",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 5000,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "armor-break",
+              "contractId": "armorBreak",
+              "version": 2,
+              "deliveryKind": "status-application",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "armorBreak",
+                "amount": 2,
+                "durationMs": 2500,
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "applyEventId": "armor.break"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.talos.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 120
+          },
+          "rangeWorldUnits": "25",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 2200,
+                "baseDamage": "100",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 5000,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "armor-break",
+              "contractId": "armorBreak",
+              "version": 2,
+              "deliveryKind": "status-application",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "armorBreak",
+                "amount": 3,
+                "durationMs": 3000,
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "applyEventId": "armor.break"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.talos.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "talos-earthbreaker",
+          "defenseId": "talos",
+          "isDefault": false,
+          "branchRoleId": "earthbreaker",
+          "nameKey": "specialization.talos-earthbreaker.name",
+          "unlockGrantId": "grant.specialization.talos-earthbreaker",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 190
+          },
+          "rangeWorldUnits": "25",
+          "behaviors": [
+            {
+              "id": "burst",
+              "contractId": "splash",
+              "version": 2,
+              "deliveryKind": "primary-centered-radius",
+              "parameters": {
+                "cooldownMs": 1800,
+                "baseDamage": "105",
+                "damageTypeId": "kinetic",
+                "maximumPrimaryTargets": 1,
+                "maximumSecondaryTargets": null,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "radiusWorldUnits": "4",
+                "primaryFirst": true,
+                "secondaryComparatorId": "secondary-route-front-v1",
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 3500,
+                "bossCoefficientBp": 10000,
+                "centerBonus": null
+              }
+            },
+            {
+              "id": "armor-break",
+              "contractId": "armorBreak",
+              "version": 2,
+              "deliveryKind": "status-application",
+              "parameters": {
+                "triggerBehaviorId": "burst",
+                "statusId": "armorBreak",
+                "amount": 3,
+                "durationMs": 3000,
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "applyEventId": "armor.break"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.talos-earthbreaker.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "talos-titan-hunter",
+          "defenseId": "talos",
+          "isDefault": true,
+          "branchRoleId": "titan-hunter",
+          "nameKey": "specialization.talos-titan-hunter.name",
+          "unlockGrantId": "grant.specialization.talos-titan-hunter",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 190
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "shot",
+              "contractId": "direct",
+              "version": 2,
+              "deliveryKind": "instant-primary-hit",
+              "parameters": {
+                "cooldownMs": 2000,
+                "baseDamage": "145",
+                "damageTypeId": "kinetic",
+                "maximumTargets": 1,
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 5000,
+                "bossCoefficientBp": 13000,
+                "airCoefficientBp": 10000,
+                "consecutiveHitCounter": null,
+                "critCounter": null,
+                "collateral": null,
+                "pierce": null,
+                "stackConsumption": null
+              }
+            },
+            {
+              "id": "armor-break",
+              "contractId": "armorBreak",
+              "version": 2,
+              "deliveryKind": "status-application",
+              "parameters": {
+                "triggerBehaviorId": "shot",
+                "statusId": "armorBreak",
+                "amount": 4,
+                "durationMs": 3000,
+                "stackRuleId": "strongest-magnitude-expiry-source",
+                "applyEventId": "armor.break"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.talos-titan-hunter.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "armor.break"
+      ]
+    },
+    {
+      "id": "zeus",
+      "nameKey": "defense.zeus.name",
+      "roleKey": "defense.zeus.role",
+      "weaknessKey": "defense.zeus.weakness",
+      "unlockId": "campaign.zeus",
+      "targetKinds": [
+        "air",
+        "ground"
+      ],
+      "allowedTargetPolicyIds": [
+        "FAST",
+        "FRONT",
+        "STRONG"
+      ],
+      "defaultTargetPolicyId": "FRONT",
+      "defenseTags": [
+        "direct"
+      ],
+      "levels": [
+        {
+          "level": 1,
+          "purchase": {
+            "kind": "build",
+            "costAether": 125
+          },
+          "rangeWorldUnits": "26",
+          "behaviors": [
+            {
+              "id": "arc",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "ordered-falloff-targets",
+              "parameters": {
+                "cooldownMs": 1000,
+                "baseDamage": "18",
+                "damageTypeId": "storm",
+                "falloffBp": [
+                  10000,
+                  7000,
+                  5000
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "jumpRangeWorldUnits": "8",
+                "comparatorId": "secondary-route-front-v1",
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "stormCounter": null,
+                "burstOnCount": null,
+                "semanticEventId": "chain.hit"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.zeus.l1.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "level": 2,
+          "purchase": {
+            "kind": "upgrade",
+            "costAether": 115
+          },
+          "rangeWorldUnits": "28",
+          "behaviors": [
+            {
+              "id": "arc",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "ordered-falloff-targets",
+              "parameters": {
+                "cooldownMs": 950,
+                "baseDamage": "24",
+                "damageTypeId": "storm",
+                "falloffBp": [
+                  10000,
+                  7500,
+                  5500,
+                  4000,
+                  3000
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "jumpRangeWorldUnits": "8",
+                "comparatorId": "secondary-route-front-v1",
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "stormCounter": null,
+                "burstOnCount": null,
+                "semanticEventId": "chain.hit"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "defense.zeus.l2.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "specializations": [
+        {
+          "id": "zeus-storm-crown",
+          "defenseId": "zeus",
+          "isDefault": true,
+          "branchRoleId": "storm-crown",
+          "nameKey": "specialization.zeus-storm-crown.name",
+          "unlockGrantId": "grant.specialization.zeus-storm-crown",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 185
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "arc",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "ordered-falloff-targets",
+              "parameters": {
+                "cooldownMs": 900,
+                "baseDamage": "30",
+                "damageTypeId": "storm",
+                "falloffBp": [
+                  10000,
+                  7500,
+                  5500,
+                  4000,
+                  3000
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "jumpRangeWorldUnits": "8",
+                "comparatorId": "secondary-route-front-v1",
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "stormCounter": {
+                  "kind": "every-n-accepted-primary-attacks",
+                  "requiredAttacks": 6,
+                  "maximumTargets": 3,
+                  "damageBp": 3000,
+                  "jumpRangeWorldUnits": "8",
+                  "comparatorId": "secondary-route-front-v1",
+                  "emptyActivationAdvances": false,
+                  "recursive": false,
+                  "resetRuleId": "counter-reset-on-wave-start",
+                  "semanticEventId": "chain.storm"
+                },
+                "burstOnCount": null,
+                "semanticEventId": "chain.hit"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.zeus-storm-crown.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        },
+        {
+          "id": "zeus-thunderhead",
+          "defenseId": "zeus",
+          "isDefault": false,
+          "branchRoleId": "thunderhead",
+          "nameKey": "specialization.zeus-thunderhead.name",
+          "unlockGrantId": "grant.specialization.zeus-thunderhead",
+          "level": 3,
+          "purchase": {
+            "kind": "specialize",
+            "costAether": 185
+          },
+          "rangeWorldUnits": "30",
+          "behaviors": [
+            {
+              "id": "arc",
+              "contractId": "chain",
+              "version": 2,
+              "deliveryKind": "ordered-falloff-targets",
+              "parameters": {
+                "cooldownMs": 1050,
+                "baseDamage": "38",
+                "damageTypeId": "storm",
+                "falloffBp": [
+                  10000,
+                  7000,
+                  5000
+                ],
+                "rangeSource": {
+                  "kind": "level-range"
+                },
+                "targetPolicySource": {
+                  "kind": "equipped-policy"
+                },
+                "jumpRangeWorldUnits": "8",
+                "comparatorId": "secondary-route-front-v1",
+                "shieldCoefficientBp": 10000,
+                "armorIgnoreBp": 0,
+                "bossCoefficientBp": 10000,
+                "airCoefficientBp": 10000,
+                "stormCounter": null,
+                "burstOnCount": {
+                  "kind": "every-n-accepted-primary-attacks",
+                  "requiredAttacks": 8,
+                  "damage": "70",
+                  "damageTypeId": "storm",
+                  "radiusWorldUnits": "3",
+                  "maximumTargets": 8,
+                  "comparatorId": "secondary-route-front-v1",
+                  "emptyActivationAdvances": false,
+                  "recursive": false,
+                  "resetRuleId": "counter-reset-on-wave-start",
+                  "semanticEventId": "chain.burst"
+                },
+                "semanticEventId": "chain.hit"
+              }
+            }
+          ],
+          "ui": {
+            "descriptionKey": "specialization.zeus-thunderhead.description",
+            "statFieldIds": [
+              "damage",
+              "cadence-ms",
+              "range"
+            ]
+          }
+        }
+      ],
+      "semanticEventIds": [
+        "chain.burst",
+        "chain.hit",
+        "chain.storm"
+      ]
+    }
+  ]
+}

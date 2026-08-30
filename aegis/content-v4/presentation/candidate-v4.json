@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 2,
+  "id": "candidate-v4-presentation",
+  "cameraRecords": [
+    {
+      "id": "camera.overscan-16x10-v1",
+      "x": -18000,
+      "y": -12000,
+      "width": 198400,
+      "height": 124000
+    }
+  ],
+  "provenanceRecords": [
+    {
+      "id": "provenance.candidate-v4-placeholder",
+      "kind": "authored",
+      "sourceRef": "docs/superpowers/specs/2026-08-29-armara-aegis-divine-protocols-and-unlocks.md section 14",
+      "parentIds": [],
+      "reviewState": "concept"
+    }
+  ],
+  "assetRecords": [],
+  "placementRecords": [],
+  "packRecords": [
+    {
+      "id": "pack.m01",
+      "kind": "asset-pack",
+      "missionIds": [
+        "m01"
+      ],
+      "assetIds": [],
+      "dependencyPackIds": [],
+      "preloadAssetIds": [],
+      "criticalAssetIds": [],
+      "fallbackStyleId": "ancient-greece-ai-procedural",
+      "maxTransferBytes": 5242880,
+      "maxDecodedBytes": 67108864
+    },
+    {
+      "id": "pack.m04",
+      "kind": "asset-pack",
+      "missionIds": [
+        "m04"
+      ],
+      "assetIds": [],
+      "dependencyPackIds": [],
+      "preloadAssetIds": [],
+      "criticalAssetIds": [],
+      "fallbackStyleId": "ancient-greece-ai-procedural",
+      "maxTransferBytes": 5242880,
+      "maxDecodedBytes": 67108864
+    },
+    {
+      "id": "pack.m05",
+      "kind": "asset-pack",
+      "missionIds": [
+        "m05"
+      ],
+      "assetIds": [],
+      "dependencyPackIds": [],
+      "preloadAssetIds": [],
+      "criticalAssetIds": [],
+      "fallbackStyleId": "ancient-greece-ai-procedural",
+      "maxTransferBytes": 5242880,
+      "maxDecodedBytes": 67108864
+    }
+  ],
+  "cueMappings": [
+    {
+      "cueId": "cue.default",
+      "kind": "asset-or-fallback",
+      "assetId": null,
+      "frameId": null,
+      "fallbackStyleId": "ancient-greece-ai-procedural"
+    }
+  ]
+}

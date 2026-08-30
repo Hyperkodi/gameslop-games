@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 2,
+  "id": "m01",
+  "titleKey": "m01.title",
+  "actIndex": 1,
+  "missionIndex": 1,
+  "seedNamespace": "slice.m01",
+  "mapId": "m01",
+  "prerequisiteMissionIds": [],
+  "headlineMechanicId": "tutorial-foundation",
+  "briefing": {
+    "summaryKey": "m01.briefing.summary",
+    "objectiveKey": "m01.briefing.objective",
+    "routeNoticeKeys": [
+      "m01.briefing.route.main"
+    ],
+    "mechanicNoticeKeys": [
+      "m01.briefing.mechanic.tutorial"
+    ]
+  },
+  "enemyRosterIds": [
+    "raider",
+    "scout"
+  ],
+  "bossRosterIds": [],
+  "availableDefenseIds": [
+    "chronos",
+    "hoplite",
+    "oracle",
+    "sentinel",
+    "siege"
+  ],
+  "baseStartAether": 150,
+  "waves": [
+    {
+      "id": "m01.w01",
+      "index": 1,
+      "baseAetherEnvelope": 30,
+      "deploymentGrantAether": 18,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m01.w01.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 6,
+          "firstTick": 0,
+          "intervalTicks": 18,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "scout"
+        }
+      ],
+      "previewDeclarationIds": [
+        "preview.m01.tutorial-foundation"
+      ],
+      "waveClearScore": 100,
+      "titleKey": "m01.wave.01.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    },
+    {
+      "id": "m01.w02",
+      "index": 2,
+      "baseAetherEnvelope": 40,
+      "deploymentGrantAether": 18,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m01.w02.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 8,
+          "firstTick": 0,
+          "intervalTicks": 17,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "scout"
+        },
+        {
+          "id": "m01.w02.g01",
+          "order": 1,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 2,
+          "firstTick": 24,
+          "intervalTicks": 24,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "raider"
+        }
+      ],
+      "previewDeclarationIds": [],
+      "waveClearScore": 110,
+      "titleKey": "m01.wave.02.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    },
+    {
+      "id": "m01.w03",
+      "index": 3,
+      "baseAetherEnvelope": 45,
+      "deploymentGrantAether": 19,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m01.w03.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 7,
+          "firstTick": 0,
+          "intervalTicks": 16,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "scout"
+        },
+        {
+          "id": "m01.w03.g01",
+          "order": 1,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 4,
+          "firstTick": 20,
+          "intervalTicks": 22,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "raider"
+        }
+      ],
+      "previewDeclarationIds": [],
+      "waveClearScore": 120,
+      "titleKey": "m01.wave.03.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    },
+    {
+      "id": "m01.w04",
+      "index": 4,
+      "baseAetherEnvelope": 50,
+      "deploymentGrantAether": 20,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m01.w04.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 6,
+          "firstTick": 0,
+          "intervalTicks": 15,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "scout"
+        },
+        {
+          "id": "m01.w04.g01",
+          "order": 1,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 6,
+          "firstTick": 18,
+          "intervalTicks": 20,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "raider"
+        }
+      ],
+      "previewDeclarationIds": [],
+      "waveClearScore": 140,
+      "titleKey": "m01.wave.04.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    },
+    {
+      "id": "m01.w05",
+      "index": 5,
+      "baseAetherEnvelope": 55,
+      "deploymentGrantAether": 21,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m01.w05.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 5,
+          "firstTick": 0,
+          "intervalTicks": 14,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "scout"
+        },
+        {
+          "id": "m01.w05.g01",
+          "order": 1,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 8,
+          "firstTick": 16,
+          "intervalTicks": 18,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "base-lineage",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "raider"
+        }
+      ],
+      "previewDeclarationIds": [],
+      "waveClearScore": 160,
+      "titleKey": "m01.wave.05.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    },
+    {
+      "id": "m01.w06",
+      "index": 6,
+      "baseAetherEnvelope": 60,
+      "deploymentGrantAether": 60,
+      "clearGrantAether": 0,
+      "groups": [
+        {
+          "id": "m01.w06.g00",
+          "order": 0,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 8,
+          "firstTick": 0,
+          "intervalTicks": 13,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "suppressed",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "scout"
+        },
+        {
+          "id": "m01.w06.g01",
+          "order": 1,
+          "spawnKind": "enemy",
+          "routeId": "route.main",
+          "count": 8,
+          "firstTick": 12,
+          "intervalTicks": 17,
+          "shuffleWithinGroup": false,
+          "rngStreamId": null,
+          "modifierIds": [],
+          "bountyPolicy": "suppressed",
+          "spawnEventId": "enemy.spawn",
+          "enemyId": "raider"
+        }
+      ],
+      "previewDeclarationIds": [],
+      "waveClearScore": 200,
+      "titleKey": "m01.wave.06.title",
+      "deploymentGrantEventId": "wave.deploy",
+      "clearGrantEventId": null
+    }
+  ],
+  "objectives": [
+    {
+      "id": "victory",
+      "kind": "victory",
+      "titleKey": "m01.objective.victory.title",
+      "descriptionKey": "m01.objective.victory.description",
+      "progressKey": "m01.objective.victory.progress",
+      "predicate": "mission-victory"
+    },
+    {
+      "id": "integrity",
+      "kind": "integrity",
+      "titleKey": "m01.objective.integrity.title",
+      "descriptionKey": "m01.objective.integrity.description",
+      "progressKey": "m01.objective.integrity.progress",
+      "thresholdRecords": [
+        {
+          "difficultyId": "story",
+          "minimumIntegrity": 20
+        },
+        {
+          "difficultyId": "strategos",
+          "minimumIntegrity": 15
+        },
+        {
+          "difficultyId": "titan",
+          "minimumIntegrity": 10
+        }
+      ]
+    },
+    {
+      "id": "mastery",
+      "kind": "mastery",
+      "titleKey": "m01.objective.mastery.title",
+      "descriptionKey": "m01.objective.mastery.description",
+      "progressKey": "m01.objective.mastery.progress",
+      "predicate": {
+        "kind": "maximum-owned-towers-at-victory",
+        "maximum": 5
+      }
+    }
+  ],
+  "firstClearRewards": [
+    {
+      "id": "reward.m01.hoplite",
+      "order": 0,
+      "kind": "unlock-defense",
+      "defenseId": "hoplite"
+    }
+  ],
+  "tutorial": {
+    "kind": "guided",
+    "modeId": "m01-guided",
+    "stepIds": [
+      "identify-aether",
+      "select-pad",
+      "compare",
+      "build",
+      "start-wave",
+      "upgrade"
+    ],
+    "upgradeGateMode": "m01-wave1",
+    "skipCommandType": "skipTutorialGate",
+    "semanticEventIds": [
+      "tutorial.step"
+    ]
+  },
+  "previewDeclarations": [
+    {
+      "id": "preview.m01.tutorial-foundation",
+      "mechanicId": "tutorial-foundation",
+      "briefingKey": "m01.preview.tutorial-foundation",
+      "previewKind": "briefing",
+      "firstLethalWaveIndex": 1,
+      "semanticCueIds": [
+        "cue.default"
+      ]
+    }
+  ],
+  "scoreRecord": {
+    "scoreRuleId": "campaign-score-v1",
+    "victoryScore": 1000,
+    "integrityPointScore": 50,
+    "masteryObjectiveScore": 500,
+    "rawUnspentScorePerEligibleAether": 2
+  },
+  "semanticEventIds": [
+    "enemy.spawn",
+    "tutorial.step",
+    "wave.deploy"
+  ],
+  "presentationPackId": "pack.m01",
+  "protocolLoan": null,
+  "mechanism": null,
+  "reinforcementMarkers": []
+}

@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 2,
+  "contracts": [
+    {
+      "id": "armorBreak",
+      "version": 1
+    },
+    {
+      "id": "armorBreak",
+      "version": 2
+    },
+    {
+      "id": "aura",
+      "version": 1
+    },
+    {
+      "id": "aura",
+      "version": 2
+    },
+    {
+      "id": "beam",
+      "version": 2
+    },
+    {
+      "id": "block",
+      "version": 1
+    },
+    {
+      "id": "block",
+      "version": 2
+    },
+    {
+      "id": "bossScript",
+      "version": 1
+    },
+    {
+      "id": "chain",
+      "version": 1
+    },
+    {
+      "id": "chain",
+      "version": 2
+    },
+    {
+      "id": "control",
+      "version": 2
+    },
+    {
+      "id": "direct",
+      "version": 1
+    },
+    {
+      "id": "direct",
+      "version": 2
+    },
+    {
+      "id": "dot",
+      "version": 1
+    },
+    {
+      "id": "drone",
+      "version": 2
+    },
+    {
+      "id": "execute",
+      "version": 1
+    },
+    {
+      "id": "execute",
+      "version": 2
+    },
+    {
+      "id": "link",
+      "version": 2
+    },
+    {
+      "id": "mine",
+      "version": 2
+    },
+    {
+      "id": "slow",
+      "version": 1
+    },
+    {
+      "id": "slow",
+      "version": 2
+    },
+    {
+      "id": "spawnUnit",
+      "version": 1
+    },
+    {
+      "id": "spawnUnit",
+      "version": 2
+    },
+    {
+      "id": "splash",
+      "version": 1
+    },
+    {
+      "id": "splash",
+      "version": 2
+    }
+  ]
+}

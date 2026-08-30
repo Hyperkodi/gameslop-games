@@ -1,0 +1,1451 @@
+{
+  "schemaVersion": 1,
+  "id": "candidate-v4-strings-en",
+  "locale": "en",
+  "fallbackLocale": null,
+  "entries": [
+    {
+      "key": "boss.talos-prototype.description",
+      "value": "A towering bronze automaton that releases Scout pods at fixed health thresholds. Each release briefly exposes its core to amplified damage.",
+      "placeholders": []
+    },
+    {
+      "key": "boss.talos-prototype.name",
+      "value": "Talos Prototype",
+      "placeholders": []
+    },
+    {
+      "key": "defense.apollo.l1.description",
+      "value": "250 ms beam pulses ramp from 4 to 14 damage with 50 percent extra shield damage.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.apollo.l2.description",
+      "value": "Pulses ramp from 4 to 16 and reach peak faster, keeping 50 percent extra shield damage.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.apollo.name",
+      "value": "Apollo Prism",
+      "placeholders": []
+    },
+    {
+      "key": "defense.apollo.role",
+      "value": "Sustained beam pressure that punishes shields.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.apollo.weakness",
+      "value": "Loses its ramp whenever the target changes.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.artemis.l1.description",
+      "value": "52 damage every 2 seconds at range 38, ignoring armor.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.artemis.l2.description",
+      "value": "80 damage every 1.9 seconds at range 42, piercing one aligned target for 50 percent.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.artemis.name",
+      "value": "Artemis Rail",
+      "placeholders": []
+    },
+    {
+      "key": "defense.artemis.role",
+      "value": "Long-range armor-piercing single-target rail.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.artemis.weakness",
+      "value": "Slow cadence leaves gaps against swarms.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.athena.l1.description",
+      "value": "Links at most three eligible attackers and grants 10 percent range.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.athena.l2.description",
+      "value": "Links at most four attackers and grants 10 percent range and rate.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.athena.name",
+      "value": "Athena Nexus",
+      "placeholders": []
+    },
+    {
+      "key": "defense.athena.role",
+      "value": "Support nexus that links nearby attackers.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.athena.weakness",
+      "value": "Deals no damage of its own.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.chronos.l1.description",
+      "value": "Deals {damage} damage every {cooldownMs} ms and slows targets by {slowPercent}% for {durationMs} ms.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "slowPercent",
+          "type": "integer"
+        },
+        {
+          "name": "durationMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.chronos.l2.description",
+      "value": "Deals {damage} damage every {cooldownMs} ms and slows targets by {slowPercent}% for {durationMs} ms.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "slowPercent",
+          "type": "integer"
+        },
+        {
+          "name": "durationMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.chronos.name",
+      "value": "Chronos",
+      "placeholders": []
+    },
+    {
+      "key": "defense.chronos.role",
+      "value": "Controls ground and air lanes with persistent soft slows.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.chronos.weakness",
+      "value": "Low direct damage, and heavy enemies resist part of its control.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hades.l1.description",
+      "value": "14 damage every 1.25 seconds; executes non-bosses below 10 percent and its kills cannot revive.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hades.l2.description",
+      "value": "20 damage every 1.2 seconds with a 14 percent execute threshold.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hades.name",
+      "value": "Hades Gate",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hades.role",
+      "value": "Execution gate that finishes wounded lanes.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hades.weakness",
+      "value": "Ground only, and never executes a boss.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hephaestus.l1.description",
+      "value": "One active mine dealing 30 blast plus 4 per second for 3 seconds, replenishing in 5.5 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hephaestus.l2.description",
+      "value": "Two mines dealing 44 blast plus 5 per second for 3.5 seconds, replenishing in 5 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hephaestus.name",
+      "value": "Hephaestus Forge",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hephaestus.role",
+      "value": "Placed mines that burn a contested approach.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hephaestus.weakness",
+      "value": "Ground only and limited by mine replenishment.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hermes.l1.description",
+      "value": "One drone dealing 8 damage every 450 ms with air priority.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hermes.l2.description",
+      "value": "Two independent drones dealing 7 damage each every 450 ms.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hermes.name",
+      "value": "Hermes Wing",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hermes.role",
+      "value": "Patrolling drones with air priority.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hermes.weakness",
+      "value": "Fragile drone uptime against heavy pressure.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hoplite.l1.description",
+      "value": "Projects {slotCount} guard that blocks for {controlDurationMs} ms and replenishes after {replenishMs} ms.",
+      "placeholders": [
+        {
+          "name": "slotCount",
+          "type": "integer"
+        },
+        {
+          "name": "controlDurationMs",
+          "type": "integer"
+        },
+        {
+          "name": "replenishMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.hoplite.l2.description",
+      "value": "Projects {slotCount} guards that each block for {controlDurationMs} ms and replenish after {replenishMs} ms.",
+      "placeholders": [
+        {
+          "name": "slotCount",
+          "type": "integer"
+        },
+        {
+          "name": "controlDurationMs",
+          "type": "integer"
+        },
+        {
+          "name": "replenishMs",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.hoplite.name",
+      "value": "Hoplite Node",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hoplite.role",
+      "value": "Creates fixed guards that hold ground threats at strategic road positions.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.hoplite.weakness",
+      "value": "Deals little damage, cannot affect air, and guards need time to replenish.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.medusa.l1.description",
+      "value": "8 damage every 650 ms; every sixth shot petrifies its primary for 0.75 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.medusa.l2.description",
+      "value": "12 damage every 600 ms; every fifth shot petrifies for 0.9 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.medusa.name",
+      "value": "Medusa Lens",
+      "placeholders": []
+    },
+    {
+      "key": "defense.medusa.role",
+      "value": "Counted petrification that stalls a ground lane.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.medusa.weakness",
+      "value": "Hard control is rejected during Resolve.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.oracle.l1.description",
+      "value": "Reveals hidden enemies and maintains {markCount} mark that amplifies damage by {amplificationPercent}% within range {range}.",
+      "placeholders": [
+        {
+          "name": "markCount",
+          "type": "integer"
+        },
+        {
+          "name": "amplificationPercent",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.oracle.l2.description",
+      "value": "Reveals hidden enemies and maintains {markCount} marks that amplify damage by {amplificationPercent}% within range {range}.",
+      "placeholders": [
+        {
+          "name": "markCount",
+          "type": "integer"
+        },
+        {
+          "name": "amplificationPercent",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.oracle.name",
+      "value": "Oracle Relay",
+      "placeholders": []
+    },
+    {
+      "key": "defense.oracle.role",
+      "value": "Reveals cloaked enemies and amplifies allied damage against marked targets.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.oracle.weakness",
+      "value": "Provides almost no direct damage and depends on nearby attackers.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.poseidon.l1.description",
+      "value": "16 line damage every 1.25 seconds to at most three targets with 1.5 push and a 10 percent drench.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.poseidon.l2.description",
+      "value": "24 damage every 1.15 seconds to at most four targets with 2 push and a 12 percent drench.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.poseidon.name",
+      "value": "Poseidon Coil",
+      "placeholders": []
+    },
+    {
+      "key": "defense.poseidon.role",
+      "value": "Line control with knockback and drench.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.poseidon.weakness",
+      "value": "Ground only, with a per-target displacement cooldown.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.sentinel.l1.description",
+      "value": "Fires a {damage}-damage bolt every {cooldownMs} ms at ground or air targets within range {range}.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.sentinel.l2.description",
+      "value": "Fires a {damage}-damage bolt every {cooldownMs} ms at targets within range {range}.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "range",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "defense.sentinel.name",
+      "value": "Sentinel",
+      "placeholders": []
+    },
+    {
+      "key": "defense.sentinel.role",
+      "value": "Fast, focused fire that answers both ground and air threats.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.sentinel.weakness",
+      "value": "Armor and dense crowds reduce the value of its single-target attacks.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.siege.l1.description",
+      "value": "Launches a {damage}-damage ground shell every {cooldownMs} ms with a {radius}-unit blast radius.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "radius",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "key": "defense.siege.l2.description",
+      "value": "Launches a {damage}-damage shell every {cooldownMs} ms with a {radius}-unit blast radius.",
+      "placeholders": [
+        {
+          "name": "damage",
+          "type": "integer"
+        },
+        {
+          "name": "cooldownMs",
+          "type": "integer"
+        },
+        {
+          "name": "radius",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "key": "defense.siege.name",
+      "value": "Siege",
+      "placeholders": []
+    },
+    {
+      "key": "defense.siege.role",
+      "value": "Heavy circular splash punishes tightly packed ground formations.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.siege.weakness",
+      "value": "Slow cadence, high cost, and no ability to attack air.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.talos.l1.description",
+      "value": "68 damage every 2.3 seconds at range 24, ignoring 50 percent armor and applying minus 2 armor.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.talos.l2.description",
+      "value": "100 damage every 2.2 seconds at range 25 with minus 3 armor for 3 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.talos.name",
+      "value": "Talos Bastion",
+      "placeholders": []
+    },
+    {
+      "key": "defense.talos.role",
+      "value": "Heavy armor-breaking siege bastion.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.talos.weakness",
+      "value": "Very slow cadence against fast lanes.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.zeus.l1.description",
+      "value": "18 damage every second to three targets at 100, 70, and 50 percent.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.zeus.l2.description",
+      "value": "24 damage every 950 ms to five targets at 100, 75, 55, 40, and 30 percent.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.zeus.name",
+      "value": "Zeus Array",
+      "placeholders": []
+    },
+    {
+      "key": "defense.zeus.role",
+      "value": "Multi-target storm arcs with falloff.",
+      "placeholders": []
+    },
+    {
+      "key": "defense.zeus.weakness",
+      "value": "Falloff makes late chain targets weak.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.echo.description",
+      "value": "A cloaked infiltrator that becomes exposed when damaged. Oracle Relays reveal it continuously.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.echo.name",
+      "value": "Echo",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.guardian.description",
+      "value": "A slow armored escort built to absorb focused fire and screen lighter attackers.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.guardian.name",
+      "value": "Guardian",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.raider.description",
+      "value": "A sturdy rank-and-file attacker that anchors the enemy formation.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.raider.name",
+      "value": "Raider",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.scout.description",
+      "value": "A fragile runner whose speed punishes late coverage and slow reactions.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.scout.name",
+      "value": "Scout",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.titan.description",
+      "value": "A heavily armored elite with high health and partial resistance to control.",
+      "placeholders": []
+    },
+    {
+      "key": "enemy.titan.name",
+      "value": "Titan",
+      "placeholders": []
+    },
+    {
+      "key": "m01.briefing.mechanic.tutorial",
+      "value": "Command guidance pauses the battle while it introduces Aether, pads, tower comparison, construction, waves, and upgrades.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.briefing.objective",
+      "value": "Hold the Eternal Gate through {waveCount} waves and learn when to build, upgrade, or save.",
+      "placeholders": [
+        {
+          "name": "waveCount",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m01.briefing.route.main",
+      "value": "One broad road bends past ten deliberate firing positions before reaching the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.briefing.summary",
+      "value": "The first hostile column advances at dawn. Establish a compact defense before its faster ranks arrive.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.integrity.description",
+      "value": "Finish with the required gate integrity for your chosen difficulty.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.integrity.progress",
+      "value": "Gate integrity remaining",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.integrity.title",
+      "value": "Unbroken Seal",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.mastery.description",
+      "value": "Win while owning no more than {maximumTowers} towers.",
+      "placeholders": [
+        {
+          "name": "maximumTowers",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m01.objective.mastery.progress",
+      "value": "Towers owned at victory",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.mastery.title",
+      "value": "Measured Defense",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.victory.description",
+      "value": "Defeat every enemy in all {waveCount} waves.",
+      "placeholders": [
+        {
+          "name": "waveCount",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m01.objective.victory.progress",
+      "value": "Waves cleared",
+      "placeholders": []
+    },
+    {
+      "key": "m01.objective.victory.title",
+      "value": "Hold the Gate",
+      "placeholders": []
+    },
+    {
+      "key": "m01.preview.tutorial-foundation",
+      "value": "Command guidance teaches the complete build-and-wave loop before the opening assault can threaten the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m01.title",
+      "value": "Gate of Dawn",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.01.title",
+      "value": "First Footsteps",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.02.title",
+      "value": "Running Bronze",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.03.title",
+      "value": "Split Cadence",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.04.title",
+      "value": "Pressure Line",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.05.title",
+      "value": "The Long Advance",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.06.title",
+      "value": "Dawn Assault",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.mechanic.merge",
+      "value": "North and south formations arrive together, then merge onto one final causeway. Pads marked Support trade direct road exposure for strong Oracle Relay coverage.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.objective",
+      "value": "Balance both entrances without neglecting the shared trunk to the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.route.north",
+      "value": "The north harbor approach gives dedicated coverage before joining the shared causeway.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.route.south",
+      "value": "The south harbor approach demands its own answer before both formations merge.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.briefing.summary",
+      "value": "Two Piraeus landing parties converge through the switchyard. A tower committed to one approach may miss the other.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.integrity.description",
+      "value": "Finish with the required gate integrity for your chosen difficulty.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.integrity.progress",
+      "value": "Gate integrity remaining",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.integrity.title",
+      "value": "Harbor Bulwark",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.mastery.description",
+      "value": "Allow no enemy from either entrance to leak through the gate.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.mastery.progress",
+      "value": "North and south leaks",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.mastery.title",
+      "value": "Seal Both Harbors",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.victory.description",
+      "value": "Defeat every formation from both routes.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.victory.progress",
+      "value": "Waves cleared",
+      "placeholders": []
+    },
+    {
+      "key": "m04.objective.victory.title",
+      "value": "Secure Piraeus",
+      "placeholders": []
+    },
+    {
+      "key": "m04.preview.two-route-merge",
+      "value": "Route labels reveal simultaneous north and south deployments before each wave begins.",
+      "placeholders": []
+    },
+    {
+      "key": "m04.title",
+      "value": "Piraeus Switchyard",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.01.title",
+      "value": "Twin Landings",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.02.title",
+      "value": "Harbor Raiders",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.03.title",
+      "value": "Shielded Cargo",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.04.title",
+      "value": "Echoes on the Quays",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.05.title",
+      "value": "Converging Steel",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.06.title",
+      "value": "The Piraeus Crush",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.mechanic.talos",
+      "value": "Talos releases Scout pods at fixed health thresholds and exposes its core for a short damage window.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.objective",
+      "value": "Survive the spiral siege, preserve enough force for Talos, and strike hard when its core opens.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.route.spiral",
+      "value": "The clockwise spiral offers repeated coverage, while pads marked Support are deliberate Oracle Relay positions rather than primary firing sites.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.briefing.summary",
+      "value": "The Bronze Warden awakens inside the foundry. {waveCount} waves coil inward before Talos takes the road.",
+      "placeholders": [
+        {
+          "name": "waveCount",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m05.objective.integrity.description",
+      "value": "Finish with the required gate integrity for your chosen difficulty.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.integrity.progress",
+      "value": "Gate integrity remaining",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.integrity.title",
+      "value": "Foundry Fortitude",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.mastery.description",
+      "value": "Prevent Talos and every enemy descended from its boss wave from leaking.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.mastery.progress",
+      "value": "Boss-lineage leaks",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.mastery.title",
+      "value": "Break the Bronze Line",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.victory.description",
+      "value": "Destroy Talos and clear every supporting formation.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.victory.progress",
+      "value": "Waves cleared",
+      "placeholders": []
+    },
+    {
+      "key": "m05.objective.victory.title",
+      "value": "Topple the Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.preview.talos-thresholds",
+      "value": "Talos enters on Wave {bossWave}. Its warning pulse precedes each Scout-pod release and exposed-core window.",
+      "placeholders": [
+        {
+          "name": "bossWave",
+          "type": "integer"
+        }
+      ]
+    },
+    {
+      "key": "m05.preview.titan-heavy",
+      "value": "Titans arrive next: slow Heavy enemies with extreme durability, strong armor, and a punishing gate leak.",
+      "placeholders": []
+    },
+    {
+      "key": "m05.title",
+      "value": "Bronze Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.01.title",
+      "value": "Foundry Runners",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.02.title",
+      "value": "Bronze Escort",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.03.title",
+      "value": "Hidden Sparks",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.04.title",
+      "value": "Shield and Echo",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.05.title",
+      "value": "Heavy Footfalls",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.06.title",
+      "value": "Coils of War",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.07.title",
+      "value": "Before the Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.08.title",
+      "value": "Talos Unbound",
+      "placeholders": []
+    },
+    {
+      "key": "mechanism.athena-statue-beam.name",
+      "value": "Athena Statue Beam",
+      "placeholders": []
+    },
+    {
+      "key": "mechanism.bridgefall.name",
+      "value": "Bridgefall",
+      "placeholders": []
+    },
+    {
+      "key": "mechanism.bronze-city-gate.name",
+      "value": "Bronze City Gate",
+      "placeholders": []
+    },
+    {
+      "key": "mechanism.harbor-chain.name",
+      "value": "Harbor Chain",
+      "placeholders": []
+    },
+    {
+      "key": "mechanism.sacred-braziers.name",
+      "value": "Sacred Braziers",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.aegis-ward.name",
+      "value": "Divine Protocol Aegis Ward",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.armara-ascension.name",
+      "value": "Divine Protocol Armara Ascension",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.athena-command.name",
+      "value": "Divine Protocol Athena Command",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.hades-bargain.name",
+      "value": "Divine Protocol Hades Bargain",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.hephaestus-overclock.name",
+      "value": "Divine Protocol Hephaestus Overclock",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.hermes-rewind.name",
+      "value": "Divine Protocol Hermes Rewind",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.medusa-lock.name",
+      "value": "Divine Protocol Medusa Lock",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.poseidon-surge.name",
+      "value": "Divine Protocol Poseidon Surge",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.temporal-edict.name",
+      "value": "Divine Protocol Temporal Edict",
+      "placeholders": []
+    },
+    {
+      "key": "protocol.zeus-skyfire.name",
+      "value": "Divine Protocol Zeus Skyfire",
+      "placeholders": []
+    },
+    {
+      "key": "reinforcement.artemis-scout.name",
+      "value": "Artemis Scout",
+      "placeholders": []
+    },
+    {
+      "key": "reinforcement.spartan-phalanx.name",
+      "value": "Spartan Phalanx",
+      "placeholders": []
+    },
+    {
+      "key": "reinforcement.talos-automaton.name",
+      "value": "Talos Automaton",
+      "placeholders": []
+    },
+    {
+      "key": "relic.broken-aegis.benefit",
+      "value": "Broken Aegis grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.broken-aegis.drawback",
+      "value": "Broken Aegis charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.broken-aegis.name",
+      "value": "Broken Aegis",
+      "placeholders": []
+    },
+    {
+      "key": "relic.bronze-obol.benefit",
+      "value": "Bronze Obol grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.bronze-obol.drawback",
+      "value": "Bronze Obol charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.bronze-obol.name",
+      "value": "Bronze Obol",
+      "placeholders": []
+    },
+    {
+      "key": "relic.forge-ember.benefit",
+      "value": "Forge Ember grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.forge-ember.drawback",
+      "value": "Forge Ember charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.forge-ember.name",
+      "value": "Forge Ember",
+      "placeholders": []
+    },
+    {
+      "key": "relic.hermes-greaves.benefit",
+      "value": "Hermes Greaves grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.hermes-greaves.drawback",
+      "value": "Hermes Greaves charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.hermes-greaves.name",
+      "value": "Hermes Greaves",
+      "placeholders": []
+    },
+    {
+      "key": "relic.laurel-of-ares.benefit",
+      "value": "Laurel Of Ares grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.laurel-of-ares.drawback",
+      "value": "Laurel Of Ares charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.laurel-of-ares.name",
+      "value": "Laurel Of Ares",
+      "placeholders": []
+    },
+    {
+      "key": "relic.owl-lens.benefit",
+      "value": "Owl Lens grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.owl-lens.drawback",
+      "value": "Owl Lens charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.owl-lens.name",
+      "value": "Owl Lens",
+      "placeholders": []
+    },
+    {
+      "key": "relic.tideglass.benefit",
+      "value": "Tideglass grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.tideglass.drawback",
+      "value": "Tideglass charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.tideglass.name",
+      "value": "Tideglass",
+      "placeholders": []
+    },
+    {
+      "key": "relic.titan-gear.benefit",
+      "value": "Titan Gear grants its recorded benefit before the run begins.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.titan-gear.drawback",
+      "value": "Titan Gear charges its recorded drawback for that benefit.",
+      "placeholders": []
+    },
+    {
+      "key": "relic.titan-gear.name",
+      "value": "Titan Gear",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.apollo-forked-ray.description",
+      "value": "Pulses ramp 4 to 18 with 50 percent extra shield damage and fork at 45 percent, or 70 percent against a shielded second target.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.apollo-forked-ray.name",
+      "value": "Forked Ray",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.apollo-solar-lance.description",
+      "value": "Pulses ramp 4 to 24 and reach peak faster with double shield damage, and it never forks.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.apollo-solar-lance.name",
+      "value": "Solar Lance",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.artemis-execution-line.description",
+      "value": "118 damage every 1.8 seconds at range 46; every fourth primary deals 150 percent and the 50 percent pierce never crits.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.artemis-execution-line.name",
+      "value": "Execution Line",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.artemis-threader.description",
+      "value": "96 damage every 1.65 seconds at range 44 through up to three aligned targets at 100, 65, and 40 percent, with no crit.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.artemis-threader.name",
+      "value": "Threader",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.athena-command-mesh.description",
+      "value": "Links five attackers for 12 percent range and 15 percent rate, with no coordinated-damage bonus.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.athena-command-mesh.name",
+      "value": "Command Mesh",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.athena-coordinated-fire.description",
+      "value": "Links four attackers for 10 percent range and rate and adds 8 percent damage when two links share a target.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.athena-coordinated-fire.name",
+      "value": "Coordinated Fire",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.chronos-echo-field.description",
+      "value": "6 damage every 720 ms with a 48 percent slow for 1.5 seconds; every fifth attack echoes a weaker slow to at most two nearby enemies.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.chronos-echo-field.name",
+      "value": "Echo Field",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.chronos-time-debt.description",
+      "value": "5 damage every 760 ms with a 55 percent slow for 1.8 seconds; a third consecutive hit consumes its own slow stacks for 18 temporal damage.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.chronos-time-debt.name",
+      "value": "Time Debt",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hades-soul-tithe.description",
+      "value": "30 damage every 1.0 second with a 20 percent execute; the first six executes each wave grant 2 Aether and there is no banish.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hades-soul-tithe.name",
+      "value": "Soul Tithe",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hades-twin-banish.description",
+      "value": "28 damage every 1.1 seconds with an 18 percent execute; every third execute may banish one nearby wounded non-boss on an 8 second cooldown.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hades-twin-banish.name",
+      "value": "Twin Banish",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hephaestus-molten-field.description",
+      "value": "Two mines dealing 60 blast plus 6 per second for 4 seconds, replenishing in 4.5 seconds and leaving a 2.5 second anti-regeneration field.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hephaestus-molten-field.name",
+      "value": "Molten Field",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hephaestus-triple-foundry.description",
+      "value": "Three mines dealing 46 blast plus 5 per second for 3.5 seconds, replenishing in 3.8 seconds, with no persistent field.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hephaestus-triple-foundry.name",
+      "value": "Triple Foundry",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hermes-sky-swarm.description",
+      "value": "Three drones dealing 7 damage every 450 ms with air priority and an internal air coefficient, and no bonus-shot counter.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hermes-sky-swarm.name",
+      "value": "Sky Swarm",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hermes-wing-command.description",
+      "value": "Two drones dealing 8 damage every 400 ms; every sixth drone attack fires one bonus shot.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hermes-wing-command.name",
+      "value": "Wing Command",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hoplite-phalanx.description",
+      "value": "Three guards with a 1.2 second block and 5 second replenish; the first eligible contact bashes for 12.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hoplite-phalanx.name",
+      "value": "Phalanx",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hoplite-spearwall.description",
+      "value": "Two guards with a 1.0 second block and 4.25 second replenish; every accepted contact deals 24 and there is no opening bash.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.hoplite-spearwall.name",
+      "value": "Spearwall",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.medusa-basilisk-focus.description",
+      "value": "19 damage every 600 ms; every fourth shot petrifies only the primary target for 1.5 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.medusa-basilisk-focus.name",
+      "value": "Basilisk Focus",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.medusa-gorgon-bloom.description",
+      "value": "16 damage every 550 ms; every fifth shot petrifies the primary for 1 second and radius 2.5 secondaries for 0.35 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.medusa-gorgon-bloom.name",
+      "value": "Gorgon Bloom",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.oracle-chorus.description",
+      "value": "Two 11 percent marks at range 32; every fifth scan marks at most five targets for 2 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.oracle-chorus.name",
+      "value": "Chorus",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.oracle-judgment.description",
+      "value": "Three simultaneous 15 percent marks at range 30, with no mass-scan capstone.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.oracle-judgment.name",
+      "value": "Judgment",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.poseidon-maelstrom.description",
+      "value": "30 damage every 1.05 seconds to five targets with 2.5 push and a 15 percent drench; every fifth attack is a 40 damage six-target maelstrom.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.poseidon-maelstrom.name",
+      "value": "Maelstrom",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.poseidon-undertow.description",
+      "value": "24 damage every 1.1 seconds to four targets with 3.5 push and a 25 percent drench, and no maelstrom counter.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.poseidon-undertow.name",
+      "value": "Undertow",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.sentinel-lock-on.description",
+      "value": "18 damage every 360 ms at range 26; three consecutive primary hits add 15 percent internal damage until the target changes.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.sentinel-lock-on.name",
+      "value": "Lock-On",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.sentinel-twin-lance.description",
+      "value": "15 damage every 340 ms at range 25; the closest second target within 6 units takes 60 percent and never advances a counter.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.sentinel-twin-lance.name",
+      "value": "Twin Lance",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.siege-breach-core.description",
+      "value": "52 damage every 1.2 seconds at range 28 with radius 6.5; the central 2.5 units take 35 percent extra.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.siege-breach-core.name",
+      "value": "Breach Core",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.siege-sun-shrapnel.description",
+      "value": "42 damage every 1.05 seconds at range 28 with radius 8 across at most eight targets, and no center bonus.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.siege-sun-shrapnel.name",
+      "value": "Sun Shrapnel",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.talos-earthbreaker.description",
+      "value": "105 damage every 1.8 seconds at range 25 in radius 4 with 35 percent armor ignore and minus 3 armor for 3 seconds.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.talos-earthbreaker.name",
+      "value": "Earthbreaker",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.talos-titan-hunter.description",
+      "value": "145 damage every 2 seconds at range 26 with 50 percent armor ignore, minus 4 armor for 3 seconds, and 30 percent extra boss damage.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.talos-titan-hunter.name",
+      "value": "Titan Hunter",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.zeus-storm-crown.description",
+      "value": "30 damage every 900 ms to five targets at 100 to 30 percent; every sixth attack adds up to three 30 percent storm targets.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.zeus-storm-crown.name",
+      "value": "Storm Crown",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.zeus-thunderhead.description",
+      "value": "38 damage every 1.05 seconds to three targets; every eighth primary creates a 70 damage radius 3 burst that cannot recurse.",
+      "placeholders": []
+    },
+    {
+      "key": "specialization.zeus-thunderhead.name",
+      "value": "Thunderhead",
+      "placeholders": []
+    }
+  ]
+}
