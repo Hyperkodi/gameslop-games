@@ -827,7 +827,7 @@
               "version": 1,
               "deliveryKind": "instant-primary-hit",
               "parameters": {
-                "cooldownMs": 800,
+                "cooldownMs": 750,
                 "baseDamage": "4",
                 "damageTypeId": "arcane",
                 "maximumTargets": 1,

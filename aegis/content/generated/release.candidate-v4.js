@@ -6,7 +6,7 @@
     Object.keys(value).forEach(function (key) { deepFreeze(value[key]); });
     return Object.freeze(value);
   }
-  const DATA = deepFreeze(JSON.parse("{\"approvalState\":\"candidate-balance\",\"contentVersion\":\"candidate-v4\",\"id\":\"candidate-v4\",\"releaseArtifact\":\"aegis-release.eff46ecae4d38957e4758ed3727201f7bc31351642e8e830c08876bdfd7c0fec.js\",\"releaseEligible\":false,\"releaseHash\":\"sha256:eff46ecae4d38957e4758ed3727201f7bc31351642e8e830c08876bdfd7c0fec\",\"schemaVersion\":1}"));
+  const DATA = deepFreeze(JSON.parse("{\"approvalState\":\"candidate-balance\",\"contentVersion\":\"candidate-v4\",\"id\":\"candidate-v4\",\"releaseArtifact\":\"aegis-release.1c219126277270b83257f8f3afca58fbfa04e43800fd48cef4322d9b93f64ce6.js\",\"releaseEligible\":false,\"releaseHash\":\"sha256:1c219126277270b83257f8f3afca58fbfa04e43800fd48cef4322d9b93f64ce6\",\"schemaVersion\":1}"));
   const api = deepFreeze({ RELEASE_ALIAS: DATA });
   if (typeof module !== "undefined" && module.exports) { module.exports = api; return; }
   const game = root.Game = root.Game || {};

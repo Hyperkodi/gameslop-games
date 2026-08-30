@@ -18,7 +18,7 @@
   "annex": {
     "id": "candidate-v4",
     "source": "annexes/candidate-v4.json",
-    "sha256": "sha256:d81a8d0636ed8685b5b321ac473fa2a0492d1e3a6ba7cac299c118506799ad15"
+    "sha256": "sha256:a35353140e8bbffa73cd79ce8cf828e081fa8c910e17891a8cc146c79d0e5cb9"
   },
   "campaignRules": {
     "source": "campaign-rules/candidate-v4.json",
@@ -26,7 +26,7 @@
   },
   "defenses": {
     "source": "defenses/candidate-v4.json",
-    "sha256": "sha256:0d7fef9ccc6f9b0be86a06012e565b9315af6273d3e213235ae7e01641f4f283"
+    "sha256": "sha256:90804deeb38125e285d8cab927fe380d0be5eacc485613bd54e510f787ad3345"
   },
   "enemies": {
     "source": "enemies/candidate-v4.json",

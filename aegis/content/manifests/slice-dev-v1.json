@@ -14,7 +14,7 @@
   "annex": {
     "id": "slice-dev-v1",
     "source": "annexes/slice-dev-v1.json",
-    "sha256": "sha256:41ab28d2d45cb30e0167accfc48614afc10594d5d6d669b1f505bd95090d2569"
+    "sha256": "sha256:d84b9dd8ed4718d6a2188ab2aae629560faf189a42cf2a53b6c91234df8def4b"
   },
   "campaignRules": {
     "source": "campaign-rules/slice-v1.json",
@@ -22,7 +22,7 @@
   },
   "defenses": {
     "source": "defenses/slice-v1.json",
-    "sha256": "sha256:ae412d5c0427de695d3d1eb5038d5b30c2505212b8678930d51a6e4f791984f0"
+    "sha256": "sha256:597cc1b3a144d7978dea455f9d5cb6ee96ef21cb56587f0de9d79f29cf82831a"
   },
   "enemies": {
     "source": "enemies/slice-v1.json",

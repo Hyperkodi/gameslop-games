@@ -253,6 +253,9 @@ test("tower cards expose compiled cost, damage, cadence, range, targeting, and d
   const chronos = PreviewController.defenseView(runtime, "chronos", 1);
   assert.equal(chronos.costAether, 75);
   assert.equal(chronos.description, "Deals 2 every 900 ms and slows 32% for 1200 ms.");
+  assert.equal(PreviewController.attackCadenceLabel(chronos), "every 900 ms");
+  assert.equal(PreviewController.attackCadenceLabel({ cooldownMs: 750 }), "every 750 ms");
+  assert.equal(PreviewController.attackCadenceLabel({ cooldownMs: null }), "continuous");
 });
 
 test("preview header derives loadout grants and tutorial mode from compiled content", () => {

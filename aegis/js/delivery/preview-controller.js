@@ -390,8 +390,8 @@
     });
   }
 
-  function attackRateLabel(view) {
-    return view.attacksPerSecond === "continuous" ? "continuous" : view.attacksPerSecond + "/sec";
+  function attackCadenceLabel(view) {
+    return view.cooldownMs === null ? "continuous" : "every " + view.cooldownMs + " ms";
   }
 
   /* The run header and the session live in battle-session.js so the shell can
@@ -2099,7 +2099,7 @@
           "manage-" + occupied.id + "-l" + occupied.level
         );
         card.appendChild(element(documentObject, "p", "preview-stats",
-          "Damage " + view.damage + " · " + attackRateLabel(view) + " · Range " + view.range +
+          "Damage " + view.damage + " · " + attackCadenceLabel(view) + " · Range " + view.range +
           " · Targets " + view.targetKinds.join(" + ")));
         appendTowerDetails(card, [
           ["", view.description],
@@ -2112,7 +2112,7 @@
           delta.appendChild(element(documentObject, "h4", "", "NEXT: LEVEL " + (occupied.level + 1) + " - " + next.costAether + " AETHER"));
           delta.appendChild(element(documentObject, "p", "preview-stats",
             "Damage " + view.damage + " -> " + next.damage +
-            " | Rate " + attackRateLabel(view) + " -> " + attackRateLabel(next) +
+            " | Cadence " + attackCadenceLabel(view) + " -> " + attackCadenceLabel(next) +
             " | Range " + view.range + " -> " + next.range));
           delta.appendChild(element(documentObject, "p", "", next.description));
           card.appendChild(delta);
@@ -2207,7 +2207,7 @@
           need > 0 ? "Need " + need + " more Aether" : "Affordable"));
         card.appendChild(actions);
         card.appendChild(element(documentObject, "p", "preview-stats",
-          "Damage " + view.damage + " · " + attackRateLabel(view) + " · Range " + view.range +
+          "Damage " + view.damage + " · " + attackCadenceLabel(view) + " · Range " + view.range +
           " · Targets " + view.targetKinds.join(" + ")));
         appendTowerDetails(card, [
           ["preview-role", "Role: " + view.role],
@@ -3034,6 +3034,7 @@
     createRunResult: BattleSession.createRunResult,
     deriveRunFacts: BattleSession.deriveRunFacts,
     defenseView: defenseView,
+    attackCadenceLabel: attackCadenceLabel,
     mount: mount,
     mountBattle: mountBattle,
     resultCardModel: resultCardModel,
