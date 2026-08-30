@@ -15,8 +15,8 @@ function ref(source, fill) {
 
 function validManifest() {
   const names = [
-    "abiDescriptor", "behaviorContracts", "campaignRules", "defenses", "enemies", "bosses",
-    "eventCatalog", "stringCatalog", "presentationCatalog", "protocols", "relics",
+    "abiDescriptor", "acts", "behaviorContracts", "campaignRules", "defenses", "enemies",
+    "bosses", "eventCatalog", "stringCatalog", "presentationCatalog", "protocols", "relics",
     "specializations", "reinforcements", "mechanisms", "progression",
   ];
   const manifest = {
@@ -25,6 +25,7 @@ function validManifest() {
     sourceKind: "campaign",
     approvalState: "candidate-balance",
     abiDescriptor: null,
+    acts: null,
     behaviorContracts: null,
     annex: { id: "unlock-dev-v1", source: "annexes/unlock-dev-v1.json", sha256: "sha256:" + "f".repeat(64) },
     campaignRules: null,
@@ -75,6 +76,7 @@ test("v4 manifest accepts the parallel unlock domains and map schemas 1 through 
   assert.strictEqual(normalized, manifest);
   assert.equal(normalized.schemaVersion, 4);
   assert.equal(normalized.missions[1].map.schemaVersion, 3);
+  assert.equal(normalized.acts.source, "v4/acts.json");
   assert.equal(Loader.V4_JSON_OPTIONS.maxDepth, 32);
   assert.equal(Loader.MAX_SOURCE_BYTES, 1048576);
 });
@@ -83,6 +85,10 @@ test("v4 manifest is exact and cannot omit or smuggle unlock domain references",
   let manifest = validManifest();
   delete manifest.protocols;
   expectDiagnostic(function () { Loader.validateV4SourceManifest(manifest); }, "SCHEMA_MISSING_KEY", "/protocols");
+
+  manifest = validManifest();
+  delete manifest.acts;
+  expectDiagnostic(function () { Loader.validateV4SourceManifest(manifest); }, "SCHEMA_MISSING_KEY", "/acts");
 
   manifest = validManifest();
   manifest.units = manifest.reinforcements;

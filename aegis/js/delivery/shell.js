@@ -211,6 +211,22 @@
     }
   }
 
+  /* Authored trait and resistance entries are records, not words. Only their stable IDs reach
+     a player-facing projection, so a briefing can never print a raw authored object. */
+  function traitIds(record) {
+    return (record.traits || []).map(function (entry) {
+      if (typeof entry === "string") return entry;
+      return entry && typeof entry.kind === "string" ? entry.kind : null;
+    }).filter(Boolean).sort(asciiCompare);
+  }
+
+  function resistanceIds(record) {
+    return (record.resistances || []).map(function (entry) {
+      if (typeof entry === "string") return entry;
+      return entry && typeof entry.damageTypeId === "string" ? entry.damageTypeId : null;
+    }).filter(Boolean).sort(asciiCompare);
+  }
+
   function normalizeCollection(source, mapper) {
     const output = Object.create(null);
     if (!isPlainObject(source)) return output;
@@ -322,6 +338,7 @@
         summary: format(strings, briefing.summaryKey, "Hold the gate against every authored wave.", missionValues),
         objectiveText: format(strings, briefing.objectiveKey,
           "Survive every wave and protect the gate.", missionValues),
+        story: format(strings, briefing.storyKey, "", missionValues),
         routeNotices: (briefing.routeNoticeKeys || [])
           .map(function (key) { return format(strings, key, "", missionValues); }).filter(Boolean),
         mechanicNotices: (briefing.mechanicNoticeKeys || [])
@@ -361,18 +378,64 @@
     return output;
   }
 
-  function actCatalog(missionIds, missions, strings) {
+  /* Compiled content v4 authors the act narrative (spec 18.2). The shell carries the authored
+     title, era, story, and premise through verbatim and never writes narrative of its own; a
+     build whose content predates the acts collection keeps the old derived heading. Acts with
+     no mission in this build are omitted rather than rendered as empty shelves. */
+  function actCatalog(missionIds, missions, strings, content) {
     const byAct = new Map();
     missionIds.forEach(function (missionId) {
       const actIndex = missions[missionId].actIndex;
       if (!byAct.has(actIndex)) byAct.set(actIndex, []);
       byAct.get(actIndex).push(missionId);
     });
+    const authored = new Map();
+    const records = content && content.acts && Array.isArray(content.acts.records)
+      ? content.acts.records : [];
+    records.forEach(function (record) {
+      if (record && Number.isSafeInteger(record.index)) authored.set(record.index, record);
+    });
     return Array.from(byAct.keys()).sort(function (a, b) { return a - b; }).map(function (actIndex) {
+      const record = authored.get(actIndex) || null;
       return {
         index: actIndex,
-        title: text(strings, "act." + actIndex + ".title", "Act " + (ROMAN[actIndex] || actIndex)),
+        title: text(
+          strings,
+          record ? record.titleKey : "act." + actIndex + ".title",
+          "Act " + (ROMAN[actIndex] || actIndex)
+        ),
+        era: record ? format(strings, record.eraKey, "", {}) : "",
+        story: record ? format(strings, record.storyKey, "", {}) : "",
+        premise: record ? format(strings, record.premiseKey, "", {}) : "",
         missionIds: byAct.get(actIndex).slice(),
+      };
+    });
+  }
+
+  /* Spec 18.3: every Recon tier explains in plain language what it does and does not reveal.
+     The authored copy lives in compiled content; these fallbacks only cover a build compiled
+     before the collection existed. */
+  const RECON_FALLBACK_DETAIL = Object.freeze([
+    "You can see every route, enemy type, and boss rule for this mission, but not how many are"
+      + " coming. Recon reveals exact numbers.",
+    "Recon I shows exact numbers and routes for the next wave.",
+    "Recon II shows exact numbers for the next two waves, and roughly when each group arrives.",
+    "Recon III shows exact numbers, routes, and arrival times for every wave left in the mission.",
+  ]);
+
+  function reconCatalog(content, strings) {
+    const records = content && content.acts && Array.isArray(content.acts.reconRecords)
+      ? content.acts.reconRecords : [];
+    const byTier = new Map();
+    records.forEach(function (record) {
+      if (record && Number.isSafeInteger(record.tier)) byTier.set(record.tier, record);
+    });
+    return RECON_FALLBACK_DETAIL.map(function (fallback, tier) {
+      const record = byTier.get(tier) || null;
+      return {
+        tier: tier,
+        label: RECON_LABELS[tier],
+        detail: record ? format(strings, record.detailKey, fallback, {}) : fallback,
       };
     });
   }
@@ -434,7 +497,8 @@
       abiVersion: content.schemaVersion === 4 ? 2 : 1,
       missionIds: missionIds,
       missions: missions,
-      acts: actCatalog(missionIds, missions, strings),
+      acts: actCatalog(missionIds, missions, strings, content),
+      reconTiers: reconCatalog(content, strings),
       difficulties: difficulties,
       defenses: defenseCatalog(content, strings, scales),
       protocols: protocolCatalog(content, strings),
@@ -446,11 +510,9 @@
           id: id,
           name: text(strings, record.nameKey, titleCase(id)),
           routeKinds: (record.routeKinds || []).slice().sort(asciiCompare),
-          traits: (record.traits || []).slice().sort(asciiCompare),
+          traits: traitIds(record),
           tags: (record.tags || []).slice().sort(asciiCompare),
-          resistances: (record.resistances || []).map(function (entry) {
-            return typeof entry === "string" ? entry : entry.damageTypeId;
-          }).filter(Boolean).sort(asciiCompare),
+          resistances: resistanceIds(record),
         };
       }),
       bosses: normalizeCollection(content.bosses, function (record, id) {
@@ -459,6 +521,9 @@
           name: text(strings, record.nameKey, titleCase(id)),
           description: text(strings, record.descriptionKey, ""),
           routeKinds: (record.routeKinds || ["ground"]).slice().sort(asciiCompare),
+          traits: traitIds(record),
+          tags: (record.tags || []).slice().sort(asciiCompare),
+          resistances: resistanceIds(record),
           phases: (record.phaseRecords || []).slice().sort(function (a, b) { return a.order - b.order; })
             .map(function (phase) {
               return {
@@ -964,6 +1029,9 @@
         return {
           index: act.index,
           title: act.title,
+          era: act.era,
+          story: act.story,
+          premise: act.premise,
           cleared: actCleared(catalog, profile, act.index),
           missions: act.missionIds.map(function (missionId) {
             const mission = catalog.missions[missionId];
@@ -1203,9 +1271,74 @@
     return "large group";
   }
 
+  /* Authored route names win. The fallback stays lowercase so it reads inside a sentence
+     ("on the north route") instead of shouting a runtime identifier at the player. */
   function routeLabel(catalog, missionId, routeId) {
     const key = "route." + missionId + "." + String(routeId);
-    return text(catalog.strings, key, titleCase(String(routeId).replace(/^route\./, "")) + " route");
+    const derived = String(routeId).replace(/^route\./, "").replace(/[-_.]+/g, " ").trim();
+    return text(catalog.strings, key, derived ? "the " + derived + " route" : "the route");
+  }
+
+  /* Spec 18.3: a wave preview describes each group as one readable sentence, never a field
+     dump. Redundant qualifiers are omitted, so ground movement is silent, a route is named
+     only when the mission has more than one, and timing appears only where Recon reveals it. */
+  const QUANTITY_WORDS = Object.freeze({
+    "small group": "A few",
+    "medium group": "A group of",
+    "large group": "A large group of",
+  });
+  const TRAIT_WORDS = Object.freeze({
+    armor: "armored",
+    cloak: "cloaked",
+    flight: "airborne",
+    shield: "shielded",
+  });
+  const AIRBORNE_TRAITS = Object.freeze(["airborne", "flight", "flying"]);
+
+  function pluralName(name, count) {
+    const value = String(name);
+    if (count === 1) return value;
+    if (/(?:s|x|z|ch|sh)$/i.test(value)) return value + "es";
+    if (/[^aeiouAEIOU]y$/.test(value)) return value.slice(0, -1) + "ies";
+    /* Echo becomes Echoes, matching the authored wave copy. */
+    if (/[^aeiouAEIOU]o$/.test(value)) return value + "es";
+    return value + "s";
+  }
+
+  function traitWord(trait) {
+    const id = String(trait);
+    return hasOwn(TRAIT_WORDS, id) ? TRAIT_WORDS[id] : id.replace(/[-_.]/g, " ");
+  }
+
+  /* Arriving with the wave is the default, so only a later group says when it comes. Whole
+     seconds only: a tick count never reaches a player (spec 18.3). */
+  function arrivalText(second) {
+    if (second === null || second <= 0) return "";
+    return "arriving about " + second + (second === 1 ? " second in" : " seconds in");
+  }
+
+  function groupSentence(group, namedRoutes) {
+    let sentence;
+    if (group.isBoss) {
+      sentence = group.unitName;
+    } else if (group.exactCount !== null) {
+      sentence = group.exactCount + " " + pluralName(group.unitName, group.exactCount);
+    } else {
+      sentence = (QUANTITY_WORDS[group.relativeSize] || "A group of")
+        + " " + pluralName(group.unitName, 2);
+    }
+    const airborne = group.movement === "air";
+    if (airborne) sentence += ", airborne";
+    if (namedRoutes) sentence += " on " + group.routeLabel;
+    const qualifiers = group.traits.filter(function (trait) {
+      return !airborne || AIRBORNE_TRAITS.indexOf(String(trait)) === -1;
+    }).map(traitWord);
+    if (group.resistances.length) {
+      qualifiers.push("resists " + group.resistances.join(" and "));
+    }
+    if (qualifiers.length) sentence += " (" + qualifiers.join(", ") + ")";
+    if (group.arrival) sentence += ", " + group.arrival;
+    return sentence + ".";
   }
 
   /* Recon reads immutable compiled waves and never enters simulation state.
@@ -1226,14 +1359,19 @@
       });
     });
     const horizon = reconTier === 0 ? 0 : (reconTier === 1 ? 1 : (reconTier === 2 ? 2 : waves.length));
+    const missionRouteIds = new Set();
+    waves.forEach(function (wave) {
+      (wave.groups || []).forEach(function (group) { missionRouteIds.add(String(group.routeId)); });
+    });
+    const namedRoutes = missionRouteIds.size > 1;
+    const reconRecord = Array.isArray(catalog.reconTiers)
+      ? catalog.reconTiers.find(function (record) { return record.tier === reconTier; })
+      : null;
     return deepFreeze({
       reconTier: reconTier,
       reconLabel: RECON_LABELS[reconTier],
-      reconDetail: reconTier === 0
-        ? "Baseline scouting names every route, enemy type, trait, and boss rule."
-        : (reconTier === 1 ? "Recon I adds exact counts and routes for the next wave."
-          : (reconTier === 2 ? "Recon II adds exact groups for the next two waves and one-second spawn bands."
-            : "Recon III adds exact groups, routes, and timing for every remaining wave.")),
+      reconDetail: reconRecord ? reconRecord.detail : RECON_FALLBACK_DETAIL[reconTier],
+      namedRoutes: namedRoutes,
       waves: waves.map(function (wave, index) {
         const exact = index < horizon;
         const timed = exact && reconTier >= 2;
@@ -1242,7 +1380,10 @@
           const unitId = boss ? (group.bossId || group.enemyId) : group.enemyId;
           const unit = boss ? catalog.bosses[unitId] : catalog.enemies[unitId];
           const routeKinds = unit ? unit.routeKinds : ["ground"];
-          return {
+          const firstSpawnSecond = timed && Number.isSafeInteger(group.firstTick)
+            ? Math.floor(group.firstTick / ticksPerSecond)
+            : null;
+          const record = {
             id: group.id,
             unitId: unitId,
             unitName: unit ? unit.name : titleCase(String(unitId)),
@@ -1254,17 +1395,20 @@
             relativeSize: boss ? "boss" : relativeSize(group.count || 0, maximumCount),
             exactCount: exact && Number.isSafeInteger(group.count) ? group.count : null,
             routeLabel: routeLabel(catalog, missionId, group.routeId),
-            firstSpawnSecondBand: timed && Number.isSafeInteger(group.firstTick)
-              ? Math.floor(group.firstTick / ticksPerSecond) + "-"
-                + (Math.floor(group.firstTick / ticksPerSecond) + 1) + " s"
-              : null,
+            firstSpawnSecondBand: firstSpawnSecond === null
+              ? null
+              : firstSpawnSecond + "-" + (firstSpawnSecond + 1) + " s",
+            arrival: arrivalText(firstSpawnSecond),
           };
+          record.sentence = groupSentence(record, namedRoutes);
+          return record;
         });
         const bossGroup = groups.find(function (group) { return group.isBoss; }) || null;
         const bossRecord = bossGroup ? catalog.bosses[bossGroup.unitId] : null;
         return {
           index: index + 1,
           title: text(catalog.strings, wave.titleKey, "Wave " + (index + 1)),
+          note: format(catalog.strings, wave.noteKey, "", {}),
           detailLevel: timed ? "timed" : (exact ? "counts" : "baseline"),
           routes: Array.from(new Set(groups.map(function (group) { return group.routeLabel; }))).sort(asciiCompare),
           movementKinds: Array.from(new Set(groups.map(function (group) { return group.movement; }))).sort(asciiCompare),
@@ -1283,6 +1427,33 @@
     });
   }
 
+  /* Spec 18.3: a briefing states, in this order and without repeating itself, the act era,
+     the act premise, what this battlefield is, what the player must do, and what is new here.
+     The order and the deduplication are decided here so the view only renders what it is
+     given. Nothing here may expose pad quality, exposure, grid coordinates, ticks, hashes,
+     or runtime IDs. */
+  function briefingNarrative(act, mission) {
+    const lines = [];
+    const seen = new Set();
+    function add(id, label, value) {
+      const body = typeof value === "string" ? value.trim() : "";
+      if (!body || seen.has(body)) return;
+      seen.add(body);
+      lines.push({ id: id, label: label, text: body });
+    }
+    /* Labels are short scanning tags, never a second copy of a fact the screen already
+       states: the act title and the battlefield name are in the briefing header. */
+    add("act-era", "Era", act ? act.era : "");
+    add("act-premise", "This act", act ? act.premise : "");
+    add("battlefield-story", "This battlefield", mission.story);
+    add("battlefield-summary", "The situation", mission.summary);
+    mission.routeNotices.forEach(function (notice, index) {
+      add("battlefield-route-" + index, "The road", notice);
+    });
+    add("objective", "Your task", mission.objectiveText);
+    return lines;
+  }
+
   function selectBriefingScreen(context) {
     const catalog = context.catalog;
     const profile = context.profile;
@@ -1292,12 +1463,23 @@
     const difficulty = catalog.difficulties.find(function (record) { return record.id === state.difficultyId; });
     const loan = mission.protocolLoan;
     const loanProtocol = loan && catalog.protocols[loan.protocolId] ? catalog.protocols[loan.protocolId] : null;
+    const act = catalog.acts.find(function (record) { return record.index === mission.actIndex; }) || null;
+    const narrative = briefingNarrative(act, mission);
+    const narrativeTexts = new Set(narrative.map(function (line) { return line.text; }));
+    const newHere = mission.mechanicNotices.filter(function (notice, index, all) {
+      return notice && !narrativeTexts.has(notice) && all.indexOf(notice) === index;
+    });
     return deepFreeze({
       screen: "briefing",
       mode: state.mode,
       missionId: mission.id,
       heading: "Mission " + mission.number + " - " + mission.title,
-      actTitle: (catalog.acts.find(function (act) { return act.index === mission.actIndex; }) || {}).title || "",
+      actTitle: act ? act.title : "",
+      actEra: act ? act.era : "",
+      actPremise: act ? act.premise : "",
+      missionStory: mission.story,
+      narrative: narrative,
+      newHere: newHere,
       environmentLabel: mission.environmentLabel,
       summary: mission.summary,
       objectiveText: mission.objectiveText,

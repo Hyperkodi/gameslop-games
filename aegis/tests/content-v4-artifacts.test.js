@@ -18,6 +18,8 @@ const SIMULATION_FIXTURE = path.join(
 const Compiler = require(path.join(LIB, "compiler.js"));
 const V4Artifacts = require(path.join(LIB, "v4-artifacts.js"));
 const V4Compiler = require(path.join(LIB, "v4-compiler.js"));
+const V4CrossReferences = require(path.join(LIB, "v4-cross-references.js"));
+const V3MapAdapter = require(path.join(LIB, "v3-map-adapter.js"));
 const RuleCatalog = require(path.join(LIB, "v4-rule-catalog.js"));
 const Catalog = require(path.join(LIB, "v4-behavior-catalog.js"));
 const ReleaseSelector = require(path.join(REPO_ROOT, "games", "aegis", "js", "delivery", "release-selector.js"));
@@ -80,7 +82,7 @@ test("candidate-v4 compiles twice to byte-identical immutable artifacts", () => 
 test("compiled content v4 keeps the v3 lock tree and adds the unlock collections", () => {
   const content = build().artifacts.content;
   assert.deepEqual(Object.keys(content).sort(), [
-    "abiHash", "abiVersion", "behaviorContracts", "behaviorRegistryVersion", "bosses",
+    "abiHash", "abiVersion", "acts", "behaviorContracts", "behaviorRegistryVersion", "bosses",
     "campaignRules", "commandSchemaVersion", "contentVersion", "defenseUnlockGrantMappings",
     "defenses", "enemies", "eventCatalog", "eventSchemaVersion", "grantRecords", "maps", "mechanisms",
     "missionProgression", "missions", "previewProofRecords", "profileSchemaVersion",
@@ -156,6 +158,121 @@ test("compiled content v4 keeps the v3 lock tree and adds the unlock collections
   assert.equal(content.relicRules.maximumSlotCap, 2);
   assert.equal(content.reinforcementRules.maximumActive, 1);
   assert.equal(content.abiHash, "sha256:" + AbiV2.DESCRIPTOR_SHA256);
+});
+
+test("compiled acts carry the four-act narrative and agree with every mission actIndex", () => {
+  const result = build();
+  const content = result.artifacts.content;
+  const acts = content.acts;
+  assert.deepEqual(Object.keys(acts).sort(), ["reconRecords", "records", "schemaVersion"]);
+  assert.equal(acts.schemaVersion, 1);
+  assert.equal(acts.records.length, 4);
+  assert.deepEqual(acts.records.map(function (record) { return record.index; }), [1, 2, 3, 4]);
+  acts.records.forEach(function (record) {
+    assert.deepEqual(Object.keys(record).sort(), [
+      "eraKey", "index", "missionIds", "premiseKey", "storyKey", "titleKey",
+    ]);
+  });
+  assert.deepEqual(acts.records[0].missionIds, ["m01", "m04", "m05"]);
+  assert.deepEqual(acts.records[1].missionIds, []);
+  assert.deepEqual(acts.records[2].missionIds, []);
+  assert.deepEqual(acts.records[3].missionIds, []);
+  Object.keys(content.missions).forEach(function (missionId) {
+    const actIndex = content.missions[missionId].actIndex;
+    const act = acts.records.find(function (record) { return record.index === actIndex; });
+    assert.ok(act, missionId + " resolves an act");
+    assert.ok(act.missionIds.indexOf(missionId) !== -1, missionId + " is listed by its own act");
+  });
+  const claimed = acts.records.reduce(function (total, record) { return total + record.missionIds.length; }, 0);
+  assert.equal(claimed, Object.keys(content.missions).length, "no mission is missing or duplicated");
+
+  assert.deepEqual(acts.reconRecords.map(function (record) { return record.tier; }), [0, 1, 2, 3]);
+  acts.reconRecords.forEach(function (record) {
+    assert.deepEqual(Object.keys(record).sort(), ["detailKey", "tier"]);
+  });
+
+  /* Every narrative key resolves in the shipped presentation companion. */
+  const strings = new Map(result.artifacts.presentation.strings.map(function (entry) {
+    return [entry.key, entry.value];
+  }));
+  acts.records.forEach(function (record) {
+    ["titleKey", "eraKey", "storyKey", "premiseKey"].forEach(function (field) {
+      assert.ok(strings.has(record[field]), record[field] + " resolves");
+      assert.ok(strings.get(record[field]).length > 0, record[field] + " is not empty");
+    });
+  });
+  acts.reconRecords.forEach(function (record) {
+    assert.ok(strings.has(record.detailKey), record.detailKey + " resolves");
+  });
+  Object.keys(content.missions).forEach(function (missionId) {
+    const mission = content.missions[missionId];
+    assert.ok(strings.has(mission.briefing.storyKey), missionId + " story resolves");
+    mission.waves.forEach(function (wave) {
+      assert.ok(strings.has(wave.noteKey), wave.id + " note resolves");
+    });
+  });
+
+  /* Spec 18.4: no em dash reaches a player through compiled narrative copy. */
+  Array.from(strings.values()).forEach(function (value) {
+    assert.equal(value.indexOf(String.fromCharCode(8212)), -1, "em dash in " + value);
+  });
+});
+
+test("act narrative stays out of the simulation lock tree and every ruleset input beyond content bytes", () => {
+  const result = build();
+  assert.deepEqual(
+    Object.keys(result.resolved.lockTree).sort(),
+    [
+      "bosses", "campaignRules", "defenses", "enemies", "eventCatalog", "maps", "missions",
+      "schemaVersion", "specializations", "summons",
+    ],
+    "the annex-covered lock tree gains no narrative collection"
+  );
+  assert.equal(Object.prototype.hasOwnProperty.call(result.resolved.lockTree, "acts"), false);
+  const encodedTree = JSON.stringify(result.resolved.lockTree);
+  ["act.1.era", "act.1.story", "act.1.premise", "recon.0.detail"].forEach(function (key) {
+    assert.equal(encodedTree.indexOf(key), -1, key + " never enters the lock tree");
+  });
+});
+
+test("the act catalog and its narrative keys fail closed on drift", () => {
+  const preflight = build().source;
+  function graph(mutate) {
+    const draft = JSON.parse(JSON.stringify({
+      manifest: preflight.manifest,
+      normalizedSource: preflight.normalizedSource,
+    }));
+    mutate(draft.normalizedSource);
+    return function () {
+      V4CrossReferences.resolveV4Graph(draft, {
+        normalizeAndValidateMap: V3MapAdapter.normalizeAndValidateMap,
+      });
+    };
+  }
+
+  /* The unmodified graph is the control: every assertion below is about the mutation. */
+  assert.doesNotThrow(graph(function () {}));
+
+  expectDiagnostic(graph(function (source) {
+    source.acts.records[0].missionIds = ["m01", "m05"];
+  }), "V4_ACT_BINDING");
+  expectDiagnostic(graph(function (source) {
+    source.acts.records[1].missionIds = source.acts.records[0].missionIds;
+    source.acts.records[0].missionIds = [];
+  }), "V4_ACT_BINDING");
+  expectDiagnostic(graph(function (source) {
+    source.acts.records[0].storyKey = "act.1.absent";
+  }), "REFERENCE_UNKNOWN");
+  expectDiagnostic(graph(function (source) {
+    source.acts.reconRecords[2].detailKey = "recon.2.absent";
+  }), "REFERENCE_UNKNOWN");
+  /* Every authored narrative string must be reachable: an orphaned wave note is rejected. */
+  expectDiagnostic(graph(function (source) {
+    source.missions[0].definition.waves[0].noteKey = source.missions[0].definition.waves[1].noteKey;
+  }), "STRING_UNUSED");
+  expectDiagnostic(graph(function (source) {
+    source.missions[0].definition.briefing.storyKey = "m01.absent";
+  }), "REFERENCE_UNKNOWN");
 });
 
 test("the v4 release record is a developer-only descriptor with authenticated identities", () => {

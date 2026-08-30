@@ -5,6 +5,86 @@
   "fallbackLocale": null,
   "entries": [
     {
+      "key": "act.1.era",
+      "value": "The plain of Marathon, 490 BC",
+      "placeholders": []
+    },
+    {
+      "key": "act.1.premise",
+      "value": "This act restores that defense. Hold one road, learn what a line costs, and finish standing.",
+      "placeholders": []
+    },
+    {
+      "key": "act.1.story",
+      "value": "Darius of Persia sent a fleet west to punish Athens for backing the Ionian revolt. It beached at Marathon, one day's march from the city. Athens went out with Plataea beside her and no Spartan column in sight, because Sparta was keeping a religious festival and would arrive after the fighting ended. Miltiades thinned his centre, weighted both wings, let the Persian middle push forward, and closed on it from either side. Herodotus counted 192 Athenian dead. The same men then walked forty kilometres home in armour to meet the fleet before it could reach an undefended city.",
+      "placeholders": []
+    },
+    {
+      "key": "act.1.title",
+      "value": "Attican Boot Sequence",
+      "placeholders": []
+    },
+    {
+      "key": "act.2.era",
+      "value": "The Delian League, founded 478 BC",
+      "placeholders": []
+    },
+    {
+      "key": "act.2.premise",
+      "value": "This act restores the alliance. Many islands, many roads, and the slow discovery that protection and control wear the same face.",
+      "placeholders": []
+    },
+    {
+      "key": "act.2.story",
+      "value": "With Persia thrown back, the island states swore a common alliance and put its treasury on Delos, the birthplace of Apollo, where by sacred law no one was allowed to be born or to die. Members paid in ships or in silver. It held until Naxos tried to leave: the alliance besieged it, took its walls and its fleet, and Thucydides marked that as the first ally reduced to a subject, against everything the league had sworn. The treasury moved to Athens in 454 BC.",
+      "placeholders": []
+    },
+    {
+      "key": "act.2.title",
+      "value": "Shards of the Aegean",
+      "placeholders": []
+    },
+    {
+      "key": "act.3.era",
+      "value": "The Hot Gates and Delphi, 480 BC",
+      "placeholders": []
+    },
+    {
+      "key": "act.3.premise",
+      "value": "This act restores the narrow ground and the ambiguous answer. Fewer places to stand, and a prophecy worth only as much as your reading of it.",
+      "placeholders": []
+    },
+    {
+      "key": "act.3.story",
+      "value": "Xerxes returned with an army the Greeks could not meet in open country, so they chose ground where numbers could not spread out. Thermopylae was a coastal pass only a few paces wide, and Leonidas held it for two days. On the third a local man named Ephialtes showed the Persians a mountain track around it. Leonidas sent most of the army away and stayed with his Spartans, the Thespians who refused to leave, and the Thebans. At the same time Delphi told Athens to trust a wooden wall. The priests meant the palisade on the Acropolis. Themistocles argued it meant the fleet, and the fleet won at Salamis.",
+      "placeholders": []
+    },
+    {
+      "key": "act.3.title",
+      "value": "Oracle War",
+      "placeholders": []
+    },
+    {
+      "key": "act.4.era",
+      "value": "The Peloponnesian War, 431 to 404 BC",
+      "placeholders": []
+    },
+    {
+      "key": "act.4.premise",
+      "value": "This act restores the last defense, the one fought against something the network built itself.",
+      "placeholders": []
+    },
+    {
+      "key": "act.4.story",
+      "value": "The alliance that saved Greece from Persia turned on itself. Athens and Sparta fought for twenty-seven years. Plague took perhaps a third of the city from behind its own walls, and Pericles with it. The fleet that had won at Salamis was thrown away in Sicily. Athens surrendered in 404 BC and the long walls came down to the sound of flutes. No foreign power ended the golden age. It was ended from the inside, by people certain they were defending it.",
+      "placeholders": []
+    },
+    {
+      "key": "act.4.title",
+      "value": "Titan Singularity",
+      "placeholders": []
+    },
+    {
       "key": "boss.talos-prototype.description",
       "value": "A towering bronze automaton that releases Scout pods at fixed health thresholds. Each release briefly exposes its core to amplified damage.",
       "placeholders": []
@@ -663,8 +743,18 @@
       "placeholders": []
     },
     {
+      "key": "m01.story",
+      "value": "The first ships beach at first light. Nothing about this road is complicated, which is the only reason you will survive learning it.",
+      "placeholders": []
+    },
+    {
       "key": "m01.title",
       "value": "Gate of Dawn",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.01.note",
+      "value": "Scouts only. Fast, fragile, and worth one point of the gate each.",
       "placeholders": []
     },
     {
@@ -673,8 +763,18 @@
       "placeholders": []
     },
     {
+      "key": "m01.wave.02.note",
+      "value": "Raiders join them. Heavier bodies that walk straight through thin coverage.",
+      "placeholders": []
+    },
+    {
       "key": "m01.wave.02.title",
       "value": "Running Bronze",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.03.note",
+      "value": "The column splits its timing so a single tower cannot meet all of it.",
       "placeholders": []
     },
     {
@@ -683,13 +783,28 @@
       "placeholders": []
     },
     {
+      "key": "m01.wave.04.note",
+      "value": "Sustained pressure. This is the wave that finds an under-built road.",
+      "placeholders": []
+    },
+    {
       "key": "m01.wave.04.title",
       "value": "Pressure Line",
       "placeholders": []
     },
     {
+      "key": "m01.wave.05.note",
+      "value": "A long advance. Coverage matters more than any single strong position.",
+      "placeholders": []
+    },
+    {
       "key": "m01.wave.05.title",
       "value": "The Long Advance",
+      "placeholders": []
+    },
+    {
+      "key": "m01.wave.06.note",
+      "value": "The full dawn assault, every type at once.",
       "placeholders": []
     },
     {
@@ -773,8 +888,18 @@
       "placeholders": []
     },
     {
+      "key": "m04.story",
+      "value": "The fleet turns for the harbour. Two landings, one road home, and no time to favour either.",
+      "placeholders": []
+    },
+    {
       "key": "m04.title",
       "value": "Piraeus Switchyard",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.01.note",
+      "value": "Both harbours land at once. Neither entrance can be ignored.",
       "placeholders": []
     },
     {
@@ -783,13 +908,28 @@
       "placeholders": []
     },
     {
+      "key": "m04.wave.02.note",
+      "value": "Raiders press the north approach before the causeway merges.",
+      "placeholders": []
+    },
+    {
       "key": "m04.wave.02.title",
       "value": "Harbor Raiders",
       "placeholders": []
     },
     {
+      "key": "m04.wave.03.note",
+      "value": "Guardians escort the cargo. Heavy armour blunts fast, light weapons.",
+      "placeholders": []
+    },
+    {
       "key": "m04.wave.03.title",
-      "value": "Shielded Cargo",
+      "value": "Armoured Cargo",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.04.note",
+      "value": "Cloaked Echoes on the quays. Only damage or a reveal exposes them.",
       "placeholders": []
     },
     {
@@ -798,8 +938,18 @@
       "placeholders": []
     },
     {
+      "key": "m04.wave.05.note",
+      "value": "Both columns converge onto the shared road.",
+      "placeholders": []
+    },
+    {
       "key": "m04.wave.05.title",
       "value": "Converging Steel",
+      "placeholders": []
+    },
+    {
+      "key": "m04.wave.06.note",
+      "value": "Everything the harbour has left, on both approaches at once.",
       "placeholders": []
     },
     {
@@ -893,8 +1043,18 @@
       "placeholders": []
     },
     {
+      "key": "m05.story",
+      "value": "Crete's bronze guardian was said to circle its island three times a day and let nothing come ashore. Something like it is awake in the foundry, and nobody told it the war ended.",
+      "placeholders": []
+    },
+    {
       "key": "m05.title",
       "value": "Bronze Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.01.note",
+      "value": "Runners test the spiral. The road passes your positions more than once here.",
       "placeholders": []
     },
     {
@@ -903,8 +1063,18 @@
       "placeholders": []
     },
     {
+      "key": "m05.wave.02.note",
+      "value": "Bronze escorts. Armour starts to matter.",
+      "placeholders": []
+    },
+    {
       "key": "m05.wave.02.title",
       "value": "Bronze Escort",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.03.note",
+      "value": "Hidden sparks. Cloaked units mixed into an ordinary column.",
       "placeholders": []
     },
     {
@@ -913,8 +1083,18 @@
       "placeholders": []
     },
     {
+      "key": "m05.wave.04.note",
+      "value": "Armoured Guardians and cloaked Echoes share the same road.",
+      "placeholders": []
+    },
+    {
       "key": "m05.wave.04.title",
-      "value": "Shield and Echo",
+      "value": "Armour and Echo",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.05.note",
+      "value": "Heavy footfalls. Slow, durable, and hard to displace.",
       "placeholders": []
     },
     {
@@ -923,13 +1103,28 @@
       "placeholders": []
     },
     {
+      "key": "m05.wave.06.note",
+      "value": "The coils tighten. Sustained pressure before the Warden wakes.",
+      "placeholders": []
+    },
+    {
       "key": "m05.wave.06.title",
       "value": "Coils of War",
       "placeholders": []
     },
     {
+      "key": "m05.wave.07.note",
+      "value": "The last wave before Talos. Preserve what you will need.",
+      "placeholders": []
+    },
+    {
       "key": "m05.wave.07.title",
       "value": "Before the Warden",
+      "placeholders": []
+    },
+    {
+      "key": "m05.wave.08.note",
+      "value": "Talos Unbound. It sheds Scout pods at fixed health thresholds and exposes its core after each one.",
       "placeholders": []
     },
     {
@@ -1010,6 +1205,26 @@
     {
       "key": "protocol.zeus-skyfire.name",
       "value": "Divine Protocol Zeus Skyfire",
+      "placeholders": []
+    },
+    {
+      "key": "recon.0.detail",
+      "value": "You can see every route, enemy type, and boss rule for this mission, but not how many are coming. Recon reveals exact numbers.",
+      "placeholders": []
+    },
+    {
+      "key": "recon.1.detail",
+      "value": "Recon I shows exact numbers and routes for the next wave.",
+      "placeholders": []
+    },
+    {
+      "key": "recon.2.detail",
+      "value": "Recon II shows exact numbers for the next two waves, and roughly when each group arrives.",
+      "placeholders": []
+    },
+    {
+      "key": "recon.3.detail",
+      "value": "Recon III shows exact numbers, routes, and arrival times for every wave left in the mission.",
       "placeholders": []
     },
     {

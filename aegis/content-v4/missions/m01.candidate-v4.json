@@ -11,6 +11,7 @@
   "briefing": {
     "summaryKey": "m01.briefing.summary",
     "objectiveKey": "m01.briefing.objective",
+    "storyKey": "m01.story",
     "routeNoticeKeys": [
       "m01.briefing.route.main"
     ],
@@ -60,6 +61,7 @@
       ],
       "waveClearScore": 100,
       "titleKey": "m01.wave.01.title",
+      "noteKey": "m01.wave.01.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -104,6 +106,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 110,
       "titleKey": "m01.wave.02.title",
+      "noteKey": "m01.wave.02.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -148,6 +151,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 120,
       "titleKey": "m01.wave.03.title",
+      "noteKey": "m01.wave.03.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -192,6 +196,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 140,
       "titleKey": "m01.wave.04.title",
+      "noteKey": "m01.wave.04.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -236,6 +241,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 160,
       "titleKey": "m01.wave.05.title",
+      "noteKey": "m01.wave.05.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -280,6 +286,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 200,
       "titleKey": "m01.wave.06.title",
+      "noteKey": "m01.wave.06.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     }

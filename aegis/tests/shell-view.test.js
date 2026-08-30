@@ -41,15 +41,36 @@ function fixtureContent() {
     },
     bosses: {},
     protocols: {}, relics: {}, reinforcements: {},
+    acts: {
+      schemaVersion: 1,
+      records: [{
+        index: 1,
+        titleKey: "act.1.title",
+        eraKey: "act.1.era",
+        storyKey: "act.1.story",
+        premiseKey: "act.1.premise",
+        missionIds: ["m01", "m02"],
+      }],
+      reconRecords: [
+        { tier: 0, detailKey: "recon.0.detail" },
+        { tier: 1, detailKey: "recon.1.detail" },
+        { tier: 2, detailKey: "recon.2.detail" },
+        { tier: 3, detailKey: "recon.3.detail" },
+      ],
+    },
     missions: {
       m01: {
         id: "m01", actIndex: 1, mapId: "m01", titleKey: "mission.m01.title",
         availableDefenseIds: ["chronos", "sentinel", "siege"],
         tutorial: { upgradeGateMode: "m01-wave1" },
-        briefing: { summaryKey: "mission.m01.summary", objectiveKey: "mission.m01.objective", routeNoticeKeys: [], mechanicNoticeKeys: [] },
+        briefing: {
+          summaryKey: "mission.m01.summary", objectiveKey: "mission.m01.objective",
+          storyKey: "mission.m01.story", routeNoticeKeys: [],
+          mechanicNoticeKeys: ["mission.m01.mechanic"],
+        },
         objectives: [{ id: "victory", titleKey: "objective.victory.title" }],
         waves: [{
-          id: "w1", index: 1, titleKey: "wave.1.title",
+          id: "w1", index: 1, titleKey: "wave.1.title", noteKey: "wave.1.note",
           groups: [{ id: "g0", enemyId: "scout", count: 6, routeId: "route.main", firstTick: 0, intervalTicks: 18, spawnKind: "enemy", order: 0, modifierIds: [] }],
         }],
         protocolLoan: null,
@@ -82,6 +103,17 @@ const PRESENTATION = {
     { key: "enemy.scout.name", value: "Scout" },
     { key: "objective.victory.title", value: "Win the mission" },
     { key: "wave.1.title", value: "First Footsteps" },
+    { key: "wave.1.note", value: "Scouts only. Fast, fragile, and worth one point of the gate each." },
+    { key: "act.1.title", value: "Attican Boot Sequence" },
+    { key: "act.1.era", value: "The plain of Marathon, 490 BC" },
+    { key: "act.1.story", value: "Athens went out with Plataea beside her and no Spartan column in sight." },
+    { key: "act.1.premise", value: "This act restores that defense. Hold one road and finish standing." },
+    { key: "mission.m01.story", value: "The first ships beach at first light." },
+    { key: "mission.m01.mechanic", value: "Upgrades unlock after wave one." },
+    { key: "recon.0.detail", value: "You can see every route, enemy type, and boss rule for this mission, but not how many are coming." },
+    { key: "recon.1.detail", value: "Recon I shows exact numbers and routes for the next wave." },
+    { key: "recon.2.detail", value: "Recon II shows exact numbers for the next two waves." },
+    { key: "recon.3.detail", value: "Recon III shows exact numbers, routes, and arrival times." },
   ],
 };
 
@@ -277,11 +309,57 @@ test("the briefing renders the Recon tier, wave groups, and Laurel targets as te
   const text = ShellView.renderToText(treeFor("briefing", profileFor(["m01"])));
   assert.match(text, /Baseline scouting/);
   assert.match(text, /First Footsteps/);
-  assert.match(text, /Scout/);
-  assert.match(text, /ground/);
+  assert.match(text, /A large group of Scouts\./);
   assert.match(text, /Win the mission/);
   assert.match(text, /Start mission/);
   assert.match(text, /Gate Health/);
+});
+
+test("the briefing reads in the spec order and never repeats or field-dumps (spec 18.3)", () => {
+  const model = modelFor("briefing", profileFor(["m01"]));
+  assert.deepEqual(model.narrative.map((line) => line.id), [
+    "act-era", "act-premise", "battlefield-story", "battlefield-summary", "objective",
+  ]);
+  assert.deepEqual(model.narrative.map((line) => line.text), [
+    "The plain of Marathon, 490 BC",
+    "This act restores that defense. Hold one road and finish standing.",
+    "The first ships beach at first light.",
+    "Hold the eastern gate.",
+    "Finish above the gate threshold.",
+  ]);
+  assert.equal(model.actEra, "The plain of Marathon, 490 BC");
+  assert.equal(model.actPremise, "This act restores that defense. Hold one road and finish standing.");
+  assert.equal(model.missionStory, "The first ships beach at first light.");
+  assert.deepEqual(model.newHere, ["Upgrades unlock after wave one."]);
+
+  const text = ShellView.renderToText(treeFor("briefing", profileFor(["m01"])));
+  let cursor = -1;
+  model.narrative.concat([{ text: "What is new here" }, { text: "Upgrades unlock after wave one." }])
+    .forEach((line) => {
+      const position = text.indexOf(line.text);
+      assert.ok(position >= 0, "the briefing is missing " + JSON.stringify(line.text));
+      assert.ok(position > cursor, JSON.stringify(line.text) + " is out of the spec order");
+      cursor = position;
+    });
+  model.narrative.forEach((line) => {
+    assert.equal(text.split(line.text).length - 1, 1,
+      "no briefing fact is stated twice: " + JSON.stringify(line.text));
+  });
+  assert.equal(text.split("Upgrades unlock after wave one.").length - 1, 1,
+    "a mission rule is stated exactly once");
+  assert.doesNotMatch(text, /ground/, "ground movement is the default and is never named");
+  assert.doesNotMatch(text, /route\.main/, "no runtime route ID reaches a player");
+  assert.match(text, /Scouts only\. Fast, fragile/, "each wave carries its authored note");
+});
+
+test("the campaign screen names each act era and story from the compiled acts", () => {
+  const tree = treeFor("campaign", profileFor(["m01"]));
+  const text = ShellView.renderToText(tree);
+  assert.match(text, /Attican Boot Sequence/);
+  assert.match(text, /The plain of Marathon, 490 BC/);
+  assert.match(text, /Athens went out with Plataea beside her/);
+  const act = flatten(tree).find((candidate) => candidate.className === "aegis-shell-act");
+  assert.equal(act.attrs["aria-label"], "Attican Boot Sequence. The plain of Marathon, 490 BC");
 });
 
 test("the session-only warning is on every screen until storage is durable", () => {

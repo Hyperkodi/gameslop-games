@@ -20,14 +20,20 @@ function group(id, unitId, count, routeId, firstTick, spawnKind) {
 }
 
 const WAVES = [
-  { id: "w1", index: 1, titleKey: "wave.1.title", groups: [group("g0", "scout", 3, "route.main", 0)] },
   {
-    id: "w2", index: 2, titleKey: "wave.2.title",
+    id: "w1", index: 1, titleKey: "wave.1.title", noteKey: "wave.1.note",
+    groups: [group("g0", "scout", 3, "route.main", 0)],
+  },
+  {
+    id: "w2", index: 2, titleKey: "wave.2.title", noteKey: "wave.2.note",
     groups: [group("g1", "raider", 6, "route.main", 90), group("g2", "harpy", 9, "route.sky", 180)],
   },
-  { id: "w3", index: 3, titleKey: "wave.3.title", groups: [group("g3", "scout", 5, "route.main", 30)] },
   {
-    id: "w4", index: 4, titleKey: "wave.4.title",
+    id: "w3", index: 3, titleKey: "wave.3.title", noteKey: "wave.3.note",
+    groups: [group("g3", "scout", 5, "route.main", 30)],
+  },
+  {
+    id: "w4", index: 4, titleKey: "wave.4.title", noteKey: "wave.4.note",
     groups: [group("g4", "talos-prototype", 1, "route.main", 0, "boss")],
   },
 ];
@@ -88,6 +94,23 @@ function fixtureContent(missionOverrides) {
     },
     relics: {},
     reinforcements: {},
+    acts: {
+      schemaVersion: 1,
+      records: [{
+        index: 1,
+        titleKey: "act.1.title",
+        eraKey: "act.1.era",
+        storyKey: "act.1.story",
+        premiseKey: "act.1.premise",
+        missionIds: ["m01"],
+      }],
+      reconRecords: [
+        { tier: 0, detailKey: "recon.0.detail" },
+        { tier: 1, detailKey: "recon.1.detail" },
+        { tier: 2, detailKey: "recon.2.detail" },
+        { tier: 3, detailKey: "recon.3.detail" },
+      ],
+    },
     missions: {
       m01: Object.assign({
         id: "m01",
@@ -99,6 +122,7 @@ function fixtureContent(missionOverrides) {
         briefing: {
           summaryKey: "mission.m01.summary",
           objectiveKey: "mission.m01.objective",
+          storyKey: "mission.m01.story",
           routeNoticeKeys: ["mission.m01.route"],
           mechanicNoticeKeys: ["mission.m01.mechanic"],
         },
@@ -140,6 +164,19 @@ const PRESENTATION = {
     { key: "wave.4.title", value: "Bronze Warden" },
     { key: "route.m01.route.main", value: "East Road" },
     { key: "route.m01.route.sky", value: "Sky Lane" },
+    { key: "mission.m01.story", value: "The first ships beach at first light." },
+    { key: "wave.1.note", value: "Scouts only. Fast, fragile, and cheap to stop." },
+    { key: "wave.2.note", value: "Raiders join them, and the sky opens." },
+    { key: "wave.3.note", value: "A second column tests the same road." },
+    { key: "wave.4.note", value: "The Bronze Warden takes the road." },
+    { key: "act.1.title", value: "Attican Boot Sequence" },
+    { key: "act.1.era", value: "The plain of Marathon, 490 BC" },
+    { key: "act.1.story", value: "Athens went out with Plataea beside her and no Spartan column in sight." },
+    { key: "act.1.premise", value: "This act restores that defense. Hold one road and finish standing." },
+    { key: "recon.0.detail", value: "You can see every route, enemy type, and boss rule for this mission, but not how many are coming. Recon reveals exact numbers." },
+    { key: "recon.1.detail", value: "Recon I shows exact numbers and routes for the next wave." },
+    { key: "recon.2.detail", value: "Recon II shows exact numbers for the next two waves, and roughly when each group arrives." },
+    { key: "recon.3.detail", value: "Recon III shows exact numbers, routes, and arrival times for every wave left in the mission." },
   ],
 };
 
@@ -176,7 +213,10 @@ test("the briefing names the mission, act, environment, objectives, and loadout"
   const catalog = catalogFor();
   const model = briefing(catalog, Profile.createProfileV2("candidate-v4"));
   assert.equal(model.heading, "Mission 1 - Gate of Dawn");
-  assert.equal(model.actTitle, "Act I");
+  assert.equal(model.actTitle, "Attican Boot Sequence");
+  assert.equal(model.actEra, "The plain of Marathon, 490 BC");
+  assert.equal(model.actPremise, "This act restores that defense. Hold one road and finish standing.");
+  assert.equal(model.missionStory, "The first ships beach at first light.");
   assert.equal(model.environmentLabel, "Gate of Dawn Terrace");
   assert.equal(model.summary, "Hold the eastern gate through four waves.");
   assert.equal(model.objectiveText, "Finish with the gate above the threshold.");
@@ -192,6 +232,124 @@ test("the briefing names the mission, act, environment, objectives, and loadout"
     ["Field the featured defense", false],
   ]);
   assert.equal(Object.isFrozen(model), true);
+});
+
+test("the briefing orders act era, act premise, battlefield, and task without repeating itself", () => {
+  const model = briefing(catalogFor(), Profile.createProfileV2("candidate-v4"));
+  assert.deepEqual(model.narrative.map((line) => line.id), [
+    "act-era", "act-premise", "battlefield-story", "battlefield-summary",
+    "battlefield-route-0", "objective",
+  ]);
+  assert.deepEqual(model.narrative.map((line) => line.text), [
+    "The plain of Marathon, 490 BC",
+    "This act restores that defense. Hold one road and finish standing.",
+    "The first ships beach at first light.",
+    "Hold the eastern gate through four waves.",
+    "One road enters from the east.",
+    "Finish with the gate above the threshold.",
+  ]);
+  assert.deepEqual(model.narrative.map((line) => line.label), [
+    "Era", "This act", "This battlefield", "The situation", "The road", "Your task",
+  ]);
+  /* The briefing header already names the act and the battlefield, so no label repeats them. */
+  model.narrative.forEach((line) => {
+    assert.notEqual(line.label, model.actTitle);
+    assert.notEqual(line.label, model.environmentLabel);
+  });
+  assert.deepEqual(model.newHere, ["Upgrades unlock after wave one."]);
+  const texts = model.narrative.map((line) => line.text);
+  assert.equal(new Set(texts).size, texts.length, "a briefing never states the same fact twice");
+});
+
+test("a briefing drops an act premise that only repeats the mission summary", () => {
+  const content = fixtureContent();
+  const catalog = Shell.createCatalog({
+    content,
+    presentation: {
+      strings: PRESENTATION.strings.map((entry) => (entry.key === "act.1.premise"
+        ? { key: entry.key, value: "Hold the eastern gate through four waves." }
+        : entry)),
+    },
+  });
+  const model = briefing(catalog, Profile.createProfileV2("candidate-v4"), content);
+  assert.deepEqual(model.narrative.map((line) => line.id), [
+    "act-era", "act-premise", "battlefield-story", "battlefield-route-0", "objective",
+  ]);
+  assert.equal(
+    model.narrative.filter((line) => line.text === "Hold the eastern gate through four waves.").length,
+    1
+  );
+});
+
+test("each wave carries one authored note and each group one readable sentence", () => {
+  const preview = briefing(catalogFor(), Profile.createProfileV2("candidate-v4")).wavePreview;
+  assert.deepEqual(preview.waves.map((wave) => wave.note), [
+    "Scouts only. Fast, fragile, and cheap to stop.",
+    "Raiders join them, and the sky opens.",
+    "A second column tests the same road.",
+    "The Bronze Warden takes the road.",
+  ]);
+  assert.equal(preview.namedRoutes, true, "this mission has two routes, so routes are named");
+  assert.deepEqual(preview.waves[0].groups.map((entry) => entry.sentence), [
+    "A few Scouts on East Road.",
+  ]);
+  assert.deepEqual(preview.waves[1].groups.map((entry) => entry.sentence), [
+    "A group of Raiders on East Road (armored, resists kinetic).",
+    "A large group of Harpies, airborne on Sky Lane.",
+  ]);
+  assert.equal(preview.waves[3].groups[0].sentence, "Talos Prototype on East Road.");
+});
+
+test("exact counts read correctly in the singular and the plural, and timing appears only when revealed", () => {
+  const catalog = catalogFor();
+  const single = Shell.selectWavePreview({
+    catalog,
+    missionId: "m01",
+    reconTier: 3,
+    ticksPerSecond: 60,
+    waves: [{
+      id: "w1", index: 1, titleKey: "wave.1.title", noteKey: "wave.1.note",
+      groups: [group("g0", "scout", 1, "route.main", 0)],
+    }],
+  });
+  assert.equal(single.namedRoutes, false, "a one-route mission never names its road");
+  assert.equal(single.waves[0].groups[0].sentence, "1 Scout.",
+    "arriving with the wave is the default and is never stated");
+
+  const revealed = briefing(catalog, profileWithRecon(3)).wavePreview;
+  assert.deepEqual(revealed.waves[0].groups.map((entry) => entry.sentence), [
+    "3 Scouts on East Road.",
+  ]);
+  assert.deepEqual(revealed.waves[1].groups.map((entry) => entry.sentence), [
+    "6 Raiders on East Road (armored, resists kinetic), arriving about 1 second in.",
+    "9 Harpies, airborne on Sky Lane, arriving about 3 seconds in.",
+  ]);
+  const baseline = briefing(catalog, Profile.createProfileV2("candidate-v4")).wavePreview;
+  baseline.waves.forEach((wave) => wave.groups.forEach((entry) => {
+    assert.doesNotMatch(entry.sentence, /arriv/, "baseline never states arrival timing");
+  }));
+});
+
+test("every Recon tier explains in plain language what it reveals", () => {
+  const catalog = catalogFor();
+  assert.equal(
+    briefing(catalog, Profile.createProfileV2("candidate-v4")).wavePreview.reconDetail,
+    "You can see every route, enemy type, and boss rule for this mission, but not how many are"
+      + " coming. Recon reveals exact numbers."
+  );
+  assert.equal(
+    briefing(catalog, profileWithRecon(1)).wavePreview.reconDetail,
+    "Recon I shows exact numbers and routes for the next wave."
+  );
+  assert.equal(
+    briefing(catalog, profileWithRecon(3)).wavePreview.reconDetail,
+    "Recon III shows exact numbers, routes, and arrival times for every wave left in the mission."
+  );
+  [0, 1, 2, 3].forEach((tier) => {
+    const detail = briefing(catalog, profileWithRecon(tier)).wavePreview.reconDetail;
+    assert.doesNotMatch(detail, /Baseline scouting names every route/,
+      "the old baseline sentence is gone");
+  });
 });
 
 test("baseline Recon always shows routes, enemy types, traits, air or ground, and boss phases", () => {

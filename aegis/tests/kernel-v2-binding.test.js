@@ -58,6 +58,48 @@ test("compiled content schema 4 binds ABI v2 and publishes its version", () => {
   assert.equal(Object.isFrozen(binding), true);
 });
 
+test("the kernel accepts compiled act narrative and derives nothing from it (spec 18.2)", () => {
+  const narrative = {
+    schemaVersion: 1,
+    records: [{
+      index: 1,
+      titleKey: "act.1.title",
+      eraKey: "act.1.era",
+      storyKey: "act.1.story",
+      premiseKey: "act.1.premise",
+      missionIds: ["m01"],
+    }],
+    reconRecords: [
+      { tier: 0, detailKey: "recon.0.detail" },
+      { tier: 1, detailKey: "recon.1.detail" },
+      { tier: 2, detailKey: "recon.2.detail" },
+      { tier: 3, detailKey: "recon.3.detail" },
+    ],
+  };
+  const parts = mutated(function (content) { content.acts = narrative; });
+  const withNarrative = Kernel.createRulesetBinding({ release: parts.release, content: parts.content });
+  const withoutNarrative = boundFixture();
+
+  /* The kernel binds it without reading it: the ruleset identity comes from the authenticated
+     artifact bytes, which is why the two bindings agree on every derived value here. */
+  assert.equal(withNarrative.abiVersion, withoutNarrative.abiVersion);
+  assert.equal(withNarrative.rulesetHash, withoutNarrative.rulesetHash);
+  assert.equal(withNarrative.eventSchemaVersion, withoutNarrative.eventSchemaVersion);
+  assert.equal(withNarrative.behaviorRegistryVersion, withoutNarrative.behaviorRegistryVersion);
+  assert.deepEqual(Object.keys(withNarrative).sort(), Object.keys(withoutNarrative).sort());
+  const encoded = JSON.stringify(withNarrative);
+  ["act.1.era", "act.1.story", "act.1.premise", "recon.0.detail"].forEach(function (key) {
+    assert.equal(encoded.indexOf(key), -1, key + " never reaches a ruleset binding");
+  });
+
+  /* A field the compiler never emits is still rejected, so this is an accepted collection,
+     not a hole in the content contract. */
+  assert.throws(
+    bindMutated(function (content) { content.marketingCopy = narrative; }),
+    /Simulation content must contain exactly/
+  );
+});
+
 test("compiled content schema 3 still binds ABI v1 with its historical identities", () => {
   const binding = Kernel.createRulesetBinding({ release: V3_RELEASE, content: V3_CONTENT });
   assert.equal(binding.abiVersion, 1);

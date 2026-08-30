@@ -247,6 +247,36 @@ test("v4 missions add exactly protocolLoan, mechanism, and reinforcement markers
     null
   );
 
+  assert.equal(normalized.briefing.storyKey, "m05.story");
+  assert.deepEqual(
+    normalized.waves.map(function (wave) { return wave.noteKey; }),
+    [
+      "m05.wave.01.note", "m05.wave.02.note", "m05.wave.03.note", "m05.wave.04.note",
+      "m05.wave.05.note", "m05.wave.06.note", "m05.wave.07.note", "m05.wave.08.note",
+    ]
+  );
+
+  expectDiagnostic(function () {
+    const drift = clone(mission);
+    delete drift.briefing.storyKey;
+    Records.validateV4MissionSource(drift);
+  }, "SCHEMA_REQUIRED", "/briefing/storyKey");
+  expectDiagnostic(function () {
+    const drift = clone(mission);
+    delete drift.waves[2].noteKey;
+    Records.validateV4MissionSource(drift);
+  }, "SCHEMA_REQUIRED", "/waves/2/noteKey");
+  expectDiagnostic(function () {
+    const drift = clone(mission);
+    drift.waves[0].noteKey = "not a key";
+    Records.validateV4MissionSource(drift);
+  }, "SCHEMA_STRING", "/waves/0/noteKey");
+  expectDiagnostic(function () {
+    const drift = clone(mission);
+    drift.briefing.extraKey = "m05.story";
+    Records.validateV4MissionSource(drift);
+  }, "SCHEMA_UNKNOWN_KEY", "/briefing/extraKey");
+
   expectDiagnostic(function () {
     const drift = clone(mission);
     drift.protocolLoan.tier = 2;
@@ -280,4 +310,66 @@ test("v4 missions add exactly protocolLoan, mechanism, and reinforcement markers
     };
     Records.validateV4MissionSource(drift);
   }, "SCHEMA_ENUM", "/mechanism/activations/0/kind");
+});
+
+test("the checked-in act catalog is four contiguous acts plus four recon briefing lines", () => {
+  const acts = readSource("acts/candidate-v4.json");
+  const normalized = Records.validateV4ActSource(acts);
+  assert.equal(normalized.schemaVersion, Records.ACT_SOURCE_SCHEMA_VERSION);
+  assert.equal(normalized.records.length, Records.ACT_COUNT);
+  assert.deepEqual(normalized.records.map(function (record) { return record.index; }), [1, 2, 3, 4]);
+  normalized.records.forEach(function (record) {
+    assert.deepEqual(Object.keys(record).sort(), Records.ACT_RECORD_FIELDS.slice().sort());
+  });
+  assert.deepEqual(normalized.records[0].missionIds, ["m01", "m04", "m05"]);
+  assert.deepEqual(
+    normalized.reconRecords.map(function (record) { return record.tier; }),
+    [0, 1, 2, 3]
+  );
+
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.records[2].index = 5;
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_RANGE", "/records/2/index");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.records.pop();
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_LIMIT", "/records");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.records[0].missionIds = ["m04", "m01", "m05"];
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_UNSTABLE_ORDER", "/records/0/missionIds/1");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.records[1].missionIds = ["m01"];
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_DUPLICATE_ID", "/records/1/missionIds/0");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.records[0].missionIds = ["m21"];
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_STRING", "/records/0/missionIds/0");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    delete drift.records[3].eraKey;
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_REQUIRED", "/records/3/eraKey");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.records[0].bannerAsset = "art/act-1.png";
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_UNKNOWN_KEY", "/records/0/bannerAsset");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.reconRecords[3].tier = 4;
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_RANGE", "/reconRecords/3/tier");
+  expectDiagnostic(function () {
+    const drift = clone(acts);
+    drift.reconRecords.push({ tier: 4, detailKey: "recon.4.detail" });
+    Records.validateV4ActSource(drift);
+  }, "SCHEMA_LIMIT", "/reconRecords");
 });

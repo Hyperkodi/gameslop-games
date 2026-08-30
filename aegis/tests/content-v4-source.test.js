@@ -80,8 +80,14 @@ test("the checked-in candidate-v4 source tree preflights with pinned exact bytes
     const bytes = fs.readFileSync(path.join(CONTENT_V4, reference.source));
     assert.equal(reference.sha256, "sha256:" + sha256Hex(bytes), key + " pins its exact bytes");
   });
+  assert.equal(preflight.normalizedSource.acts.schemaVersion, 1);
+  assert.deepEqual(
+    preflight.normalizedSource.acts.records.map(function (record) { return record.index; }),
+    [1, 2, 3, 4]
+  );
   const declaredSources = preflight.provenance.map(function (record) { return record.source; });
   assert.ok(declaredSources.indexOf("abi/abi-v2.json") >= 0);
+  assert.ok(declaredSources.indexOf("acts/candidate-v4.json") >= 0);
   assert.ok(declaredSources.indexOf("progression/binding-v1.json") >= 0);
   assert.equal(
     preflight.repositoryProvenance.length,

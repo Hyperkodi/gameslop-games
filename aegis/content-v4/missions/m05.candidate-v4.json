@@ -13,6 +13,7 @@
   "briefing": {
     "summaryKey": "m05.briefing.summary",
     "objectiveKey": "m05.briefing.objective",
+    "storyKey": "m05.story",
     "routeNoticeKeys": [
       "m05.briefing.route.spiral"
     ],
@@ -80,6 +81,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 180,
       "titleKey": "m05.wave.01.title",
+      "noteKey": "m05.wave.01.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -124,6 +126,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 200,
       "titleKey": "m05.wave.02.title",
+      "noteKey": "m05.wave.02.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -168,6 +171,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 220,
       "titleKey": "m05.wave.03.title",
+      "noteKey": "m05.wave.03.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -214,6 +218,7 @@
       ],
       "waveClearScore": 250,
       "titleKey": "m05.wave.04.title",
+      "noteKey": "m05.wave.04.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -273,6 +278,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 280,
       "titleKey": "m05.wave.05.title",
+      "noteKey": "m05.wave.05.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -332,6 +338,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 320,
       "titleKey": "m05.wave.06.title",
+      "noteKey": "m05.wave.06.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -393,6 +400,7 @@
       ],
       "waveClearScore": 360,
       "titleKey": "m05.wave.07.title",
+      "noteKey": "m05.wave.07.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     },
@@ -437,6 +445,7 @@
       "previewDeclarationIds": [],
       "waveClearScore": 500,
       "titleKey": "m05.wave.08.title",
+      "noteKey": "m05.wave.08.note",
       "deploymentGrantEventId": "wave.deploy",
       "clearGrantEventId": null
     }

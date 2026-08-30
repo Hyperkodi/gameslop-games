@@ -7,6 +7,10 @@
     "source": "abi/abi-v2.json",
     "sha256": "sha256:5f02c369c5331f65196090e00cdf09a7aa4458376f35057c0b5750202a0ea76b"
   },
+  "acts": {
+    "source": "acts/candidate-v4.json",
+    "sha256": "sha256:032c830d3a666375e6116f36f8e4a5a1358b687db82dc7096a0b9b52da1a1130"
+  },
   "behaviorContracts": {
     "source": "behavior-contracts.json",
     "sha256": "sha256:4f7e02af3c1765237cc90580e9771e8f2da64eb513608b8516501bc975da3da2"
@@ -14,7 +18,7 @@
   "annex": {
     "id": "candidate-v4",
     "source": "annexes/candidate-v4.json",
-    "sha256": "sha256:7d30d8c49ea4371f58432b43d1c4fe067c12d91e99dbb75423ae74c3de3e67b6"
+    "sha256": "sha256:d81a8d0636ed8685b5b321ac473fa2a0492d1e3a6ba7cac299c118506799ad15"
   },
   "campaignRules": {
     "source": "campaign-rules/candidate-v4.json",
@@ -38,7 +42,7 @@
   },
   "stringCatalog": {
     "source": "strings/en.candidate-v4.json",
-    "sha256": "sha256:ac57648f3e86ba1a625d38d5c1b5142104c5458775a8abd2bb75de977bfc5449"
+    "sha256": "sha256:b658a5096ab39fa068a3cdd005c1adae47a724250a35e8dd199535374e581113"
   },
   "presentationCatalog": {
     "source": "presentation/candidate-v4.json",
@@ -73,7 +77,7 @@
       "id": "m01",
       "definition": {
         "source": "missions/m01.candidate-v4.json",
-        "sha256": "sha256:9061a30395a12f02fce0f02be578bd3d83dbb5233dafa041038fcfefd940b8d3"
+        "sha256": "sha256:ad79573d6f815c56fea9c4d49b8d6a8f36639a79726631f22adb6df20ee166ff"
       },
       "map": {
         "schemaVersion": 1,
@@ -90,7 +94,7 @@
       "id": "m04",
       "definition": {
         "source": "missions/m04.candidate-v4.json",
-        "sha256": "sha256:4ecdf2757518a7de202227c5310c216ca4b7e04de6ac1096a36d7907929d15aa"
+        "sha256": "sha256:70368abdf030646af52fc69dc73bf0cd622f5884f5b35fab85e4bcdc75d40d6e"
       },
       "map": {
         "schemaVersion": 2,
@@ -102,7 +106,7 @@
       "id": "m05",
       "definition": {
         "source": "missions/m05.candidate-v4.json",
-        "sha256": "sha256:a3131dde68f78e79c69a23b62ca1acd8573aafa03c6605bd3a572d8ee4003ae9"
+        "sha256": "sha256:bdf1bad2489268cc66fd8134376c2f5dcde852b347d21315a736259326da4b2f"
       },
       "map": {
         "schemaVersion": 2,

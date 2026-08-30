@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "id": "candidate-v4-acts",
+  "records": [
+    {
+      "index": 1,
+      "titleKey": "act.1.title",
+      "eraKey": "act.1.era",
+      "storyKey": "act.1.story",
+      "premiseKey": "act.1.premise",
+      "missionIds": [
+        "m01",
+        "m04",
+        "m05"
+      ]
+    },
+    {
+      "index": 2,
+      "titleKey": "act.2.title",
+      "eraKey": "act.2.era",
+      "storyKey": "act.2.story",
+      "premiseKey": "act.2.premise",
+      "missionIds": []
+    },
+    {
+      "index": 3,
+      "titleKey": "act.3.title",
+      "eraKey": "act.3.era",
+      "storyKey": "act.3.story",
+      "premiseKey": "act.3.premise",
+      "missionIds": []
+    },
+    {
+      "index": 4,
+      "titleKey": "act.4.title",
+      "eraKey": "act.4.era",
+      "storyKey": "act.4.story",
+      "premiseKey": "act.4.premise",
+      "missionIds": []
+    }
+  ],
+  "reconRecords": [
+    {
+      "tier": 0,
+      "detailKey": "recon.0.detail"
+    },
+    {
+      "tier": 1,
+      "detailKey": "recon.1.detail"
+    },
+    {
+      "tier": 2,
+      "detailKey": "recon.2.detail"
+    },
+    {
+      "tier": 3,
+      "detailKey": "recon.3.detail"
+    }
+  ]
+}

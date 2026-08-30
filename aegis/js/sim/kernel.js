@@ -194,6 +194,19 @@
     "profileSchemaVersion", "protocolRules", "protocols", "reinforcementRules", "reinforcements",
     "relicRules", "relics", "replayFormatVersion", "specializations",
   ]));
+  /* `acts` is compiled narrative copy (spec 18.2). A compiled v4 artifact carries it, and the
+     kernel accepts it so that artifact loads; content assembled without narrative stays legal.
+     The kernel never reads it: no simulation value, header field, replay header, or record key
+     derives from an act record. */
+  const CONTENT_PRESENTATION_FIELDS_V2 = Object.freeze(["acts"]);
+
+  function contentFieldsFor(content, abiVersion) {
+    if (abiVersion !== 2) return CONTENT_FIELDS;
+    const present = CONTENT_PRESENTATION_FIELDS_V2.filter(function (key) {
+      return content !== null && typeof content === "object" && own(content, key);
+    });
+    return present.length === 0 ? CONTENT_FIELDS_V2 : CONTENT_FIELDS_V2.concat(present);
+  }
   const HEADER_FIELDS_V2 = Object.freeze(HEADER_FIELDS.concat([
     "missionProtocolLoan", "protocolAuthority", "protocolLoadout", "protocolSlotCap", "relicIds",
     "relicSlotCap", "reinforcementId", "specializationAccessIds",
@@ -736,11 +749,7 @@
       "Release record"
     );
     const abi = abiVersion === 2 ? ABIV2 : ABI;
-    exactFields(
-      content,
-      abiVersion === 2 ? CONTENT_FIELDS_V2 : CONTENT_FIELDS,
-      "Simulation content"
-    );
+    exactFields(content, contentFieldsFor(content, abiVersion), "Simulation content");
     const releaseAbiHash = hash(release.abiHash, "Release ABI hash");
     if (hash(content.abiHash, "Content ABI hash") !== releaseAbiHash) {
       throw new RangeError("Release and content ABI identities do not match");

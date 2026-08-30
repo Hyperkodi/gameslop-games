@@ -261,19 +261,21 @@
       ].concat(model.acts.map(function (act) {
         return node("section", {
           className: "aegis-shell-act",
-          attrs: { "aria-label": act.title },
+          attrs: { "aria-label": act.era ? act.title + ". " + act.era : act.title },
           children: [
             node("div", {
               className: "aegis-shell-act-header",
               children: [
                 heading(3, act.title, "aegis-shell-act-title"),
+                act.era ? span("aegis-shell-act-era aegis-shell-stat-label", act.era) : null,
                 span("aegis-shell-act-state", act.cleared ? "Act cleared" : "In progress"),
-              ],
+              ].filter(Boolean),
             }),
+            act.story ? paragraph("aegis-shell-act-story aegis-shell-hint", act.story) : null,
             list("aegis-shell-mission-grid", act.missions.map(function (mission) {
               return missionCard(mission, model.mode);
             })),
-          ],
+          ].filter(Boolean),
         });
       })),
     });
@@ -485,6 +487,8 @@
     });
   }
 
+  /* Spec 18.3: the projection already wrote each group as one readable sentence and each wave
+     as one short note, so the view prints them and never assembles a field dump of its own. */
   function waveRow(wave) {
     return node("li", {
       className: "aegis-shell-wave",
@@ -494,20 +498,11 @@
           className: "aegis-shell-wave-head",
           children: [
             heading(4, wave.title, "aegis-shell-wave-title"),
-            span("aegis-shell-wave-routes", wave.routes.join(", ")),
           ],
         }),
+        wave.note ? paragraph("aegis-shell-wave-note aegis-shell-hint", wave.note) : null,
         list("aegis-shell-wave-groups", wave.groups.map(function (group) {
-          const facts = [
-            group.exactCount === null ? group.relativeSize : group.exactCount + "x",
-            group.unitName,
-            group.movement,
-            group.routeLabel,
-          ];
-          if (group.traits.length) facts.push(group.traits.join(", "));
-          if (group.resistances.length) facts.push("resists " + group.resistances.join(", "));
-          if (group.firstSpawnSecondBand) facts.push("arrives " + group.firstSpawnSecondBand);
-          return node("li", { className: "aegis-shell-wave-group", text: facts.join(" · ") });
+          return node("li", { className: "aegis-shell-wave-group", text: group.sentence });
         })),
         wave.boss ? node("div", {
           className: "aegis-shell-wave-boss",
@@ -532,10 +527,34 @@
           className: "aegis-shell-briefing-head",
           children: [
             span("aegis-shell-briefing-act", model.actTitle + " · " + model.environmentLabel),
-            paragraph("aegis-shell-lede", model.summary),
-            paragraph("aegis-shell-hint", model.objectiveText),
           ],
         }),
+        node("section", {
+          className: "aegis-shell-briefing-narrative",
+          attrs: { "aria-label": "Briefing" },
+          children: model.narrative.map(function (line) {
+            return node("div", {
+              className: "aegis-shell-briefing-line",
+              attrs: { "data-line": line.id },
+              children: [
+                line.label
+                  ? span("aegis-shell-briefing-line-label aegis-shell-stat-label", line.label)
+                  : null,
+                paragraph("aegis-shell-briefing-line-text aegis-shell-lede", line.text),
+              ].filter(Boolean),
+            });
+          }),
+        }),
+        model.newHere.length ? node("section", {
+          className: "aegis-shell-notices",
+          attrs: { "aria-label": "What is new here" },
+          children: [
+            heading(3, "What is new here", "aegis-shell-section-title"),
+            list("aegis-shell-notice-list", model.newHere.map(function (notice) {
+              return node("li", { text: notice });
+            })),
+          ],
+        }) : null,
         node("div", {
           className: "aegis-shell-briefing-stats",
           children: [
@@ -584,17 +603,6 @@
             list("aegis-shell-wave-list", model.wavePreview.waves.map(waveRow)),
           ],
         }),
-        (model.routeNotices.length || model.mechanicNotices.length) ? node("section", {
-          className: "aegis-shell-notices",
-          attrs: { "aria-label": "Mission rules" },
-          children: [
-            heading(3, "Mission rules", "aegis-shell-section-title"),
-            list("aegis-shell-notice-list",
-              model.routeNotices.concat(model.mechanicNotices).map(function (notice) {
-                return node("li", { text: notice });
-              })),
-          ],
-        }) : null,
         node("div", {
           className: "aegis-shell-actions",
           children: [
