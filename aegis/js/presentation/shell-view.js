@@ -216,7 +216,8 @@
         node("div", {
           className: "aegis-shell-hero",
           children: [
-            heading(2, model.heading, "aegis-shell-hero-title"),
+            node("h2", { className: "aegis-shell-hero-title", text: model.heading,
+              attrs: { id: "shellTitleHeading" } }),
             paragraph("aegis-shell-hero-subtitle", model.subheading),
             paragraph("aegis-shell-hero-progress", model.progressText),
             paragraph("aegis-shell-hero-progress", model.laurelText),
@@ -281,7 +282,8 @@
       ].concat(model.acts.map(function (act) {
         return node("section", {
           className: "aegis-shell-act",
-          attrs: { "aria-label": act.era ? act.title + ". " + act.era : act.title },
+          attrs: { "aria-label": act.era ? act.title + ". " + act.era : act.title,
+            "data-act-index": String(act.index) },
           children: [
             node("div", {
               className: "aegis-shell-act-header",
@@ -364,13 +366,14 @@
   function protocolCard(entry) {
     return node("li", {
       className: "aegis-shell-card",
-      attrs: { "data-status": entry.granted ? "available" : "locked" },
+      attrs: { "data-status": !entry.granted ? "locked"
+        : entry.equippedSlot !== null ? "equipped" : "available" },
       children: [
         node("div", {
           className: "aegis-shell-card-head",
           children: [
             heading(4, entry.name, "aegis-shell-card-title"),
-            chip("Tier " + entry.availableTier, entry.granted ? "ready" : "quiet"),
+            chip(entry.granted ? "Tier " + entry.availableTier : "Locked", entry.granted ? "ready" : "quiet"),
           ],
         }),
         entry.currentEffectText ? paragraph("aegis-shell-card-role", entry.currentEffectText) : null,

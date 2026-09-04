@@ -1491,8 +1491,8 @@
     });
     pattern.appendChild(svgElement(documentObject, "image", {
       href: road.asset.href,
-      x: road.pattern.originXMilliUnits,
-      y: road.pattern.originYMilliUnits,
+      x: 0,
+      y: 0,
       width: road.pattern.tileMilliUnits,
       height: road.pattern.tileMilliUnits,
       preserveAspectRatio: "none",
@@ -2434,8 +2434,15 @@
       if (typeof panel.getBoundingClientRect !== "function") return;
       const cardBox = card.getBoundingClientRect();
       const panelBox = panel.getBoundingClientRect();
-      if (cardBox.top >= panelBox.top && cardBox.bottom <= panelBox.bottom) return;
-      panel.scrollTop += cardBox.top - panelBox.top - 8;
+      const header = typeof panel.querySelector === "function"
+        ? panel.querySelector(".preview-store-panel-header") : null;
+      const visibleTop = header ? header.getBoundingClientRect().bottom + 8 : panelBox.top + 8;
+      const build = typeof card.querySelector === "function" ? card.querySelector("button") : null;
+      const actionBottom = build ? build.getBoundingClientRect().bottom : cardBox.bottom;
+      /* Keep the name and Build action together below the sticky header. Long
+         details may scroll normally without pushing the title behind it. */
+      if (cardBox.top >= visibleTop && actionBottom <= panelBox.bottom - 8) return;
+      panel.scrollTop += cardBox.top - visibleTop;
     }
 
     function cadenceRenderWouldReplaceFocus() {
