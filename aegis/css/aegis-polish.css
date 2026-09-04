@@ -192,7 +192,10 @@ body[data-screen="battle"] .preview-command-bar .preview-readout span { font-siz
 body[data-screen="battle"] .preview-command-bar .preview-readout output { font-size: 1.25rem; }
 body[data-screen="battle"] .preview-feedback { padding-block: .3rem; font-size: .82rem; }
 body[data-screen="battle"] .preview-battlefield-heading h3 { font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: #c6b596; }
-body[data-screen="battle"] #previewBattlefield { inline-size: min(100%, calc(160dvh - 28rem)); border: 2px solid #bd9654; border-radius: .6rem; box-shadow: 0 0 0 3px #17130e, 0 12px 24px #0006; }
+body[data-screen="battle"] #previewBattlefield { inline-size: min(100%, calc(160dvh - 20rem)); border: 2px solid #bd9654; border-radius: .6rem; box-shadow: 0 0 0 3px #17130e, 0 12px 24px #0006; }
+body[data-screen="battle"] .preview-battlefield-heading { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+#previewBattlefield[data-map-zoomed="true"] { cursor: grab; user-select: none; }
+#previewMapFit { font-variant-numeric: tabular-nums; }
 .preview-tactical-grid { display: none; }
 body[data-screen="battle"] #previewStorePanel { border: 1px solid #b28e52; border-radius: .75rem; background: #171410; box-shadow: 0 12px 40px #000b; padding: .75rem; }
 body[data-screen="battle"] .preview-store-panel-header { top: -.75rem; margin: -.75rem -.75rem .75rem; padding: .65rem .75rem; background: #201a13; border-bottom-color: #675137; }
@@ -253,7 +256,7 @@ body[data-screen="battle"] #previewStorePanel .preview-upgrade-delta { padding: 
   body[data-screen="battle"] .preview-command-bar .preview-readout output { font-size: 1.15rem; }
   body[data-screen="battle"] .preview-battle-region .preview-panel { padding: .4rem; }
 }
-@media (max-height: 35rem) and (orientation: landscape) {
+@media (min-width: 64.01rem), (max-height: 35rem) and (orientation: landscape) {
   body[data-screen="battle"] .preview-rule-hint { display: none; }
   body[data-screen="battle"] .aegis-shell { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: .5rem; }
   body[data-screen="battle"] .aegis-shell-topbar { grid-column: 1; grid-row: 1; border: 0; margin: 0; }
@@ -263,7 +266,9 @@ body[data-screen="battle"] #previewStorePanel .preview-upgrade-delta { padding: 
   body[data-screen="battle"] .aegis-shell-notice { grid-column: 1 / -1; }
   body[data-screen="battle"] .preview-command-bar .preview-hud { flex: 1 1 20rem; }
   body[data-screen="battle"] .preview-command-bar .preview-actions { flex: 0 0 auto; }
-  body[data-screen="battle"] #previewBattlefield { inline-size: min(100%, calc(160dvh - 22.5rem)); }
+}
+@media (max-height: 35rem) and (orientation: landscape) {
+  body[data-screen="battle"] #previewBattlefield { inline-size: min(100%, calc(160dvh - 20rem)); }
   body[data-screen="battle"] .preview-battlefield-stage { position: relative; top: auto; }
   body[data-screen="battle"] #previewStorePanel { max-block-size: calc(100dvh - 1rem); }
 }

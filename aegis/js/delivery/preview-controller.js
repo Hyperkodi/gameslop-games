@@ -1668,6 +1668,21 @@
     return node;
   }
 
+  /* View-only navigation. Authored geometry and simulation coordinates stay fixed. */
+  function zoomBattlefieldCamera(current, factor, anchor) {
+    const bounds = Camera.DEFAULT_CAMERA;
+    const width = Math.max(bounds.width / 3, Math.min(bounds.width, current.width / factor));
+    const height = width * 5 / 8;
+    const x = current.x + (current.width - width) * anchor.x;
+    const y = current.y + (current.height - height) * anchor.y;
+    return {
+      x: Math.max(bounds.x, Math.min(bounds.x + bounds.width - width, x)),
+      y: Math.max(bounds.y, Math.min(bounds.y + bounds.height - height, y)),
+      width: width,
+      height: height,
+    };
+  }
+
   function mountBattle(runtimeInput, options) {
     const runtime = assertRuntime(runtimeInput);
     options = options || {};
@@ -1720,6 +1735,94 @@
     let renderedShareState = null;
     let renderedShareModel = null;
     let outcomeReported = false;
+    let mapCamera = Object.assign({}, Camera.DEFAULT_CAMERA);
+    let mapDrag = null;
+    let suppressMapClick = false;
+    const fitMapButton = documentObject.getElementById("previewMapFit");
+
+    function applyMapCamera(svg) {
+      svg = svg || ui.battlefield.querySelector(".preview-battlefield-svg");
+      if (svg) svg.setAttribute("viewBox", [mapCamera.x, mapCamera.y, mapCamera.width, mapCamera.height].join(" "));
+      ui.battlefield.setAttribute("data-map-zoomed", String(mapCamera.width < Camera.DEFAULT_CAMERA.width));
+      if (fitMapButton) fitMapButton.setAttribute("title", "Zoom " + Math.round(Camera.DEFAULT_CAMERA.width / mapCamera.width * 100) +
+        "%. Ctrl + scroll to zoom. Drag to pan. Click to fit the whole battlefield.");
+    }
+
+    function fitMap() {
+      mapCamera = Object.assign({}, Camera.DEFAULT_CAMERA);
+      mapDrag = null;
+      applyMapCamera();
+    }
+
+    function zoomMap(event) {
+      if (!event.ctrlKey || !Number.isFinite(event.deltaY) || event.deltaY === 0 || !session) return;
+      const box = ui.battlefield.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      event.preventDefault();
+      const pixels = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? box.height : 1);
+      mapCamera = zoomBattlefieldCamera(mapCamera, Math.exp(-Math.max(-400, Math.min(400, pixels)) * .002), {
+        x: Math.max(0, Math.min(1, (event.clientX - box.left) / box.width)),
+        y: Math.max(0, Math.min(1, (event.clientY - box.top) / box.height)),
+      });
+      applyMapCamera();
+    }
+
+    function startMapDrag(event) {
+      suppressMapClick = false;
+      if (event.button !== 0 || event.pointerType !== "mouse" || mapCamera.width >= Camera.DEFAULT_CAMERA.width) return;
+      mapDrag = { id: event.pointerId, x: event.clientX, y: event.clientY, camera: Object.assign({}, mapCamera), moved: false };
+    }
+
+    function moveMapDrag(event) {
+      if (!mapDrag || mapDrag.id !== event.pointerId) return;
+      const dx = event.clientX - mapDrag.x;
+      const dy = event.clientY - mapDrag.y;
+      if (!mapDrag.moved && Math.hypot(dx, dy) < 4) return;
+      if (!mapDrag.moved) ui.battlefield.setPointerCapture(event.pointerId);
+      mapDrag.moved = true;
+      suppressMapClick = true;
+      event.preventDefault();
+      const box = ui.battlefield.getBoundingClientRect();
+      if (!box.width || !box.height) return;
+      mapCamera = zoomBattlefieldCamera(Object.assign({}, mapDrag.camera, {
+        x: mapDrag.camera.x - dx * mapDrag.camera.width / box.width,
+        y: mapDrag.camera.y - dy * mapDrag.camera.height / box.height,
+      }), 1, { x: 0, y: 0 });
+      applyMapCamera();
+    }
+
+    function endMapDrag(event) {
+      if (!mapDrag || mapDrag.id !== event.pointerId) return;
+      if (ui.battlefield.hasPointerCapture(event.pointerId)) ui.battlefield.releasePointerCapture(event.pointerId);
+      mapDrag = null;
+    }
+
+    function stopDraggedClick(event) {
+      if (!suppressMapClick) return;
+      suppressMapClick = false;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }
+
+    function mapNavigationKey(event) {
+      if (event.target !== ui.battlefield || event.ctrlKey || event.altKey || event.metaKey) return;
+      if (event.key === "0") { event.preventDefault(); fitMap(); return; }
+      const factor = event.key === "+" || event.key === "=" ? 1.2 : event.key === "-" ? 1 / 1.2 : null;
+      if (factor) {
+        event.preventDefault();
+        mapCamera = zoomBattlefieldCamera(mapCamera, factor, { x: .5, y: .5 });
+        applyMapCamera();
+      }
+      const direction = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[event.key];
+      if (direction && mapCamera.width < Camera.DEFAULT_CAMERA.width) {
+        event.preventDefault();
+        mapCamera = zoomBattlefieldCamera(Object.assign({}, mapCamera, {
+          x: mapCamera.x + direction[0] * mapCamera.width * .1,
+          y: mapCamera.y + direction[1] * mapCamera.height * .1,
+        }), 1, { x: 0, y: 0 });
+        applyMapCamera();
+      }
+    }
     const reduceMotion = typeof windowObject.matchMedia === "function" &&
       windowObject.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -2241,6 +2344,7 @@
         projectileLayer.appendChild(projectileEffect(documentObject, projectile, reduceMotion));
       });
       svg.appendChild(projectileLayer);
+      applyMapCamera(svg);
       replaceChildren(ui.battlefield, [svg]);
       renderSiteSelector(view, state);
       return view;
@@ -2519,6 +2623,7 @@
           loadoutIds: selectedLoadout(),
         });
         session = createSession(runtime, header);
+        fitMap();
         outcomeReported = false;
         selectedPadId = null;
         manuallyPaused = false;
@@ -2599,6 +2704,16 @@
     }
 
     groupCommandBar();
+    ui.battlefield.setAttribute("tabindex", "0");
+    ui.battlefield.setAttribute("aria-label", "Battlefield. Control plus scroll to zoom, drag to pan. Keyboard: plus, minus, arrows to pan, zero to fit.");
+    ui.battlefield.addEventListener("wheel", zoomMap, { passive: false });
+    ui.battlefield.addEventListener("pointerdown", startMapDrag);
+    ui.battlefield.addEventListener("pointermove", moveMapDrag);
+    ui.battlefield.addEventListener("pointerup", endMapDrag);
+    ui.battlefield.addEventListener("pointercancel", endMapDrag);
+    ui.battlefield.addEventListener("click", stopDraggedClick, true);
+    ui.battlefield.addEventListener("keydown", mapNavigationKey);
+    if (fitMapButton) fitMapButton.addEventListener("click", fitMap);
     setTowerMenuFlag(false);
     populateMissions();
     populateLoadout();
@@ -2683,6 +2798,17 @@
       dispose: function () {
         if (timer !== null) windowObject.clearInterval(timer);
         timer = null;
+        mapDrag = null;
+        if (typeof ui.battlefield.removeEventListener === "function") {
+          ui.battlefield.removeEventListener("wheel", zoomMap);
+          ui.battlefield.removeEventListener("pointerdown", startMapDrag);
+          ui.battlefield.removeEventListener("pointermove", moveMapDrag);
+          ui.battlefield.removeEventListener("pointerup", endMapDrag);
+          ui.battlefield.removeEventListener("pointercancel", endMapDrag);
+          ui.battlefield.removeEventListener("click", stopDraggedClick, true);
+          ui.battlefield.removeEventListener("keydown", mapNavigationKey);
+        }
+        if (fitMapButton && typeof fitMapButton.removeEventListener === "function") fitMapButton.removeEventListener("click", fitMap);
       },
       startRun: function (header) { resetSession(header); },
       get session() { return session; },
@@ -3240,6 +3366,7 @@
     attackCadenceLabel: attackCadenceLabel,
     mount: mount,
     mountBattle: mountBattle,
+    zoomBattlefieldCamera: zoomBattlefieldCamera,
     resultCardModel: resultCardModel,
   });
 });
