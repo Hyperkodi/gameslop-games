@@ -122,6 +122,20 @@
     }),
   });
   const STATIC_ENEMY_SPRITES = Object.freeze({});
+  // New walk sheets have individually measured crops, not assumed grid cells.
+  // Crops keep neighboring spears/tails out and pin every pose to its foot line.
+  const ENEMY_RUN_SHEETS = Object.freeze({
+    scout: Object.freeze({
+      href: "art/v2/m01/enemies/scout-run-v2.webp",
+      crops: [[46,147,398,236],[486,158,344,223],[905,151,356,229],[1352,131,366,220],
+        [24,565,433,187],[511,516,304,197],[905,550,346,240],[1345,569,390,219]],
+    }),
+    raider: Object.freeze({
+      href: "art/v2/m01/enemies/raider-run-v2.webp",
+      crops: [[54,33,348,369],[495,41,321,360],[895,45,346,356],[1295,47,337,355],
+        [46,464,344,368],[480,470,327,357],[922,478,304,350],[1297,479,336,350]],
+    }),
+  });
   const ANCHOR_ASSETS = Object.freeze({
     entry: Object.freeze({ kind: "image", href: "skin/armara/breach.png" }),
     gate: Object.freeze({ kind: "image", href: "skin/armara/gate.png" }),
@@ -909,6 +923,7 @@
       return {
         id: enemy.id,
         ownerId: enemy.ownerId,
+        distance: enemy.distance,
         name: owner ? stringValue(strings, owner.nameKey, owner.id) : enemy.ownerId,
         kind: enemy.kind,
         routeId: enemy.routeId,
@@ -1015,6 +1030,7 @@
       "data-frame": attributes["data-frame"],
       "data-asset-href": asset.href,
       "data-asset-state": "loading",
+      opacity: attributes.opacity === undefined ? 1 : attributes.opacity,
     });
     const definitions = svgElement(documentObject, "defs", {});
     const clip = svgElement(documentObject, "clipPath", {
@@ -1029,15 +1045,22 @@
     }));
     definitions.appendChild(clip);
     wrapper.appendChild(definitions);
-    const image = svgElement(documentObject, "image", {
-      href: asset.href,
+    const sourceGeometry = frame.source ? {
+      x: x - frame.source[0] * width / frame.source[2],
+      y: y - frame.source[1] * height / frame.source[3],
+      width: 1774 * width / frame.source[2],
+      height: 887 * height / frame.source[3],
+    } : {
       x: x - frame.column * width,
       y: y - frame.row * height,
       width: width * asset.metadata.columns,
       height: height * asset.metadata.rows,
+    };
+    const image = svgElement(documentObject, "image", Object.assign({
+      href: asset.href,
       preserveAspectRatio: "none",
       "clip-path": "url(#" + clipId + ")",
-    });
+    }, sourceGeometry));
     const fallback = svgElement(documentObject, "g", {
       class: "preview-sprite-fallback",
       visibility: "hidden",
@@ -1246,6 +1269,70 @@
     return points.map(function (point, index) {
       return (index === 0 ? "M " : "L ") + point.x + " " + point.y;
     }).join(" ");
+  }
+
+  /* Distance drives footsteps; the clock only drives finite hit/death reactions.
+     These values are presentation cues, never inputs to the kernel. */
+  function enemyMotionPose(enemy, previous, tick, quiet) {
+    const hunter = enemy.ownerId === "scout";
+    const heavy = enemy.kind === "boss" || enemy.ownerId === "titan" || enemy.ownerId === "guardian";
+    const hovering = enemy.ownerId === "echo";
+    const distance = Number.isFinite(enemy.distance) ? enemy.distance : 0;
+    const phase = (distance / (hunter ? 6000 : heavy ? 7000 : 4400) + enemy.id * .173) % 1;
+    const dx = previous ? enemy.displayX - previous.enemy.displayX : 0;
+    const facing = Math.abs(dx) > 1 ? (dx < 0 ? -1 : 1) : previous ? previous.facing : 1;
+    const moving = !previous || tick === previous.tick ? (!previous || previous.moving)
+      : distance !== previous.enemy.distance;
+    const stride = phase * Math.PI * 2;
+    return {
+      enemy: enemy, tick: tick, facing: facing, moving: moving,
+      frameIndex: quiet || !moving ? 0 : Math.floor(phase * 8),
+      bob: quiet || !moving ? 0 : Math.round(Math.abs(Math.sin(stride)) * (hunter ? 780 : heavy ? 230 : 390)),
+      lean: quiet || !moving ? 0 : Math.sin(stride) * (hunter ? 2.4 : heavy ? .8 : 1.6),
+      squash: quiet || !moving ? 1 : 1 + Math.cos(stride * 2) * (hunter ? .025 : .012),
+      hover: quiet || !hovering ? 0 : Math.round(Math.sin(tick / 13 + enemy.id) * 600),
+      footfall: !quiet && moving && !hovering ? Math.pow(Math.max(0, Math.cos(stride * 2)), 6) : 0,
+    };
+  }
+
+  function enemyLocomotionSprite(enemy, pose, quiet, size) {
+    const sheet = ENEMY_RUN_SHEETS[enemy.ownerId];
+    if (sheet) {
+      const index = quiet ? 0 : pose.frameIndex;
+      const crop = sheet.crops[index];
+      const scale = size * 1.44 / 443.5;
+      return {
+        asset: { href: sheet.href, fallbackSymbol: enemy.symbol },
+        frame: { source: crop, frameName: "walk-" + index },
+        x: -crop[2] * scale / 2,
+        y: size * .44 - crop[3] * scale,
+        width: crop[2] * scale, height: crop[3] * scale,
+      };
+    }
+    const names = ["runA", "runB", "runC", "runB"];
+    return {
+      asset: enemy.asset,
+      frame: SpriteAtlas.enemyFrame(enemy.asset.metadata, quiet ? "idleB" : names[Math.floor(pose.frameIndex / 2)]),
+      x: -size * .72, y: -size * .78, width: size * 1.44, height: size * 1.44,
+    };
+  }
+
+  function enemyReactionsForStep(stepResult) {
+    const diagnostics = stepResult && stepResult.telemetry;
+    const records = Array.isArray(diagnostics) ? diagnostics : diagnostics && diagnostics.records || [];
+    const byTarget = new Map();
+    records.forEach(function (record) {
+      if (record.kind !== "damage" || !Number.isSafeInteger(record.targetRuntimeId) ||
+          !(record.appliedHpDamageMilli > 0 || record.appliedShieldDamageMilli > 0)) return;
+      const earlier = byTarget.get(record.targetRuntimeId);
+      if (earlier && earlier.kind === "defeat") return;
+      byTarget.set(record.targetRuntimeId, {
+        id: record.targetRuntimeId,
+        kind: record.targetHpAfterMilli === 0 ? "defeat" : "hit",
+        tick: stepResult.state.tick,
+      });
+    });
+    return Array.from(byTarget.values());
   }
 
   function appendM01RoadDefinitions(documentObject, defs, missionArt) {
@@ -1730,6 +1817,8 @@
     let timer = null;
     let visualTicksSinceRender = 0;
     let projectileCues = [];
+    let enemyMotionHistory = new Map();
+    let enemyReactions = new Map();
     let manuallyPaused = false;
     let fatalPaused = false;
     let renderedShareState = null;
@@ -2072,8 +2161,10 @@
     }
 
     function renderBattlefield(state) {
+      const quietMotion = reduceMotion || Boolean(documentObject.body && documentObject.body.dataset &&
+        (documentObject.body.dataset.reducedMotion === "true" || documentObject.body.dataset.photosensitiveSafe === "true"));
       const view = battlefieldView(runtime, state, selectedPadId, {
-        reduceMotion: reduceMotion,
+        reduceMotion: quietMotion,
         previewDefenseId: previewDefenseId,
         projectiles: projectileCues,
       });
@@ -2206,7 +2297,6 @@
             pad.tower.asset.metadata, pad.tower.level, blend.to
           );
           const effect = towerAttackEffect(documentObject, pad.tower);
-          if (effect) group.appendChild(effect);
           const motion = svgElement(documentObject, "g", {
             class: "preview-tower-motion",
             transform: "translate(0 " + blend.recoilY + ")",
@@ -2236,6 +2326,7 @@
             }, "preview-tower-blend-clip-" + pad.tower.id));
           }
           group.appendChild(motion);
+          if (effect) group.appendChild(effect);
         } else if (pad.tower) {
           group.appendChild(svgElement(documentObject, "text", {
             class: "preview-map-symbol preview-tower-symbol",
@@ -2260,49 +2351,83 @@
       svg.appendChild(padLayer);
 
       const enemyLayer = svgElement(documentObject, "g", { class: "preview-enemy-layer", "aria-hidden": "true" });
+      const liveEnemyIds = new Set(view.enemies.map(function (enemy) { return enemy.id; }));
+      enemyReactions.forEach(function (reaction, id) {
+        const age = view.tick - reaction.tick;
+        if (age > (reaction.kind === "defeat" ? 36 : 10)) { enemyReactions.delete(id); return; }
+        if (reaction.kind !== "defeat" || liveEnemyIds.has(id) || quietMotion || !reaction.visual ||
+            state.management.phase !== "wave") return;
+        const enemy = reaction.visual.enemy;
+        if (!enemy.asset || enemy.asset.kind !== "atlas") return;
+        const size = enemy.kind === "boss" ? 16000 : 10000;
+        const death = svgElement(documentObject, "g", {
+          class: "preview-enemy-defeat", "data-enemy-id": id,
+          transform: "translate(" + enemy.displayX + " " + enemy.displayY + ")",
+          opacity: Math.max(0, 1 - Math.max(0, age - 10) / 26).toFixed(3),
+        });
+        const body = svgElement(documentObject, "g", { transform: "scale(" + reaction.visual.facing + " 1)" });
+        body.appendChild(atlasSprite(documentObject, enemy.asset,
+          SpriteAtlas.enemyFrame(enemy.asset.metadata, "defeat"), {
+            class: "preview-enemy-fallen-sprite", x: -size * .72, y: -size * .52,
+            width: size * 1.44, height: size * 1.44, "data-frame": "defeat",
+          }, "preview-fallen-clip-" + id));
+        death.appendChild(body);
+        for (let particle = 0; particle < 5; particle += 1) {
+          const angle = (particle / 5 + id * .17) * Math.PI * 2;
+          const reach = age * 170;
+          death.appendChild(svgElement(documentObject, "circle", {
+            cx: Math.cos(angle) * reach, cy: 1800 + Math.sin(angle) * reach * .45 - Math.sin(age / 36 * Math.PI) * 2200,
+            r: Math.max(100, 500 - age * 10), fill: particle % 2 ? "#ffb646" : "#ffe0a0",
+          }));
+        }
+        enemyLayer.appendChild(death);
+      });
       view.enemies.forEach(function (enemy) {
         const size = enemy.kind === "boss" ? 16000 : 10000;
-        const phase = (view.tick + enemy.id * 7) % 24;
-        const bob = reduceMotion ? 0 : (phase <= 12 ? phase : 24 - phase) * -85;
+        const pose = enemyMotionPose(enemy, enemyMotionHistory.get(enemy.id), view.tick, quietMotion);
+        enemyMotionHistory.set(enemy.id, pose);
+        const reaction = enemyReactions.get(enemy.id);
+        const hitAge = reaction && reaction.kind === "hit" ? view.tick - reaction.tick : 99;
+        const hit = !quietMotion && hitAge < 10 ? 1 - hitAge / 10 : 0;
         const group = svgElement(documentObject, "g", {
           class: "preview-map-enemy preview-map-enemy-" + enemy.kind,
-          transform: "translate(" + enemy.displayX + " " + (enemy.displayY + bob) + ")",
+          transform: "translate(" + enemy.displayX + " " + enemy.displayY + ")",
           "data-enemy-id": enemy.id,
+          "data-gait-frame": pose.frameIndex,
+          "data-facing": pose.facing,
+          "data-hit": hit > 0 ? "true" : "false",
         });
         group.appendChild(svgElement(documentObject, "title", {},
           enemy.name + " · " + Math.round(enemy.hpBp / 100) + "% vitality · " +
           Math.round(enemy.progressBp / 100) + "% route progress"));
-        group.appendChild(svgElement(documentObject, "circle", {
+        group.appendChild(svgElement(documentObject, "ellipse", {
           class: "preview-enemy-contrast",
           cx: 0,
-          cy: 0,
-          r: Math.floor(size * 0.43),
+          cy: size * .45,
+          rx: size * (.4 - pose.bob / 16000), ry: size * .12,
         }));
+        if (pose.footfall > .08) {
+          group.appendChild(svgElement(documentObject, "ellipse", {
+            class: "preview-enemy-footfall", cx: Math.sin(enemy.id) * 1700, cy: size * .44,
+            rx: 1400 + (1 - pose.footfall) * 1700, ry: 400 + (1 - pose.footfall) * 500,
+            fill: "#e8c992", opacity: (pose.footfall * .28).toFixed(3),
+          }));
+        }
+        const body = svgElement(documentObject, "g", {
+          class: "preview-enemy-body",
+          transform: "translate(" + (-pose.facing * hit * 550).toFixed(1) + " " + (-pose.bob + pose.hover).toFixed(1) +
+            ") rotate(" + (pose.lean - pose.facing * hit * 5).toFixed(2) + " 0 4000) translate(0 4000) scale(" +
+            pose.facing + " " + pose.squash.toFixed(4) + ") translate(0 -4000)",
+        });
         if (enemy.asset && enemy.asset.kind === "atlas") {
-          const blend = enemyFrameBlend(enemy.asset, view.tick, enemy.id, reduceMotion);
-          group.appendChild(atlasSprite(documentObject, enemy.asset, blend.from, {
+          const walk = enemyLocomotionSprite(enemy, pose, quietMotion, size);
+          body.appendChild(atlasSprite(documentObject, walk.asset, walk.frame, {
             class: "preview-enemy-sprite",
-            x: -size * 0.72,
-            y: -size * 0.78,
-            width: size * 1.44,
-            height: size * 1.44,
-            opacity: ((10000 - blend.mixBp) / 10000).toFixed(3),
-            "data-frame": blend.from.frameName,
+            x: walk.x, y: walk.y, width: walk.width, height: walk.height,
+            "data-frame": walk.frame.frameName,
           }, "preview-enemy-clip-" + enemy.id));
-          if (blend.mixBp > 0 && blend.to.frameName !== blend.from.frameName) {
-            group.appendChild(atlasSprite(documentObject, enemy.asset, blend.to, {
-              class: "preview-enemy-sprite-blend",
-              x: -size * 0.72,
-              y: -size * 0.78,
-              width: size * 1.44,
-              height: size * 1.44,
-              opacity: (blend.mixBp / 10000).toFixed(3),
-              "data-frame": blend.to.frameName,
-              "aria-hidden": "true",
-            }, "preview-enemy-blend-clip-" + enemy.id));
-          }
         } else if (enemy.asset) {
-          group.appendChild(spriteImage(documentObject, enemy.asset, {
+          body.appendChild(spriteImage(documentObject, enemy.asset, {
             class: "preview-enemy-sprite",
             x: -size / 2,
             y: -size / 2,
@@ -2310,12 +2435,25 @@
             height: size,
           }));
         } else {
-          group.appendChild(svgElement(documentObject, "text", {
+          body.appendChild(svgElement(documentObject, "text", {
             class: "preview-map-symbol preview-enemy-symbol",
             x: 0,
             y: 1300,
             "text-anchor": "middle",
           }, enemy.symbol));
+        }
+        group.appendChild(body);
+        if (hit > 0) {
+          for (let spark = 0; spark < 3; spark += 1) {
+            const angle = (spark / 3 + enemy.id * .13) * Math.PI * 2;
+            const spread = (1 - hit) * 2400 + 900;
+            group.appendChild(svgElement(documentObject, "line", {
+              class: "preview-enemy-hit-spark", stroke: "#ffe29a", "stroke-width": 320,
+              x1: Math.cos(angle) * spread, y1: Math.sin(angle) * spread - 1200,
+              x2: Math.cos(angle) * (spread + 850), y2: Math.sin(angle) * (spread + 850) - 1200,
+              opacity: hit.toFixed(3),
+            }));
+          }
         }
         group.appendChild(svgElement(documentObject, "rect", {
           class: "preview-hp-track",
@@ -2336,12 +2474,13 @@
         enemyLayer.appendChild(group);
       });
       svg.appendChild(enemyLayer);
+      enemyMotionHistory.forEach(function (_, id) { if (!liveEnemyIds.has(id)) enemyMotionHistory.delete(id); });
       const projectileLayer = svgElement(documentObject, "g", {
         class: "preview-projectile-layer",
         "aria-hidden": "true",
       });
       view.projectiles.forEach(function (projectile) {
-        projectileLayer.appendChild(projectileEffect(documentObject, projectile, reduceMotion));
+        projectileLayer.appendChild(projectileEffect(documentObject, projectile, quietMotion));
       });
       svg.appendChild(projectileLayer);
       applyMapCamera(svg);
@@ -2632,6 +2771,8 @@
         renderedShareModel = null;
         visualTicksSinceRender = 0;
         projectileCues = [];
+        enemyMotionHistory = new Map();
+        enemyReactions = new Map();
         setFeedback("Plan your defense. Choose an empty build site to place a tower.");
         render();
       } catch (error) {
@@ -2758,6 +2899,10 @@
         const priorState = session.state;
         const result = session.step();
         if (!result.advanced) return;
+        enemyReactionsForStep(result).forEach(function (reaction) {
+          reaction.visual = enemyMotionHistory.get(reaction.id) || null;
+          enemyReactions.set(reaction.id, reaction);
+        });
         projectileCues = projectileCues
           .concat(projectileCuesForStep(runtime, priorState, result))
           .filter(function (cue) {
@@ -3356,6 +3501,9 @@
     VISUAL_FPS: VISUAL_FPS,
     battlefieldView: battlefieldView,
     enemyFrameBlend: enemyFrameBlend,
+    enemyMotionPose: enemyMotionPose,
+    enemyLocomotionSprite: enemyLocomotionSprite,
+    enemyReactionsForStep: enemyReactionsForStep,
     towerFrameBlend: towerFrameBlend,
     projectileCuesForStep: projectileCuesForStep,
     createHeader: createHeader,
