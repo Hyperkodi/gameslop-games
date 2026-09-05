@@ -2,7 +2,7 @@
 (function (root) {
   'use strict';
   const G = root.SlopCommando = root.SlopCommando || {};
-  const names = { P: 'RIFLE', M: 'MACHINE GUN', S: 'SPREAD GUN', L: 'LASER RIFLE', F: 'FLAMETHROWER', G: 'GRENADE LAUNCHER', H: 'HOMING ROCKET', W: 'WAVE CANNON', B: 'BARRIER', R: 'RAPID FIRE' };
+  const names = { P: 'RIFLE', M: 'MACHINE GUN', S: 'SPREAD GUN', L: 'LASER RIFLE', F: 'FLAMETHROWER', G: 'GRENADE LAUNCHER', H: 'HOMING ROCKET', W: 'WAVE CANNON', T: 'TESLA CARBINE', I: 'CRYO BLASTER', A: 'PLASMA CANNON', B: 'BARRIER', R: 'RAPID FIRE', C: 'CLOAK · 8 SECONDS', N: 'SCREEN NUKE' };
   function createWeaponArt(c, palette = {}) {
     const p = { outline: '#07151c', steel: '#637e86', light: '#c8dad3', dark: '#273c49', brass: '#e8b766', wood: '#b15f3f', flame: '#ff793f', laser: '#75f2ef', ...palette };
     const rect = (x,y,w,h,color) => { c.fillStyle=color; c.fillRect(x,y,w,h); };
@@ -123,9 +123,34 @@
       shape([[34,-7],[26,5],[33,4],[27,20],[47,-1],[37,1],[43,-7]],'#fff2aa');
       line([[8,-1],[3,-1]],'#efc96e',2);line([[9,6],[1,6]],'#efc96e',2);
     }
+    function tesla(time){
+      receiver('#68578a');shape([[1,-7],[16,-6],[17,4],[4,8]],'#41314f');
+      round(37,-5,28,10,3,p.dark);for(let x=40;x<64;x+=5){round(x,-11,3,23,1,'#b09bdd');}
+      round(65,-7,8,14,4,'#d9dcfa');line([[70,-12],[75,-5],[69,0],[76,6+Math.sin(time*10)*2]],'#e5c7ff',2);
+    }
+    function cryo(){
+      receiver('#61b1ca');round(3,-15,13,31,5,'#d5f0ef');round(5,-11,9,22,4,'#62c9ec');
+      round(37,-8,27,17,4,'#e0edf2');for(let x=43;x<62;x+=6)rect(x,-7,2,15,'#58899f');
+      shape([[62,-9],[74,-5],[74,6],[62,10]],'#83dff7');rect(30,-14,12,5,'#81f5ed');
+    }
+    function plasma(time){
+      receiver('#88617e');round(0,-8,16,17,3,p.dark);round(36,-14,32,27,9,'#624270');
+      round(41,-10,23,19,7,'#241935');round(46,-6,15,11,5,'#efa3ff');
+      for(const y of [-14,10])rect(42,y,28,4,'#ba8ec3');rect(68,-8,6,17,'#e1c3db');
+    }
+    function cloak(){
+      shape([[34,-23],[46,-14],[47,-1],[57,23],[36,17],[14,23],[23,-2],[22,-14]],'#607da8');
+      shape([[34,-19],[41,-12],[39,-5],[29,-5],[27,-12]],'#13283e');
+      line([[25,2],[20,18],[34,13],[50,19]],'#b6e8ff',2);line([[30,-2],[33,12],[36,2]],'#8cbde6',2);
+    }
+    function nuke(){
+      round(16,-16,40,35,10,'#c6aa50');round(20,-12,32,27,8,'#344149');
+      for(let i=0;i<3;i++){c.save();c.translate(36,1);c.rotate(i*Math.PI*2/3);shape([[0,-5],[-8,-13],[8,-13]],'#ffe287',null);c.restore();}
+      round(33,-2,6,6,3,'#ffe287',null);rect(27,-21,18,5,p.steel);rect(17,18,38,4,p.dark);
+    }
     function draw(type, {time=0} = {}) {
       c.save();
-      ({P:rifle,M:machine,S:spread,L:laser,F:()=>flame(time),G:grenade,H:homing,W:()=>wave(time),B:barrier,R:rapid}[type]||rifle)();
+      ({P:rifle,M:machine,S:spread,L:laser,F:()=>flame(time),G:grenade,H:homing,W:()=>wave(time),T:()=>tesla(time),I:cryo,A:()=>plasma(time),C:cloak,N:nuke,B:barrier,R:rapid}[type]||rifle)();
       c.restore();
     }
     function pickup(item, time, nearby=false) {

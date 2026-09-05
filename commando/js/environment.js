@@ -4,11 +4,12 @@
   const G = root.SlopCommando = root.SlopCommando || {};
   const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
   function sceneryLayout(state, basePosition = 0, count = 7) {
-    const vertical=state.level.mode==='climb', base=state.level.mode==='base';
+    if(state.level.mode==='base')return {vertical:false,position:0,travel:0,step:0,overlap:0,visible:[{index:state.room||0,x:0,y:0}]};
+    const vertical=state.level.mode==='climb';
     const viewport=vertical?540:960;
-    const extent=base?4800:vertical?state.level.height:state.level.width;
+    const extent=vertical?state.level.height:state.level.width;
     const travel=Math.max(0,extent-viewport),step=travel/(count-1);
-    const position=clamp(base?basePosition:vertical?state.camera.y:state.camera.x,0,travel);
+    const position=clamp(vertical?state.camera.y:state.camera.x,0,travel);
     const visible=[];
     for(let index=0;index<count;index++) {
       const offset=(vertical?travel-index*step:index*step)-position;
@@ -16,15 +17,12 @@
     }
     return {vertical,step,position,travel,overlap:viewport-step,visible};
   }
-  function bunkerProgress(state) {
-    const remaining=state.enemies.filter(e=>e.kind==='core'&&e.hp>0).length;
-    return clamp(state.boss?6:state.room*2+(3-remaining)*2/3,0,6)*640;
-  }
   function createEnvironmentRenderer(c, skin, themes) {
     const config = skin.environment;
     const atlases=new Map(),frames=new Map(),tiles=new Map();
-    let currentStage=-1,basePosition=0,lastTick=0,lastStageTime=0,lastLayout=null;
+    let currentStage=-1,lastLayout=null;
     function loadStage(stage) {
+      if(G.levels?.[stage]?.mode==='base')return Promise.resolve(true);
       if(!config.stages[stage])return Promise.resolve(false);
       if(atlases.has(stage))return atlases.get(stage).ready;
       const entry={image:new Image(),loaded:false};
@@ -69,18 +67,20 @@
     }
     function draw(state,time) {
       if(currentStage!==state.stage) {
-        currentStage=state.stage;frames.clear();basePosition=0;lastTick=state.tick;lastStageTime=state.stageTime;
+        currentStage=state.stage;frames.clear();
         for(const key of atlases.keys())if(key!==currentStage&&key!==currentStage+1)atlases.delete(key);
         loadStage(currentStage);loadStage(currentStage+1);
       }
+      if(state.level.mode==='base') {
+        // Free up/down movement takes place on a visible overhead floor. Core
+        // damage never pans the room; a new chamber shares its floor coordinates.
+        lastLayout=sceneryLayout(state);
+        drawOverheadRoom(state,time);return true;
+      }
       if(!atlases.get(currentStage)?.loaded)return false;
       const level=state.level;
-      if(state.tick<lastTick||state.stageTime<lastStageTime)basePosition=0;
-      const dt=clamp((state.tick-lastTick)/60,0,.1);
-      if(level.mode==='base')basePosition+=clamp(bunkerProgress(state)-basePosition,-dt*850,dt*850);
-      lastTick=state.tick;lastStageTime=state.stageTime;
       const count=config.stages[currentStage].frames?.length||config.sections;
-      const layout=sceneryLayout(state,basePosition,count);lastLayout=layout;
+      const layout=sceneryLayout(state,0,count);lastLayout=layout;
       c.save();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
       c.fillStyle=themes[level.theme].sky;c.fillRect(0,0,960,540);
       // Cache only intersecting sections: up to three sideways or five vertically.
@@ -96,13 +96,62 @@
       // route feel like it leads forward and up through it.
       if(level.mode==='climb'&&level.theme==='water')spillwayDepth(state,time);
       atmosphere(state,time);
-      if(level.mode==='base') {
-        c.fillStyle='#081821a8';c.fillRect(382,58,196,25);
-        c.font='bold 11px monospace';c.fillStyle='#b8d8d7';c.textAlign='center';c.fillText('CHAMBER '+(state.room+1)+' / 3',480,75);
-        c.globalAlpha=.6+Math.sin(time*3)*.15;c.fillStyle='#ff7359';c.fillRect(130,234,700,2);
-        c.globalAlpha=.2;for(let x=138;x<830;x+=28)c.fillRect(x,238,12,2);
-      }
       c.restore();return true;
+    }
+    function drawOverheadRoom(state,time) {
+      const hot=state.level.theme==='foundry',room=state.room;
+      const glow=hot?'#ffa75a':'#68e2e3',dark=hot?'#292324':'#14252d';
+      c.save();
+      rect(c,0,0,960,540,'#070f14');
+      const floor=c.createLinearGradient(0,80,0,540);
+      floor.addColorStop(0,hot?'#4b3a32':'#304a54');floor.addColorStop(1,dark);
+      shape(c,[[96,84],[864,84],[930,540],[30,540]],floor);
+      // A continuous tiled floor exposes both dimensions of the movement plane.
+      c.save();c.beginPath();c.moveTo(96,84);c.lineTo(864,84);c.lineTo(930,540);c.lineTo(30,540);c.closePath();c.clip();
+      for(let row=0;row<9;row++){
+        const y=86+row*55;
+        for(let col=0;col<12;col++){
+          const x=15+col*80+(row%2)*40;
+          rect(c,x,y,77,52,(row+col)%3===0?'#71858115':'#08151a24');
+          rect(c,x,y,77,1,'#bad5cb20');rect(c,x+76,y,1,52,'#00000038');
+          if((col+row+room)%7===0){rect(c,x+12,y+14,16,2,'#07131844');rect(c,x+12,y+18,8,1,'#adc0b91c');}
+        }
+      }
+      // Central recessed conduit and walkways remain aligned in all three rooms.
+      rect(c,452,190,56,350,'#030c1255');
+      for(let y=195;y<540;y+=13)rect(c,458,y,44,3,hot?'#dd985344':'#73afad44');
+      for(const x of [116,836]){rect(c,x,196,4,320,glow+'44');for(let y=206;y<530;y+=35)rect(c,x-4,y,12,3,glow);}
+      c.restore();
+      // Low perimeter walls: top faces and small near-facing lips, no wall-sized
+      // background behind the player. Machinery is outside the walkable floor.
+      shape(c,[[64,65],[106,82],[42,540],[0,540]],'#233b40');
+      shape(c,[[854,82],[896,65],[960,540],[918,540]],'#233b40');
+      c.strokeStyle='#87a19d';c.lineWidth=2;c.beginPath();c.moveTo(106,82);c.lineTo(42,540);c.moveTo(854,82);c.lineTo(918,540);c.stroke();
+      rect(c,70,50,820,35,hot?'#766050':'#546d73');rect(c,70,85,820,13,'#101c24');
+      for(const x of [195,445,695]){
+        rect(c,x,113,98,77,'#020a1066');rect(c,x-5,105,98,67,dark);
+        rect(c,x,108,88,3,'#91a79c');rect(c,x+7,119,72,37,'#060f16');
+        for(let j=0;j<6;j++)rect(c,x+11+j*11,123,5,29,glow+'33');
+        rect(c,x+2,169,86,5,glow+'55');
+      }
+      for(const side of [0,1])for(let n=0;n<3;n++){
+        const x=side?861+n*7:57-n*7,y=222+n*105;
+        rect(c,x+3,y+8,37,62,'#00000055');
+        c.fillStyle=hot?'#69503d':'#42616b';c.beginPath();c.roundRect(x,y,34,55,6);c.fill();
+        if(hot){c.fillStyle='#171b20';c.beginPath();c.ellipse(x+17,y+25,12,20,0,0,Math.PI*2);c.fill();c.strokeStyle=glow;c.lineWidth=3;c.stroke();}
+        else {rect(c,x+6,y+9,22,13,'#0b252f');rect(c,x+8,y+12,17,2,glow);for(let k=0;k<4;k++)rect(c,x+6,y+30+k*4,22,1,'#172d37');}
+      }
+      // Chamber identity comes from overhead engineering details and illumination,
+      // not sliding landscape images. Nothing drifts as individual cores fall.
+      for(let i=0;i<=room;i++){
+        const x=300+i*120;
+        c.strokeStyle=glow+'38';c.lineWidth=3;c.beginPath();c.arc(x,240,22,0,Math.PI*2);c.stroke();
+        for(let a=0;a<4;a++){c.save();c.translate(x,240);c.rotate(time*(hot?.3:.1)+a*Math.PI/2);shape(c,[[2,2],[17,4],[10,13]],'#78969144');c.restore();}
+      }
+      rect(c,386,60,188,29,'#06131b');c.textAlign='center';c.font='bold 11px monospace';c.fillStyle=glow;
+      c.fillText((hot?'REACTOR':'SECURITY')+'  /  0'+(room+1),480,79);
+      c.font='10px monospace';c.fillStyle='#b2c4bd88';c.fillText('↑  BREACH THE CORES  ↑',480,510);
+      c.restore();
     }
     function spillwayDepth(state,time) {
       const progress=clamp(1-state.camera.y/Math.max(1,state.level.height-540),0,1);
@@ -256,8 +305,8 @@
       }
       rect(c,p.x+inset,frontY+depth-2,p.w-inset*2,2,'#071c255f');
     }
-    return {draw,platform,ready,loadStage,get loaded(){return !!atlases.get(currentStage)?.loaded;},get layout(){return lastLayout;},get cacheSize(){return frames.size;}};
+    return {draw,platform,ready,loadStage,get loaded(){return G.levels?.[currentStage]?.mode==='base'||!!atlases.get(currentStage)?.loaded;},get layout(){return lastLayout;},get cacheSize(){return frames.size;}};
   }
   G.createEnvironmentRenderer=createEnvironmentRenderer;
-  if(typeof module!=='undefined')module.exports={sceneryLayout,bunkerProgress};
+  if(typeof module!=='undefined')module.exports={sceneryLayout};
 })(typeof window!=='undefined'?window:globalThis);

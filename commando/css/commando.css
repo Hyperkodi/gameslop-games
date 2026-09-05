@@ -17,3 +17,6 @@
 @media(max-width:650px) and (orientation:portrait){.title-screen{padding:3% 5%}.title-kicker{font-size:6px;margin-bottom:7px}.title-screen h2{font-size:8vw}.title-description{display:none}.mode-options{margin-top:6px;margin-bottom:5px}.mode-options button{font-size:8px;min-height:26px}.title-screen .primary{font-size:8px;min-height:32px;min-width:180px}.title-bottom{font-size:7px;margin-top:4px}.title-bottom select{font-size:7px;min-height:20px}}
 .weapon-list span{flex-direction:column;align-items:flex-start;gap:4px}.weapon-list canvas{width:56px;height:32px;image-rendering:auto;touch-action:auto}.weapon-list{row-gap:12px}.weapon-list span{line-height:1.4}
 #game{image-rendering:auto}
+.action-buttons{position:relative}.action-buttons [data-action=swap]{width:52px;height:36px;border-radius:8px;font-size:9px;background:#293f45;border-color:#739c9d}.action-buttons [data-action=swap]:disabled{opacity:.4}.hud small{max-width:260px;line-height:1.5;display:block}.hud strong{font-size:clamp(7px,1.35vw,15px)}
+@media(max-height:550px) and (orientation:landscape) and (pointer:coarse){.action-buttons [data-action=swap]{position:static;width:55px;height:35px}.hud small{font-size:6px;max-width:150px}}
+@media(max-width:650px){.hud small{font-size:5px;max-width:125px}.action-buttons [data-action=swap]{width:44px;height:36px}}

@@ -11,24 +11,73 @@
     F: { name: 'FLAMETHROWER', delay: .1, speed: 400, damage: 2, ttl: .6, height: 14 },
     G: { name: 'GRENADE LAUNCHER', delay: .52, speed: 480, damage: 3, ttl: 1.35, gravity: 430, splash: 52, splashDamage: 3, width: 12, height: 12 },
     H: { name: 'HOMING ROCKET', delay: .46, speed: 430, damage: 4, ttl: 1.4, homing: 5.25, splash: 42, splashDamage: 2, width: 16, height: 8 },
-    W: { name: 'WAVE CANNON', delay: .34, speed: 840, damage: 2, ttl: 1.15, pierce: true, width: 30, height: 16 }
+    W: { name: 'WAVE CANNON', delay: .34, speed: 840, damage: 2, ttl: 1.15, pierce: true, width: 30, height: 16 },
+    T: { name: 'TESLA CARBINE', delay: .38, speed: 760, damage: 2, chain: 2, width: 12, height: 10 },
+    I: { name: 'CRYO BLASTER', delay: .23, speed: 620, damage: 1, slow: 2.5, width: 14, height: 12 },
+    A: { name: 'PLASMA CANNON', delay: .6, speed: 520, damage: 5, splash: 65, splashDamage: 3, width: 20, height: 20 }
   };
-  // Drops are deliberately scarce so a special weapon feels like a turn in the fight.
-  const WEAPON_DROP_CHANCE = .025;
-  const weaponDropTypes = ['S', 'M', 'F', 'G', 'H', 'W', 'B', 'R'];
+  const difficultyRules = {
+    easy: { lives: 12, dropChance: .1, cacheStep: 2, waveInterval: 6, enemyLimit: 14, fireScale: 1.3, holster: true, nukes: true },
+    normal: { lives: 3, dropChance: .045, cacheStep: 4, waveInterval: 4.5, enemyLimit: 16, fireScale: 1, holster: true, nukes: true },
+    hard: { lives: 3, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false }
+  };
+  const stageEnemies = ['vineMantis','securitySpider','riverRay','reactorOrb','iceWolf','slagCrab','caveBat','sporeWasp'];
+  const specialEnemies = {
+    vineMantis: { hp: 4, speed: 58, flying: false }, securitySpider: { hp: 5, speed: 65, flying: false },
+    riverRay: { hp: 4, speed: 65, flying: true }, reactorOrb: { hp: 6, speed: 35, flying: true },
+    iceWolf: { hp: 4, speed: 100, flying: false }, slagCrab: { hp: 8, speed: 24, flying: false },
+    caveBat: { hp: 3, speed: 95, flying: true }, sporeWasp: { hp: 5, speed: 55, flying: true }
+  };
+  const weaponTier = p => Math.min(5, p.weaponLevels?.[p.weapon] || 1);
+  const weaponDropTypes = ['P', 'S', 'M', 'L', 'F', 'G', 'H', 'W', 'T', 'I', 'A', 'B', 'R', 'C', 'N'];
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
   function createEngine(options = {}) {
     let rng, id = 0;
     const state = { status: 'ready', seed: options.seed ?? 1978, tick: 0, elapsed: 0, score: 0, stage: 0, players: [], enemies: [], bullets: [], effects: [], pickups: [], inputLog: [], events: [], camera: { x: 0, y: 0 }, continues: 3, room: 0, boss: null, kills: 0 };
     function event(type, data = {}) { state.events.push({ type, ...data }); }
-    function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: state.difficulty === 'assist' ? 12 : 3, weapon: 'P', shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
+    const rules = () => difficultyRules[state.difficulty] || difficultyRules.normal;
+    function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
+    function equip(p, type) {
+      p.weaponLevels ||= {P:1};
+      if (type === p.weapon || (rules().holster && type === p.holstered)) {
+        p.weaponLevels[type] = Math.min(5, (p.weaponLevels[type] || 1) + 1);
+      } else {
+        if (rules().holster) p.holstered = p.weapon;
+        else { p.holstered = null; p.weaponLevels = {}; }
+        p.weapon = type; p.weaponLevels[type] ||= 1;
+      }
+    }
+    function resetEquipment(p) {
+      p.weapon='P'; p.holstered=null; p.cloak=0; p.rapid=0; p.shield=0;
+      if (!rules().holster) p.weaponLevels={P:1};
+    }
+    function populateRoute() {
+      const l=state.level;
+      if(l.mode==='base')return;
+      const ledges=l.platforms.filter(p=>!p.ground&&p.w<900);
+      const guns=Object.keys(weapons);
+      const pool=[guns[state.stage%guns.length],guns[(state.stage+3)%guns.length],guns[(state.stage+7)%guns.length]];
+      l.supplies=[];
+      ledges.forEach((p,i)=>{
+        if(i%rules().cacheStep===0) l.supplies.push({x:p.x+40,y:p.y-43,type:pool[Math.floor(i/rules().cacheStep)%pool.length]});
+        if(i===3||i===Math.floor(ledges.length*.65)) l.supplies.push({x:p.x+p.w-70,y:p.y-43,type:i===3?'C':rules().nukes?'N':'B'});
+      });
+      const extra=l.spawns.filter((_,i)=>i%(state.difficulty==='hard'?2:4)===0).map(e=>{
+        const kind=stageEnemies[state.stage];
+        const support=l.platforms.filter(p=>p.x<=e.x&&p.x+p.w>=e.x+32&&p.y>=e.y).sort((a,b)=>a.y-b.y)[0];
+        return {...e,kind,y:!specialEnemies[kind].flying&&support?support.y-34:e.y};
+      });
+      if(state.difficulty==='hard')l.spawns.push(...extra);
+      else extra.forEach(e=>{const old=l.spawns.find(s=>s.x===e.x);Object.assign(old,e);});
+    }
     function loadStage(index) {
       state.stage = index; state.level = buildLevel(index); state.room = 0;
+      populateRoute();
       state.enemies = []; state.bullets = []; state.pickups = []; state.effects = []; state.boss = null;
       state.camera = { x: 0, y: state.level.mode === 'climb' ? state.level.height - H : 0 };
       state.checkpoint = { x: 110, y: state.level.mode === 'climb' ? state.level.height - 94 : 410 };
-      state.spawned = {}; state.stageTime = 0; state.waveTime = 0; state.banner = 3.4;
+      state.spawned = {}; state.stageTime = 0; state.waveTime = 0; state.banner = 3.4; state.roomTransition=0; state.nukeFlash=0;
       state.players.forEach((p, i) => { Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, held: {}, grounded: false, jumpHeld: false, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
       if (state.level.mode === 'base') loadRoom();
       event('stage');
@@ -39,21 +88,26 @@
       state.players.forEach((p, i) => { p.x = 390 + i * 80; p.y = 420; p.aimX = 0; p.aimY = -1; p.invincible = 2; });
       state.waveTime = 0;
       // Each bunker cache introduces a distinct part of the arsenal across both assaults.
-      const cacheWeapons = ['S', 'L', 'M', 'G', 'H', 'W', 'F'];
-      state.pickups.push({ x: 465, y: 305, w: 24, h: 24, type: cacheWeapons[(state.stage * 3 + state.room) % cacheWeapons.length], ttl: 999 });
+      const cacheWeapons = state.stage===1?['T','L','M']:['A','F','I'];
+      const cacheCount=state.difficulty==='easy'?4:state.difficulty==='hard'?(state.room%2===0?1:0):2;
+      for(let i=0;i<cacheCount;i++)state.pickups.push({x:260+i*140,y:320+(i%2)*85,w:24,h:24,type:cacheWeapons[(state.room+i)%3],ttl:999});
+      state.pickups.push({x:750,y:400,w:24,h:24,type:state.room===1&&rules().nukes?'N':'C',ttl:999});
+      spawnEnemy({kind:stageEnemies[state.stage],x:160,y:280});
+      if(state.difficulty==='hard')spawnEnemy({kind:stageEnemies[state.stage],x:770,y:280});
     }
     function start(config = {}) {
       state.seed = config.seed ?? state.seed; rng = mulberry32(state.seed); id = 0;
-      Object.assign(state, { status: 'playing', tick: 0, elapsed: 0, score: 0, kills: 0, inputLog: [], events: [], difficulty: config.difficulty || 'arcade', continues: 3, creditsUsed: 0, extraLifeAt: 15000 });
+      const difficulty=config.difficulty==='assist'?'easy':config.difficulty==='arcade'?'normal':config.difficulty||'normal';
+      Object.assign(state, { status: 'playing', tick: 0, elapsed: 0, score: 0, kills: 0, inputLog: [], events: [], difficulty: difficultyRules[difficulty]?difficulty:'normal', continues: 3, creditsUsed: 0, extraLifeAt: 15000 });
       state.players = Array.from({ length: config.players === 2 ? 2 : 1 }, (_, i) => makePlayer(i));
       loadStage(0);
     }
     function input(player, action, down) {
       const p = state.players[player]; if (!p || state.status !== 'playing') return;
-      if (!['left', 'right', 'up', 'down', 'fire', 'jump'].includes(action) || p.held[action] === down) return;
+      if (!['left', 'right', 'up', 'down', 'fire', 'jump', 'swap'].includes(action) || p.held[action] === down) return;
       p.held[action] = down; state.inputLog.push({ tick: state.tick, player, action, down });
     }
-    function release() { state.players.forEach(p => { p.held = {}; p.jumpHeld = false; }); }
+    function release() { state.players.forEach(p => { p.held = {}; p.jumpHeld = false; p.swapHeld=false; }); }
     function pause() { if (state.status === 'playing') { state.status = 'paused'; release(); } else if (state.status === 'paused') state.status = 'playing'; }
     function advance() {
       if (state.status !== 'clear') return;
@@ -63,7 +117,7 @@
     function continueRun() {
       if (state.status !== 'gameover' || state.continues <= 0) return false;
       state.continues--; state.creditsUsed++;
-      state.players.forEach(p => { p.lives = state.difficulty === 'assist' ? 12 : 3; p.weapon = 'P'; p.rapid = 0; p.shield = 0; });
+      state.players.forEach(p => { p.lives = rules().lives; resetEquipment(p); });
       state.status = 'playing'; loadStage(state.stage); return true;
     }
     function addScore(points) {
@@ -77,7 +131,10 @@
       burst(e.x + e.w / 2, e.y + e.h / 2, '#ff923d', e.kind === 'boss' ? 70 : 20);
       state.kills++; addScore(e.kind === 'boss' ? 5000 : e.kind === 'core' ? 500 : 150); event('explosion');
       if (e.kind === 'boss') { state.status = 'clear'; state.bullets = []; release(); event('clear'); }
-      else if (e.kind !== 'core' && rng() < WEAPON_DROP_CHANCE) state.pickups.push({ x: e.x, y: e.y, w: 24, h: 24, type: weaponDropTypes[Math.floor(rng() * weaponDropTypes.length)], ttl: 12 });
+      else if (e.kind !== 'core' && !state.detonating && rng() < rules().dropChance) {
+        const types=weaponDropTypes.filter(t=>rules().nukes||t!=='N');
+        state.pickups.push({ x: e.x, y: e.y, w: 24, h: 24, type: types[Math.floor(rng() * types.length)], ttl: 18 });
+      }
     }
     function damageEnemy(e, damage, impact) {
       if (e.hp <= 0) return false;
@@ -112,7 +169,7 @@
     function damagePlayer(p, falling = false) {
       if (p.lives <= 0 || (!falling && (p.invincible > 0 || p.shield > 0 || (state.level.mode === 'base' && p.jumpTime > 0)))) return;
       p.lives--; burst(p.x + 15, p.y + 20, '#ff433c', 22); event('death');
-      p.weapon = 'P'; p.rapid = 0; p.shield = 0;
+      resetEquipment(p);
       if (p.lives > 0) {
         const c = state.checkpoint;
         p.x = c.x + p.id * 35; p.y = c.y; p.vy = 0; p.invincible = 3; p.grounded = false;
@@ -121,6 +178,7 @@
       if (state.players.every(q => q.lives <= 0)) { state.status = 'gameover'; release(); event('gameover'); }
     }
     function fire(p) {
+      const tier=weaponTier(p),rank=tier-1;
       const w = weapons[p.weapon], base = state.level.mode === 'base';
       let dx = Number(!!p.held.right) - Number(!!p.held.left), dy = Number(!!p.held.down) - Number(!!p.held.up);
       if (!base && p.grounded && dy > 0) dy = 0;
@@ -132,20 +190,21 @@
         state.bullets.push({
           id: id++, x: p.x + 15 + Math.cos(a) * 19, y: p.y + (p.prone ? 30 : 19) + Math.sin(a) * 13,
           vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, speed: w.speed,
-          w: w.width || 8, h: w.height || 5, team: 'player', damage: w.damage, weapon: p.weapon,
+          w: (w.width || 8)*(1+rank*.08), h: (w.height || 5)*(1+rank*.08), team: 'player', damage: w.damage*(1+rank*.3), weapon: p.weapon, tier,
           ttl: w.ttl || 1.5, gravity: w.gravity || 0, homing: w.homing || 0,
-          splash: w.splash || 0, splashDamage: w.splashDamage || 0, pierce: !!w.pierce, hits: []
+          splash: (w.splash || 0)*(1+rank*.12), splashDamage: (w.splashDamage || 0)*(1+rank*.3), pierce: !!w.pierce, hits: [], chain:(w.chain||0)+(w.chain?rank:0), slow:(w.slow||0)*(1+rank*.2)
         });
       }
-      p.cooldown = w.delay * (p.rapid > 0 ? .65 : 1); event('shot');
+      p.cooldown = w.delay * (1-rank*.075) * (p.rapid > 0 ? .65 : 1); event('shot');
     }
     function enemyShot(e, target, offset = 0, speed = 180) {
+      if(!target || target.cloak>0)return;
       const x = e.x + e.w / 2, y = e.y + e.h / 2;
       const a = Math.atan2(target.y + 20 - y, target.x + 15 - x) + offset;
       state.bullets.push({ x, y, w: 9, h: 9, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, team: 'enemy', ttl: 5 });
     }
     function spawnEnemy(spec) {
-      const hp = spec.kind === 'turret' ? 5 : spec.kind === 'drone' ? 2 : 2;
+      const hp = specialEnemies[spec.kind]?.hp || (spec.kind === 'turret' ? 5 : 2);
       state.enemies.push({ ...spec, id: id++, originX: spec.x, originY: spec.y, w: 32, h: 34, hp, maxHp: hp, cooldown: .8 + rng(), phase: rng() * 6, vx: -35 });
     }
     function spawnBoss() {
@@ -157,7 +216,9 @@
     function movePlayer(p, dt) {
       if (p.lives <= 0) return;
       const l = state.level, base = l.mode === 'base';
-      p.cooldown -= dt; p.invincible -= dt; p.shield -= dt; p.rapid -= dt; p.jumpTime = Math.max(0, p.jumpTime - dt);
+      p.cooldown -= dt; p.invincible -= dt; p.shield -= dt; p.rapid -= dt; p.cloak=Math.max(0,(p.cloak||0)-dt); p.jumpTime = Math.max(0, p.jumpTime - dt);
+      if(p.held.swap&&!p.swapHeld&&rules().holster&&p.holstered){[p.weapon,p.holstered]=[p.holstered,p.weapon];event('swap');}
+      p.swapHeld=!!p.held.swap;
       const dx = Number(!!p.held.right) - Number(!!p.held.left), dy = Number(!!p.held.down) - Number(!!p.held.up);
       const jumping = p.held.jump && !p.jumpHeld; p.jumpHeld = !!p.held.jump;
       p.prone = !base && p.grounded && !!p.held.down && !jumping;
@@ -194,6 +255,7 @@
       if (state.status !== 'playing') return;
       const dt = STEP, l = state.level;
       state.tick++; state.elapsed += dt; state.stageTime += dt; state.banner = Math.max(0, state.banner - dt);
+      state.roomTransition=Math.max(0,(state.roomTransition||0)-dt); state.nukeFlash=Math.max(0,(state.nukeFlash||0)-dt);
       state.players.forEach(p => movePlayer(p, dt));
       if (state.status !== 'playing') return;
       const alive = state.players.filter(p => p.lives > 0), lead = alive.reduce((a,b) => l.mode === 'climb' ? (a.y < b.y ? a : b) : (a.x > b.x ? a : b));
@@ -216,20 +278,45 @@
         if (!state.spawned['p' + i] && p.x < state.camera.x + W && p.y > state.camera.y - 100 && p.y < state.camera.y + H) { state.spawned['p' + i] = true; state.pickups.push({ ...p, w: 24, h: 24, ttl: 999 }); }
       });
       state.waveTime += dt;
-      if (state.waveTime > (l.mode === 'base' ? 3 : 5) && state.enemies.length < 14) {
+      if (state.waveTime > rules().waveInterval*(l.mode==='base'?.65:1) && state.enemies.length < rules().enemyLimit) {
         state.waveTime = 0;
-        if (l.mode === 'base') spawnEnemy({ kind: 'drone', x: rng() > .5 ? 130 : 800, y: 230 });
-        else if (!state.boss) spawnEnemy({ kind: 'drone', x: state.camera.x + W - 30, y: state.camera.y + 130 + rng() * 110 });
+        const kind=rng()<.55?stageEnemies[state.stage]:'drone';
+        if (l.mode === 'base') spawnEnemy({ kind, x: rng() > .5 ? 130 : 800, y: 280 });
+        else if (!state.boss) {
+          const flying=kind==='drone'||specialEnemies[kind]?.flying;
+          const ground=l.platforms.find(p=>p.ground&&p.x<=state.camera.x+W-70&&p.x+p.w>=state.camera.x+W-20);
+          if(flying||ground)spawnEnemy({kind,x:state.camera.x+W-65,y:flying?state.camera.y+130+rng()*110:ground.y-34});
+        }
       }
       for (const e of state.enemies) {
         e.cooldown -= dt; e.phase = (e.phase || 0) + dt;
-        const target = alive.reduce((a,b) => Math.abs(a.x-e.x) < Math.abs(b.x-e.x) ? a : b);
-        if (e.kind === 'soldier') {
-          const nx = e.x + (target.x > e.x ? 32 : -32) * dt;
+        e.slow=Math.max(0,(e.slow||0)-dt);const speedScale=e.slow>0?.35:1;
+        const target = alive.filter(p=>!p.cloak).reduce((a,b) => !a||Math.hypot(b.x-e.x,b.y-e.y)<Math.hypot(a.x-e.x,a.y-e.y)?b:a,null);
+        if (e.kind === 'soldier' && target) {
+          const nx = e.x + (target.x > e.x ? 32 : -32) * dt*speedScale;
           if (l.platforms.some(p => p.x < nx && p.x + p.w > nx + e.w && Math.abs(p.y - e.y - e.h) < 3)) e.x = nx;
         }
-        if (e.kind === 'drone') { e.x += (target.x > e.x ? 55 : -55) * dt; e.y = e.originY + Math.sin(e.phase * 2) * 30; }
-        if (e.cooldown <= 0 && e.x > state.camera.x - 40 && e.y > state.camera.y - 40) { enemyShot(e, target, 0, 160 + state.stage * 8); e.cooldown = (e.kind === 'turret' ? 1.4 : 2.2) * (state.difficulty === 'assist' ? 1.3 : 1); }
+        if (e.kind === 'drone') { if(target)e.x += (target.x > e.x ? 55 : -55) * dt*speedScale; e.y = e.originY + Math.sin(e.phase * 2) * 30; }
+        const special=specialEnemies[e.kind];
+        if(special){
+          if(target){
+            const dx=target.x-e.x,dy=target.y-e.y,d=Math.max(1,Math.hypot(dx,dy));
+            const dash=e.kind==='iceWolf'&&Math.sin(e.phase*2)>.7?2:1;
+            const step=special.speed*speedScale*dash*dt;
+            if(special.flying||l.mode==='base'){
+              e.x+=dx/d*step;e.y+=dy/d*step*(e.kind==='reactorOrb'?.35:1);
+            }else{
+              const nx=e.x+Math.sign(dx)*step;
+              if(l.platforms.some(p=>nx>=p.x&&nx+e.w<=p.x+p.w&&Math.abs(p.y-e.y-e.h)<4))e.x=nx;
+            }
+          }
+          if(special.flying)e.y+=Math.sin(e.phase*(e.kind==='caveBat'?12:5))*dt*12*speedScale;
+        }
+        if (target && e.cooldown <= 0 && e.x > state.camera.x - 40 && e.y > state.camera.y - 40) {
+          if(e.kind==='slagCrab'||e.kind==='reactorOrb')for(const offset of [-.2,0,.2])enemyShot(e,target,offset,145);
+          else if(e.kind!=='iceWolf'&&e.kind!=='caveBat')enemyShot(e, target, 0, 160 + state.stage * 8);
+          e.cooldown = (e.kind === 'turret' ? 1.4 : e.kind==='sporeWasp'?1.3:2.2) * rules().fireScale / speedScale;
+        }
         for (const p of alive) { const box = playerBox(p); if (hit(e, box)) damagePlayer(p); }
       }
       const boss = state.boss;
@@ -251,8 +338,9 @@
             const count = rage ? 16 : 12;
             for (let i = 0; i < count; i++) enemyShot(boss, { x: boss.x + 200, y: boss.y + 50 }, i * Math.PI * 2 / count + boss.phase * .1, 160);
           } else {
-            for (let i = -1; i <= 1; i++) enemyShot(boss, lead, i * (rage ? .25 : .18), 185 + state.stage * 7);
-            if (rage) { enemyShot(boss, lead, -.5, 180); enemyShot(boss, lead, .5, 180); }
+            const target=alive.find(p=>!p.cloak);
+            for (let i = -1; i <= 1; i++) enemyShot(boss, target, i * (rage ? .25 : .18), 185 + state.stage * 7);
+            if (rage) { enemyShot(boss, target, -.5, 180); enemyShot(boss, target, .5, 180); }
           }
           if ((state.stage === 2 || state.stage === 6) && boss.attack % 3 === 0 && state.enemies.length < 10) spawnEnemy({ kind: 'drone', x: boss.x - 40, y: boss.y + 30 });
           if ((state.stage === 4 || state.stage === 5) && boss.attack % 2 === 0) {
@@ -275,6 +363,17 @@
           for (const e of targets) {
             if (e.hp <= 0 || b.ttl <= 0 || b.hits.includes(e.id) || !hit(b, e)) continue;
             b.hits.push(e.id); damageEnemy(e, b.damage, b);
+            if(b.slow)e.slow=b.slow;
+            if(b.chain){
+              let source=e;
+              for(let jump=0;jump<b.chain;jump++){
+                const next=targets.filter(t=>t.hp>0&&!b.hits.includes(t.id)&&Math.hypot(t.x-source.x,t.y-source.y)<160)
+                  .sort((a,z)=>Math.hypot(a.x-source.x,a.y-source.y)-Math.hypot(z.x-source.x,z.y-source.y))[0];
+                if(!next)break;
+                state.effects.push({x:source.x+16,y:source.y+16,x2:next.x+16,y2:next.y+16,vx:0,vy:0,ttl:.18,color:'#b3a0ff',arc:true});
+                b.hits.push(next.id);damageEnemy(next,b.damage*.65,b);source=next;
+              }
+            }
             if (b.splash) { explodeProjectile(b, targets, e); b.ttl = 0; break; }
             if (!b.pierce) b.ttl = 0;
             if (state.status !== 'playing') break;
@@ -293,9 +392,17 @@
         // Pickups are now wide weapon silhouettes, so their full visible width collects.
         const pickupBox = { x: p.x - 12, y: p.y - 5, w: p.w + 24, h: p.h + 10 };
         for (const player of alive) if (hit(pickupBox, player)) {
-          if (weapons[p.type]) player.weapon = p.type;
+          if (weapons[p.type]) equip(player,p.type);
           else if (p.type === 'B') player.shield = 12;
           else if (p.type === 'R') player.rapid = 20;
+          else if (p.type === 'C') player.cloak = 8;
+          else if (p.type === 'N' && rules().nukes) {
+            state.detonating=true;
+            const screen={x:state.camera.x,y:state.camera.y,w:W,h:H};
+            for(const enemy of state.enemies)if(enemy.kind!=='boss'&&enemy.hp>0&&hit(enemy,screen))damageEnemy(enemy,enemy.hp,enemy);
+            state.detonating=false;state.nukeFlash=.7;
+            state.bullets=state.bullets.filter(b=>b.team==='player'||!hit(b,screen));event('nuke');
+          }
           p.ttl = 0; addScore(200); event('pickup', { weapon: p.type }); break;
         }
       }
@@ -304,17 +411,17 @@
       for (const e of state.effects) { e.x += e.vx * dt; e.y += e.vy * dt; e.vy += 250 * dt; e.ttl -= dt; }
       state.effects = state.effects.filter(e => e.ttl > 0);
       if (l.mode === 'base' && !state.boss && state.enemies.every(e => e.kind !== 'core')) {
-        if (state.room < 2) { state.room++; loadRoom(); state.banner = 2; event('room'); }
+        if (state.room < 2) { state.room++; loadRoom(); state.roomTransition=.65; state.banner = 2; event('room'); }
         else spawnBoss();
       }
     }
     function playerBox(p) { return { x: p.x + 6, y: p.y + (p.prone ? 27 : 6), w: p.w - 12, h: p.prone ? 14 : p.h - 9 }; }
     function drainEvents() { return state.events.splice(0); }
     // A ready scene is real level data and uses the same renderer as gameplay.
-    state.difficulty = 'arcade'; rng = mulberry32(state.seed); state.players = [makePlayer(0)]; loadStage(0); state.events = [];
+    state.difficulty = 'normal'; rng = mulberry32(state.seed); state.players = [makePlayer(0)]; loadStage(0); state.events = [];
     return { state, start, input, tick, pause, release, advance, continueRun, drainEvents, hash: () => fnv1a(JSON.stringify(state.inputLog)) };
   }
-  const api = { createEngine, weapons, weaponDropChance: WEAPON_DROP_CHANCE, W, H, STEP, hit };
+  const api = { createEngine, weapons, weaponTier, difficultyRules, stageEnemies, specialEnemies, W, H, STEP, hit };
   root.SlopCommando = Object.assign(root.SlopCommando || {}, api);
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);

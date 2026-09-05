@@ -5,12 +5,13 @@
   const params = new URLSearchParams(location.search);
   const engine = G.createEngine({ seed: GameSlopKit.parseSeed(params.get('seed')) });
   const renderer = G.createRenderer({ canvas: $('game') });
+  const p2Power=document.createElement('small');$('p2-hud').append(p2Power);
   // The guide mirrors the actual loot table. Stronger weapons are rare in play,
   // but every silhouette is visible here before the player finds one.
   const guideWeapons = [
     ['S','Spread gun'],['M','Machine gun'],['G','Grenade launcher'],
     ['L','Laser rifle'],['H','Homing rocket'],['F','Flamethrower'],
-    ['W','Wave cannon'],['B','Barrier'],['R','Rapid fire']
+    ['W','Wave cannon'],['T','Tesla carbine'],['I','Cryo blaster'],['A','Plasma cannon'],['B','Barrier'],['R','Rapid fire'],['C','Invisibility cloak'],['N','Screen nuke']
   ];
   const weaponList = document.querySelector('.weapon-list');
   if (weaponList) weaponList.replaceChildren(...guideWeapons.map(([type,label]) => {
@@ -37,13 +38,13 @@
   // Controls must be descendants of the fullscreen element on mobile.
   cabinet.append(document.querySelector('.touch-controls'));
   const sources = { keyboard: new Set(), touch: new Map(), pad: new Set() };
-  const keymap = { ArrowLeft:[0,'left'],ArrowRight:[0,'right'],ArrowUp:[0,'up'],ArrowDown:[0,'down'],KeyZ:[0,'jump'],Space:[0,'jump'],KeyX:[0,'fire'],KeyC:[0,'fire'],KeyA:[1,'left'],KeyD:[1,'right'],KeyW:[1,'up'],KeyS:[1,'down'],KeyG:[1,'jump'],KeyH:[1,'fire'] };
+  const keymap = { ArrowLeft:[0,'left'],ArrowRight:[0,'right'],ArrowUp:[0,'up'],ArrowDown:[0,'down'],KeyZ:[0,'jump'],Space:[0,'jump'],KeyX:[0,'fire'],KeyC:[0,'fire'],KeyV:[0,'swap'],KeyJ:[1,'swap'],KeyA:[1,'left'],KeyD:[1,'right'],KeyW:[1,'up'],KeyS:[1,'down'],KeyG:[1,'jump'],KeyH:[1,'fire'] };
   const storage = { get(k,f) { try { return localStorage.getItem(k) ?? f; } catch (_) { return f; } }, set(k,v) { try { localStorage.setItem(k,String(v)); } catch (_) { /* Offline/private browsing remains playable. */ } } };
   function bestKey() { return 'gameslop:commando:gameslop:'+engine.state.difficulty+':'+engine.state.players.length+':best'; }
   function clearInput() { sources.keyboard.clear();sources.touch.clear();sources.pad.clear();engine.release();document.querySelectorAll('.pressed').forEach(el=>el.classList.remove('pressed')); }
   function syncInputs() {
     const held = new Set([...[...sources.keyboard].map(code=>keymap[code].join(':')),...[...sources.touch.values()].flat(),...sources.pad]);
-    engine.state.players.forEach((p,i) => ['left','right','up','down','jump','fire'].forEach(action=>engine.input(i,action,held.has(i+':'+action))));
+    engine.state.players.forEach((p,i) => ['left','right','up','down','jump','fire','swap'].forEach(action=>engine.input(i,action,held.has(i+':'+action))));
   }
   function start() {
     clearInput();audio.unlock();engine.start({ players, difficulty: $('difficulty').value });
@@ -71,10 +72,11 @@
     $('stage-progress').innerHTML='CAMPAIGN <b>'+String(s.stage+1).padStart(2,'0')+' / 08</b>';
     $('score').textContent=String(s.score).padStart(6,'0');
     const p=s.players[0];$('p1-lives').textContent=p.lives>5?'♥ × '+p.lives:'♥ '.repeat(Math.max(0,p.lives))||'OUT';
-    $('p1-weapon').textContent=G.weapons[p.weapon].name;
-    $('p1-power').textContent=p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'';
-    if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name:'OUT';}
-    else{$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
+    $('p1-weapon').textContent=G.weapons[p.weapon].name+' '+G.weaponTier(p)+'/5';
+    $('p1-power').textContent=[p.cloak>0?'CLOAK '+Math.ceil(p.cloak)+'s':'',p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':'',p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'',p.holstered?'HOLSTER: '+G.weapons[p.holstered].name+' '+(p.weaponLevels[p.holstered]||1)+'/5':''].filter(Boolean).join(' · ');
+    const swapButton=document.querySelector('[data-action="swap"]');swapButton.disabled=s.difficulty==='hard'||!p.holstered;swapButton.textContent=s.difficulty==='hard'?'1 GUN':'SWAP';
+    if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
+    else{p2Power.textContent='';$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
     $('pause').disabled=title||!['playing','paused'].includes(s.status);
     const pauseLabel=s.status==='paused'?'▶ <span>RESUME</span>':'Ⅱ <span>PAUSE</span>';
     if($('pause').innerHTML!==pauseLabel)$('pause').innerHTML=pauseLabel;
@@ -83,7 +85,7 @@
     $('status-line').textContent=title?'READY WHEN YOU ARE.':active?(s.boss?'BOSS CONTACT · '+s.boss.name.toUpperCase():progress):s.status.toUpperCase();
     if(lastStatus!==s.status){
       if(isOverlay){
-        const data={paused:['TAKE A BREATHER','PAUSED','The mission can wait.\nYour progress is right here.','BACK TO THE ACTION →'],clear:['SECTOR SECURED',s.stage===7?'SOURCE DESTROYED':'STAGE CLEAR',s.level.name+' complete.\n'+s.score.toLocaleString()+' points · '+s.kills+' targets down',s.stage===7?'FINISH THE MISSION →':'NEXT MISSION →'],gameover:['YOU MADE A MESS','GAME OVER',s.score.toLocaleString()+' points · Stage '+(s.stage+1)+' / 8\n'+s.continues+' continues remaining',s.continues?'CONTINUE MISSION →':'TRY AGAIN →'],victory:['OPERATION COMPLETE','SLOP TRIUMPHS','All eight sectors liberated.\n'+s.score.toLocaleString()+' points · '+Math.floor(s.elapsed/60)+'m '+Math.floor(s.elapsed%60)+'s\n'+(s.difficulty==='assist'?'Assist':'Arcade')+' · '+s.creditsUsed+' continues used','RUN IT BACK →']}[s.status];
+        const data={paused:['TAKE A BREATHER','PAUSED','The mission can wait.\nYour progress is right here.','BACK TO THE ACTION →'],clear:['SECTOR SECURED',s.stage===7?'SOURCE DESTROYED':'STAGE CLEAR',s.level.name+' complete.\n'+s.score.toLocaleString()+' points · '+s.kills+' targets down',s.stage===7?'FINISH THE MISSION →':'NEXT MISSION →'],gameover:['YOU MADE A MESS','GAME OVER',s.score.toLocaleString()+' points · Stage '+(s.stage+1)+' / 8\n'+s.continues+' continues remaining',s.continues?'CONTINUE MISSION →':'TRY AGAIN →'],victory:['OPERATION COMPLETE','SLOP TRIUMPHS','All eight sectors liberated.\n'+s.score.toLocaleString()+' points · '+Math.floor(s.elapsed/60)+'m '+Math.floor(s.elapsed%60)+'s\n'+s.difficulty.toUpperCase()+' · '+s.creditsUsed+' continues used','RUN IT BACK →']}[s.status];
         $('overlay-kicker').textContent=data[0];$('overlay-title').textContent=data[1];$('overlay-body').textContent=data[2];$('overlay-action').textContent=data[3];$('overlay-action').focus({preventScroll:true});
       }
       if(['clear','gameover','victory'].includes(s.status)&&s.score>best){best=s.score;storage.set(bestKey(),best);}
@@ -99,7 +101,7 @@
     sources.pad.clear();let startDown=false;
     const pads=navigator.getGamepads?Array.from(navigator.getGamepads()).filter(Boolean).slice(0,2):[];
     pads.forEach((pad,i)=>{
-      const button=n=>!!pad.buttons[n]?.pressed,actions={left:button(14)||pad.axes[0]<-.3,right:button(15)||pad.axes[0]>.3,up:button(12)||pad.axes[1]<-.3,down:button(13)||pad.axes[1]>.3,jump:button(0),fire:button(2)||button(7)||button(1)};
+      const button=n=>!!pad.buttons[n]?.pressed,actions={left:button(14)||pad.axes[0]<-.3,right:button(15)||pad.axes[0]>.3,up:button(12)||pad.axes[1]<-.3,down:button(13)||pad.axes[1]>.3,jump:button(0),fire:button(2)||button(7)||button(1),swap:button(3)};
       Object.entries(actions).forEach(([a,down])=>{if(down)sources.pad.add(i+':'+a);});if(button(9))startDown=true;
     });
     if(startDown&&!lastGamepadStart){if(engine.state.status==='ready')start();else if(engine.state.status==='playing')togglePause();else overlayAction();}lastGamepadStart=startDown;

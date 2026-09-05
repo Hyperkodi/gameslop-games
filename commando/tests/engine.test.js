@@ -1,7 +1,7 @@
 'use strict';
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { createEngine, weapons, weaponDropChance } = require('../js/engine.js');
+const { createEngine, weapons } = require('../js/engine.js');
 const { levels, buildLevel } = require('../js/levels.js');
 function game(config={}) { const e=createEngine({seed:42});e.start(config);return e; }
 function ticks(e,n) { for(let i=0;i<n;i++)e.tick(); }
@@ -98,11 +98,4 @@ test('Spillway is a taller, safe switchback ascent with mixed encounters',()=>{
 test('run-stage gaps are shorter than a full jump and do not contain spawns',()=>{for(let i=0;i<8;i++){const l=buildLevel(i);for(const[a,b]of l.gaps||[]){assert.ok(b-a<150);assert.ok(!l.spawns.some(e=>e.x>a&&e.x<b&&e.kind!=='drone'));}}});
 test('world entities remain bounded during extended gameplay',()=>{const e=game({difficulty:'assist'});e.state.players[0].invincible=1000;e.input(0,'fire',true);ticks(e,36000);assert.ok(e.state.bullets.length<100);assert.ok(e.state.enemies.length<30);assert.ok(e.state.effects.length<300);assert.ok(Number.isFinite(e.state.players[0].y));});
 test('extra-life threshold awards exactly once',()=>{const e=game();quiet(e);e.state.score=14900;e.state.pickups.push({x:110,y:410,w:24,h:24,type:'R',ttl:10});ticks(e,1);assert.equal(e.state.players[0].lives,4);ticks(e,10);assert.equal(e.state.players[0].lives,4);});
-test('special weapon caches and enemy drops stay scarce',()=>{
-  assert.equal(weaponDropChance,.025);
-  for(const index of [0,4,5,6,7])assert.ok(buildLevel(index).supplies.length<=4);
-  assert.equal(buildLevel(2).supplies.length,3);
-  const caches=[...buildLevel(0).supplies,...buildLevel(1).supplies,...buildLevel(2).supplies,...buildLevel(3).supplies,...buildLevel(4).supplies,...buildLevel(5).supplies,...buildLevel(6).supplies,...buildLevel(7).supplies];
-  for(const type of ['G','H','W'])assert.ok(caches.some(p=>p.type===type));
-});
-test('all weapon definitions expose valid gameplay values',()=>{assert.deepEqual(Object.keys(weapons).sort(),['F','G','H','L','M','P','S','W']);for(const w of Object.values(weapons)){assert.ok(w.damage>0&&w.delay>0&&w.speed>0);}});
+test('all weapon definitions expose valid gameplay values',()=>{assert.deepEqual(Object.keys(weapons).sort(),['A','F','G','H','I','L','M','P','S','T','W']);for(const w of Object.values(weapons)){assert.ok(w.damage>0&&w.delay>0&&w.speed>0);}});

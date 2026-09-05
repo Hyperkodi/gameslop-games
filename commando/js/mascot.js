@@ -145,6 +145,8 @@
       ctx.save();
       // Blink translucently during protection; never make the mascot disappear.
       if (!large && p.invincible > 0 && Math.floor(time * 12) % 2 === 0) ctx.globalAlpha = .5;
+      if(!large&&p.cloak>0){ctx.globalAlpha=.28;ctx.shadowColor='#93dfff';ctx.shadowBlur=8;}
+      if(!large&&p.holstered){ctx.save();ctx.translate(p.x+3,p.y+26);ctx.rotate(-1.1);ctx.scale(.4,.4);arsenal.draw(p.holstered,{time});ctx.restore();}
       body(p, time, large, victory, mode);
       if (!large && !victory) weapon(p, time);
       if (!large && p.shield > 0) {

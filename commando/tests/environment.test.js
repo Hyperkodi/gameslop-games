@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {sceneryLayout,bunkerProgress}=require('../js/environment.js');
+const {sceneryLayout}=require('../js/environment.js');
 const {buildLevel}=require('../js/levels.js');
 const fs=require('node:fs');
 const path=require('node:path');
@@ -24,6 +24,7 @@ test('all stage artwork exists and authored crops stay inside each PNG',()=>{
 test('configured scenery strips cover every point throughout every stage',()=>{
   const skin=JSON.parse(fs.readFileSync(path.join(__dirname,'../skin/gameslop/skin.json'),'utf8'));
   for(let stage=0;stage<8;stage++){
+    if(buildLevel(stage).mode==='base')continue;
     const configured=skin.environment.stages[stage];
     const count=configured.frames?.length||skin.environment.sections;
     assert.ok(count>=6&&count<=7);
@@ -61,11 +62,9 @@ test('waterfall starts at section zero and finishes at section six while ascendi
   assert.equal(end.visible.at(-1).index,6);assert.equal(end.visible.at(-1).y,0);
 });
 
-test('bunker scenery advances monotonically through cores, rooms and boss',()=>{
-  let previous=-1;
-  for(let room=0;room<3;room++)for(let remaining=3;remaining>=0;remaining--){
-    const position=bunkerProgress({room,enemies:Array.from({length:remaining},()=>({kind:'core',hp:5})),boss:null});
-    assert.ok(position>=previous);previous=position;
+test('both overhead bunker floors remain stationary as cores and chambers change',()=>{
+  for(const stage of [1,3])for(let room=0;room<3;room++)for(let remaining=3;remaining>=0;remaining--){
+    const layout=sceneryLayout({level:buildLevel(stage),room,camera:{x:0,y:0},enemies:Array.from({length:remaining},()=>({kind:'core',hp:5}))},room*640);
+    assert.equal(layout.position,0);assert.equal(layout.travel,0);assert.deepEqual(layout.visible,[{index:room,x:0,y:0}]);
   }
-  assert.equal(bunkerProgress({room:2,enemies:[],boss:{hp:100}}),3840);
 });
