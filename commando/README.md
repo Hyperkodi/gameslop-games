@@ -23,6 +23,8 @@ Hold a phone in landscape for the largest playfield. **Expand** requests browser
 
 Touch supports simultaneous movement, jump, fire, and a separate **SWAP** button. Down crouches in side-scrolling stages; down + jump drops through a ledge. In bunker stages, move on the overhead floor, fire upward toward cores, and jump to dodge shots.
 
+In Spillway, hold Down and press Jump to descend one ledge; release Jump before dropping again. The camera follows your retreat. The boss crest has safe landing shelves directly below its full width, and you can jump back up.
+
 ## Difficulty and equipment
 
 | Mode | Lives | Gun supply | Weapon slots | Upgrade memory | Nukes |
@@ -53,6 +55,8 @@ Pickups and equipped weapons use distinct silhouettes. HUD labels show active ti
 ## Campaign
 
 The outdoor run stages span 6,600px with biome-specific ledges, gaps, hazards, and encounters. Spillway spans 2,860px vertically. Each stage has a boss and one exclusive new enemy:
+
+Spillway mixes narrow concrete steps, broad steel bridges, and optional side shelves. Its fixed gun caches are deliberately scarcer: five on Easy, three on Normal, and one on Hard. Guns sit in marked side alcoves away from the main ascent, with no fixed grenade launcher cache; enemy drops still use the difficulty's random loot rules.
 
 | Stage | Route | New enemy |
 | --- | --- | --- |
@@ -98,3 +102,5 @@ Run `node --test` inside `games/commando`. The suite covers weapons at all five 
 The repository's `tools/cdp-drivers/commando-qa.js` tests desktop/mobile, touch, pause, fullscreen and fallback. `tools/cdp-drivers/commando-v4-qa.js` checks all eight themed enemies, stationary bunker floors during core destruction, tier-preserving keyboard swaps, mobile swaps and non-overlapping controls, and Hard's disabled holster. Chrome device emulation is automated; physical device testing remains manual.
 
 `tools/cdp-drivers/commando-audio-qa.js` verifies actual MP3 decoding and playback, weapon/impact routing, all supplied level tracks, mute/pause/resume, mobile restart, and bounded effect voices.
+
+`tools/cdp-drivers/commando-spillway-qa.js` checks reduced optional gun caches, keyboard and mobile down+jump, safe boss-platform retreat and return, and downward camera movement.

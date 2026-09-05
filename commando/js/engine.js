@@ -58,11 +58,17 @@
       const ledges=l.platforms.filter(p=>!p.ground&&p.w<900);
       const guns=Object.keys(weapons);
       const pool=[guns[state.stage%guns.length],guns[(state.stage+3)%guns.length],guns[(state.stage+7)%guns.length]];
-      l.supplies=[];
-      ledges.forEach((p,i)=>{
-        if(i%rules().cacheStep===0) l.supplies.push({x:p.x+40,y:p.y-43,type:pool[Math.floor(i/rules().cacheStep)%pool.length]});
-        if(i===3||i===Math.floor(ledges.length*.65)) l.supplies.push({x:p.x+p.w-70,y:p.y-43,type:i===3?'C':rules().nukes?'N':'B'});
-      });
+      if(l.mode==='climb') {
+        // Climbing caches are optional detours authored with the route, never automatic
+        // weapon replacements on the next required landing.
+        l.supplies=l.supplies.filter(p=>(!p.modes||p.modes.includes(state.difficulty))&&(p.type!=='N'||rules().nukes));
+      } else {
+        l.supplies=[];
+        ledges.forEach((p,i)=>{
+          if(i%rules().cacheStep===0) l.supplies.push({x:p.x+40,y:p.y-43,type:pool[Math.floor(i/rules().cacheStep)%pool.length]});
+          if(i===3||i===Math.floor(ledges.length*.65)) l.supplies.push({x:p.x+p.w-70,y:p.y-43,type:i===3?'C':rules().nukes?'N':'B'});
+        });
+      }
       const extra=l.spawns.filter((_,i)=>i%(state.difficulty==='hard'?2:4)===0).map(e=>{
         const kind=stageEnemies[state.stage];
         const support=l.platforms.filter(p=>p.x<=e.x&&p.x+p.w>=e.x+32&&p.y>=e.y).sort((a,b)=>a.y-b.y)[0];
@@ -231,20 +237,25 @@
         if (jumping && p.jumpTime <= 0) { p.jumpTime = .6; event('jump'); }
       } else {
         if (jumping && p.grounded) {
-          if (p.held.down && !p.onGround) { p.y += 5; p.dropTime = .24; }
+          const support=l.platforms.find(platform=>Math.abs(p.y+p.h-platform.y)<=1&&p.x+p.w>platform.x&&p.x<platform.x+platform.w);
+          if (p.held.down && support && !support.ground) {
+            // Move the feet past this one-way surface. Other platforms remain solid,
+            // including close shelves immediately below the boss arena.
+            p.y += 3; p.vy = 90; event('drop');
+          }
           else { p.vy = -510; event('jump'); }
           p.grounded = false;
         }
-        p.dropTime = Math.max(0, (p.dropTime || 0) - dt);
         p.x = clamp(p.x + p.vx * dt, state.camera.x, l.width - p.w);
         const feet = p.y + p.h; p.vy += 1150 * dt; p.y += p.vy * dt; p.grounded = false;
-        if (p.vy >= 0 && p.dropTime <= 0) {
+        if (p.vy >= 0) {
+          let landing=null;
           for (const platform of l.platforms) {
-            if (p.x + p.w > platform.x && p.x < platform.x + platform.w && feet <= platform.y + 1 && p.y + p.h >= platform.y) {
-              p.y = platform.y - p.h; p.vy = 0; p.grounded = true; p.onGround = !!platform.ground;
-              if (l.mode === 'climb' && platform.y < state.checkpoint.y + p.h) state.checkpoint = { x: platform.x + 45, y: platform.y - p.h };
-              break;
-            }
+            if (p.x + p.w > platform.x && p.x < platform.x + platform.w && feet <= platform.y + 1 && p.y + p.h >= platform.y && (!landing||platform.y<landing.y)) landing=platform;
+          }
+          if(landing) {
+            p.y = landing.y - p.h; p.vy = 0; p.grounded = true; p.onGround = !!landing.ground;
+            if (l.mode === 'climb' && landing.y < state.checkpoint.y + p.h) state.checkpoint = { x: landing.x + 45, y: landing.y - p.h };
           }
         }
         if (p.y > l.height + 40 || (l.mode === 'climb' && p.y > state.camera.y + H + 70)) damagePlayer(p, true);
@@ -269,7 +280,9 @@
         if (segment) state.checkpoint = { x: Math.max(110, state.camera.x + 80), y: 410 };
         if (!state.boss && lead.x > l.width - 780) spawnBoss();
       } else if (l.mode === 'climb') {
-        state.camera.y = Math.min(state.camera.y, clamp(lead.y - 235, 0, l.height - H));
+        // Keep a quiet center band, but follow both ascent and deliberate retreats.
+        if (lead.y < state.camera.y + 235) state.camera.y = clamp(lead.y - 235, 0, l.height - H);
+        else if (lead.y > state.camera.y + 340) state.camera.y = clamp(lead.y - 340, 0, l.height - H);
         if (!state.boss && lead.y < 350) spawnBoss();
       }
       l.spawns.forEach((e, i) => {

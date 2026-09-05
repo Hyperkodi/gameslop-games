@@ -4,7 +4,7 @@
   const levels = [
     { name: 'Verdant Outpost', tag: 'JUNGLE INFILTRATION', mode: 'run', theme: 'jungle', width: 6600, boss: 'Bastion', briefing: 'Follow the river through the canopy, ravines, and perimeter cannon.', gaps: [[1290, 1405], [2430, 2550], [3615, 3740], [4890, 5005], [5310, 5430]] },
     { name: 'Signal Bunker', tag: 'SECURITY BREACH', mode: 'base', theme: 'base', width: 960, boss: 'Watchtower', briefing: 'Destroy the red security cores in all three chambers. Keep moving.' },
-    { name: 'Spillway Ascent', tag: 'FORWARD ASCENT', mode: 'climb', theme: 'water', width: 960, height: 2860, boss: 'Undertow', briefing: 'Climb from the flood basin to the dam crest. The guardian waits above.' },
+    { name: 'Spillway Ascent', tag: 'FORWARD ASCENT', mode: 'climb', theme: 'water', width: 960, height: 2860, boss: 'Undertow', briefing: 'Climb the spillway bridges and take side shelves for guns. Down + jump drops to a lower ledge, including beneath the boss.' },
     { name: 'Furnace Network', tag: 'REACTOR BREACH', mode: 'base', theme: 'foundry', width: 960, boss: 'Overseer', briefing: 'Breach three reactor chambers. Jump to evade incoming fire.' },
     { name: 'Whiteout Relay', tag: 'FROZEN FRONT', mode: 'run', theme: 'snow', width: 6600, boss: 'Frostbite', briefing: 'Cross ice shelves, relay towers, and a whiteout pass to reach the siege walker.', gaps: [[1220, 1330], [2550, 2675], [3895, 4025], [4800, 4920], [5560, 5685]] },
     { name: 'Cinder Foundry', tag: 'INDUSTRIAL SABOTAGE', mode: 'run', theme: 'foundry', width: 6600, boss: 'Crucible', briefing: 'Sabotage conveyor spans, furnace decks, and timed flame vents.', gaps: [[1450, 1575], [2875, 2990], [4190, 4325], [5200, 5320], [5600, 5725]] },
@@ -115,15 +115,29 @@
     }
   };
 
-  // The spillway is a long switchback of broad landings. Every step rises 83
-  // pixels or less, below the 113 pixel jump envelope, so it is readable and fair.
+  // Spillway alternates narrow steps, broad rests, and changing switchbacks.
+  // The marked main route is always clear of supplies; side alcoves reward a
+  // deliberate detour. Rises stay below the 113 pixel jump envelope.
   const climbLandings = [
-    [78, 320], [250, 275], [470, 270], [640, 270], [440, 285], [220, 275],
-    [70, 290], [255, 275], [485, 270], [650, 270], [455, 285], [235, 275],
-    [78, 295], [270, 275], [510, 270], [660, 265], [450, 290], [225, 280],
-    [62, 300], [250, 280], [490, 275], [645, 275], [430, 295], [205, 285],
-    [55, 305], [245, 280], [500, 275], [665, 260], [445, 295], [210, 300],
-    [80, 340]
+    [72, 2720, 350], [215, 2630, 155], [290, 2560, 310], [405, 2465, 200],
+    [280, 2390, 150], [125, 2300, 320], [65, 2205, 175], [180, 2120, 390],
+    [445, 2045, 145], [535, 1950, 260], [425, 1870, 160], [275, 1775, 330],
+    [165, 1685, 180], [75, 1610, 270], [215, 1515, 135], [295, 1430, 385],
+    [550, 1355, 160], [640, 1260, 230], [485, 1170, 180], [330, 1095, 350],
+    [205, 1000, 150], [85, 920, 340], [185, 825, 170], [305, 740, 370],
+    [590, 660, 150], [655, 565, 230], [450, 480, 235], [295, 405, 330],
+    [150, 320, 225], [300, 245, 360], [0, 150, 960]
+  ];
+  const climbAlcoves = [
+    [705, 2465, 215], [650, 2205, 265], [275, 1995, 140], [40, 1950, 175],
+    [430, 1560, 220], [735, 1515, 190], [35, 1095, 190], [695, 1015, 225],
+    [325, 700, 175], [40, 660, 195]
+  ];
+  const climbSupplies = [
+    [840, 2420, 'M', ['easy', 'normal']], [65, 1905, 'L', ['easy']],
+    [840, 1470, 'T', ['easy', 'normal', 'hard']], [60, 1050, 'H', ['easy']],
+    [65, 615, 'A', ['easy', 'normal']], [840, 2160, 'C', ['easy', 'normal', 'hard']],
+    [820, 970, 'N', ['easy', 'normal', 'hard']]
   ];
   const climbEncounters = { 3: 'turret', 7: 'drone', 11: 'soldier', 15: 'turret', 19: 'drone', 23: 'soldier', 27: 'turret' };
 
@@ -133,18 +147,19 @@
     if (l.mode === 'base') return l;
     if (l.mode === 'climb') {
       l.platforms.push({ x: 0, y: l.height - 50, w: 960, h: 50, ground: true });
-      climbLandings.forEach(([x, w], i) => {
-        const y = l.height - 140 - i * 83;
-        l.platforms.push({ x, y, w, h: 18 });
+      climbLandings.forEach(([x, y, w], i) => {
+        l.platforms.push({ x, y, w, h: 18, route: true });
         const kind = climbEncounters[i];
         if (kind) {
           l.spawns.push({ x: x + Math.min(w - 48, kind === 'drone' ? 115 : w - 66), y: y - (kind === 'drone' ? 78 : 34), kind });
         }
-        const special = { 7: 'G', 16: 'H', 25: 'W' }[i];
-        if (special) l.supplies.push({ x: x + Math.min(78, w - 58), y: y - 45, type: special });
       });
-      // A broad crest gives the final encounter a real destination after the switchbacks.
-      l.platforms.push({ x: 0, y: l.height - 2710, w: 960, h: 20 });
+      climbAlcoves.forEach(([x, y, w]) => l.platforms.push({ x, y, w, h: 18, optional: true }));
+      climbSupplies.forEach(([x, y, type, modes]) => l.supplies.push({ x, y, type, modes, optional: true }));
+      // Retreat shelves overlap across the entire crest: down + jump always
+      // finds a floor, and the 95 pixel return jump remains within reach.
+      l.platforms.push({ x: 0, y: 245, w: 320, h: 18, retreat: true });
+      l.platforms.push({ x: 640, y: 245, w: 320, h: 18, retreat: true });
       return l;
     }
 

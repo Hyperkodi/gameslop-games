@@ -281,9 +281,12 @@
       // spillway route viewed from above rather than a thin side-view shelf.
       const inset=Math.min(42,Math.max(11,p.w*(.08+(1-near)*.12)));
       const rearY=p.y-(5+(1-near)*5),frontY=p.y+1,depth=7+near*7;
+      const bridge=p.w>=350,stone=p.w<=180&&!p.optional;
+      const deck=p.optional?'#948e6e':bridge?'#627f89':stone?'#91a69a':'#7fb4af';
+      const face=p.optional?'#695f49':bridge?'#354f5d':stone?'#647b70':'#426f73';
       shape(c,[[p.x-3,frontY+2],[p.x+p.w+3,frontY+2],[p.x+p.w-inset,frontY+depth],[p.x+inset,frontY+depth]],'#102f3a8c');
-      shape(c,[[p.x+inset,rearY],[p.x+p.w-inset,rearY],[p.x+p.w,frontY],[p.x,frontY]],'#7fb4af','#122f38');
-      shape(c,[[p.x,frontY],[p.x+p.w,frontY],[p.x+p.w-inset,frontY+depth],[p.x+inset,frontY+depth]],'#426f73','#143640');
+      shape(c,[[p.x+inset,rearY],[p.x+p.w-inset,rearY],[p.x+p.w,frontY],[p.x,frontY]],deck,'#122f38');
+      shape(c,[[p.x,frontY],[p.x+p.w,frontY],[p.x+p.w-inset,frontY+depth],[p.x+inset,frontY+depth]],face,'#143640');
       c.strokeStyle='#d3eee2';c.globalAlpha=.82;c.lineWidth=1.4;c.beginPath();c.moveTo(p.x+inset,rearY+.5);c.lineTo(p.x+p.w-inset,rearY+.5);c.stroke();
       // Slats and two thin drainage channels converge with the landing perspective.
       const lanes=Math.max(2,Math.floor(p.w/54));
@@ -296,6 +299,16 @@
         const x=p.x+p.w*i/4;c.fillRect(x-1,frontY+2,2,Math.max(2,depth-3));
       }
       c.globalAlpha=1;
+      if(bridge){
+        // Wide maintenance bridges have an exposed steel truss beneath the deck.
+        c.strokeStyle='#aac5bd';c.lineWidth=1;
+        for(let x=p.x+inset;x<p.x+p.w-inset-40;x+=48){c.beginPath();c.moveTo(x,frontY+2);c.lineTo(x+22,frontY+depth-1);c.lineTo(x+44,frontY+2);c.stroke();}
+      }else if(stone){
+        for(let i=0;i<3;i++){const x=p.x+inset+(p.w-inset*2)*i/3;shape(c,[[x,frontY],[x+10,frontY+3],[x+7,frontY+depth-2],[x-3,frontY+depth-3]],'#426659');}
+      }
+      if(p.optional){
+        for(let x=p.x+10;x<p.x+p.w-10;x+=22)rect(c,x,frontY,10,3,'#e6c67a');
+      }
       if(screenY>120){
         // Short rails at the close edge reinforce the direction of travel without
         // obstructing the player or changing the engine's collision surface.

@@ -55,8 +55,8 @@ test('bunker movement is bounded, defaults fire upward and jumping dodges',()=>{
   const e=game();e.state.status='clear';e.advance();const p=e.state.players[0];e.input(0,'fire',true);ticks(e,1);assert.ok(e.state.bullets.some(b=>b.team==='player'&&b.vy<0));e.input(0,'fire',false);e.input(0,'left',true);e.input(0,'down',true);ticks(e,300);assert.ok(p.x>=100&&p.y<=478);e.input(0,'left',false);e.input(0,'down',false);p.invincible=0;e.input(0,'jump',true);e.state.bullets.push(enemyBullet(p));const lives=p.lives;ticks(e,1);assert.equal(p.lives,lives);assert.ok(p.jumpTime>0);
 });
 test('platform route has no vertical step beyond jump height',()=>{
-  const l=buildLevel(2),route=l.platforms.filter(p=>!p.ground).sort((a,b)=>b.y-a.y);
-  let previous=l.platforms[0];for(const p of route){assert.ok(previous.y-p.y<=113);assert.ok(p.x<previous.x+previous.w+140&&p.x+p.w>previous.x-140);previous=p;}
+  const l=buildLevel(2),route=l.platforms.filter(p=>p.route).sort((a,b)=>b.y-a.y);
+  let previous=l.platforms[0];for(const p of route){assert.ok(previous.y-p.y>0&&previous.y-p.y<=100);assert.ok(Math.min(p.x+p.w,previous.x+previous.w)-Math.max(p.x,previous.x)>=24,'consecutive main landings should have a forgiving horizontal overlap');previous=p;}
 });
 test('expanded run stages are substantially longer with distributed, varied routes',()=>{
   // These are the campaign widths before the expansion. Keep the expectation
@@ -76,15 +76,16 @@ test('expanded run stages are substantially longer with distributed, varied rout
     assert.ok(new Set(encounters.map(e=>Math.min(4,Math.floor(e.x/l.width*5)))).size>=4,`${l.name} should distribute encounters across the route`);
   }
 });
-test('Spillway is a taller, safe switchback ascent with mixed encounters',()=>{
-  const previousHeight=1930,l=buildLevel(2),route=l.platforms.filter(p=>!p.ground).sort((a,b)=>b.y-a.y);
+test('Spillway is a varied, branching ascent with mixed encounters',()=>{
+  const previousHeight=1930,l=buildLevel(2),route=l.platforms.filter(p=>p.route).sort((a,b)=>b.y-a.y);
   assert.ok(l.height>=previousHeight*1.4,'Spillway should be materially taller than the earlier climb');
   assert.ok(route.length>=30,'Spillway should provide a long sequence of landing choices');
   assert.ok(route[route.length-1].y<=l.height*.12,'the route should reach the dam crest');
-  let previous=l.platforms.find(p=>p.ground),previousDirection=0,directionChanges=0;
+  let previous=l.platforms.find(p=>p.ground),previousDirection=0,directionChanges=0;const rises=new Set();
   for(const landing of route){
     const rise=previous.y-landing.y;
-    assert.ok(rise>0&&rise<=90,'each ascent step should stay comfortably inside the jump envelope');
+    rises.add(rise);
+    assert.ok(rise>0&&rise<=100,'each ascent step should stay comfortably inside the jump envelope');
     assert.ok(landing.x<previous.x+previous.w+140&&landing.x+landing.w>previous.x-140,'each landing should connect to the prior safe approach');
     const direction=Math.sign((landing.x+landing.w/2)-(previous.x+previous.w/2));
     if(direction&&previousDirection&&direction!==previousDirection)directionChanges++;
@@ -92,8 +93,101 @@ test('Spillway is a taller, safe switchback ascent with mixed encounters',()=>{
     previous=landing;
   }
   assert.ok(directionChanges>=6,'the climb should switch back instead of reading as a vertical ladder');
+  assert.ok(rises.size>=5,'the climb should vary its vertical spacing');
+  assert.ok(route.some(p=>p.w<=150)&&route.some(p=>p.w>=380&&p.w<960),'narrow steps should alternate with broad resting decks');
+  assert.ok(new Set(route.map(p=>p.w)).size>=10,'the main route should have varied landing widths');
   assert.equal(new Set(l.spawns.map(e=>e.kind)).size,3,'the ascent should mix enemy roles across its landings');
   assert.ok(new Set(l.spawns.map(e=>Math.floor((l.height-e.y)/350))).size>=5,'the ascent encounters should be spread through its height');
+});
+test('Spillway caches sit in reachable side alcoves and become scarcer by difficulty',()=>{
+  const l=buildLevel(2),route=l.platforms.filter(p=>p.route),alcoves=l.platforms.filter(p=>p.optional);
+  const reached=new Set(route);let changed=true;
+  while(changed){changed=false;for(const p of alcoves){if(reached.has(p))continue;for(const q of reached){const gap=Math.max(0,p.x-(q.x+q.w),q.x-(p.x+p.w));if(Math.abs(p.y-q.y)<=100&&gap<=120){reached.add(p);changed=true;break;}}}}
+  assert.ok(alcoves.length>=8,'side paths should have dedicated approach steps and alcoves');
+  assert.ok(alcoves.every(p=>reached.has(p)),'every optional alcove should connect to the ascent and permit a return');
+  for(const supply of l.supplies){
+    assert.equal(supply.optional,true);
+    assert.ok(alcoves.some(p=>p.y===supply.y+45&&supply.x>=p.x&&supply.x+24<=p.x+p.w),'each pickup should be supported by its optional alcove');
+    assert.ok(!route.some(p=>p.y===supply.y+45&&supply.x+36>p.x&&supply.x-12<p.x+p.w),'walking along a main landing should never force a pickup');
+  }
+  const guns=l.supplies.filter(s=>weapons[s.type]);
+  assert.equal(guns.some(s=>s.type==='G'),false,'no grenade launcher should be forced into the climbing route');
+  assert.equal(new Set(guns.map(s=>s.type)).size,5,'side caches should offer five different gun choices');
+  for(const [mode,count]of [['easy',5],['normal',3],['hard',1]])assert.equal(guns.filter(s=>s.modes.includes(mode)).length,count,mode+' authored gun count');
+});
+test('Spillway crest has continuous retreat coverage and a reachable return jump',()=>{
+  const l=buildLevel(2),crest=l.platforms.find(p=>p.route&&p.y===150);
+  assert.ok(crest&&crest.x===0&&crest.w===l.width,'the crest should provide a full boss platform');
+  const shelves=l.platforms.filter(p=>p.y>crest.y&&p.y<=crest.y+100).sort((a,b)=>a.x-b.x);
+  let covered=crest.x;for(const shelf of shelves){assert.ok(shelf.x<=covered,'retreat shelves must not leave a fall-through gap');covered=Math.max(covered,shelf.x+shelf.w);}
+  assert.ok(covered>=crest.x+crest.w,'down + jump should find a landing anywhere under the crest');
+});
+test('real input traverses the entire Spillway main route without collecting any gun',()=>{
+  for(const difficulty of ['easy','normal','hard']){
+    const e=game({difficulty});e.state.status='clear';e.advance();e.state.status='clear';e.advance();
+    const s=e.state,p=s.players[0],route=s.level.platforms.filter(landing=>landing.route).sort((a,b)=>b.y-a.y);
+    s.level.spawns=[];s.enemies=[];s.bullets=[];s.waveTime=-10000;p.invincible=10000;
+    ticks(e,5);assert.equal(p.grounded,true);const lives=p.lives;
+    let previous=s.level.platforms.find(landing=>landing.ground);
+    for(const landing of route){
+      // Walk to the shared approach, then use the game's actual jump, gravity,
+      // one-way collisions, pickup bounds, and camera to reach the next floor.
+      const overlapStart=Math.max(previous.x,landing.x),overlapEnd=Math.min(previous.x+previous.w,landing.x+landing.w);
+      const targetX=(overlapStart+overlapEnd-p.w)/2;
+      let walking=0;
+      while(Math.abs(p.x-targetX)>2&&walking++<300){e.input(0,'left',p.x>targetX);e.input(0,'right',p.x<targetX);ticks(e,1);}
+      e.input(0,'left',false);e.input(0,'right',false);
+      assert.ok(walking<300,`walk to y${landing.y} should finish in ${difficulty}`);
+      assert.equal(p.grounded,true,'each approach should remain on its landing');
+      e.input(0,'jump',true);ticks(e,1);e.input(0,'jump',false);
+      let airborne=0;while(!p.grounded&&airborne++<90)ticks(e,1);
+      assert.equal(p.y+p.h,landing.y,`real jump should reach y${landing.y} in ${difficulty}`);
+      assert.equal(p.weapon,'P','staying on the main ascent must never force a gun pickup');
+      assert.equal(p.holstered,null);
+      assert.equal(p.lives,lives,'the main route should not require a death or checkpoint respawn');
+      previous=landing;
+    }
+    assert.equal(p.y+p.h,150,'the traversal should reach the boss crest');
+    assert.equal(s.events.filter(event=>event.type==='pickup').length,0,'all authored supplies should be avoidable on the main route');
+  }
+});
+test('real jumps reach every Spillway side cache and return to the main ascent',()=>{
+  const journeys=[
+    ['M',[405,2465],[[705,2465]]],['L',[445,2045],[[275,1995],[40,1950]]],
+    ['T',[75,1610],[[430,1560],[735,1515]]],['H',[205,1000],[[35,1095]]],
+    ['A',[305,740],[[325,700],[40,660]]],['C',[180,2120],[[650,2205]]],
+    ['N',[330,1095],[[695,1015]]]
+  ];
+  for(const [type,start,branch]of journeys){
+    const e=game({difficulty:'easy'});e.state.status='clear';e.advance();e.state.status='clear';e.advance();
+    const s=e.state,p=s.players[0],platform=([x,y])=>s.level.platforms.find(floor=>floor.x===x&&floor.y===y);
+    const source=platform(start),path=branch.map(platform),supply=s.level.supplies.find(item=>item.type===type);
+    s.level.spawns=[];s.enemies=[];s.bullets=[];s.waveTime=-10000;
+    // Position only the starting fixture. Every approach, pickup and return
+    // after that uses ordinary inputs and collision handling.
+    Object.assign(p,{x:source.x+source.w/2-p.w/2,y:source.y-p.h,grounded:true,onGround:false,invincible:10000});
+    ticks(e,1);const lives=p.lives;
+    const steer=x=>{e.input(0,'left',p.x>x+2);e.input(0,'right',p.x<x-2);};
+    const stop=()=>{e.input(0,'left',false);e.input(0,'right',false);};
+    const walk=x=>{let count=0;while(Math.abs(p.x-x)>2&&count++<300){steer(x);ticks(e,1);}stop();assert.ok(count<300,type+' detour walk should finish');assert.equal(p.grounded,true,type+' detour walk should stay supported');};
+    const jump=(from,to,returning=false)=>{
+      const overlapStart=Math.max(from.x,to.x),overlapEnd=Math.min(from.x+from.w,to.x+to.w),overlap=overlapEnd>overlapStart;
+      let destination;
+      if(overlap){destination=(overlapStart+overlapEnd-p.w)/2;walk(destination);}
+      else{const right=to.x>from.x;walk(right?from.x+from.w-p.w:from.x);destination=right?to.x+8:to.x+to.w-p.w-8;}
+      e.input(0,'down',overlap&&to.y>from.y);steer(destination);e.input(0,'jump',true);ticks(e,1);e.input(0,'jump',false);e.input(0,'down',false);
+      let count=0;while(!p.grounded&&count++<120){steer(destination);ticks(e,1);}stop();
+      assert.ok(count<120,type+' detour jump should find a landing');
+      const landed=s.level.platforms.find(floor=>p.y+p.h===floor.y&&p.x+p.w>floor.x&&p.x<floor.x+floor.w);
+      assert.ok(landed&&(landed===to||(returning&&landed.route)),type+' should reach its detour floor or rejoin the main route');
+      assert.equal(p.lives,lives,type+' detour should not require a death or respawn');
+      return landed;
+    };
+    let current=source;for(const next of path)current=jump(current,next);
+    walk(supply.x);assert.ok(s.events.some(event=>event.type==='pickup'&&event.weapon===type),type+' should actually be collected');
+    for(const next of [...path.slice(0,-1).reverse(),source]){current=jump(current,next,true);if(current.route)break;}
+    assert.equal(current.route,true,type+' cache should permit a safe return to the ascent');
+  }
 });
 test('run-stage gaps are shorter than a full jump and do not contain spawns',()=>{for(let i=0;i<8;i++){const l=buildLevel(i);for(const[a,b]of l.gaps||[]){assert.ok(b-a<150);assert.ok(!l.spawns.some(e=>e.x>a&&e.x<b&&e.kind!=='drone'));}}});
 test('world entities remain bounded during extended gameplay',()=>{const e=game({difficulty:'assist'});e.state.players[0].invincible=1000;e.input(0,'fire',true);ticks(e,36000);assert.ok(e.state.bullets.length<100);assert.ok(e.state.enemies.length<30);assert.ok(e.state.effects.length<300);assert.ok(Number.isFinite(e.state.players[0].y));});

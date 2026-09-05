@@ -431,7 +431,7 @@
       if(s.boss&&s.status==='playing') {
         rect(244,23,472,35,'#0b1a24db');text(s.boss.name.toUpperCase(),480,38,11,'#f0d9b4','center');rect(260,45,440,5,'#49343a');rect(260,45,440*Math.max(0,s.boss.hp/s.boss.maxHp),5,'#ff6250');
       }
-      if(s.banner>0&&s.status==='playing'&&!s.boss) {rect(300,72,360,46,'#081c23ce');text(s.level.mode==='base'?'BREACH CHAMBER '+(s.room+1):s.level.name.toUpperCase(),480,94,17,'#f6ebd2','center');text(s.level.mode==='base'?'DESTROY THE RED CORES':'MOVE OUT  →',480,110,10,t.glow,'center');}
+      if(s.banner>0&&s.status==='playing'&&!s.boss) {rect(300,72,360,46,'#081c23ce');text(s.level.mode==='base'?'BREACH CHAMBER '+(s.room+1):s.level.name.toUpperCase(),480,94,17,'#f6ebd2','center');text(s.level.mode==='base'?'DESTROY THE RED CORES':s.level.mode==='climb'?'JUMP TO CLIMB · ↓ + JUMP TO DESCEND':'MOVE OUT  →',480,110,10,t.glow,'center');}
       if(s.level.mode==='run'&&s.status==='playing'&&!s.boss)text('→',922,282,24,'#e1cf9a','center');
     }
     return { draw, themes, mascot: hero, environment };
