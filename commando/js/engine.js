@@ -3,6 +3,7 @@
   const { buildLevel, levels } = typeof module !== 'undefined' ? require('./levels.js') : root.SlopCommando;
   const { mulberry32, fnv1a } = typeof module !== 'undefined' ? require('../../_kit/rng.js') : root.GameSlopKit;
   const W = 960, H = 540, STEP = 1 / 60;
+  const COYOTE_TIME = .1, JUMP_BUFFER_TIME = .12;
   const weapons = {
     P: { name: 'RIFLE', delay: .19, speed: 690, damage: 1 },
     M: { name: 'MACHINE GUN', delay: .09, speed: 780, damage: 1 },
@@ -37,7 +38,12 @@
     const state = { status: 'ready', seed: options.seed ?? 1978, tick: 0, elapsed: 0, score: 0, stage: 0, players: [], enemies: [], bullets: [], effects: [], pickups: [], inputLog: [], events: [], camera: { x: 0, y: 0 }, continues: 3, room: 0, boss: null, kills: 0 };
     function event(type, data = {}) { state.events.push({ type, ...data }); }
     const rules = () => difficultyRules[state.difficulty] || difficultyRules.normal;
-    function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
+    function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, dropHeld: false, jumpQueued: false, jumpDownQueued: false, dropQueued: false, jumpBuffer: 0, coyoteTime: 0, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
+    function resetMovementInput(p) {
+      p.held = {}; p.jumpHeld = false; p.swapHeld = false; p.dropHeld = false;
+      p.jumpQueued = false; p.jumpDownQueued = false; p.dropQueued = false;
+      p.jumpBuffer = 0; p.coyoteTime = 0;
+    }
     function equip(p, type) {
       p.weaponLevels ||= {P:1};
       if (type === p.weapon || (rules().holster && type === p.holstered)) {
@@ -84,14 +90,14 @@
       state.camera = { x: 0, y: state.level.mode === 'climb' ? state.level.height - H : 0 };
       state.checkpoint = { x: 110, y: state.level.mode === 'climb' ? state.level.height - 94 : 410 };
       state.spawned = {}; state.stageTime = 0; state.waveTime = 0; state.banner = 3.4; state.roomTransition=0; state.nukeFlash=0;
-      state.players.forEach((p, i) => { Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, held: {}, grounded: false, jumpHeld: false, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
+      state.players.forEach((p, i) => { resetMovementInput(p); Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, grounded: false, jumpTime: 0, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
       if (state.level.mode === 'base') loadRoom();
       event('stage', { stage: index });
     }
     function loadRoom() {
       state.enemies = []; state.bullets = []; state.pickups = [];
       for (let i = 0; i < 3; i++) state.enemies.push({ id: id++, kind: 'core', x: 220 + i * 250, y: 125, w: 42, h: 50, hp: 7 + state.stage, maxHp: 7 + state.stage, cooldown: 1.3 + i * .5 });
-      state.players.forEach((p, i) => { p.x = 390 + i * 80; p.y = 420; p.aimX = 0; p.aimY = -1; p.invincible = 2; });
+      state.players.forEach((p, i) => { resetMovementInput(p); p.jumpTime = 0; p.x = 390 + i * 80; p.y = 420; p.aimX = 0; p.aimY = -1; p.invincible = 2; });
       state.waveTime = 0;
       // Each bunker cache introduces a distinct part of the arsenal across both assaults.
       const cacheWeapons = state.stage===1?['T','L','M']:['A','F','I'];
@@ -110,10 +116,14 @@
     }
     function input(player, action, down) {
       const p = state.players[player]; if (!p || state.status !== 'playing') return;
-      if (!['left', 'right', 'up', 'down', 'fire', 'jump', 'swap'].includes(action) || p.held[action] === down) return;
+      if (!['left', 'right', 'up', 'down', 'fire', 'jump', 'swap', 'drop'].includes(action) || p.held[action] === down) return;
       p.held[action] = down; state.inputLog.push({ tick: state.tick, player, action, down });
+      // Capture presses here as well as held state so a quick tap can finish
+      // between physics ticks without losing its jump or changing a drop intent.
+      if (action === 'jump' && down) { p.jumpQueued = true; p.jumpDownQueued = !!p.held.down; }
+      if (action === 'drop' && down) p.dropQueued = true;
     }
-    function release() { state.players.forEach(p => { p.held = {}; p.jumpHeld = false; p.swapHeld=false; }); }
+    function release() { state.players.forEach(resetMovementInput); }
     function pause() { if (state.status === 'playing') { state.status = 'paused'; release(); } else if (state.status === 'paused') state.status = 'playing'; }
     function advance() {
       if (state.status !== 'clear') return;
@@ -176,7 +186,7 @@
     function damagePlayer(p, falling = false) {
       if (p.lives <= 0 || (!falling && (p.invincible > 0 || p.shield > 0 || (state.level.mode === 'base' && p.jumpTime > 0)))) return;
       p.lives--; burst(p.x + 15, p.y + 20, '#ff433c', 22); event('death');
-      resetEquipment(p);
+      resetEquipment(p); resetMovementInput(p); p.jumpTime = 0;
       if (p.lives > 0) {
         const c = state.checkpoint;
         p.x = c.x + p.id * 35; p.y = c.y; p.vy = 0; p.invincible = 3; p.grounded = false;
@@ -227,25 +237,39 @@
       if(p.held.swap&&!p.swapHeld&&rules().holster&&p.holstered){[p.weapon,p.holstered]=[p.holstered,p.weapon];event('swap');}
       p.swapHeld=!!p.held.swap;
       const dx = Number(!!p.held.right) - Number(!!p.held.left), dy = Number(!!p.held.down) - Number(!!p.held.up);
-      const jumping = p.held.jump && !p.jumpHeld; p.jumpHeld = !!p.held.jump;
+      const jumping = p.jumpQueued || (p.held.jump && !p.jumpHeld);
+      const downJump = jumping && (p.jumpQueued ? p.jumpDownQueued : !!p.held.down);
+      const dropping = p.dropQueued || (p.held.drop && !p.dropHeld);
+      p.jumpQueued = false; p.jumpDownQueued = false; p.dropQueued = false;
+      p.jumpHeld = !!p.held.jump; p.dropHeld = !!p.held.drop;
+      p.jumpBuffer = Math.max(0, (p.jumpBuffer || 0) - dt);
+      p.coyoteTime = Math.max(0, (p.coyoteTime || 0) - dt);
       p.prone = !base && p.grounded && !!p.held.down && !jumping;
       if (dx) p.face = dx;
       p.vx = dx * (p.prone ? 0 : 225);
       if (base) {
         const scale = dx && dy ? Math.SQRT1_2 : 1;
         p.x = clamp(p.x + p.vx * dt * scale, 100, 830); p.y = clamp(p.y + dy * 205 * dt * scale, 260, 478);
-        if (jumping && p.jumpTime <= 0) { p.jumpTime = .6; event('jump'); }
+        p.jumpBuffer = 0; p.coyoteTime = 0;
+        if (jumping && !dropping && p.jumpTime <= 0) { p.jumpTime = .6; event('jump'); }
       } else {
-        if (jumping && p.grounded) {
-          const support=l.platforms.find(platform=>Math.abs(p.y+p.h-platform.y)<=1&&p.x+p.w>platform.x&&p.x<platform.x+platform.w);
-          if (p.held.down && support && !support.ground) {
+        const wasGrounded = p.grounded;
+        let leftByAction = false;
+        const support = p.grounded && l.platforms.find(platform=>Math.abs(p.y+p.h-platform.y)<=1&&p.x+p.w>platform.x&&p.x<platform.x+platform.w);
+        if (dropping || downJump) {
+          // A downward request never waits for a landing and must not become a
+          // buffered jump or leave coyote time available to undo the descent.
+          p.jumpBuffer = 0; p.coyoteTime = 0;
+          if (support && !support.ground) {
             // Move the feet past this one-way surface. Other platforms remain solid,
             // including close shelves immediately below the boss arena.
-            p.y += 3; p.vy = 90; event('drop');
+            p.y += 3; p.vy = 90; p.grounded = false; leftByAction = true; event('drop');
           }
-          else { p.vy = -510; event('jump'); }
-          p.grounded = false;
+          else if (!dropping && p.grounded) p.jumpBuffer = JUMP_BUFFER_TIME;
         }
+        else if (jumping) p.jumpBuffer = JUMP_BUFFER_TIME;
+        const launch = () => { p.vy = -510; p.grounded = false; p.jumpBuffer = 0; p.coyoteTime = 0; leftByAction = true; event('jump'); };
+        if (p.jumpBuffer > 1e-9 && (p.grounded || p.coyoteTime > 1e-9)) launch();
         p.x = clamp(p.x + p.vx * dt, state.camera.x, l.width - p.w);
         const feet = p.y + p.h; p.vy += 1150 * dt; p.y += p.vy * dt; p.grounded = false;
         if (p.vy >= 0) {
@@ -254,10 +278,12 @@
             if (p.x + p.w > platform.x && p.x < platform.x + platform.w && feet <= platform.y + 1 && p.y + p.h >= platform.y && (!landing||platform.y<landing.y)) landing=platform;
           }
           if(landing) {
-            p.y = landing.y - p.h; p.vy = 0; p.grounded = true; p.onGround = !!landing.ground;
+            p.y = landing.y - p.h; p.vy = 0; p.grounded = true; p.onGround = !!landing.ground; p.coyoteTime = 0;
             if (l.mode === 'climb' && landing.y < state.checkpoint.y + p.h) state.checkpoint = { x: landing.x + 45, y: landing.y - p.h };
+            if (p.jumpBuffer > 1e-9) launch();
           }
         }
+        if (wasGrounded && !p.grounded && !leftByAction) p.coyoteTime = COYOTE_TIME;
         if (p.y > l.height + 40 || (l.mode === 'climb' && p.y > state.camera.y + H + 70)) damagePlayer(p, true);
       }
       if (p.held.fire && p.cooldown <= 0) fire(p);

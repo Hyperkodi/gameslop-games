@@ -21,7 +21,11 @@ Hold a phone in landscape for the largest playfield. **Expand** requests browser
 | Pause | Escape / P | Shared | Start |
 | Sound | M | Shared | Onscreen button |
 
-Touch supports simultaneous movement, jump, fire, and a separate **SWAP** button. Down crouches in side-scrolling stages; down + jump drops through a ledge. In bunker stages, move on the overhead floor, fire upward toward cores, and jump to dodge shots.
+On mobile, drag anywhere on the circular thumbstick to move or aim. **AUTO FIRE** starts enabled for touch play, so you can move with one thumb and use the larger **JUMP** button with the other. The toggle remembers your preference; **FIRE** remains available for manual firing. Player 1 keyboard and gamepad input turn off touch auto-fire until you touch the game again; Player 2 can keep playing alongside your touch controls.
+
+**SWAP** exchanges carried guns, and **DROP** descends one ledge per tap without needing a down + jump combination. Drop is disabled in overhead bunker stages and does nothing on solid ground. Down crouches in side-scrolling stages; down + jump still drops through a ledge. In bunker stages, move on the overhead floor, fire upward toward cores, and jump to dodge shots.
+
+Jump accepts a press up to 100ms after stepping off a ledge or 120ms before landing. Quick taps register even between simulation ticks. Rotation, pause, and backgrounding release held controls.
 
 In Spillway, hold Down and press Jump to descend one ledge; release Jump before dropping again. The camera follows your retreat. The boss crest has safe landing shelves directly below its full width, and you can jump back up.
 
@@ -90,6 +94,7 @@ Audio starts after a player gesture. Pause and backgrounding stop music and effe
 - `js/weapon-art.js`: shared weapon, pickup, and guide illustrations.
 - `js/mascot.js`: mascot poses, held/holstered weapons, cloak translucency, and co-op tint.
 - `js/game.js`: HUD, keyboard/gamepad/touch input, fullscreen, audio, and local scores.
+- `js/touch.js`: full-area thumbstick, direction dead zones, touch contacts, and remembered auto-fire preference.
 - `js/audio.js`: recorded weapon/effect routing, streamed level music, mute/pause lifecycle, and synthesized fallback cues.
 - `skin/gameslop/`: branding and bundled image assets. Keep `skin.json` and its browser copy `skin.js` synchronized.
 
@@ -104,3 +109,5 @@ The repository's `tools/cdp-drivers/commando-qa.js` tests desktop/mobile, touch,
 `tools/cdp-drivers/commando-audio-qa.js` verifies actual MP3 decoding and playback, weapon/impact routing, all supplied level tracks, mute/pause/resume, mobile restart, and bounded effect voices.
 
 `tools/cdp-drivers/commando-spillway-qa.js` checks reduced optional gun caches, keyboard and mobile down+jump, safe boss-platform retreat and return, and downward camera movement.
+
+`tools/cdp-drivers/commando-touch-qa.js` exercises the thumbstick, auto-fire, simultaneous touch actions, dedicated Drop, input cancellation, rotation, fullscreen, and control sizing across phone viewports.

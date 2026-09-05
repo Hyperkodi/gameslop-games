@@ -31,11 +31,15 @@
   const sources = { keyboard: new Set(), touch: new Map(), pad: new Set() };
   const keymap = { ArrowLeft:[0,'left'],ArrowRight:[0,'right'],ArrowUp:[0,'up'],ArrowDown:[0,'down'],KeyZ:[0,'jump'],Space:[0,'jump'],KeyX:[0,'fire'],KeyC:[0,'fire'],KeyV:[0,'swap'],KeyJ:[1,'swap'],KeyA:[1,'left'],KeyD:[1,'right'],KeyW:[1,'up'],KeyS:[1,'down'],KeyG:[1,'jump'],KeyH:[1,'fire'] };
   const storage = { get(k,f) { try { return localStorage.getItem(k) ?? f; } catch (_) { return f; } }, set(k,v) { try { localStorage.setItem(k,String(v)); } catch (_) { /* Offline/private browsing remains playable. */ } } };
+  const touch=G.createTouchControls({element:document.querySelector('.touch-controls'),cabinet,getState:()=>engine.state,storage,unlock:()=>audio.unlock(),
+    onChange(id,actions){if(actions)sources.touch.set(id,actions);else sources.touch.delete(id);syncInputs();}});
+  cabinet.addEventListener('pointerdown',event=>touch.notePointer(event),true);
   function bestKey() { return 'gameslop:commando:gameslop:'+engine.state.difficulty+':'+engine.state.players.length+':best'; }
-  function clearInput() { sources.keyboard.clear();sources.touch.clear();sources.pad.clear();engine.release();document.querySelectorAll('.pressed').forEach(el=>el.classList.remove('pressed')); }
+  function clearInput() { sources.keyboard.clear();sources.touch.clear();sources.pad.clear();touch.reset();engine.release();document.querySelectorAll('.pressed').forEach(el=>el.classList.remove('pressed')); }
   function syncInputs() {
     const held = new Set([...[...sources.keyboard].map(code=>keymap[code].join(':')),...[...sources.touch.values()].flat(),...sources.pad]);
-    engine.state.players.forEach((p,i) => ['left','right','up','down','jump','fire','swap'].forEach(action=>engine.input(i,action,held.has(i+':'+action))));
+    if(touch.shouldAutoFire())held.add('0:fire');
+    engine.state.players.forEach((p,i) => ['left','right','up','down','jump','fire','swap','drop'].forEach(action=>engine.input(i,action,held.has(i+':'+action))));
   }
   function start() {
     clearInput();audio.unlock();engine.start({ players, difficulty: $('difficulty').value });
@@ -67,6 +71,7 @@
     $('p1-weapon').textContent=G.weapons[p.weapon].name+' '+G.weaponTier(p)+'/5';
     $('p1-power').textContent=[p.cloak>0?'CLOAK '+Math.ceil(p.cloak)+'s':'',p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':'',p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'',p.holstered?'HOLSTER: '+G.weapons[p.holstered].name+' '+(p.weaponLevels[p.holstered]||1)+'/5':''].filter(Boolean).join(' · ');
     const swapButton=document.querySelector('[data-action="swap"]');swapButton.disabled=s.difficulty==='hard'||!p.holstered;swapButton.textContent=s.difficulty==='hard'?'1 GUN':'SWAP';
+    document.querySelector('[data-action="drop"]').disabled=s.level.mode==='base';
     if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
     else{p2Power.textContent='';$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
     $('pause').disabled=title||!['playing','paused'].includes(s.status);
@@ -94,6 +99,7 @@
     const pads=navigator.getGamepads?Array.from(navigator.getGamepads()).filter(Boolean).slice(0,2):[];
     pads.forEach((pad,i)=>{
       const button=n=>!!pad.buttons[n]?.pressed,actions={left:button(14)||pad.axes[0]<-.3,right:button(15)||pad.axes[0]>.3,up:button(12)||pad.axes[1]<-.3,down:button(13)||pad.axes[1]>.3,jump:button(0),fire:button(2)||button(7)||button(1),swap:button(3)};
+      if(i===0&&(Object.values(actions).some(Boolean)||button(9)))touch.usePhysicalControls();
       Object.entries(actions).forEach(([a,down])=>{if(down)sources.pad.add(i+':'+a);});if(button(9))startDown=true;
     });
     if(startDown&&!lastGamepadStart){if(engine.state.status==='ready')start();else if(engine.state.status==='playing')togglePause();else overlayAction();}lastGamepadStart=startDown;
@@ -112,30 +118,19 @@
   document.addEventListener('keydown',e=>{
     if(showingDossier||editable(e.target)||e.ctrlKey||e.metaKey||e.altKey)return;
     if(e.code==='Space'&&e.target.tagName==='BUTTON')return;
-    const mapped=keymap[e.code];if(mapped){e.preventDefault();sources.keyboard.add(e.code);}
+    const mapped=keymap[e.code];if(mapped?.[0]===0||['Enter','Escape','KeyP'].includes(e.code))touch.usePhysicalControls();
+    if(mapped){e.preventDefault();sources.keyboard.add(e.code);syncInputs();}
     if(e.repeat)return;
     if(e.code==='Escape'||e.code==='KeyP'){e.preventDefault();togglePause();}
     if(e.code==='KeyM')toggleMute();
     if(e.code==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();if(engine.state.status==='ready')start();else if(engine.state.status!=='playing')overlayAction();}
   });
-  document.addEventListener('keyup',e=>{const mapped=keymap[e.code];if(mapped){e.preventDefault();sources.keyboard.delete(e.code);}});
-  document.querySelectorAll('.action-buttons [data-action]').forEach(btn=>{
-    btn.addEventListener('pointerdown',e=>{e.preventDefault();if(engine.state.status!=='playing')return;audio.unlock();btn.setPointerCapture(e.pointerId);sources.touch.set(e.pointerId,'0:'+btn.dataset.action);btn.classList.add('pressed');});
-    const up=e=>{sources.touch.delete(e.pointerId);btn.classList.remove('pressed');};btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('lostpointercapture',up);btn.addEventListener('contextmenu',e=>e.preventDefault());
-  });
-  // A sliding thumb on the D-pad supports diagonals without two fingers.
-  const dpad=document.querySelector('.dpad');
-  function steer(e){
-    const r=dpad.getBoundingClientRect(),dx=(e.clientX-r.x-r.width/2)/(r.width/2),dy=(e.clientY-r.y-r.height/2)/(r.height/2),actions=[];
-    if(dx<-.25)actions.push('0:left');if(dx>.25)actions.push('0:right');if(dy<-.25)actions.push('0:up');if(dy>.25)actions.push('0:down');
-    sources.touch.set(e.pointerId,actions);dpad.querySelectorAll('button').forEach(b=>b.classList.toggle('pressed',actions.includes('0:'+b.dataset.action)));
-  }
-  dpad.addEventListener('pointerdown',e=>{e.preventDefault();if(engine.state.status!=='playing')return;dpad.setPointerCapture(e.pointerId);steer(e);});
-  dpad.addEventListener('pointermove',e=>{if(dpad.hasPointerCapture(e.pointerId))steer(e);});
-  const releasePad=e=>{sources.touch.delete(e.pointerId);dpad.querySelectorAll('button').forEach(b=>b.classList.remove('pressed'));};
-  dpad.addEventListener('pointerup',releasePad);dpad.addEventListener('pointercancel',releasePad);dpad.addEventListener('lostpointercapture',releasePad);dpad.addEventListener('contextmenu',e=>e.preventDefault());
+  document.addEventListener('keyup',e=>{const mapped=keymap[e.code];if(mapped){e.preventDefault();sources.keyboard.delete(e.code);syncInputs();}});
   function backgroundPause(){clearInput();if(engine.state.status==='playing'){engine.pause();updateUI();}}
   window.addEventListener('blur',backgroundPause);document.addEventListener('visibilitychange',()=>{if(document.hidden)backgroundPause();});
+  // Rotation/fullscreen can move controls away from the fingers holding them.
+  window.addEventListener('resize',clearInput);
+  screen.orientation?.addEventListener?.('change',clearInput);
   $('crt').checked=storage.get('gameslop:commando:crt','1')==='1';
   function setCRT(){document.querySelector('.scanlines').hidden=!$('crt').checked;storage.set('gameslop:commando:crt',$('crt').checked?'1':'0');}
   $('crt').addEventListener('change',setCRT);setCRT();
@@ -159,6 +154,6 @@
   $('howto').addEventListener('click',()=>{resumeAfterDossier=engine.state.status==='playing';backgroundPause();showingDossier=true;$('dossier').showModal();});
   $('close-dossier').addEventListener('click',()=>$('dossier').close());
   $('dossier').addEventListener('close',()=>{showingDossier=false;if(resumeAfterDossier&&engine.state.status==='paused')engine.pause();updateUI();});
-  if(params.get('debug')==='1')window.__gameslop={engine,renderer,audio};
+  if(params.get('debug')==='1')window.__gameslop={engine,renderer,audio,touch};
   document.body.dataset.ready='1';updateUI();requestAnimationFrame(frame);
 })();
