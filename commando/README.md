@@ -67,6 +67,14 @@ The outdoor run stages span 6,600px with biome-specific ledges, gaps, hazards, a
 
 Both bunker stages use a consistent overhead floor and low walls. Destroying cores does not pan or replace the background. Chamber changes use a brief fade, retaining the same floor coordinates. Outdoor stages retain seven stitched scrolling scenery panels.
 
+## Audio
+
+The supplied MP3s in `Soundtrack/` play and loop for their matching stages: Jungle, Bunker, Reactor, Snow, Foundry, Cave, and Alien. Spillway's soundtrack is pending; stage 3 currently plays effects only. Add its filename to slot 2 of `audioTracks` in `js/audio.js` when it arrives.
+
+The recordings in `Sound Effects/` cover machine gun, spread, laser, flame, grenade launcher, rocket launcher, and wave cannon firing; grenade and rocket detonations; barrier activation; and boss destruction. Other actions and weapons retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Short effects are cached and concurrent voices are capped for rapid fire and co-op. Music streams one level at a time instead of downloading the entire soundtrack at startup.
+
+Audio starts after a player gesture. Pause and backgrounding stop music and effect tails; resume continues the track. Sound Off mutes both channels and remembers the preference. New runs and stage changes restart the appropriate track, while bunker room changes leave it playing. If an effect fails to load, a synthesized cue keeps that action audible.
+
 ## Implementation
 
 - `js/engine.js`: deterministic 60 Hz simulation, difficulty, arsenal, upgrades, cloak/nuke effects, enemy behavior, and input replay.
@@ -76,6 +84,7 @@ Both bunker stages use a consistent overhead floor and low walls. Destroying cor
 - `js/weapon-art.js`: shared weapon, pickup, and guide illustrations.
 - `js/mascot.js`: mascot poses, held/holstered weapons, cloak translucency, and co-op tint.
 - `js/game.js`: HUD, keyboard/gamepad/touch input, fullscreen, audio, and local scores.
+- `js/audio.js`: recorded weapon/effect routing, streamed level music, mute/pause lifecycle, and synthesized fallback cues.
 - `skin/gameslop/`: branding and bundled image assets. Keep `skin.json` and its browser copy `skin.js` synchronized.
 
 `?seed=42` selects a replay seed. `?debug=1` exposes `window.__gameslop.{engine,renderer}`. The existing optional game-over bridge and local best-score storage remain supported.
@@ -85,3 +94,5 @@ Both bunker stages use a consistent overhead floor and low walls. Destroying cor
 Run `node --test` inside `games/commando`. The suite covers weapons at all five tiers, holster behavior, progression across loss and continues, co-op isolation, cloak tracking and expiry, nuke screen bounds/boss immunity, mode-specific loot/enemies, safe routes, campaign victory, and scenery coverage.
 
 The repository's `tools/cdp-drivers/commando-qa.js` tests desktop/mobile, touch, pause, fullscreen and fallback. `tools/cdp-drivers/commando-v4-qa.js` checks all eight themed enemies, stationary bunker floors during core destruction, tier-preserving keyboard swaps, mobile swaps and non-overlapping controls, and Hard's disabled holster. Chrome device emulation is automated; physical device testing remains manual.
+
+`tools/cdp-drivers/commando-audio-qa.js` verifies actual MP3 decoding and playback, weapon/impact routing, all supplied level tracks, mute/pause/resume, mobile restart, and bounded effect voices.

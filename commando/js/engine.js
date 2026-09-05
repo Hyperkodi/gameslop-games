@@ -80,7 +80,7 @@
       state.spawned = {}; state.stageTime = 0; state.waveTime = 0; state.banner = 3.4; state.roomTransition=0; state.nukeFlash=0;
       state.players.forEach((p, i) => { Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, held: {}, grounded: false, jumpHeld: false, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
       if (state.level.mode === 'base') loadRoom();
-      event('stage');
+      event('stage', { stage: index });
     }
     function loadRoom() {
       state.enemies = []; state.bullets = []; state.pickups = [];
@@ -129,7 +129,7 @@
     }
     function awardEnemyKill(e) {
       burst(e.x + e.w / 2, e.y + e.h / 2, '#ff923d', e.kind === 'boss' ? 70 : 20);
-      state.kills++; addScore(e.kind === 'boss' ? 5000 : e.kind === 'core' ? 500 : 150); event('explosion');
+      state.kills++; addScore(e.kind === 'boss' ? 5000 : e.kind === 'core' ? 500 : 150); event('explosion', { kind: e.kind });
       if (e.kind === 'boss') { state.status = 'clear'; state.bullets = []; release(); event('clear'); }
       else if (e.kind !== 'core' && !state.detonating && rng() < rules().dropChance) {
         const types=weaponDropTypes.filter(t=>rules().nukes||t!=='N');
@@ -159,6 +159,7 @@
     function explodeProjectile(b, targets, directTarget) {
       if (b.exploded || !b.splash) return;
       b.exploded = true;
+      event('impact', { weapon: b.weapon });
       burst(b.x, b.y, b.weapon === 'G' ? '#ff9b42' : '#ff5c45', 16);
       for (const e of targets) {
         if (e === directTarget || e.hp <= 0) continue;
@@ -195,7 +196,7 @@
           splash: (w.splash || 0)*(1+rank*.12), splashDamage: (w.splashDamage || 0)*(1+rank*.3), pierce: !!w.pierce, hits: [], chain:(w.chain||0)+(w.chain?rank:0), slow:(w.slow||0)*(1+rank*.2)
         });
       }
-      p.cooldown = w.delay * (1-rank*.075) * (p.rapid > 0 ? .65 : 1); event('shot');
+      p.cooldown = w.delay * (1-rank*.075) * (p.rapid > 0 ? .65 : 1); event('shot', { weapon: p.weapon, player: p.id });
     }
     function enemyShot(e, target, offset = 0, speed = 180) {
       if(!target || target.cloak>0)return;

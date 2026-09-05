@@ -23,17 +23,8 @@
     const c=canvas.getContext('2d');c.translate(7,31);c.scale(1.35,1.35);
     G.createWeaponArt(c,window.SlopCommandoSkin.weapons).draw(canvas.dataset.pickupIcon);
   });
-  const audio = GameSlopKit.createAudio({
-    shot: [[180,.045,'square',.018,0,70]], jump: [[160,.11,'square',.025,0,480]],
-    explosion: [[75,.17,'sawtooth',.05,0,25],[130,.12,'triangle',.035,0,30]],
-    death: [[240,.22,'sawtooth',.04,0,35]], pickup: [[440,.07,'square',.04],[660,.08,'square',.04,.07],[880,.1,'square',.04,.14]],
-    cannon: [[62,.18,'sawtooth',.035,0,30]], boss: [[110,.2,'square',.045],[130,.2,'square',.045,.22],[110,.4,'square',.045,.44]],
-    stage: [[220,.1,'square',.035],[330,.1,'square',.035,.1],[440,.18,'square',.035,.2]],
-    clear: [[330,.12,'square',.04],[440,.12,'square',.04,.14],[550,.12,'square',.04,.28],[660,.35,'square',.04,.42]],
-    life: [[660,.12,'triangle',.05],[880,.18,'triangle',.05,.12]],
-    beat: [[73.42,.12,'triangle',.024]], beat2: [[98,.12,'triangle',.024]], lead: [[293.66,.09,'square',.009]], lead2: [[349.23,.1,'square',.009]],
-  });
-  let players = 1, lastStatus = '', last = 0, accumulator = 0, best = 0, beat = -1, lastGamepadStart = false, posted = false, showingDossier = false;
+  const audio = G.createAudio();
+  let players = 1, lastStatus = '', last = 0, accumulator = 0, best = 0, lastGamepadStart = false, posted = false, showingDossier = false;
   const cabinet = document.querySelector('.cabinet');
   // Controls must be descendants of the fullscreen element on mobile.
   cabinet.append(document.querySelector('.touch-controls'));
@@ -48,14 +39,14 @@
   }
   function start() {
     clearInput();audio.unlock();engine.start({ players, difficulty: $('difficulty').value });
-    best=Number(storage.get(bestKey(),0))||0;posted=false;beat=-1;$('game').focus({preventScroll:true});updateUI();
+    best=Number(storage.get(bestKey(),0))||0;posted=false;$('game').focus({preventScroll:true});updateUI();
   }
   function setTitle() {
     clearInput(); engine.state.status='ready'; engine.state.level=G.buildLevel(0);engine.state.stage=0;engine.state.camera={x:0,y:0};engine.state.boss=null;
     engine.state.enemies=[];engine.state.bullets=[];engine.state.pickups=[];engine.state.effects=[];
     updateUI();$('start').focus({preventScroll:true});
   }
-  function togglePause() { if (engine.state.status==='playing'||engine.state.status==='paused') { clearInput();engine.pause();updateUI(); } }
+  function togglePause() { audio.unlock(); if (engine.state.status==='playing'||engine.state.status==='paused') { clearInput();engine.pause();updateUI(); } }
   function toggleMute() { audio.toggle();$('sound').textContent=audio.muted?'SOUND OFF':'SOUND ON';$('sound').setAttribute('aria-pressed',String(audio.muted)); }
   function overlayAction() {
     const s=engine.state;audio.unlock();clearInput();
@@ -66,6 +57,7 @@
     updateUI();$('game').focus({preventScroll:true});
   }
   function updateUI() {
+    audio.update(engine.state, engine.drainEvents());
     const s=engine.state,active=s.status==='playing',title=s.status==='ready',isOverlay=['paused','clear','gameover','victory'].includes(s.status);
     $('title-screen').hidden=!title;$('hud').hidden=title;$('overlay').hidden=!isOverlay;
     $('mission').textContent=String(s.stage+1).padStart(2,'0');$('mission-name').textContent=s.level.name.toUpperCase();
@@ -111,10 +103,7 @@
     if(!showingDossier)gamepads();syncInputs();
     if(engine.state.status==='playing') {
       accumulator+=elapsed;while(accumulator>=G.STEP){engine.tick();accumulator-=G.STEP;}
-      const b=Math.floor(engine.state.elapsed*5);if(b!==beat){beat=b;audio.play(b%8<4?'beat':'beat2');if(b%2===0)audio.play(b%8<4?'lead':'lead2');}
     } else accumulator=0;
-    let shot=false;
-    for(const e of engine.drainEvents()){if(e.type==='shot'){if(shot)continue;shot=true;}audio.play(e.type);}
     updateUI();renderer.draw(engine.state,{time:now/1000,attract:engine.state.status==='ready'});requestAnimationFrame(frame);
   }
   document.querySelectorAll('[data-players]').forEach(btn=>btn.addEventListener('click',()=>{players=Number(btn.dataset.players);document.querySelectorAll('[data-players]').forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn));});}));
@@ -170,6 +159,6 @@
   $('howto').addEventListener('click',()=>{resumeAfterDossier=engine.state.status==='playing';backgroundPause();showingDossier=true;$('dossier').showModal();});
   $('close-dossier').addEventListener('click',()=>$('dossier').close());
   $('dossier').addEventListener('close',()=>{showingDossier=false;if(resumeAfterDossier&&engine.state.status==='paused')engine.pause();updateUI();});
-  if(params.get('debug')==='1')window.__gameslop={engine,renderer};
+  if(params.get('debug')==='1')window.__gameslop={engine,renderer,audio};
   document.body.dataset.ready='1';updateUI();requestAnimationFrame(frame);
 })();
