@@ -403,7 +403,26 @@
       for(const e of s.effects){c.globalAlpha=Math.min(1,e.ttl*5);if(e.arc){c.strokeStyle=e.color;c.lineWidth=2;c.beginPath();c.moveTo(e.x,e.y);c.lineTo((e.x+e.x2)/2+5,(e.y+e.y2)/2-8);c.lineTo(e.x2,e.y2);c.stroke();}else rect(e.x,e.y,4,4,e.color);}c.globalAlpha=1;
       c.restore();
       if(s.roomTransition>0){c.fillStyle='rgba(4,12,19,'+Math.min(.85,s.roomTransition/.65)+')';c.fillRect(0,0,960,540);}
-      if(s.nukeFlash>0){c.fillStyle='rgba(203,246,255,'+(s.nukeFlash*.65)+')';c.fillRect(0,0,960,540);c.strokeStyle='#d4fffa';c.lineWidth=8;c.beginPath();c.arc(480,270,(.7-s.nukeFlash)*1800,0,Math.PI*2);c.stroke();}
+      if(s.nukeFlash>0){
+        // A nuke is a screen-clearing moment: a white-hot detonation that fills the frame,
+        // then a huge blast front and shock rings race beyond the visible battlefield.
+        const duration=1.2, progress=Math.max(0,Math.min(1,1-s.nukeFlash/duration));
+        const flash=progress<.16?.98-(progress/.16)*.18:Math.pow(1-progress,1.65)*.8;
+        const radius=70+progress*1160, core=Math.max(0,1-progress*2.4)*210;
+        c.save();c.globalCompositeOperation='screen';
+        c.fillStyle='rgba(255,255,255,'+flash+')';c.fillRect(0,0,960,540);
+        const blast=c.createRadialGradient(480,270,0,480,270,radius);
+        blast.addColorStop(0,'rgba(255,255,255,'+Math.min(1,.95+flash*.2)+')');
+        blast.addColorStop(Math.min(.78,Math.max(.08,core/radius)),'rgba(255,248,214,'+(1-progress)*.92+')');
+        blast.addColorStop(.88,'rgba(255,207,116,'+(1-progress)*.48+')');blast.addColorStop(1,'rgba(255,255,255,0)');
+        c.fillStyle=blast;c.beginPath();c.arc(480,270,radius,0,Math.PI*2);c.fill();
+        c.strokeStyle='rgba(255,255,255,'+(1-progress)*.95+')';c.lineWidth=18*(1-progress)+3;
+        c.beginPath();c.arc(480,270,radius,0,Math.PI*2);c.stroke();
+        c.strokeStyle='rgba(255,238,174,'+(1-progress)*.65+')';c.lineWidth=6;
+        c.beginPath();c.arc(480,270,Math.max(0,radius-95),0,Math.PI*2);c.stroke();
+        for(let i=0;i<20;i++){const angle=i*Math.PI*2/20+progress*.45,inner=Math.max(0,radius*.12),outer=radius*(.72+(i%3)*.12);c.strokeStyle='rgba(255,255,255,'+(1-progress)*.42+')';c.lineWidth=2+(i%3);c.beginPath();c.moveTo(480+Math.cos(angle)*inner,270+Math.sin(angle)*inner);c.lineTo(480+Math.cos(angle)*outer,270+Math.sin(angle)*outer);c.stroke();}
+        c.restore();
+      }
       if(attract) {
         const shade=c.createLinearGradient(0,0,960,0);shade.addColorStop(0,'#08171beb');shade.addColorStop(.5,'#08171ba0');shade.addColorStop(1,'#08171b10');c.fillStyle=shade;c.fillRect(0,0,960,540);
         c.save();c.translate(710,265);hero.draw({x:-15,y:-22,lives:1,id:0},time,{large:true});c.restore();

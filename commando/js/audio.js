@@ -6,8 +6,9 @@
     'shot:M':'Machine Gun.mp3', 'shot:S':'Spread Gun.mp3', 'shot:L':'Laser Rifle.mp3',
     'shot:F':'Flame Thrower.mp3', 'shot:G':'Grenade Launcher.mp3',
     'shot:H':'Rocket Launcher.mp3', 'shot:W':'Wave Cannon.mp3',
+    'shot:T':'Tesla Carbine.mp3', 'shot:I':'Cryo-Blaster.mp3', 'shot:A':'Plasma Cannon.mp3',
     'impact:G':'Grenade Explosion.mp3', 'impact:H':'Rocket Explosion.mp3',
-    barrier:'Barrier.mp3', bossExplosion:'Boss Explosion.mp3'
+    barrier:'Barrier.mp3', cloak:'Invisibility Cloak.mp3', nuke:'Nuke.mp3', bossExplosion:'Boss Explosion.mp3'
   };
   // Keep distinct synthesized cues for actions without a supplied recording.
   const recipes = {

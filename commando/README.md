@@ -71,7 +71,9 @@ Both bunker stages use a consistent overhead floor and low walls. Destroying cor
 
 The supplied MP3s in `Soundtrack/` play and loop for their matching stages: Jungle, Bunker, Foundry (also used by Spillway), Reactor, Snow, Cave, and Alien.
 
-The recordings in `Sound Effects/` cover machine gun, spread, laser, flame, grenade launcher, rocket launcher, and wave cannon firing; grenade and rocket detonations; barrier activation; and boss destruction. Other actions and weapons retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Short effects are cached and concurrent voices are capped for rapid fire and co-op. Music streams one level at a time instead of downloading the entire soundtrack at startup.
+The recordings in `Sound Effects/` cover machine gun, spread, laser, flame, grenade launcher, rocket launcher, wave cannon, Tesla, cryo, and plasma firing; grenade and rocket detonations; barrier and cloak activation; nuke detonation; and boss destruction. Other actions retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Short effects are cached and concurrent voices are capped for rapid fire and co-op. Music streams one level at a time instead of downloading the entire soundtrack at startup.
+
+Nukes begin with a near-white screen flash, then expand as a white-hot explosion and shock rings that race beyond the playfield while visible non-boss enemies are removed.
 
 Audio starts after a player gesture. Pause and backgrounding stop music and effect tails; resume continues the track. Sound Off mutes both channels and remembers the preference. New runs and stage changes restart the appropriate track, while bunker room changes leave it playing. If an effect fails to load, a synthesized cue keeps that action audible.
 

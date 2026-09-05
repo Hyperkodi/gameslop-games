@@ -45,6 +45,11 @@ test('barrier activation and boss destruction route to their recordings', () => 
   e.tick();
   assert.equal(audioCueFor(e.drainEvents().find(event => event.type === 'explosion')), 'bossExplosion');
 });
+test('new Tesla, cryo, plasma, cloak, and nuke recordings route to their distinct cues', () => {
+  assert.deepEqual(['T','I','A'].map(weapon => audioCueFor({type:'shot',weapon})),['shot:T','shot:I','shot:A']);
+  assert.equal(audioCueFor({type:'pickup',weapon:'C'}),'cloak');
+  assert.equal(audioCueFor({type:'nuke'}),'nuke');
+});
 test('audio remains optional with unavailable browser APIs or blocked storage', async () => {
   const audio = createAudio({env:{localStorage:{getItem(){throw Error('blocked');},setItem(){throw Error('blocked');}}}});
   await audio.unlock();

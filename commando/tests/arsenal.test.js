@@ -56,7 +56,7 @@ test('nuke kills visible enemies once, preserves offscreen enemies and bosses, c
   const e=game();const visible=target(1,300),offscreen=target(2,1100);e.state.enemies=[visible,offscreen];
   const boss={...target(3,720,310),kind:'boss',phase:0,attack:0,name:'TEST',originX:720,originY:310};e.state.boss=boss;
   e.state.bullets=[{x:500,y:400,w:9,h:9,vx:0,vy:0,team:'enemy',ttl:10}];pickup(e,'N');
-  assert.equal(visible.hp,0);assert.equal(offscreen.hp,50);assert.equal(boss.hp,50);assert.equal(e.state.kills,1);assert.ok(e.state.nukeFlash>0);
+  assert.equal(visible.hp,0);assert.equal(offscreen.hp,50);assert.equal(boss.hp,50);assert.equal(e.state.kills,1);assert.equal(e.state.nukeFlash,1.2);
   assert.equal(e.state.bullets.length,0);ticks(e);assert.equal(e.state.kills,1);
 });
 test('Tesla chains, cryo slows, and plasma explodes across nearby targets',()=>{

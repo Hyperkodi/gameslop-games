@@ -401,7 +401,7 @@
             state.detonating=true;
             const screen={x:state.camera.x,y:state.camera.y,w:W,h:H};
             for(const enemy of state.enemies)if(enemy.kind!=='boss'&&enemy.hp>0&&hit(enemy,screen))damageEnemy(enemy,enemy.hp,enemy);
-            state.detonating=false;state.nukeFlash=.7;
+            state.detonating=false;state.nukeFlash=1.2;
             state.bullets=state.bullets.filter(b=>b.team==='player'||!hit(b,screen));event('nuke');
           }
           p.ttl = 0; addScore(200); event('pickup', { weapon: p.type }); break;
