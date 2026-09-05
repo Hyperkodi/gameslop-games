@@ -69,7 +69,7 @@ Both bunker stages use a consistent overhead floor and low walls. Destroying cor
 
 ## Audio
 
-The supplied MP3s in `Soundtrack/` play and loop for their matching stages: Jungle, Bunker, Reactor, Snow, Foundry, Cave, and Alien. Spillway's soundtrack is pending; stage 3 currently plays effects only. Add its filename to slot 2 of `audioTracks` in `js/audio.js` when it arrives.
+The supplied MP3s in `Soundtrack/` play and loop for their matching stages: Jungle, Bunker, Foundry (also used by Spillway), Reactor, Snow, Cave, and Alien.
 
 The recordings in `Sound Effects/` cover machine gun, spread, laser, flame, grenade launcher, rocket launcher, and wave cannon firing; grenade and rocket detonations; barrier activation; and boss destruction. Other actions and weapons retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Short effects are cached and concurrent voices are capped for rapid fire and co-op. Music streams one level at a time instead of downloading the entire soundtrack at startup.
 

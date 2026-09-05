@@ -1,8 +1,7 @@
 /* Stream one stage soundtrack; decode and reuse the short user-supplied effects. */
 (function (root) {
   'use strict';
-  const tracks = ['Jungle.mp3', 'Bunker.mp3', null, 'Reactor.mp3', 'Snow.mp3', 'Foundry.mp3', 'Cave.mp3', 'Alien.mp3'];
-  // Spillway has no track yet. Add its filename above when the recording arrives.
+  const tracks = ['Jungle.mp3', 'Bunker.mp3', 'Foundry.mp3', 'Reactor.mp3', 'Snow.mp3', 'Foundry.mp3', 'Cave.mp3', 'Alien.mp3'];
   const samples = {
     'shot:M':'Machine Gun.mp3', 'shot:S':'Spread Gun.mp3', 'shot:L':'Laser Rifle.mp3',
     'shot:F':'Flame Thrower.mp3', 'shot:G':'Grenade Launcher.mp3',
