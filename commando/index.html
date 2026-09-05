@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101312">
+  <meta name="description" content="Slop Commando. An eight-stage GameSlop run-and-gun adventure starring the red D-pad mascot. Play solo or local co-op.">
+  <title>Slop Commando — GameSlop</title>
+  <link rel="icon" href="skin/gameslop/icon.jpg">
+  <link rel="stylesheet" href="css/commando.css">
+</head>
+<body>
+  <header class="masthead">
+    <a class="brand" href="../" aria-label="Back to the arcade"><img src="skin/gameslop/icon.jpg" alt=""><span>GAME<span class="brand-red">SLOP</span><small>GOOD GAMES. ZERO PRETENSE.</small></span></a>
+    <div class="masthead-right"><span class="online-dot"></span><span>THE ARCADE IS OPEN</span><a href="../">ALL GAMES <span aria-hidden="true">↗</span></a></div>
+  </header>
+  <main>
+    <div class="game-heading"><div><p class="eyebrow">GAMESLOP ORIGINALS <span>/</span> NO. 007</p><h1>SLOP COMMANDO<span class="edition">RUN & GUN</span></h1></div><div class="heading-note">EIGHT STAGES.<br>ONE VERY MESSY MISSION.</div></div>
+    <section class="cabinet" aria-label="Slop Commando arcade game">
+      <div class="cabinet-top"><span><i class="live-light"></i> <b id="mission">01</b> <span id="mission-name">VERDANT OUTPOST</span></span><div><button id="sound" aria-label="Toggle sound" aria-pressed="false">SOUND ON</button><button id="pause" aria-label="Pause game">Ⅱ <span>PAUSE</span></button><button id="fullscreen" aria-label="Toggle fullscreen">⛶ <span>EXPAND</span></button></div></div>
+      <div class="screen" id="screen">
+        <canvas id="game" width="960" height="540" tabindex="0" aria-label="Game area. Player one: arrows to move and aim, Z to jump, X to fire. Enter to start. Escape to pause."></canvas>
+        <div class="scanlines" aria-hidden="true"></div>
+        <div id="hud" class="hud" hidden><div><span class="hud-label">1P <span id="p1-lives">♥ ♥ ♥</span></span><strong id="p1-weapon">RIFLE</strong><small id="p1-power"></small></div><div class="hud-score"><span class="hud-label">SCORE</span><strong id="score">000000</strong></div><div id="p2-hud"><span class="hud-label" id="p2-label">HI-SCORE</span><strong id="p2-value">000000</strong></div></div>
+        <div id="title-screen" class="title-screen">
+          <p class="title-kicker"><span></span> INSERT ABSOLUTELY NOTHING</p>
+          <h2>SLOP<br><span>COMMANDO</span></h2>
+          <p class="title-description">Big guns. Bad odds. Maximum slop.<br>The arcade called. You're up.</p>
+          <div class="mode-options" role="group" aria-label="Number of players"><button class="selected" data-players="1" aria-pressed="true">1 PLAYER</button><button data-players="2" aria-pressed="false">2 PLAYER CO-OP</button></div>
+          <button id="start" class="primary">LET'S MAKE A MESS <span>→</span></button>
+          <div class="title-bottom"><label for="difficulty">MODE</label><select id="difficulty"><option value="arcade">ARCADE · 3 LIVES</option><option value="assist">ASSIST · 12 LIVES</option></select><span>OR PRESS ENTER</span></div>
+        </div>
+        <div id="overlay" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="overlay-title"><div class="overlay-card"><p class="eyebrow" id="overlay-kicker">TAKE A BREATHER</p><h2 id="overlay-title">PAUSED</h2><p id="overlay-body"></p><button class="primary" id="overlay-action">RESUME →</button><button class="secondary" id="restart">BACK TO TITLE</button></div></div>
+      </div>
+      <div class="cabinet-bottom"><span><span class="red-dot">●</span> <span id="status-line">READY WHEN YOU ARE.</span></span><span id="stage-progress">CAMPAIGN <b>01 / 08</b></span><label class="crt-control"><input type="checkbox" id="crt" checked> CRT FILTER</label></div>
+    </section>
+    <nav class="touch-controls" aria-label="Touch game controls"><div class="dpad"><button data-action="up" aria-label="Aim or move up">▲</button><button data-action="left" aria-label="Move left">◀</button><button data-action="down" aria-label="Crouch or move down">▼</button><button data-action="right" aria-label="Move right">▶</button></div><span>HOLD FIRE.<br>KEEP MOVING.</span><div class="action-buttons"><button data-action="jump" aria-label="Jump">JUMP</button><button data-action="fire" aria-label="Fire">FIRE</button></div></nav>
+    <section class="field-guide" aria-label="Controls and instructions"><div class="guide-intro"><p class="eyebrow">THE FIELD GUIDE</p><h2>LESS TALK.<br>MORE <span>SLOP.</span></h2></div><div class="guide-controls"><h3>01 / KNOW YOUR BUTTONS</h3><p><kbd>←</kbd><kbd>↑</kbd><kbd>↓</kbd><kbd>→</kbd><span>Move & aim</span></p><p><kbd>Z</kbd><span>Jump</span><kbd>X</kbd><span>Fire (hold)</span></p><small>P2: WASD · G jump · H fire<br>Gamepad: D-pad / stick · A jump · X / RT fire</small></div><div class="guide-weapons"><h3>02 / GRAB THE GOOD STUFF</h3><div class="weapon-list"><span><canvas width="112" height="64" data-pickup-icon="S" aria-hidden="true"></canvas>Spread gun</span><span><canvas width="112" height="64" data-pickup-icon="M" aria-hidden="true"></canvas>Machine gun</span><span><canvas width="112" height="64" data-pickup-icon="L" aria-hidden="true"></canvas>Laser rifle</span><span><canvas width="112" height="64" data-pickup-icon="F" aria-hidden="true"></canvas>Flamethrower</span><span><canvas width="112" height="64" data-pickup-icon="B" aria-hidden="true"></canvas>Barrier</span><span><canvas width="112" height="64" data-pickup-icon="R" aria-hidden="true"></canvas>Rapid fire</span></div><small>↓ to crouch · ↓ + jump to drop through<br>In bunkers: fire upward; jump to dodge.</small></div><div class="guide-mission"><h3>03 / FINISH THE JOB</h3><p>Eight stages. Eight bosses.<br>Three continues. No excuses.</p><small>Extra life every 15,000 points.<br>Esc / P to pause. Assist mode gives 12 lives.</small><button id="howto">VIEW MISSION DOSSIER ↗</button></div></section>
+    <footer><span>© GAMESLOP <span class="footer-separator">/</span> BUILT FOR THE JOY OF PLAYING.</span><span>NO DOWNLOADS. NO QUARTERS. JUST PLAY.</span></footer>
+  </main>
+  <dialog id="dossier"><div class="dossier-head"><p class="eyebrow">OPERATION: MAXIMUM SLOP</p><button id="close-dossier" aria-label="Close mission dossier">✕</button></div><h2>THE MISSION DOSSIER</h2><p>An automated army has taken over the island. You're a sentient blob with a very large gun. Work with what you've got.</p><ol id="mission-list"></ol><p class="dossier-tip">Arcade: 3 lives per player, one-hit deaths. Assist: 12 lives and slower enemy firing. Both modes include 3 continues, checkpoints, and brief protection after respawning. Co-op shares one screen and score. Best scores are saved on this device by mode.</p></dialog>
+  <script src="../_kit/rng.js"></script>
+  <script src="../_kit/audio.js"></script>
+  <script src="skin/gameslop/skin.js"></script>
+  <script src="skin/gameslop/mascot-atlas-v2.js"></script>
+  <script src="js/levels.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/weapon-art.js"></script>
+  <script src="js/mascot.js"></script>
+  <script src="js/environment.js"></script>
+  <script src="js/renderer.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

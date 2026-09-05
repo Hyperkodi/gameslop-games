@@ -1,0 +1,173 @@
+(function () {
+  'use strict';
+  const G = window.SlopCommando, $ = id => document.getElementById(id);
+  Object.entries(window.SlopCommandoSkin.palette).forEach(([name,value])=>document.documentElement.style.setProperty('--'+name,value));
+  const params = new URLSearchParams(location.search);
+  const engine = G.createEngine({ seed: GameSlopKit.parseSeed(params.get('seed')) });
+  const renderer = G.createRenderer({ canvas: $('game') });
+  // The guide mirrors the actual loot table. Stronger weapons are rare in play,
+  // but every silhouette is visible here before the player finds one.
+  const guideWeapons = [
+    ['S','Spread gun'],['M','Machine gun'],['G','Grenade launcher'],
+    ['L','Laser rifle'],['H','Homing rocket'],['F','Flamethrower'],
+    ['W','Wave cannon'],['B','Barrier'],['R','Rapid fire']
+  ];
+  const weaponList = document.querySelector('.weapon-list');
+  if (weaponList) weaponList.replaceChildren(...guideWeapons.map(([type,label]) => {
+    const row=document.createElement('span'), icon=document.createElement('canvas');
+    icon.width=112;icon.height=64;icon.dataset.pickupIcon=type;icon.setAttribute('aria-hidden','true');
+    row.append(icon,document.createTextNode(label));return row;
+  }));
+  document.querySelectorAll('[data-pickup-icon]').forEach(canvas=>{
+    const c=canvas.getContext('2d');c.translate(7,31);c.scale(1.35,1.35);
+    G.createWeaponArt(c,window.SlopCommandoSkin.weapons).draw(canvas.dataset.pickupIcon);
+  });
+  const audio = GameSlopKit.createAudio({
+    shot: [[180,.045,'square',.018,0,70]], jump: [[160,.11,'square',.025,0,480]],
+    explosion: [[75,.17,'sawtooth',.05,0,25],[130,.12,'triangle',.035,0,30]],
+    death: [[240,.22,'sawtooth',.04,0,35]], pickup: [[440,.07,'square',.04],[660,.08,'square',.04,.07],[880,.1,'square',.04,.14]],
+    cannon: [[62,.18,'sawtooth',.035,0,30]], boss: [[110,.2,'square',.045],[130,.2,'square',.045,.22],[110,.4,'square',.045,.44]],
+    stage: [[220,.1,'square',.035],[330,.1,'square',.035,.1],[440,.18,'square',.035,.2]],
+    clear: [[330,.12,'square',.04],[440,.12,'square',.04,.14],[550,.12,'square',.04,.28],[660,.35,'square',.04,.42]],
+    life: [[660,.12,'triangle',.05],[880,.18,'triangle',.05,.12]],
+    beat: [[73.42,.12,'triangle',.024]], beat2: [[98,.12,'triangle',.024]], lead: [[293.66,.09,'square',.009]], lead2: [[349.23,.1,'square',.009]],
+  });
+  let players = 1, lastStatus = '', last = 0, accumulator = 0, best = 0, beat = -1, lastGamepadStart = false, posted = false, showingDossier = false;
+  const cabinet = document.querySelector('.cabinet');
+  // Controls must be descendants of the fullscreen element on mobile.
+  cabinet.append(document.querySelector('.touch-controls'));
+  const sources = { keyboard: new Set(), touch: new Map(), pad: new Set() };
+  const keymap = { ArrowLeft:[0,'left'],ArrowRight:[0,'right'],ArrowUp:[0,'up'],ArrowDown:[0,'down'],KeyZ:[0,'jump'],Space:[0,'jump'],KeyX:[0,'fire'],KeyC:[0,'fire'],KeyA:[1,'left'],KeyD:[1,'right'],KeyW:[1,'up'],KeyS:[1,'down'],KeyG:[1,'jump'],KeyH:[1,'fire'] };
+  const storage = { get(k,f) { try { return localStorage.getItem(k) ?? f; } catch (_) { return f; } }, set(k,v) { try { localStorage.setItem(k,String(v)); } catch (_) { /* Offline/private browsing remains playable. */ } } };
+  function bestKey() { return 'gameslop:commando:gameslop:'+engine.state.difficulty+':'+engine.state.players.length+':best'; }
+  function clearInput() { sources.keyboard.clear();sources.touch.clear();sources.pad.clear();engine.release();document.querySelectorAll('.pressed').forEach(el=>el.classList.remove('pressed')); }
+  function syncInputs() {
+    const held = new Set([...[...sources.keyboard].map(code=>keymap[code].join(':')),...[...sources.touch.values()].flat(),...sources.pad]);
+    engine.state.players.forEach((p,i) => ['left','right','up','down','jump','fire'].forEach(action=>engine.input(i,action,held.has(i+':'+action))));
+  }
+  function start() {
+    clearInput();audio.unlock();engine.start({ players, difficulty: $('difficulty').value });
+    best=Number(storage.get(bestKey(),0))||0;posted=false;beat=-1;$('game').focus({preventScroll:true});updateUI();
+  }
+  function setTitle() {
+    clearInput(); engine.state.status='ready'; engine.state.level=G.buildLevel(0);engine.state.stage=0;engine.state.camera={x:0,y:0};engine.state.boss=null;
+    engine.state.enemies=[];engine.state.bullets=[];engine.state.pickups=[];engine.state.effects=[];
+    updateUI();$('start').focus({preventScroll:true});
+  }
+  function togglePause() { if (engine.state.status==='playing'||engine.state.status==='paused') { clearInput();engine.pause();updateUI(); } }
+  function toggleMute() { audio.toggle();$('sound').textContent=audio.muted?'SOUND OFF':'SOUND ON';$('sound').setAttribute('aria-pressed',String(audio.muted)); }
+  function overlayAction() {
+    const s=engine.state;audio.unlock();clearInput();
+    if(s.status==='paused')engine.pause();
+    else if(s.status==='clear')engine.advance();
+    else if(s.status==='gameover'&&s.continues>0)engine.continueRun();
+    else start();
+    updateUI();$('game').focus({preventScroll:true});
+  }
+  function updateUI() {
+    const s=engine.state,active=s.status==='playing',title=s.status==='ready',isOverlay=['paused','clear','gameover','victory'].includes(s.status);
+    $('title-screen').hidden=!title;$('hud').hidden=title;$('overlay').hidden=!isOverlay;
+    $('mission').textContent=String(s.stage+1).padStart(2,'0');$('mission-name').textContent=s.level.name.toUpperCase();
+    $('stage-progress').innerHTML='CAMPAIGN <b>'+String(s.stage+1).padStart(2,'0')+' / 08</b>';
+    $('score').textContent=String(s.score).padStart(6,'0');
+    const p=s.players[0];$('p1-lives').textContent=p.lives>5?'♥ × '+p.lives:'♥ '.repeat(Math.max(0,p.lives))||'OUT';
+    $('p1-weapon').textContent=G.weapons[p.weapon].name;
+    $('p1-power').textContent=p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'';
+    if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name:'OUT';}
+    else{$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
+    $('pause').disabled=title||!['playing','paused'].includes(s.status);
+    const pauseLabel=s.status==='paused'?'▶ <span>RESUME</span>':'Ⅱ <span>PAUSE</span>';
+    if($('pause').innerHTML!==pauseLabel)$('pause').innerHTML=pauseLabel;
+    $('pause').setAttribute('aria-label',s.status==='paused'?'Resume game':'Pause game');
+    const progress=s.level.mode==='base'?'CHAMBER '+(s.room+1)+'/3':s.level.mode==='climb'?'CLIMB TO THE SUMMIT':s.level.tag;
+    $('status-line').textContent=title?'READY WHEN YOU ARE.':active?(s.boss?'BOSS CONTACT · '+s.boss.name.toUpperCase():progress):s.status.toUpperCase();
+    if(lastStatus!==s.status){
+      if(isOverlay){
+        const data={paused:['TAKE A BREATHER','PAUSED','The mission can wait.\nYour progress is right here.','BACK TO THE ACTION →'],clear:['SECTOR SECURED',s.stage===7?'SOURCE DESTROYED':'STAGE CLEAR',s.level.name+' complete.\n'+s.score.toLocaleString()+' points · '+s.kills+' targets down',s.stage===7?'FINISH THE MISSION →':'NEXT MISSION →'],gameover:['YOU MADE A MESS','GAME OVER',s.score.toLocaleString()+' points · Stage '+(s.stage+1)+' / 8\n'+s.continues+' continues remaining',s.continues?'CONTINUE MISSION →':'TRY AGAIN →'],victory:['OPERATION COMPLETE','SLOP TRIUMPHS','All eight sectors liberated.\n'+s.score.toLocaleString()+' points · '+Math.floor(s.elapsed/60)+'m '+Math.floor(s.elapsed%60)+'s\n'+(s.difficulty==='assist'?'Assist':'Arcade')+' · '+s.creditsUsed+' continues used','RUN IT BACK →']}[s.status];
+        $('overlay-kicker').textContent=data[0];$('overlay-title').textContent=data[1];$('overlay-body').textContent=data[2];$('overlay-action').textContent=data[3];$('overlay-action').focus({preventScroll:true});
+      }
+      if(['clear','gameover','victory'].includes(s.status)&&s.score>best){best=s.score;storage.set(bestKey(),best);}
+      if((s.status==='gameover'||s.status==='victory')&&!posted){
+        // Match the arcade's existing optional embedding bridge. No input or private data.
+        if(window.parent!==window)window.parent.postMessage({v:1,type:'gameover',game:'commando',skin:'gameslop',score:s.score,seed:s.seed,inputsHash:engine.hash(),stats:{stage:s.stage+1,players:s.players.length,difficulty:s.difficulty,victory:s.status==='victory'}},'*');
+        posted=true;
+      }
+      if(active)posted=false;lastStatus=s.status;
+    }
+  }
+  function gamepads() {
+    sources.pad.clear();let startDown=false;
+    const pads=navigator.getGamepads?Array.from(navigator.getGamepads()).filter(Boolean).slice(0,2):[];
+    pads.forEach((pad,i)=>{
+      const button=n=>!!pad.buttons[n]?.pressed,actions={left:button(14)||pad.axes[0]<-.3,right:button(15)||pad.axes[0]>.3,up:button(12)||pad.axes[1]<-.3,down:button(13)||pad.axes[1]>.3,jump:button(0),fire:button(2)||button(7)||button(1)};
+      Object.entries(actions).forEach(([a,down])=>{if(down)sources.pad.add(i+':'+a);});if(button(9))startDown=true;
+    });
+    if(startDown&&!lastGamepadStart){if(engine.state.status==='ready')start();else if(engine.state.status==='playing')togglePause();else overlayAction();}lastGamepadStart=startDown;
+  }
+  function frame(now) {
+    const elapsed=Math.min(.1,(now-last)/1000||0);last=now;
+    if(!showingDossier)gamepads();syncInputs();
+    if(engine.state.status==='playing') {
+      accumulator+=elapsed;while(accumulator>=G.STEP){engine.tick();accumulator-=G.STEP;}
+      const b=Math.floor(engine.state.elapsed*5);if(b!==beat){beat=b;audio.play(b%8<4?'beat':'beat2');if(b%2===0)audio.play(b%8<4?'lead':'lead2');}
+    } else accumulator=0;
+    let shot=false;
+    for(const e of engine.drainEvents()){if(e.type==='shot'){if(shot)continue;shot=true;}audio.play(e.type);}
+    updateUI();renderer.draw(engine.state,{time:now/1000,attract:engine.state.status==='ready'});requestAnimationFrame(frame);
+  }
+  document.querySelectorAll('[data-players]').forEach(btn=>btn.addEventListener('click',()=>{players=Number(btn.dataset.players);document.querySelectorAll('[data-players]').forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn));});}));
+  $('start').addEventListener('click',start);$('pause').addEventListener('click',togglePause);$('sound').addEventListener('click',toggleMute);$('overlay-action').addEventListener('click',overlayAction);$('restart').addEventListener('click',setTitle);
+  function editable(target){return ['SELECT','INPUT','TEXTAREA'].includes(target.tagName);}
+  document.addEventListener('keydown',e=>{
+    if(showingDossier||editable(e.target)||e.ctrlKey||e.metaKey||e.altKey)return;
+    if(e.code==='Space'&&e.target.tagName==='BUTTON')return;
+    const mapped=keymap[e.code];if(mapped){e.preventDefault();sources.keyboard.add(e.code);}
+    if(e.repeat)return;
+    if(e.code==='Escape'||e.code==='KeyP'){e.preventDefault();togglePause();}
+    if(e.code==='KeyM')toggleMute();
+    if(e.code==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();if(engine.state.status==='ready')start();else if(engine.state.status!=='playing')overlayAction();}
+  });
+  document.addEventListener('keyup',e=>{const mapped=keymap[e.code];if(mapped){e.preventDefault();sources.keyboard.delete(e.code);}});
+  document.querySelectorAll('.action-buttons [data-action]').forEach(btn=>{
+    btn.addEventListener('pointerdown',e=>{e.preventDefault();if(engine.state.status!=='playing')return;audio.unlock();btn.setPointerCapture(e.pointerId);sources.touch.set(e.pointerId,'0:'+btn.dataset.action);btn.classList.add('pressed');});
+    const up=e=>{sources.touch.delete(e.pointerId);btn.classList.remove('pressed');};btn.addEventListener('pointerup',up);btn.addEventListener('pointercancel',up);btn.addEventListener('lostpointercapture',up);btn.addEventListener('contextmenu',e=>e.preventDefault());
+  });
+  // A sliding thumb on the D-pad supports diagonals without two fingers.
+  const dpad=document.querySelector('.dpad');
+  function steer(e){
+    const r=dpad.getBoundingClientRect(),dx=(e.clientX-r.x-r.width/2)/(r.width/2),dy=(e.clientY-r.y-r.height/2)/(r.height/2),actions=[];
+    if(dx<-.25)actions.push('0:left');if(dx>.25)actions.push('0:right');if(dy<-.25)actions.push('0:up');if(dy>.25)actions.push('0:down');
+    sources.touch.set(e.pointerId,actions);dpad.querySelectorAll('button').forEach(b=>b.classList.toggle('pressed',actions.includes('0:'+b.dataset.action)));
+  }
+  dpad.addEventListener('pointerdown',e=>{e.preventDefault();if(engine.state.status!=='playing')return;dpad.setPointerCapture(e.pointerId);steer(e);});
+  dpad.addEventListener('pointermove',e=>{if(dpad.hasPointerCapture(e.pointerId))steer(e);});
+  const releasePad=e=>{sources.touch.delete(e.pointerId);dpad.querySelectorAll('button').forEach(b=>b.classList.remove('pressed'));};
+  dpad.addEventListener('pointerup',releasePad);dpad.addEventListener('pointercancel',releasePad);dpad.addEventListener('lostpointercapture',releasePad);dpad.addEventListener('contextmenu',e=>e.preventDefault());
+  function backgroundPause(){clearInput();if(engine.state.status==='playing'){engine.pause();updateUI();}}
+  window.addEventListener('blur',backgroundPause);document.addEventListener('visibilitychange',()=>{if(document.hidden)backgroundPause();});
+  $('crt').checked=storage.get('gameslop:commando:crt','1')==='1';
+  function setCRT(){document.querySelector('.scanlines').hidden=!$('crt').checked;storage.set('gameslop:commando:crt',$('crt').checked?'1':'0');}
+  $('crt').addEventListener('change',setCRT);setCRT();
+  $('sound').textContent=audio.muted?'SOUND OFF':'SOUND ON';$('sound').setAttribute('aria-pressed',String(audio.muted));
+  function expanded(){return !!document.fullscreenElement||cabinet.classList.contains('expanded');}
+  function fullscreenUI(){const on=expanded();$('fullscreen').innerHTML=on?'⛶ <span>EXIT</span>':'⛶ <span>EXPAND</span>';$('fullscreen').setAttribute('aria-label',on?'Exit fullscreen':'Toggle fullscreen');document.body.classList.toggle('is-expanded',on);}
+  $('fullscreen').addEventListener('click',async()=>{
+    if(document.fullscreenElement){await document.exitFullscreen();}
+    else if(cabinet.classList.contains('expanded'))cabinet.classList.remove('expanded');
+    else {
+      try {if(!cabinet.requestFullscreen)throw new Error('fallback');await cabinet.requestFullscreen();}
+      catch(_){cabinet.classList.add('expanded');}
+      try{await screen.orientation?.lock?.('landscape');}catch(_){/* Browser/OS may require manual rotation. */}
+    }
+    if(!expanded()){try{screen.orientation?.unlock?.();}catch(_){/* Optional browser capability. */}}
+    fullscreenUI();
+  });
+  document.addEventListener('fullscreenchange',()=>{fullscreenUI();if(!expanded()){try{screen.orientation?.unlock?.();}catch(_){/* Optional capability. */}}});
+  $('mission-list').innerHTML=G.levels.map((l,i)=>'<li><strong>'+l.name+'</strong><span>'+l.briefing+'</span></li>').join('');
+  let resumeAfterDossier=false;
+  $('howto').addEventListener('click',()=>{resumeAfterDossier=engine.state.status==='playing';backgroundPause();showingDossier=true;$('dossier').showModal();});
+  $('close-dossier').addEventListener('click',()=>$('dossier').close());
+  $('dossier').addEventListener('close',()=>{showingDossier=false;if(resumeAfterDossier&&engine.state.status==='paused')engine.pause();updateUI();});
+  if(params.get('debug')==='1')window.__gameslop={engine,renderer};
+  document.body.dataset.ready='1';updateUI();requestAnimationFrame(frame);
+})();

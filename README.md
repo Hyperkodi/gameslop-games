@@ -1,6 +1,6 @@
 # Armara Arcade
 
-Six browser games (Armaratris, Serpent, Breaker, Aegis, Flight, Starfall) sharing one kit
+Seven browser games (Slop Commando, Armaratris, Serpent, Breaker, Aegis, Flight, Starfall) sharing one kit
 (`_kit/`: `rng.js`, `draw.js`, `skin.js`, `audio.js`, `input.js`, `shell.js`, `kit.css`). Static,
 no build step, no server-side code. `index.html` is the arcade hub.
 
@@ -30,13 +30,15 @@ cd games/breaker && node --test
 cd games/aegis && node --test
 cd games/flight && node --test
 cd games/starfall && node --test
+cd games/commando && node --test
 ```
 
 Run from inside each folder (not `node --test games/<id>/tests/`, because passing a path fails on
 Node 24; passing none discovers `tests/` from the cwd).
 
-Current expected total: 268 tests: kit 12, Armaratris 35, Serpent 11, Breaker 9, Aegis 185,
-Flight 7, and Starfall 9.
+Slop Commando adds a GameSlop-branded landscape run-and-gun campaign with mobile touch,
+browser fullscreen and local co-op. It reuses kit RNG/audio with its own landscape controller;
+see `commando/README.md` for controls, campaign details, and browser verification.
 
 ## Add a game
 
