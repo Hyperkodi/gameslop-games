@@ -29,10 +29,9 @@
   .dpad [data-action=right]{right:0;top:calc(50% - 22px)}
   .dpad button.pressed{color:#fff1cc;background:#d7e6b722}
   .stick-knob{position:absolute;left:calc(50% - 22px);top:calc(50% - 22px);width:44px;height:44px;border-radius:50%;border:1px solid #a2b297;background:radial-gradient(circle at 35% 25%,#8b9a7e,#485e48 70%);box-shadow:0 4px 9px #0007,inset 0 0 0 4px #b5c4a321;transform:translate(var(--stick-x),var(--stick-y));pointer-events:none}
-  .action-buttons{grid-row:2;grid-column:2;display:grid;grid-template-columns:60px 84px;grid-template-rows:44px 84px;gap:8px;align-items:end;justify-items:center;pointer-events:none}
+  .action-buttons{grid-row:2;grid-column:2;display:grid;grid-template-columns:48px 48px;grid-template-rows:44px 84px;gap:8px;align-items:end;justify-items:center;pointer-events:none}
   .action-buttons button{padding:0;border:2px solid #8eaa91;background:#263c32e8;border-radius:50%;font:bold 10px var(--mono);letter-spacing:.4px;box-shadow:0 3px 10px #0006;pointer-events:auto;touch-action:none}
-  .action-buttons [data-action=jump]{grid-column:2;grid-row:2;width:84px;height:84px;font-size:13px;letter-spacing:.8px;background:#ff4439ed;border-color:#ff9980;box-shadow:0 4px 0 #8e2d2b,0 5px 18px #0007}
-  .action-buttons [data-action=fire]{grid-column:1;grid-row:2;width:60px;height:60px;color:#e8e2c8}
+  .action-buttons [data-action=jump]{grid-column:1/-1;grid-row:2;width:84px;height:84px;font-size:13px;letter-spacing:.8px;background:#ff4439ed;border-color:#ff9980;box-shadow:0 4px 0 #8e2d2b,0 5px 18px #0007}
   .action-buttons [data-action=swap],.action-buttons [data-action=drop]{grid-row:1;width:48px;height:44px;border-radius:11px;font-size:9px;background:#263d45eb;border-color:#779f9b}
   .action-buttons [data-action=swap]{grid-column:1}
   .action-buttons [data-action=drop]{grid-column:2}
@@ -45,9 +44,8 @@
 }
 @media(max-width:360px) and (pointer:coarse){
   .dpad{--stick-size:128px}
-  .action-buttons{grid-template-columns:56px 80px;grid-template-rows:44px 80px}
+  .action-buttons{grid-template-rows:44px 80px}
   .action-buttons [data-action=jump]{width:80px;height:80px}
-  .action-buttons [data-action=fire]{width:56px;height:56px}
   .touch-hint{font-size:7px;max-width:112px}
   .touch-settings{gap:8px}
 }

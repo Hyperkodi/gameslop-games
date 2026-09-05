@@ -21,7 +21,7 @@ Hold a phone in landscape for the largest playfield. **Expand** requests browser
 | Pause | Escape / P | Shared | Start |
 | Sound | M | Shared | Onscreen button |
 
-On mobile, drag anywhere on the circular thumbstick to move or aim. **AUTO FIRE** starts enabled for touch play, so you can move with one thumb and use the larger **JUMP** button with the other. The toggle remembers your preference; **FIRE** remains available for manual firing. Player 1 keyboard and gamepad input turn off touch auto-fire until you touch the game again; Player 2 can keep playing alongside your touch controls.
+On mobile, drag anywhere on the circular thumbstick to move or aim. **AUTO FIRE** starts enabled for touch play, so you can move with one thumb and use the larger **JUMP** button with the other. Use the remembered auto-fire toggle to start or stop shooting; there is no separate touch Fire button. Player 1 keyboard and gamepad input turn off touch auto-fire until you touch the game again; Player 2 can keep playing alongside your touch controls.
 
 **SWAP** exchanges carried guns, and **DROP** descends one ledge per tap without needing a down + jump combination. Drop is disabled in overhead bunker stages and does nothing on solid ground. Down crouches in side-scrolling stages; down + jump still drops through a ledge. In bunker stages, move on the overhead floor, fire upward toward cores, and jump to dodge shots.
 

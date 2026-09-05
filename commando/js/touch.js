@@ -25,7 +25,7 @@
       auto.textContent=autoFire?'AUTO FIRE ON':'AUTO FIRE OFF';
       auto.setAttribute('aria-pressed',String(autoFire));
       auto.setAttribute('aria-label',autoFire?'Turn off automatic firing':'Turn on automatic firing');
-      if(hint)hint.textContent=autoFire?'MOVE + JUMP':'HOLD FIRE · TAP JUMP';
+      if(hint)hint.textContent=autoFire?'MOVE + JUMP':'TAP AUTO FIRE TO SHOOT';
     }
     function capture(node,id) { try{node.setPointerCapture(id);}catch(_){/* Some browsers cancel a pointer during rotation. */} }
     function steer(event) {
