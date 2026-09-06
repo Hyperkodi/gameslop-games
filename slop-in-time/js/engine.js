@@ -1,6 +1,7 @@
 (function(root){
   'use strict';
   const K=typeof module!=='undefined'?require('../../_kit/rng.js'):root.GameSlopKit;
+  const Content=typeof module!=='undefined'?require('./content.js'):root.SlopTimeContent;
   const STEP=1/60,clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
   const stages=[
     {name:'Neon Afterhours',year:'199X',tag:'THE NIGHT THE CLOCK BROKE',theme:'city',boss:'Knuckle Volt',color:'#73e3dc',floor:'#25343a',enemy:'Punk',weapon:'pipe'},
@@ -20,6 +21,7 @@
   ];
   const powers=[['GRID OVERLOAD','MOVE OUT OF THE ELECTRIC LANES'],['CANNON RAIN','GET CLEAR OF THE TARGET CIRCLES'],['EXTINCTION STOMP','JUMP OVER THE SHOCKWAVES'],['SHADOW CROSS','DODGE THE THREE SHADOW SLASHES'],['BOILER BURST','STAY BETWEEN THE STEAM VENTS'],['TIME RUPTURE','JUMP THROUGH THE EXPANDING RINGS']];
   stages.forEach((s,i)=>Object.assign(s,{width:[9000,9400,9800,9600,10000,10400][i],landmarks:routes[i],superName:powers[i][0],superHint:powers[i][1],encounters:[.0,.095,.215,.32,.435,.53,.635,.74,.855,1].map(f=>Math.round(480+f*([9000,9400,9800,9600,10000,10400][i]-1130)))}));
+  Content.configure(stages);
   const BOSS_RAGE=.3;
   const difficulties={easy:{lives:5,damage:.65,health:.8},normal:{lives:3,damage:1,health:1},hard:{lives:2,damage:1.3,health:1.25}};
   function createEngine({seed=1991}={}){
@@ -28,16 +30,22 @@
     const emit=(type,data={})=>state.events.push({type,...data});
     const rules=()=>difficulties[state.difficulty];
     const stage=()=>stages[state.stage],center=()=>stage().encounters[Math.min(state.gate,stage().encounters.length-1)],lastGate=()=>state.gate===stage().encounters.length-1;
+    const ground=x=>Content.floor(stage(),x),bounds=x=>Content.bounds(stage(),x);
+    function routeMove(p,dx,dy){const x=p.x+dx;if(Content.walkable(stage(),x,p.y))p.x=x;const b=bounds(p.x);p.y=clamp(p.y+dy,b.min,b.max);}
+    function story(index){state.story={text:stage().story[index],life:7,index};emit('story');}
     function player(id){return {id,x:130+id*70,y:416+id*36,z:0,vz:0,face:1,hp:100,lives:rules().lives,energy:40,held:{},queued:{},cooldown:0,action:null,comboStep:0,comboUntil:0,invincible:2,hurt:0,dead:0,weapon:null,weaponHits:0,walk:0,moving:false};}
     function release(){for(const p of state.players){p.held={};p.queued={};}}
     function stageLoad(index,startGate=0){
       state.stage=index;state.enemies=[];state.pickups=[];state.effects=[];state.shots=[];state.props=[];state.camera=0;state.gate=0;state.arena=false;state.transition=2.4;state.shake=0;state.flash=0;state.hitstop=0;state.combo=0;state.comboTime=0;
       release();
       state.width=stage().width;state.hazards=[];state.checkpoint=startGate;state.gate=startGate;state.wave=0;
+      state.cameraY=0;state.missiles=[];state.traps=[];state.story=null;state.storySeen=new Set();
       state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,hp:100,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
       const spawnX=startGate?center()-360:130;
-      state.players.forEach((p,i)=>p.x=spawnX+i*65);state.camera=Math.max(0,spawnX-130);
-      for(let i=0;i<Math.floor(state.width/310);i++){const x=330+i*310;if(x<spawnX)continue;state.props.push({id:nextId++,x,y:350+(i%3)*60,hp:16,kind:i%3===0?'food':i%3===1?'weapon':'energy'});}
+      state.players.forEach((p,i)=>{p.x=spawnX+i*65;p.y=416+i*35+ground(p.x);});state.camera=Math.max(0,spawnX-130);state.cameraY=ground(spawnX);
+      for(let i=0;i<Math.floor(state.width/370);i++){const x=350+i*370;if(x<spawnX)continue;const kind=i%3===0?'food':i%3===1?'weapon':'energy';state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,weapon:stage().weapons[Math.floor(i/3)%2]});}
+      for(let i=0;i<8;i++){const x=720+i*1010;if(x<spawnX||x>state.width-1000)continue;const y=420+ground(x);state.props.push({id:nextId++,x,y,hp:1,kind:'lid',open:false});state.traps.push({x:x+230,y:365+ground(x+230),kind:stage().trap,phase:i*.7,active:false,warning:false});}
+      story(startGate?1:0);
       emit('stage',{stage:index});
     }
     function start({players=1,difficulty='normal'}={}){
@@ -55,13 +63,14 @@
     function fx(kind,x,y,extra={}){state.effects.push({kind,x,y,life:.45,max:.45,...extra});}
     function spawn(kind,x,y,boss=false){
       const hp=Math.round((boss?440+state.stage*55:kind==='brute'?65:kind==='thrower'?30:kind==='swift'?30:37)*rules().health*(boss&&state.players.length===2?1.6:1));
-      const e={id:nextId++,kind,boss,x,y,z:0,hp,maxHp:hp,face:-1,cooldown:.65+rng()*.7,stun:0,down:0,windup:0,attack:null,vx:0,thrown:0,throwHits:[],phase:0,walk:0,dead:0,enraged:false,superTimer:4};state.enemies.push(e);return e;
+      const e={id:nextId++,kind,boss,x,y,z:kind==='flyer'?82:0,hp,maxHp:hp,face:-1,cooldown:.65+rng()*.7,stun:0,down:0,windup:0,attack:null,vx:0,thrown:0,throwHits:[],phase:0,walk:0,dead:0,enraged:false,superTimer:4};state.enemies.push(e);return e;
     }
     function beginArena(){
       state.arena=true;const at=center();
       const count=(lastGate()?2:3+(state.gate+state.wave)%3)+(state.players.length-1)*2+(state.difficulty==='hard'?2:0);
-      for(let i=0;i<count;i++){const flank=state.wave>0&&i%2===0;spawn(['grunt','swift','grunt','thrower','brute'][(i+state.stage+state.gate+state.wave)%5],flank?Math.max(state.camera+45,at-200):at+110+(i%3)*70,350+(i%4)*42);}
-      if(lastGate())spawn('boss',at+200,419,true);
+      for(let i=0;i<count;i++){const flank=state.wave>0&&i%2===0,x=flank?Math.max(state.camera+45,at-200):at+110+(i%3)*70;spawn(['grunt','swift','guard','thrower','brute'][(i+state.stage+state.gate+state.wave)%5],x,350+(i%4)*42+ground(x));}
+      if(state.gate>0&&!lastGate())spawn('flyer',at+260,425+ground(at+260));
+      if(lastGate()){spawn('boss',at+200,419+ground(at+200),true);story(2);}
       emit('arena');
     }
     function hitEnemy(e,damage,face,force=80){
@@ -76,23 +85,30 @@
     }
     function hurtPlayer(p,damage,face){
       if(p.lives<=0||p.dead>0||p.invincible>0)return false;
-      p.hp-=Math.round(damage*rules().damage);p.hurt=.3;p.invincible=.85;p.action=null;p.x=clamp(p.x+face*20,state.camera+25,state.width-40);state.combo=0;state.shake=5;emit('hurt');fx('hit',p.x,p.y-p.z-35,{color:'#ff7466'});
+      p.hp-=Math.round(damage*rules().damage);p.hurt=.3;p.invincible=.85;p.action=null;routeMove(p,clamp(p.x+face*20,state.camera+25,state.width-40)-p.x,0);state.combo=0;state.shake=5;emit('hurt');fx('hit',p.x,p.y-p.z-35,{color:'#ff7466'});
       if(p.hp<=0){p.hp=0;p.lives--;p.dead=1.4;p.airKick=false;p.held={};p.queued={};p.weapon=null;p.weaponHits=0;emit('death');}
       return true;
     }
     function strike(p,a){
-      a.struck=true;const reach=p.weapon?116:a.kind==='kick'?103:a.step===3?98:84,damage=p.weapon?24:a.kind==='kick'?17:a.step===3?20:12;
-      for(const e of state.enemies){if(e.hp<=0||e.down>.3||Math.abs(e.y-p.y)>33)continue;const dx=(e.x-p.x)*p.face;if(dx<-18||dx>reach)continue;hitEnemy(e,damage,p.face,a.step===3||a.kind==='kick'?280:65);p.energy=clamp(p.energy+5,0,100);}
-      for(const prop of state.props){if(prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});}}
+      a.struck=true;
+      if(a.kind==='propThrow'){state.missiles.push({x:p.x+p.face*28,y:p.y,z:48,vx:p.face*580,life:1.35,hits:[],kind:'lid'});emit('throw');return;}
+      const weapon=p.weapon&&Content.weapons[p.weapon],reach=weapon?weapon.reach:a.kind==='kick'?103:a.step===3?98:84,damage=weapon?weapon.damage:a.kind==='kick'?22:a.step===3?20:12;
+      for(const e of state.enemies){if(e.hp<=0||e.down>.3||Math.abs(e.y-p.y)>33||p.z>e.z+110||e.z>p.z+65)continue;const dx=(e.x-p.x)*p.face;if(dx<-18||dx>reach)continue;
+        if(e.kind==='guard'&&e.face===-p.face&&a.kind!=='kick'&&a.step!==3&&!weapon){fx('word',e.x,e.y-e.z-115,{text:'BLOCK',life:.35,max:.35});emit('block');continue;}
+        hitEnemy(e,damage,p.face,a.step===3||a.kind==='kick'?280:65);p.energy=clamp(p.energy+5,0,100);
+      }
+      for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});}}
       if(p.weapon&&--p.weaponHits<=0)p.weapon=null;
     }
     function attack(p){
-      const target=state.enemies.find(e=>!e.boss&&e.hp>0&&e.down<=0&&Math.abs(e.y-p.y)<25&&(e.x-p.x)*p.face>-8&&(e.x-p.x)*p.face<45&&(e.stun>0||e.hp<e.maxHp*.5));
+      const lid=state.props.find(prop=>prop.kind==='lid'&&!prop.open&&Math.abs(prop.x-p.x)<52&&Math.abs(prop.y-p.y)<30);
+      if(lid&&p.z===0){lid.open=true;lid.hp=0;p.action={kind:'propThrow',age:0,duration:.5,struck:false,step:3};p.cooldown=.5;return;}
+      const target=state.enemies.find(e=>!e.boss&&e.kind!=='flyer'&&e.hp>0&&e.down<=0&&Math.abs(e.y-p.y)<25&&(e.x-p.x)*p.face>-8&&(e.x-p.x)*p.face<45&&(e.stun>0||e.hp<e.maxHp*.5));
       if(target&&p.z===0){
         p.action={kind:'throw',age:0,duration:.46,struck:true,step:3};p.cooldown=.5;target.thrown=.55;target.throwHits=[];target.stun=.8;hitEnemy(target,23,p.face,530);p.energy=clamp(p.energy+10,0,100);fx('word',p.x,p.y-100,{text:'THROW!',life:.7,max:.7});emit('throw');return;
       }
       p.comboStep=state.time<p.comboUntil?p.comboStep%3+1:1;p.comboUntil=state.time+.8;
-      const kind=p.z>12?'kick':'punch',duration=kind==='kick'?.38:p.comboStep===3?.4:.27;
+      const kind=p.z>0?'kick':'punch',duration=(kind==='kick'?.38:p.comboStep===3?.4:.27)*(p.weapon?Content.weapons[p.weapon].speed:1);
       p.action={kind,step:p.comboStep,age:0,duration,struck:false};p.cooldown=duration;emit('swing');
     }
     function special(p){
@@ -106,18 +122,19 @@
       if(p.lives<=0)return;
       const dx=Number(!!p.held.right)-Number(!!p.held.left),dy=Number(!!p.held.down)-Number(!!p.held.up),norm=dx&&dy?Math.SQRT1_2:1;
       if(dx&&!p.action)p.face=Math.sign(dx);
-      if(p.queued.jump&&p.z===0&&p.hurt<=0){p.vz=460;p.z=.1;p.airKick=true;emit('jump');}
+      if(p.queued.jump&&p.z===0&&p.hurt<=0){p.vz=620;p.z=.1;emit('jump');}
       if(p.queued.special&&p.hurt<=0)special(p);
-      if((p.held.attack||p.queued.attack||(p.airKick&&p.z>12))&&p.cooldown===0&&p.hurt<=0){attack(p);if(p.z>12)p.airKick=false;}
+      if((p.held.attack||p.queued.attack)&&p.cooldown===0&&p.hurt<=0)attack(p);
       p.queued={};
       const speed=p.hurt>0?0:p.action&&p.z===0?95:205;p.moving=!!(dx||dy);p.walk+=dt*(p.moving?12:2);
-      const boundary=state.arena?center()+340:state.width-40;
-      p.x=clamp(p.x+dx*speed*norm*dt,state.camera+30,boundary);p.y=clamp(p.y+dy*speed*.7*norm*dt,335,487);
+      const boundary=Math.min(state.arena?center()+340:state.width-40,state.players.some(q=>q!==p&&q.lives>0)?state.camera+910:state.width-40);
+      routeMove(p,clamp(p.x+dx*speed*norm*dt,state.camera+30,boundary)-p.x,dy*speed*.85*norm*dt);
+      const teammates=state.players.filter(q=>q!==p&&q.lives>0);if(teammates.length){const lo=Math.min(...teammates.map(q=>q.y))-300,hi=Math.max(...teammates.map(q=>q.y))+300;p.y=clamp(p.y,Math.max(bounds(p.x).min,lo),Math.min(bounds(p.x).max,hi));}
       if(p.z>0||p.vz>0){p.z+=p.vz*dt;p.vz-=1150*dt;if(p.z<=0){p.z=0;p.vz=0;p.airKick=false;fx('dust',p.x,p.y,{life:.25,max:.25});}}
       if(p.action){p.action.age+=dt;if(!p.action.struck&&p.action.age>=.085)strike(p,p.action);if(p.action.age>=p.action.duration)p.action=null;}
       for(let i=state.pickups.length-1;i>=0;i--){const item=state.pickups[i];if(p.z>25||Math.abs(p.x-item.x)>33||Math.abs(p.y-item.y)>25)continue;
         if(item.kind==='food'&&p.hp>=100)continue;
-        if(item.kind==='food')p.hp=clamp(p.hp+35,0,100);else if(item.kind==='energy')p.energy=clamp(p.energy+30,0,100);else{p.weapon=stages[state.stage].weapon;p.weaponHits=18;}
+        if(item.kind==='food')p.hp=clamp(p.hp+35,0,100);else if(item.kind==='energy')p.energy=clamp(p.energy+30,0,100);else{p.weapon=item.weapon||stage().weapon;p.weaponHits=Content.weapons[p.weapon].hits;}
         state.pickups.splice(i,1);state.score+=100;fx('word',p.x,p.y-100,{text:item.kind==='food'?'+35 HEALTH':item.kind==='energy'?'+30 SPECIAL':'WEAPON UP',color:'#ffe3a0',life:.9,max:.9});emit('pickup');
       }
     }
@@ -128,13 +145,14 @@
       if(kind==='super'){e.superTimer=e.enraged?6:9;emit('super');fx('word',e.x,e.y-160,{text:stage().superName,life:1.2,max:1.2,color:stage().color});}
     }
     function bossPower(e,a){
+      const base=ground(e.x);
       const color=stage().color,add=(kind,x,y,rx,ry,delay,extra={})=>state.hazards.push({kind,x,y,rx,ry,delay,life:.38,age:0,damage:24,owner:e.id,color,...extra});
       const left=state.camera+25,right=Math.min(state.width-30,state.camera+935),fit=x=>clamp(x,left+45,right-45);
-      if(state.stage===0){for(let i=0;i<2;i++)add('electric',(left+right)/2,clamp(a.y+(i?76:0),343,479),(right-left)/2,18,.7+i*.45);}
-      if(state.stage===1){for(let i=0;i<4;i++)add('cannon',fit(a.x+(i-1)*130),clamp(a.y+(i%2?52:-34),345,477),58,32,.8+i*.26);}
+      if(state.stage===0){for(let i=0;i<2;i++)add('electric',(left+right)/2,clamp(a.y+(i?76:0),343+base,479+base),(right-left)/2,18,.7+i*.45);}
+      if(state.stage===1){for(let i=0;i<4;i++)add('cannon',fit(a.x+(i-1)*130),clamp(a.y+(i%2?52:-34),345+base,477+base),58,32,.8+i*.26);}
       if(state.stage===2){for(const dir of [-1,1])add('quake',e.x,e.y,30,160,.75,{vx:dir*250,life:2.4,damage:22});}
-      if(state.stage===3){for(let i=0;i<3;i++)add('shadow',fit(a.x+(i-1)*140),clamp(a.y+(i-1)*50,346,474),80,26,.65+i*.36);}
-      if(state.stage===4){for(let i=0;i<3;i++)add('steam',left+100+i*(right-left-200)/2,416,34,95,.9+i*.22,{life:1.25,damage:22});}
+      if(state.stage===3){for(let i=0;i<3;i++)add('shadow',fit(a.x+(i-1)*140),clamp(a.y+(i-1)*50,346+base,474+base),80,26,.65+i*.36);}
+      if(state.stage===4){for(let i=0;i<3;i++)add('steam',left+100+i*(right-left-200)/2,416+base,34,95,.9+i*.22,{life:1.25,damage:22});}
       if(state.stage===5){for(let i=0;i<2;i++)add('time',e.x,e.y,25,12,.8+i*.85,{life:1.9,damage:22});}
     }
     function moveHazards(dt){
@@ -151,6 +169,28 @@
       }
       state.hazards=state.hazards.filter(h=>h.life>0);
     }
+    function sceneryTick(dt){
+      if(state.story)state.story.life-=dt;
+      for(const t of state.traps){const phase=(state.time+t.phase)%4.5;t.warning=phase>2.3&&phase<3.2;t.active=phase>=3.2&&phase<4.1;
+        if(!t.active){t.hits=[];continue;}
+        const rx=t.kind==='rail'?100:38,ry=t.kind==='arrows'||t.kind==='laser'?125:30;
+        for(const p of state.players)if(Math.abs(p.x-t.x)<rx&&Math.abs(p.y-t.y)<ry&&p.z<(t.kind==='steam'?105:40))hurtPlayer(p,16,Math.sign(p.x-t.x)||1);
+        for(const e of state.enemies)if(!e.boss&&e.hp>0&&e.z<40&&!t.hits?.includes(e.id)&&Math.abs(e.x-t.x)<rx&&Math.abs(e.y-t.y)<ry){(t.hits||=[]).push(e.id);hitEnemy(e,25,1,220);}
+      }
+      for(const prop of state.props)if(prop.kind==='lid'&&prop.open)for(const p of state.players)if(p.z<8&&Math.abs(p.x-prop.x)<21&&Math.abs(p.y-prop.y)<12&&p.action?.kind!=='propThrow'){if(hurtPlayer(p,14,p.face)){p.z=10;p.vz=230;fx('word',p.x,p.y-100,{text:'WATCH YOUR STEP!'});}}
+      for(const m of state.missiles){m.x+=m.vx*dt;m.life-=dt;for(const e of state.enemies)if(e.hp>0&&!m.hits.includes(e.id)&&Math.abs(m.x-e.x)<45&&Math.abs(m.y-e.y)<34&&Math.abs(e.z-m.z)<90){m.hits.push(e.id);hitEnemy(e,45,Math.sign(m.vx),360);}}
+      state.missiles=state.missiles.filter(m=>m.life>0&&Math.abs(m.x-state.camera)<1150);
+    }
+    function moveFlyer(e,target,dt){
+      e.face=target.x<e.x?-1:1;
+      if(e.stun>0){e.z=Math.max(16,e.z-dt*180);return;}
+      if(e.dive>0){e.dive-=dt;e.z=Math.max(12,e.z-dt*210);e.x+=e.diveVX*dt;e.y+=e.diveVY*dt;if(Math.abs(e.x-target.x)<42&&Math.abs(e.y-target.y)<28&&Math.abs(target.z-e.z)<50)hurtPlayer(target,14,e.face);if(e.dive<=0)e.cooldown=2.4;return;}
+      e.z=Math.min(88,e.z+dt*85)+Math.sin(state.time*7+e.id)*dt*9;
+      if(e.windup>0){e.windup-=dt;if(e.windup<=0){e.dive=.65;const dx=e.attack.x-e.x,dy=e.attack.y-e.y,length=Math.max(1,Math.hypot(dx,dy));e.diveVX=dx/length*300;e.diveVY=dy/length*200;e.attack=null;}return;}
+      const dx=target.x-e.x,dy=target.y-e.y;
+      if(e.cooldown===0&&Math.abs(dx)<260){e.windup=.85;e.attack={kind:'dive',x:target.x,y:target.y};return;}
+      e.x+=Math.sign(dx)*dt*(Math.abs(dx)>150?115:-25);e.y+=Math.sign(dy)*Math.min(Math.abs(dy),dt*85);
+    }
     function moveEnemy(e,dt){
       if(e.hp<=0&&e.thrown<=0){e.dead=Math.max(0,e.dead-dt);return;}
       if(e.boss&&e.hp>0){
@@ -159,12 +199,13 @@
       }
       e.stun=Math.max(0,e.stun-dt);e.down=Math.max(0,e.down-dt);e.cooldown=Math.max(0,e.cooldown-dt*(e.enraged?1.3:1));e.walk+=dt*8;
       if(e.thrown>0){e.thrown-=dt;for(const other of state.enemies)if(other!==e&&other.hp>0&&!e.throwHits.includes(other.id)&&Math.abs(other.x-e.x)<45&&Math.abs(other.y-e.y)<35){e.throwHits.push(other.id);hitEnemy(other,20,Math.sign(e.vx),280);}}
-      e.x=clamp(e.x+e.vx*dt,state.camera+20,Math.min(state.width-30,center()+350));e.vx*=Math.exp(-6*dt);
+      routeMove(e,clamp(e.x+e.vx*dt,state.camera+20,Math.min(state.width-30,center()+350))-e.x,0);e.vx*=Math.exp(-6*dt);
       if(e.hp<=0){e.dead=Math.max(0,e.dead-dt);return;}
-      if(e.stun>0)return;
       const alive=state.players.filter(p=>p.lives>0&&p.dead<=0);if(!alive.length)return;
-      if(e.charge>0){e.charge=Math.max(0,e.charge-dt);e.vx=e.face*460;for(const p of alive)if(Math.abs(p.x-e.x)<55&&Math.abs(p.y-e.y)<34&&p.z<38)hurtPlayer(p,18,e.face);return;}
       const target=alive.reduce((best,p)=>Math.hypot(p.x-e.x,p.y-e.y)<Math.hypot(best.x-e.x,best.y-e.y)?p:best);
+      if(e.kind==='flyer'){moveFlyer(e,target,dt);return;}
+      if(e.stun>0)return;
+      if(e.charge>0){e.charge=Math.max(0,e.charge-dt);e.vx=e.face*460;for(const p of alive)if(Math.abs(p.x-e.x)<55&&Math.abs(p.y-e.y)<34&&p.z<38)hurtPlayer(p,18,e.face);return;}
       const dx=target.x-e.x,dy=target.y-e.y;
       if(e.windup>0){e.windup-=dt;if(e.windup<=0){const a=e.attack;e.attack=null;e.cooldown=e.boss?1.1:e.kind==='swift'?.8:1.3;
         if(a.kind==='super')bossPower(e,a);
@@ -173,8 +214,8 @@
           for(const angle of angles)state.shots.push({x:e.x,y:e.y,vx:Math.cos(angle)*310,vy:Math.sin(angle)*310,life:3,owner:e.id});emit('shot');
         }
         else if(a.kind==='charge'){e.charge=.5;e.vx=a.face*460;fx('word',e.x,e.y-130,{text:'CHARGE!',life:.6,max:.6});}
-        else if(a.kind==='blink'){fx('burst',e.x,e.y-40);e.x=clamp(a.x-a.face*100,state.camera+30,Math.min(state.width-40,center()+320));e.y=clamp(a.y,335,487);e.face=a.face;e.cooldown=.22;fx('burst',e.x,e.y-40);}
-        else if(a.kind==='pounce'){e.x=clamp(a.x,state.camera+30,Math.min(state.width-40,center()+320));e.y=clamp(a.y,335,487);fx('slam',e.x,e.y,{life:.5,max:.5});for(const p of alive)if(Math.abs(p.x-e.x)<85&&Math.abs(p.y-e.y)<55&&p.z<35)hurtPlayer(p,20,Math.sign(p.x-e.x)||1);emit('slam');}
+        else if(a.kind==='blink'){fx('burst',e.x,e.y-40);e.x=clamp(a.x-a.face*100,state.camera+30,Math.min(state.width-40,center()+320));e.y=clamp(a.y,bounds(e.x).min,bounds(e.x).max);e.face=a.face;e.cooldown=.22;fx('burst',e.x,e.y-40);}
+        else if(a.kind==='pounce'){e.x=clamp(a.x,state.camera+30,Math.min(state.width-40,center()+320));e.y=clamp(a.y,bounds(e.x).min,bounds(e.x).max);fx('slam',e.x,e.y,{life:.5,max:.5});for(const p of alive)if(Math.abs(p.x-e.x)<85&&Math.abs(p.y-e.y)<55&&p.z<35)hurtPlayer(p,20,Math.sign(p.x-e.x)||1);emit('slam');}
         else if(a.kind==='slam'){fx('slam',e.x,e.y,{life:.5,max:.5});state.shake=8;for(const p of alive)if(Math.abs(p.x-e.x)<140&&Math.abs(p.y-e.y)<85&&p.z<35)hurtPlayer(p,20,Math.sign(p.x-e.x)||1);emit('slam');}
         else{fx('swipe',e.x+a.face*48,e.y-37,{face:a.face});for(const p of alive)if((p.x-e.x)*a.face>-15&&(p.x-e.x)*a.face<(e.boss?105:80)&&Math.abs(p.y-e.y)<32&&p.z<38)hurtPlayer(p,e.boss?19:e.kind==='brute'?17:11,a.face);}
       }return;}
@@ -184,16 +225,15 @@
       if(Math.abs(dx)<range&&Math.abs(dy)<26&&e.cooldown===0){enemyAttack(e,target);return;}
       const speed=e.kind==='swift'?115:e.kind==='brute'?57:e.boss?(e.enraged?100:78):83;
       const laneOffset=(e.id%3-1)*13,moveY=dy+laneOffset;
-      if(Math.abs(dx)>range*.75)e.x+=Math.sign(dx)*speed*dt;
-      if(Math.abs(moveY)>5)e.y=clamp(e.y+Math.sign(moveY)*speed*.72*dt,337,484);
-      for(const other of state.enemies)if(other!==e&&other.hp>0&&Math.abs(other.x-e.x)<30&&Math.abs(other.y-e.y)<22)e.y=clamp(e.y+(e.id>other.id?1:-1)*24*dt,337,484);
+      routeMove(e,Math.abs(dx)>range*.75?Math.sign(dx)*speed*dt:0,Math.abs(moveY)>5?Math.sign(moveY)*speed*.72*dt:0);
+      for(const other of state.enemies)if(other!==e&&other.hp>0&&Math.abs(other.x-e.x)<30&&Math.abs(other.y-e.y)<22)routeMove(e,0,(e.id>other.id?1:-1)*24*dt);
     }
     function tick(dt=STEP){
       if(state.status!=='playing')return;dt=Math.min(dt,.05);state.tick++;state.time+=dt;
       state.transition=Math.max(0,state.transition-dt);state.flash=Math.max(0,state.flash-dt);state.shake=Math.max(0,state.shake-dt*24);state.comboTime=Math.max(0,state.comboTime-dt);if(!state.comboTime)state.combo=0;
       state.effects.forEach(f=>f.life-=dt);state.effects=state.effects.filter(f=>f.life>0).slice(-90);
       if(state.hitstop>0){state.hitstop-=dt;return;}
-      state.players.forEach(p=>movePlayer(p,dt));state.enemies.forEach(e=>moveEnemy(e,dt));moveHazards(dt);
+      state.players.forEach(p=>movePlayer(p,dt));state.enemies.forEach(e=>moveEnemy(e,dt));moveHazards(dt);sceneryTick(dt);
       for(const b of state.shots){b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(const p of state.players)if(b.life>0&&Math.abs(p.x-b.x)<24&&Math.abs(p.y-b.y)<22&&p.z<34&&hurtPlayer(p,13,Math.sign(b.vx)))b.life=0;}
       state.shots=state.shots.filter(b=>b.life>0&&b.x>state.camera-60&&b.x<state.camera+1050);
       state.enemies=state.enemies.filter(e=>e.hp>0||e.dead>0);
@@ -201,6 +241,9 @@
       const standing=state.players.filter(p=>p.lives>0);if(!standing.length)return;
       const lead=Math.max(...standing.map(p=>p.x)),tail=Math.min(...standing.map(p=>p.x));
       const cameraTarget=Math.min(lead-310,tail-45,state.width-960);state.camera=clamp(Math.max(state.camera,cameraTarget),0,state.width-960);
+      const low=Math.min(...standing.map(p=>p.y)),high=Math.max(...standing.map(p=>p.y)),turning=standing.some(p=>stage().turns.some(t=>p.x>=t.x&&p.x<=t.end));
+      const cameraYTarget=turning?clamp(Math.min(high-416,low-180),0,600):ground(lead);state.cameraY+=clamp(cameraYTarget-state.cameraY,-dt*320,dt*320);
+      const turn=Content.nextTurn(stage(),standing[0]);if(turn&&!state.storySeen.has(turn.x)){state.storySeen.add(turn.x);story(1);}
       if(!state.arena&&state.gate<stage().encounters.length&&lead>center()-330)beginArena();
       if(state.arena&&!state.enemies.some(e=>e.hp>0)){
         if(!lastGate()&&state.gate%3===2&&state.wave===0){state.wave=1;beginArena();fx('word',lead+150,230,{text:'AMBUSH!',life:1.1,max:1.1});return;}
@@ -212,5 +255,5 @@
     }
     return {state,start,input,release,pause,advance,continueRun,tick,drainEvents(){return state.events.splice(0);},hash(){return K.fnv1a(JSON.stringify({seed,state:state.inputLog}));}};
   }
-  const api={createEngine,stages,difficulties,STEP,BOSS_RAGE};root.SlopInTime=Object.assign(root.SlopInTime||{},api);if(typeof module!=='undefined')module.exports=api;
+  const api={createEngine,stages,difficulties,STEP,BOSS_RAGE,content:Content};root.SlopInTime=Object.assign(root.SlopInTime||{},api);if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

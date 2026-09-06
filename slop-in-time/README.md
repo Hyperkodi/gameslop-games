@@ -12,13 +12,13 @@ Landscape is recommended on phones. Expand requests browser fullscreen, with an 
 | --- | --- | --- | --- | --- |
 | Move on the ground plane | Arrows | WASD | Left stick / D-pad | Thumbstick |
 | Attack / three-hit combo | Hold X | Hold H | Hold X / RT | Hold Attack |
-| Jump with automatic air kick | Z / Space | G | A / B | Jump Kick |
+| Jump (press Attack in the air to kick) | Z / Space | G | A / B | Jump |
 | Charged special | C | J | Y | Special when ready |
 | Pause | P / Escape | Shared | Start | Pause |
 
-Close in on a stunned or weakened ordinary enemy and attack to throw it. A thrown enemy damages others in its path. Bosses resist grabs and their warned attacks cannot be interrupted by ordinary punches. Move around enemy attacks or jump over them.
+Close in on a stunned or weakened ordinary enemy and attack to throw it. A thrown enemy damages others in its path. Bosses resist grabs and their warned attacks cannot be interrupted by ordinary punches. Move around enemy attacks or jump over them. Jump alone never attacks and now reaches about 170 pixels. Press Attack while airborne to kick; ordinary ground punches cannot reach a high-flying enemy. Shield guards block frontal jabs but are vulnerable to finishers, weapons, and jump kicks.
 
-Break marked barrels for food (+35 health), energy (+30 special), and an era-specific melee weapon (18 swings). Landing attacks and scoring knockouts charges Special. A full meter unleashes an area attack without costing health.
+Collect visible food (+35 health), energy drinks (+30 special), and era-specific melee weapons. Every era has two weapons, with different reach, damage, swing speed and durability; there are twelve in total. Attack near a closed manhole, hatch or stone cover to lift and throw it through enemies. The open hole remains a hazard. Landing attacks and scoring knockouts charges Special. A full meter unleashes an area attack without costing health.
 
 Easy gives five lives and lighter enemy damage; Normal gives three lives; Hard gives two lives, extra enemies, and tougher opponents. Two continues resume at the latest checkpoint (after encounters 3, 6 and 9). Checkpoints restore 45 health and 25 special energy. Clearing an era restores health. Best scores are saved locally by difficulty and player count. Co-op requires both players to use the same browser; touch controls Player 1.
 
@@ -33,9 +33,9 @@ Easy gives five lives and lighter enemy damage; Normal gives three lives; Hard g
 | Last Train to Trouble / 1888 | Western railway town | Boiler Bill | Boiler Burst: three steam vents |
 | The Clockwork End / 3099 | Time-machine foundry | The Timekeeper | Time Rupture: two expanding rings |
 
-Each era contains ten combat arenas and three additional ambush waves across seven named landmarks. Routes measure 9,000–10,400 world pixels, longer than Commando’s 6,600-pixel outdoor stages. Clear enemies to release the camera and continue along the scrolling route. Health, energy and carried weapons are independent in co-op. There are no friendly attacks.
+Each era contains ten combat arenas and three additional ambush waves across seven named landmarks. Two southbound connectors require Down movement and use an overhead view with vertical camera travel. Story blurbs introduce each era, guide the detours, and set up the boss. A different aerial enemy and environmental trap match each era. Routes measure 9,000–10,400 world pixels, longer than Commando’s 6,600-pixel outdoor stages. Clear enemies to release the camera and continue along the scrolling route. Health, energy and carried weapons are independent in co-op. There are no friendly attacks.
 
-Every boss has an armored, named superpower with marked danger areas and a dodge hint. At 30% health the boss turns red, moves faster, recovers faster, and uses its power more often. Warnings retain their full duration. Defeating a boss removes its remaining hazards.
+Each boss has its own original character art and two poses: transformer mech, crab pirate admiral, fossil tyrannosaur, spectral four-armed samurai, locomotive monster, and clock-headed sorcerer. Every boss has an armored, named superpower with marked danger areas and a dodge hint. At 30% health the boss turns red, moves faster, recovers faster, and uses its power more often. Warnings retain their full duration. Defeating a boss removes its remaining hazards.
 
 ## Implementation and verification
 
@@ -58,3 +58,5 @@ The Chrome driver verifies keyboard and touch combat, quick taps, second-finger 
 Use `tools/cdp-drivers/slop-in-time-pixel-qa.js` with the same command to check all six panorama joins, end-of-route scenery coverage, boss power warnings and actual red sprite pixels. The art renders at 480 × 270 with nearest-neighbor enlargement; the HUD stays at 960 × 540. All final artwork and generation prompts are documented in `docs/slop-in-time-pixel-art-v2.md` at the repository root.
 
 `?seed=42` fixes the simulation seed; `?debug=1` exposes `window.__gameslop.{engine,renderer,audio,touch}`. There are no account or network multiplayer services. The optional iframe game-over message contains only game statistics.
+
+The adventure update adds `js/content.js` for route geometry, weapons and story text. Run `tools/cdp-drivers/slop-in-time-adventure-qa.js` through the browser command above for attack pose captures, actual southbound traversal and aerial enemy checks. New sprite assets and final prompts are recorded in `docs/slop-in-time-adventure-art-v3.md`.

@@ -2,11 +2,12 @@
 const {test}=require('node:test'),assert=require('node:assert/strict');
 const {createEngine,stages,STEP}=require('../js/engine');
 const tick=(e,n)=>{for(let i=0;i<n;i++)e.tick();};
-function arena(options={}){const e=createEngine({seed:42});e.start(options);e.state.players[0].x=160;e.tick();e.state.props=[];e.state.enemies=e.state.enemies.slice(0,1);const foe=e.state.enemies[0];Object.assign(foe,{kind:'grunt',x:225,y:416,hp:200,maxHp:200,cooldown:100,stun:0,down:0});e.state.players[0].invincible=100;return {e,p:e.state.players[0],foe};}
+function arena(options={}){const e=createEngine({seed:42});e.start(options);e.state.players[0].x=160;e.tick();e.state.props=[];e.state.pickups=[];e.state.traps=[];e.state.enemies=e.state.enemies.slice(0,1);const foe=e.state.enemies[0];Object.assign(foe,{kind:'grunt',x:225,y:416,hp:200,maxHp:200,cooldown:100,stun:0,down:0});e.state.players[0].invincible=100;return {e,p:e.state.players[0],foe};}
 test('six eras each have a distinct theme, boss, and collectible weapon',()=>{assert.equal(stages.length,6);for(const key of ['theme','boss','weapon'])assert.equal(new Set(stages.map(s=>s[key])).size,6);});
 test('start and restart honor difficulty, co-op and a reproducible seed',()=>{const e=createEngine({seed:17});e.start({players:2,difficulty:'hard'});assert.equal(e.state.players.length,2);assert.equal(e.state.players[0].lives,2);e.state.score=999;e.start({difficulty:'easy'});assert.equal(e.state.score,0);assert.equal(e.state.players[0].lives,5);});
 test('movement uses a bounded ground plane without treating up as climbing',()=>{const {e,p}=arena();e.input(0,'up',true);tick(e,150);assert.equal(p.y,335);assert.equal(p.z,0);e.input(0,'up',false);e.input(0,'down',true);tick(e,150);assert.equal(p.y,487);assert.equal(p.z,0);});
-test('a quick released Jump automatically delivers an airborne kick and lands',()=>{const {e,p,foe}=arena();e.input(0,'jump',true);e.input(0,'jump',false);tick(e,13);assert.ok(p.z>30);assert.ok(foe.hp<200);assert.equal(p.action.kind,'kick');tick(e,65);assert.equal(p.z,0);assert.equal(p.vz,0);});
+test('Jump alone rises higher than 150 pixels, never attacks, and lands',()=>{const {e,p,foe}=arena();e.input(0,'jump',true);e.input(0,'jump',false);tick(e,30);assert.ok(p.z>150);assert.equal(foe.hp,200);assert.equal(p.action,null);tick(e,50);assert.equal(p.z,0);assert.equal(p.vz,0);});
+test('pressing Attack after takeoff produces a real jump kick',()=>{const {e,p,foe}=arena();e.input(0,'jump',true);tick(e,3);e.input(0,'jump',false);e.input(0,'attack',true);tick(e,8);assert.equal(p.action.kind,'kick');assert.equal(foe.hp,178);});
 test('holding Jump cannot repeatedly hop after landing',()=>{const {e,p}=arena();e.input(0,'jump',true);tick(e,150);assert.equal(p.z,0);assert.equal(e.drainEvents().filter(x=>x.type==='jump').length,1);});
 test('held Attack chains three hits with a finishing knockdown, not per-frame damage',()=>{const {e,p,foe}=arena();e.input(0,'attack',true);tick(e,50);assert.equal(p.comboStep,3);assert.equal(foe.hp,156);assert.ok(foe.down>0);assert.equal(e.state.combo,3);});
 test('attacks miss enemies in another depth lane',()=>{const {e,foe}=arena();foe.y=480;e.input(0,'attack',true);tick(e,8);assert.equal(foe.hp,200);});
@@ -14,7 +15,7 @@ test('a vulnerable close enemy is thrown and damages another even if the throw k
 test('bosses cannot be grabbed and thrown',()=>{const {e,p,foe}=arena();foe.boss=true;foe.hp=15;foe.x=p.x+25;e.input(0,'attack',true);tick(e,8);assert.ok(!e.drainEvents().some(x=>x.type==='throw'));});
 test('boss windups survive player combos and still resolve an attack',()=>{const {e,p,foe}=arena();p.invincible=0;foe.boss=true;foe.x=p.x+45;foe.cooldown=0;e.input(0,'attack',true);tick(e,70);assert.ok(p.hp<100);assert.ok(foe.hp<200);});
 test('special requires charge, hits its area and is consumed once per press',()=>{const {e,p,foe}=arena();p.energy=99;e.input(0,'special',true);tick(e,1);assert.equal(foe.hp,200);e.input(0,'special',false);p.energy=100;e.input(0,'special',true);tick(e,15);assert.equal(foe.hp,158);assert.ok(p.energy<100);assert.equal(e.drainEvents().filter(x=>x.type==='special').length,1);});
-test('breakable props yield actual healing and weapon pickups with limited durability',()=>{const {e,p}=arena();e.state.props=[{id:20,x:p.x+40,y:p.y,hp:10,kind:'food'}];e.input(0,'attack',true);tick(e,8);assert.equal(e.state.props[0].hp<=0,true);assert.equal(e.state.pickups.length,1);e.input(0,'attack',false);p.hp=50;p.x+=40;tick(e,5);assert.equal(p.hp,85);e.state.pickups=[{x:p.x,y:p.y,kind:'weapon'}];tick(e,1);assert.equal(p.weapon,stages[0].weapon);assert.equal(p.weaponHits,18);});
+test('breakable props yield actual healing and weapon pickups with limited durability',()=>{const {e,p}=arena();e.state.props=[{id:20,x:p.x+40,y:p.y,hp:10,kind:'food'}];e.input(0,'attack',true);tick(e,8);assert.equal(e.state.props[0].hp<=0,true);assert.equal(e.state.pickups.length,1);e.input(0,'attack',false);p.hp=50;p.x+=40;tick(e,5);assert.equal(p.hp,85);e.state.pickups=[{x:p.x,y:p.y,kind:'weapon'}];tick(e,1);assert.equal(p.weapon,stages[0].weapon);assert.equal(p.weaponHits,22);});
 test('enemy windup is visible before damage, and a jump dodges a ground strike',()=>{const {e,p,foe}=arena();p.invincible=0;foe.cooldown=0;foe.x=p.x+45;tick(e,1);assert.ok(foe.windup>0);assert.equal(p.hp,100);e.input(0,'jump',true);tick(e,30);assert.equal(p.hp,100);});
 test('taking damage respawns locally, exhausted lives lead to gameover, continues are limited',()=>{const {e,p,foe}=arena();p.lives=1;p.hp=1;p.invincible=0;foe.x=p.x+45;foe.cooldown=0;tick(e,125);assert.equal(e.state.status,'gameover');assert.equal(p.lives,0);e.continueRun();assert.equal(e.state.status,'playing');assert.equal(e.state.continues,1);assert.equal(p.hp,100);e.state.status='gameover';e.continueRun();e.state.status='gameover';e.continueRun();assert.equal(e.state.status,'gameover');assert.equal(e.state.continues,0);});
 test('pause clears pending input and freezes all combat state',()=>{const {e,p}=arena();e.input(0,'jump',true);e.pause();const before=JSON.stringify(e.state);tick(e,50);assert.equal(JSON.stringify(e.state),before);e.pause();tick(e,1);assert.equal(p.z,0);});
@@ -23,8 +24,8 @@ test('sixty encounters, eighteen ambushes and six bosses advance to victory',()=
 test('all six eras can be fought to victory with real inputs and finite player health',()=>{const e=createEngine({seed:5});e.start({difficulty:'normal'});for(let i=0;i<300000&&!['gameover','victory'].includes(e.state.status);i++){
   if(e.state.status==='clear'){e.advance();continue;}
   const p=e.state.players[0],enemies=e.state.enemies.filter(x=>x.hp>0),target=enemies.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
-  const dx=target?target.x-p.x:100,dy=target?target.y-p.y:0;
-  e.input(0,'right',dx>40||(!target));e.input(0,'left',dx< -40);e.input(0,'up',dy< -8);e.input(0,'down',dy>8);e.input(0,'attack',true);e.input(0,'jump',!!target&&i%70===0);e.input(0,'special',p.energy>=100&&!!target);e.tick();
+  const turn=require('../js/content').nextTurn(stages[e.state.stage],p);const dx=target?target.x-p.x:turn?(turn.x+turn.end)/2-p.x:100,dy=target?target.y-p.y:turn?395+turn.offset+turn.drop-p.y:0;
+  e.input(0,'right',dx>40);e.input(0,'left',dx< -40);e.input(0,'up',dy< -8);e.input(0,'down',dy>8);e.input(0,'attack',true);e.input(0,'jump',!!target&&i%70===0);e.input(0,'special',p.energy>=100&&!!target);e.tick();
 }assert.equal(e.state.status,'victory',JSON.stringify({status:e.state.status,gate:e.state.gate,player:e.state.players[0],enemies:e.state.enemies}));assert.ok(e.state.kills>=90);});
 test('identical seed and input sequence reproduce combat results',()=>{function run(){const e=createEngine({seed:7});e.start();for(let i=0;i<900;i++){e.input(0,'right',i<150);e.input(0,'attack',i>90);e.input(0,'jump',i%90===0);e.tick(STEP);}return {score:e.state.score,players:e.state.players,enemies:e.state.enemies,hash:e.hash()};}assert.deepEqual(run(),run());});
 
@@ -48,4 +49,29 @@ test('superpower damage respects warnings, depth, jumping and player invulnerabi
     const h=e.state.hazards[0];e.state.hazards=[h];h.delay=0;h.vx=0;if(h.kind==='time'){p.x=h.x+29;p.y=h.y;}else{p.x=h.x;p.y=h.y;}p.invincible=0;p.z=0;e.tick();assert.ok(p.hp<100,'damage '+h.kind);const hp=p.hp;e.tick();assert.equal(p.hp,hp,'invulnerability '+h.kind);
   }
   const {e,p,boss}=bossFixture(2);e.tick();tick(e,67);boss.cooldown=100;const h=e.state.hazards[0];e.state.hazards=[h];h.delay=0;h.vx=0;p.x=h.x;p.y=h.y;p.invincible=0;p.z=70;p.vz=0;e.tick();assert.equal(p.hp,100,'jump dodges quake');
+});
+test('routes require walking south, scroll vertically and return to horizontal travel',()=>{
+  const {e,p}=arena();e.state.enemies=[];e.state.arena=false;e.state.gate=9;const turn=stages[0].turns[0];p.x=turn.x+100;p.y=416;e.state.camera=p.x-310;
+  e.input(0,'right',true);tick(e,90);assert.ok(p.x<=turn.end);assert.equal(p.y,416);e.input(0,'right',false);e.input(0,'down',true);tick(e,120);assert.ok(p.y>635);assert.ok(e.state.cameraY>150);e.input(0,'down',false);e.input(0,'right',true);tick(e,100);assert.ok(p.x>turn.end+100);assert.ok(p.y>=635);
+});
+test('manhole lid throws once, hits several enemies and leaves an open hole',()=>{
+  const {e,p,foe}=arena();e.state.props=[{id:99,x:p.x,y:p.y,hp:1,kind:'lid',open:false}];foe.x=p.x+100;const other={...foe,id:100,x:p.x+180,throwHits:[]};e.state.enemies.push(other);e.input(0,'attack',true);tick(e,22);assert.equal(e.state.props[0].open,true);assert.equal(p.action.kind,'propThrow');assert.ok(foe.hp<=155);assert.ok(other.hp<=155);assert.equal(e.drainEvents().filter(x=>x.type==='throw').length,1);
+});
+test('shield guards block frontal jabs, but a finisher breaks their defense',()=>{
+  const {e,foe}=arena();foe.kind='guard';foe.face=-1;e.input(0,'attack',true);tick(e,10);assert.equal(foe.hp,200);tick(e,40);assert.equal(foe.hp,180);assert.ok(foe.down>0);
+});
+test('flying enemies avoid ground punches and can be hit by an airborne attack',()=>{
+  const {e,p,foe}=arena();foe.kind='flyer';foe.z=82;foe.cooldown=100;foe.stun=0;e.input(0,'attack',true);tick(e,7);assert.equal(foe.hp,200);e.input(0,'attack',false);p.cooldown=0;p.action=null;p.z=70;p.vz=0;foe.x=p.x+55;e.input(0,'attack',true);tick(e,7);assert.ok(foe.hp<200);
+});
+test('each era contains its flyer, trap, story and two distinct usable weapons',()=>{
+  const C=require('../js/content');assert.equal(Object.keys(C.weapons).length,12);const e=createEngine();e.start();for(let i=0;i<6;i++){if(i){e.state.status='clear';e.advance();}assert.equal(stages[i].weapons.length,2);assert.equal(e.state.story.text,stages[i].story[0]);assert.ok(e.state.traps.every(t=>t.kind===stages[i].trap));assert.ok(e.state.pickups.some(p=>p.kind==='weapon'&&p.weapon===stages[i].weapons[1]));assert.ok(e.state.props.every(p=>p.kind==='lid'));}
+});
+test('trap warnings are harmless; active ground traps can be jumped',()=>{
+  const {e,p}=arena();const t={x:p.x,y:p.y,kind:'spikes',phase:0};e.state.traps=[t];p.invincible=0;e.state.time=2.5;e.tick();assert.ok(t.warning);assert.equal(p.hp,100);e.state.time=3.4;p.z=90;p.vz=0;e.tick();assert.ok(t.active);assert.equal(p.hp,100);p.z=0;e.tick();assert.equal(p.hp,84);
+});
+test('all weapon pickups use their own reach, damage and durability',()=>{
+  const C=require('../js/content');for(const [id,w] of Object.entries(C.weapons)){const {e,p,foe}=arena();e.state.pickups=[{x:p.x,y:p.y,kind:'weapon',weapon:id}];e.tick();assert.equal(p.weapon,id);assert.equal(p.weaponHits,w.hits);foe.x=p.x+w.reach-5;e.input(0,'attack',true);tick(e,7);assert.equal(foe.hp,200-w.damage);assert.equal(p.weaponHits,w.hits-1);}
+});
+test('co-op players cannot outrun the shared view during a downward connector',()=>{
+  const e=createEngine();e.start({players:2});e.state.gate=9;e.state.enemies=[];e.state.arena=false;const t=stages[0].turns[0],p=e.state.players[0],q=e.state.players[1];p.x=q.x=t.x+80;p.y=q.y=416;e.state.camera=p.x-310;e.input(0,'down',true);tick(e,180);assert.ok(p.y-q.y<=300.01);assert.ok(p.y-e.state.cameraY<=490);assert.ok(q.y-e.state.cameraY>=170);e.input(0,'down',false);e.input(0,'right',true);tick(e,400);assert.ok(p.x-e.state.camera<=914);
 });
