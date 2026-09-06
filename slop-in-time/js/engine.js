@@ -33,14 +33,14 @@
     const ground=x=>Content.floor(stage(),x),bounds=x=>Content.bounds(stage(),x);
     function routeMove(p,dx,dy){const x=p.x+dx;if(Content.walkable(stage(),x,p.y))p.x=x;const b=bounds(p.x);p.y=clamp(p.y+dy,b.min,b.max);}
 
-    function player(id){return {id,x:130+id*70,y:416+id*36,z:0,vz:0,face:1,hp:100,maxHp:100,upgrades:[],lives:rules().lives,energy:40,stamina:100,staminaDelay:0,exhausted:false,running:false,held:{},queued:{},cooldown:0,action:null,comboStep:0,comboUntil:0,invincible:2,hurt:0,dead:0,weapon:null,weaponHits:0,walk:0,moving:false};}
+    function player(id){return {id,x:130+id*70,y:416+id*36,z:0,vz:0,face:1,hp:100,maxHp:100,upgrades:[],lives:rules().lives,energy:40,stamina:100,exhausted:false,running:false,held:{},queued:{},cooldown:0,action:null,comboStep:0,comboUntil:0,invincible:2,hurt:0,dead:0,weapon:null,weaponHits:0,walk:0,moving:false};}
     function release(){for(const p of state.players){p.held={};p.queued={};p.running=false;p.moving=false;}}
     function stageLoad(index,startGate=0){
       state.stage=index;state.enemies=[];state.pickups=[];state.effects=[];state.shots=[];state.props=[];state.camera=0;state.gate=0;state.arena=false;state.transition=0;state.ending=null;state.waveDelay=0;state.shake=0;state.flash=0;state.hitstop=0;state.combo=0;state.comboTime=0;
       release();
       state.width=stage().width;state.hazards=[];state.checkpoint=startGate;state.gate=startGate;state.wave=0;
       state.cameraY=0;state.missiles=[];state.traps=[];state.story=null;state.storySeen=new Set();
-      state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,stamina:100,staminaDelay:0,exhausted:false,running:false,moving:false,walk:0,hp:p.maxHp,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
+      state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,stamina:100,exhausted:false,running:false,moving:false,walk:0,hp:p.maxHp,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
       const spawnX=startGate?center()-360:130;
       state.players.forEach((p,i)=>{p.x=spawnX+i*65;p.y=416+i*35+ground(p.x);});state.camera=Math.max(0,spawnX-130);state.cameraY=ground(spawnX);
       for(let i=0;i<Math.floor(state.width/370);i++){const x=350+i*370;if(x<spawnX)continue;const kind=i%3===0?'food':i%3===1?'weapon':'energy';state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,food:Object.keys(Content.foods)[Math.floor(i/3)%4],weapon:stage().weapons[Math.floor(i/3)%2]});}
@@ -146,11 +146,11 @@
       for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;activateProp(prop,p);}}
       if(p.weapon&&--p.weaponHits<=0)p.weapon=null;
     }
-    // Exhaustion needs a useful reserve before another burst, even if Attack stays held.
+    // Every attack pays its own cost. Regeneration continues during swings, so
+    // a held attack naturally slows down when the meter cannot fund full-speed combos.
     function spendStamina(p,cost){
-      if(p.exhausted)return false;
-      if(p.stamina<cost){p.exhausted=true;return false;}
-      p.stamina=Math.max(0,p.stamina-cost);p.staminaDelay=.7;
+      if(p.stamina<cost)return false;
+      p.stamina=Math.max(0,p.stamina-cost);
       if(p.stamina===0)p.exhausted=true;
       return true;
     }
@@ -174,9 +174,9 @@
       fx('special',p.x,p.y,{life:.75,max:.75,color:p.id?'#81e7fa':'#ffe6a0'});emit('special');
     }
     function movePlayer(p,dt){
-      p.running=false;p.moving=false;p.staminaDelay=Math.max(0,p.staminaDelay-dt);
+      p.running=false;p.moving=false;
       p.invincible=Math.max(0,p.invincible-dt);p.hurt=Math.max(0,p.hurt-dt);p.cooldown=Math.max(0,p.cooldown-dt);
-      if(p.dead>0){p.dead=Math.max(0,p.dead-dt);p.queued={};if(p.dead===0&&p.lives>0){p.hp=p.maxHp;p.stamina=100;p.staminaDelay=0;p.exhausted=false;p.invincible=3;p.z=0;p.vz=0;p.action=null;}return;}
+      if(p.dead>0){p.dead=Math.max(0,p.dead-dt);p.queued={};if(p.dead===0&&p.lives>0){p.hp=p.maxHp;p.stamina=100;p.exhausted=false;p.invincible=3;p.z=0;p.vz=0;p.action=null;}return;}
       if(p.lives<=0)return;
       const dx=Number(!!p.held.right)-Number(!!p.held.left),dy=Number(!!p.held.down)-Number(!!p.held.up),norm=dx&&dy?Math.SQRT1_2:1;
       if(dx&&!p.action)p.face=Math.sign(dx);
@@ -193,8 +193,8 @@
       const distance=Math.hypot(p.x-oldX,p.y-oldY);p.moving=distance>.001;
       p.running=sprint&&p.moving;
       if(p.moving&&p.z===0&&!p.hurt)p.walk+=distance*(p.running?.052:.075);
-      if(p.running){p.stamina=Math.max(0,p.stamina-22*dt);p.staminaDelay=.4;if(p.stamina===0){p.exhausted=true;p.running=false;}}
-      else if(p.staminaDelay===0&&!p.action)p.stamina=Math.min(100,p.stamina+24*dt);
+      if(p.running){p.stamina=Math.max(0,p.stamina-22*dt);if(p.stamina===0){p.exhausted=true;p.running=false;}}
+      else p.stamina=Math.min(100,p.stamina+24*dt);
       if(p.exhausted&&p.stamina>=35)p.exhausted=false;
       if(p.z>0||p.vz>0){p.z+=p.vz*dt;p.vz-=1150*dt;if(p.z<=0){p.z=0;p.vz=0;p.airKick=false;fx('dust',p.x,p.y,{life:.25,max:.25});}}
       if(p.action){p.action.age+=dt;if(!p.action.struck&&p.action.age>=.085)strike(p,p.action);if(p.action.age>=p.action.duration)p.action=null;}

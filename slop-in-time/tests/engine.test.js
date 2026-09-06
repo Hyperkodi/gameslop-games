@@ -123,13 +123,16 @@ test('running into a lane boundary or opposite directions does not spend stamina
   const {e,p}=arena();p.y=487;e.input(0,'down',true);e.input(0,'run',true);tick(e,20);assert.equal(p.stamina,100);assert.equal(p.moving,false);
   e.input(0,'down',false);e.input(0,'left',true);e.input(0,'right',true);tick(e,20);assert.equal(p.stamina,100);assert.equal(p.moving,false);
 });
-test('holding Attack exhausts a burst and must regain a reserve before another swing',()=>{
-  const {e,p,foe}=arena();foe.x=800;foe.stun=100;e.input(0,'attack',true);let swings=0;
-  for(let i=0;i<200&&!p.exhausted;i++){e.tick();swings+=e.drainEvents().filter(v=>v.type==='swing').length;}
-  assert.ok(p.exhausted);assert.ok(swings>=5&&swings<=8);assert.ok(p.stamina<18);
-  tick(e,40);assert.equal(e.drainEvents().filter(v=>v.type==='swing').length,0);assert.ok(p.exhausted);
-  tick(e,90);assert.ok(e.drainEvents().some(v=>v.type==='swing'));assert.ok(p.stamina>=0&&p.stamina<=100);
-  e.input(0,'attack',false);tick(e,360);assert.equal(p.stamina,100);assert.equal(p.exhausted,false);
+test('held Attack drains stamina at full speed then keeps punching at a slower sustainable rate',()=>{
+  const {e,p,foe}=arena();foe.x=800;foe.stun=100;e.input(0,'attack',true);const swings=[];
+  for(let i=0;i<1200;i++){e.tick();if(e.drainEvents().some(v=>v.type==='swing'))swings.push(i);assert.ok(p.stamina>=0&&p.stamina<=100);}
+  const gaps=swings.slice(1).map((at,i)=>at-swings[i]),mean=a=>a.reduce((x,y)=>x+y,0)/a.length;
+  assert.ok(swings.length>30);assert.ok(mean(gaps.slice(-10))>mean(gaps.slice(0,6))*1.4);assert.ok(Math.max(...gaps)<50,'no reserve lockout between affordable hits');assert.ok(p.stamina<18);
+  e.input(0,'attack',false);tick(e,260);assert.equal(p.stamina,100);
+});
+test('stamina refills during an active punch and permits attacking before a sprint reserve recovers',()=>{
+  const {e,p,foe}=arena();foe.x=800;foe.stun=100;e.input(0,'attack',true);e.tick();e.input(0,'attack',false);const spent=p.stamina;tick(e,4);assert.ok(p.action);assert.ok(p.stamina>spent);
+  tick(e,25);p.stamina=12;p.exhausted=true;e.input(0,'attack',true);e.tick();assert.equal(p.action.kind,'punch');assert.ok(p.stamina<1);assert.ok(p.exhausted,'running reserve is independent of permission to punch');
 });
 test('empty stamina blocks kicks, weapons and both throws without consuming their objects',()=>{
   for(const kind of ['kick','weapon','lid','throw']){const {e,p,foe}=arena();p.stamina=0;foe.x=p.x+25;foe.stun=100;
