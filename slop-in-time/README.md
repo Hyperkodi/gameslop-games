@@ -13,8 +13,13 @@ Landscape is recommended on phones. Expand requests browser fullscreen, with an 
 | Move on the ground plane | Arrows | WASD | Left stick / D-pad | Thumbstick |
 | Attack / three-hit combo | Hold X | Hold H | Hold X / RT | Hold Attack |
 | Jump (press Attack in the air to kick) | Z / Space | G | A / B | Jump |
+| Run (uses stamina) | Hold Shift (Left Shift in co-op) | Hold Right Shift | Hold LB / L3 | Hold Run + thumbstick |
 | Charged special | C | J | Y | Special when ready |
 | Pause | P / Escape | Shared | Start | Pause |
+
+Each player has 100 stamina. Jabs cost 12, weapon swings 16, finishers/kicks/throws 18. Running moves at 300 instead of 205 pixels/second and drains 22 stamina/second while moving on the ground. Walking and jumping are free. Stamina recovers at 24/second after a short rest (0.7 seconds after attacking, 0.4 after running). If there is too little stamina for an attack, or running empties the meter, recover to 35 before the next burst. Held inputs resume when that reserve returns. Special uses its own charge. Respawning or entering an era refills stamina.
+
+Walking now articulates the original painted legs and boots, with alternating footfalls and body weight shifts. Running has longer, higher strides and a forward lean. Enemy gait follows actual ground movement; airborne enemies and spectral bosses retain flight/hover animation.
 
 Close in on a stunned or weakened ordinary enemy and attack to throw it. A thrown enemy damages others in its path. Bosses resist grabs and their warned attacks cannot be interrupted by ordinary punches. Move around enemy attacks or jump over them. Jump alone never attacks and now reaches about 170 pixels. Press Attack while airborne to kick; ordinary ground punches cannot reach a high-flying enemy. Shield guards block frontal jabs but are vulnerable to finishers, weapons, and jump kicks.
 
@@ -94,3 +99,5 @@ There are exactly three hazard sites per era (after the opening encounters), spa
 Cycles start quietly when approached, with at least a full second of warning. Dart tiles require grounded contact. All hazards have a clear bypass; ordinary enemies can also be caught by them. Most controls disable their linked trap for the current stage visit. The press console becomes reusable after six seconds and restarts with a fresh warning cycle. Controls activate with Attack; guided objects travel to their linked mechanism. Two manholes remain per era. The old shared wrecking balls and generic crushers are no longer placed or drawn.
 
 `tools/cdp-drivers/slop-in-time-traps-qa.js` checks all twelve hazard appearances, all linked controls, clear bypass lanes and the three-site limit in the browser.
+
+Run `tools/cdp-drivers/slop-in-time-stamina-qa.js` through the browser command above to verify Shift, independent co-op running, touch running, stamina recovery, and walking pose captures.

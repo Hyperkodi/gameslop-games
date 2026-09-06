@@ -33,14 +33,14 @@
     const ground=x=>Content.floor(stage(),x),bounds=x=>Content.bounds(stage(),x);
     function routeMove(p,dx,dy){const x=p.x+dx;if(Content.walkable(stage(),x,p.y))p.x=x;const b=bounds(p.x);p.y=clamp(p.y+dy,b.min,b.max);}
 
-    function player(id){return {id,x:130+id*70,y:416+id*36,z:0,vz:0,face:1,hp:100,maxHp:100,upgrades:[],lives:rules().lives,energy:40,held:{},queued:{},cooldown:0,action:null,comboStep:0,comboUntil:0,invincible:2,hurt:0,dead:0,weapon:null,weaponHits:0,walk:0,moving:false};}
-    function release(){for(const p of state.players){p.held={};p.queued={};}}
+    function player(id){return {id,x:130+id*70,y:416+id*36,z:0,vz:0,face:1,hp:100,maxHp:100,upgrades:[],lives:rules().lives,energy:40,stamina:100,staminaDelay:0,exhausted:false,running:false,held:{},queued:{},cooldown:0,action:null,comboStep:0,comboUntil:0,invincible:2,hurt:0,dead:0,weapon:null,weaponHits:0,walk:0,moving:false};}
+    function release(){for(const p of state.players){p.held={};p.queued={};p.running=false;p.moving=false;}}
     function stageLoad(index,startGate=0){
       state.stage=index;state.enemies=[];state.pickups=[];state.effects=[];state.shots=[];state.props=[];state.camera=0;state.gate=0;state.arena=false;state.transition=0;state.ending=null;state.waveDelay=0;state.shake=0;state.flash=0;state.hitstop=0;state.combo=0;state.comboTime=0;
       release();
       state.width=stage().width;state.hazards=[];state.checkpoint=startGate;state.gate=startGate;state.wave=0;
       state.cameraY=0;state.missiles=[];state.traps=[];state.story=null;state.storySeen=new Set();
-      state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,hp:p.maxHp,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
+      state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,stamina:100,staminaDelay:0,exhausted:false,running:false,moving:false,walk:0,hp:p.maxHp,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
       const spawnX=startGate?center()-360:130;
       state.players.forEach((p,i)=>{p.x=spawnX+i*65;p.y=416+i*35+ground(p.x);});state.camera=Math.max(0,spawnX-130);state.cameraY=ground(spawnX);
       for(let i=0;i<Math.floor(state.width/370);i++){const x=350+i*370;if(x<spawnX)continue;const kind=i%3===0?'food':i%3===1?'weapon':'energy';state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,food:Object.keys(Content.foods)[Math.floor(i/3)%4],weapon:stage().weapons[Math.floor(i/3)%2]});}
@@ -63,7 +63,7 @@
       state.players=Array.from({length:players===2?2:1},(_,i)=>player(i));stageLoad(0);
     }
     function input(id,action,down){
-      const p=state.players[id];if(state.status!=='playing'||state.ending||!p||!['left','right','up','down','attack','jump','special'].includes(action)||!!p.held[action]===!!down)return;
+      const p=state.players[id];if(state.status!=='playing'||state.ending||!p||!['left','right','up','down','attack','jump','special','run'].includes(action)||!!p.held[action]===!!down)return;
       p.held[action]=!!down;if(down)p.queued[action]=true;state.inputLog.push({tick:state.tick,player:id,action,down:!!down});
     }
     function pause(){if(state.status==='playing'){state.status='paused';release();}else if(state.status==='paused')state.status='playing';}
@@ -146,14 +146,25 @@
       for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;activateProp(prop,p);}}
       if(p.weapon&&--p.weaponHits<=0)p.weapon=null;
     }
+    // Exhaustion needs a useful reserve before another burst, even if Attack stays held.
+    function spendStamina(p,cost){
+      if(p.exhausted)return false;
+      if(p.stamina<cost){p.exhausted=true;return false;}
+      p.stamina=Math.max(0,p.stamina-cost);p.staminaDelay=.7;
+      if(p.stamina===0)p.exhausted=true;
+      return true;
+    }
     function attack(p){
       const lid=state.props.find(prop=>prop.kind==='lid'&&!prop.open&&Math.abs(prop.x-p.x)<52&&Math.abs(prop.y-p.y)<30);
-      if(lid&&p.z===0){lid.open=true;lid.hp=0;p.action={kind:'propThrow',age:0,duration:.5,struck:false,step:3};p.cooldown=.5;return;}
+      if(lid&&p.z===0){if(!spendStamina(p,18))return;lid.open=true;lid.hp=0;p.action={kind:'propThrow',age:0,duration:.5,struck:false,step:3};p.cooldown=.5;return;}
       const target=state.enemies.find(e=>!e.boss&&!e.entrance&&e.kind!=='flyer'&&e.hp>0&&e.down<=0&&Math.abs(e.y-p.y)<25&&(e.x-p.x)*p.face>-8&&(e.x-p.x)*p.face<45&&(e.stun>0||e.hp<e.maxHp*.5));
       if(target&&p.z===0){
+        if(!spendStamina(p,18))return;
         p.action={kind:'throw',age:0,duration:.46,struck:true,step:3};p.cooldown=.5;target.thrown=.55;target.throwHits=[];target.stun=.8;hitEnemy(target,23,p.face,530);p.energy=clamp(p.energy+10,0,100);fx('word',p.x,p.y-100,{text:'THROW!',life:.7,max:.7});emit('throw');return;
       }
-      p.comboStep=state.time<p.comboUntil?p.comboStep%3+1:1;p.comboUntil=state.time+.8;
+      const step=state.time<p.comboUntil?p.comboStep%3+1:1;
+      if(!spendStamina(p,p.z>0||step===3?18:p.weapon?16:12))return;
+      p.comboStep=step;p.comboUntil=state.time+.8;
       const kind=p.z>0?'kick':'punch',duration=(kind==='kick'?.38:p.comboStep===3?.4:.27)*(p.weapon?Content.weapons[p.weapon].speed:1);
       p.action={kind,step:p.comboStep,age:0,duration,struck:false};p.cooldown=duration;emit('swing');
     }
@@ -163,8 +174,9 @@
       fx('special',p.x,p.y,{life:.75,max:.75,color:p.id?'#81e7fa':'#ffe6a0'});emit('special');
     }
     function movePlayer(p,dt){
+      p.running=false;p.moving=false;p.staminaDelay=Math.max(0,p.staminaDelay-dt);
       p.invincible=Math.max(0,p.invincible-dt);p.hurt=Math.max(0,p.hurt-dt);p.cooldown=Math.max(0,p.cooldown-dt);
-      if(p.dead>0){p.dead=Math.max(0,p.dead-dt);p.queued={};if(p.dead===0&&p.lives>0){p.hp=p.maxHp;p.invincible=3;p.z=0;p.vz=0;p.action=null;}return;}
+      if(p.dead>0){p.dead=Math.max(0,p.dead-dt);p.queued={};if(p.dead===0&&p.lives>0){p.hp=p.maxHp;p.stamina=100;p.staminaDelay=0;p.exhausted=false;p.invincible=3;p.z=0;p.vz=0;p.action=null;}return;}
       if(p.lives<=0)return;
       const dx=Number(!!p.held.right)-Number(!!p.held.left),dy=Number(!!p.held.down)-Number(!!p.held.up),norm=dx&&dy?Math.SQRT1_2:1;
       if(dx&&!p.action)p.face=Math.sign(dx);
@@ -172,11 +184,18 @@
       if(p.queued.special&&p.hurt<=0)special(p);
       if((p.held.attack||p.queued.attack)&&p.cooldown===0&&p.hurt<=0)attack(p);
       p.queued={};
-      const speed=p.hurt>0?0:p.action&&p.z===0?95:205;p.moving=!!(dx||dy);p.walk+=dt*(p.moving?12:2);
+      const sprint=!!p.held.run&&!p.exhausted&&p.stamina>0&&!p.action&&p.hurt<=0&&p.z===0;
+      const speed=p.hurt>0?0:p.action&&p.z===0?95:sprint?300:205,oldX=p.x,oldY=p.y;
       const boundary=Math.min(state.camera+910,state.width-40);
       routeMove(p,clamp(p.x+dx*speed*norm*dt,state.camera+30,boundary)-p.x,dy*speed*.85*norm*dt);
       if(state.arena)p.y=clamp(p.y,Math.max(bounds(p.x).min,state.cameraY+180),Math.min(bounds(p.x).max,state.cameraY+487));
       const teammates=state.players.filter(q=>q!==p&&q.lives>0);if(teammates.length){const lo=Math.min(...teammates.map(q=>q.y))-300,hi=Math.max(...teammates.map(q=>q.y))+300;p.y=clamp(p.y,Math.max(bounds(p.x).min,lo),Math.min(bounds(p.x).max,hi));}
+      const distance=Math.hypot(p.x-oldX,p.y-oldY);p.moving=distance>.001;
+      p.running=sprint&&p.moving;
+      if(p.moving&&p.z===0&&!p.hurt)p.walk+=distance*(p.running?.052:.075);
+      if(p.running){p.stamina=Math.max(0,p.stamina-22*dt);p.staminaDelay=.4;if(p.stamina===0){p.exhausted=true;p.running=false;}}
+      else if(p.staminaDelay===0&&!p.action)p.stamina=Math.min(100,p.stamina+24*dt);
+      if(p.exhausted&&p.stamina>=35)p.exhausted=false;
       if(p.z>0||p.vz>0){p.z+=p.vz*dt;p.vz-=1150*dt;if(p.z<=0){p.z=0;p.vz=0;p.airKick=false;fx('dust',p.x,p.y,{life:.25,max:.25});}}
       if(p.action){p.action.age+=dt;if(!p.action.struck&&p.action.age>=.085)strike(p,p.action);if(p.action.age>=p.action.duration)p.action=null;}
       for(let i=state.pickups.length-1;i>=0;i--){const item=state.pickups[i];if(p.z>25||Math.abs(p.x-item.x)>33||Math.abs(p.y-item.y)>25)continue;
@@ -254,7 +273,7 @@
         if(!e.enraged&&e.hp/e.maxHp<=BOSS_RAGE){e.enraged=true;e.superTimer=Math.min(e.superTimer,1);state.shake=8;emit('enrage');fx('word',e.x,e.y-170,{text:'ENRAGED!',color:'#ff6655',life:1.2,max:1.2});}
         e.superTimer-=dt;
       }
-      e.stun=Math.max(0,e.stun-dt);e.down=Math.max(0,e.down-dt);e.cooldown=Math.max(0,e.cooldown-dt*(e.enraged?1.3:1));e.walk+=dt*8;
+      e.stun=Math.max(0,e.stun-dt);e.down=Math.max(0,e.down-dt);e.cooldown=Math.max(0,e.cooldown-dt*(e.enraged?1.3:1));
       if(e.thrown>0){e.thrown-=dt;for(const other of state.enemies)if(other!==e&&other.hp>0&&!other.entrance&&!e.throwHits.includes(other.id)&&Math.abs(other.x-e.x)<45&&Math.abs(other.y-e.y)<35){e.throwHits.push(other.id);hitEnemy(other,20,Math.sign(e.vx),280);}}
       routeMove(e,clamp(e.x+e.vx*dt,state.camera+20,Math.min(state.width-30,center()+350))-e.x,0);e.vx*=Math.exp(-6*dt);
       if(e.hp<=0){e.dead=Math.max(0,e.dead-dt);return;}
@@ -299,7 +318,7 @@
       if(state.ending){endingTick(dt);return;}
       const fallenBoss=state.enemies.find(e=>e.boss&&e.hp<=0);if(fallenBoss){endBoss(fallenBoss);return;}
       if(state.hitstop>0){state.hitstop-=dt;return;}
-      state.players.forEach(p=>{if(!state.ending)movePlayer(p,dt);});if(state.ending)return;state.enemies.forEach(e=>moveEnemy(e,dt));moveHazards(dt);sceneryTick(dt);if(state.ending)return;
+      state.players.forEach(p=>{if(!state.ending)movePlayer(p,dt);});if(state.ending)return;state.enemies.forEach(e=>{const x=e.x,y=e.y,arriving=!!e.entrance;moveEnemy(e,dt);const distance=Math.hypot(e.x-x,e.y-y);e.moving=!arriving&&!e.entrance&&e.hp>0&&e.z===0&&e.stun<=0&&e.down<=0&&e.thrown<=0&&!e.windup&&distance>.01;if(e.moving)e.walk+=distance*.11;});moveHazards(dt);sceneryTick(dt);if(state.ending)return;
       for(const b of state.shots){b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(const p of state.players)if(b.life>0&&Math.abs(p.x-b.x)<24&&Math.abs(p.y-b.y)<22&&Math.abs(p.z+20-(b.z||34))<28&&hurtPlayer(p,13,Math.sign(b.vx)))b.life=0;}
       state.shots=state.shots.filter(b=>b.life>0&&b.x>state.camera-60&&b.x<state.camera+1050);
       state.enemies=state.enemies.filter(e=>e.hp>0||e.dead>0);

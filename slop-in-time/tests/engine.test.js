@@ -111,3 +111,44 @@ test('themed controls, guided objects, and timed console actually neutralize the
 test('no entrance landing overlaps a trap hazard lane on any stage',()=>{const C=require('../js/content');for(let stage=0;stage<6;stage++)for(const gate of [2,5,8]){const e=createEngine({seed:4});e.start({difficulty:'hard',players:2});for(let i=0;i<stage;i++){e.state.status='clear';e.advance();}const s=stages[stage];e.state.gate=gate;e.state.camera=s.encounters[gate]-630;e.state.cameraY=C.floor(s,e.state.camera+310);e.state.players.forEach(p=>{p.x=s.encounters[gate]-290;p.y=416+C.floor(s,p.x);});e.tick();assert.ok(e.state.enemies.length>0);for(const foe of e.state.enemies)for(const t of e.state.traps)if(Math.abs(foe.entrance.landX-t.x)<210)assert.ok(Math.abs(foe.entrance.landY-t.y)>=75);}});
 
 test('castle darts require a grounded pressure-tile contact before their warning cycle starts',()=>{const {e,p,foe}=arena();foe.x=p.x+300;foe.stun=100;const t={kind:'darts',x:p.x+120,y:p.y,clock:0};e.state.traps=[t];tick(e,120);assert.equal(t.clock,0);p.x=t.x;p.z=70;p.vz=0;e.tick();assert.equal(t.clock,0);p.z=0;e.tick();assert.ok(t.warning);assert.equal(t.active,false);p.x=t.x-100;tick(e,250);assert.equal(t.clock,0);assert.equal(t.active,false);});
+
+
+test('running is faster, drains only during movement, and walking stays free',()=>{
+  const {e,p}=arena();e.input(0,'run',true);tick(e,30);assert.equal(p.stamina,100);assert.equal(p.running,false);
+  e.input(0,'right',true);const x=p.x;tick(e,30);assert.ok(Math.abs(p.x-x-150)<.01);assert.ok(Math.abs(p.stamina-89)<.01);assert.ok(p.running);
+  e.input(0,'run',false);const y=p.x,stamina=p.stamina;tick(e,30);assert.ok(Math.abs(p.x-y-102.5)<.01);assert.equal(p.running,false);assert.ok(p.stamina>=stamina);
+  p.x=e.state.camera+910;e.input(0,'run',true);p.stamina=100;tick(e,10);assert.equal(p.stamina,100);assert.equal(p.moving,false);assert.equal(p.running,false);
+});
+test('running into a lane boundary or opposite directions does not spend stamina',()=>{
+  const {e,p}=arena();p.y=487;e.input(0,'down',true);e.input(0,'run',true);tick(e,20);assert.equal(p.stamina,100);assert.equal(p.moving,false);
+  e.input(0,'down',false);e.input(0,'left',true);e.input(0,'right',true);tick(e,20);assert.equal(p.stamina,100);assert.equal(p.moving,false);
+});
+test('holding Attack exhausts a burst and must regain a reserve before another swing',()=>{
+  const {e,p,foe}=arena();foe.x=800;foe.stun=100;e.input(0,'attack',true);let swings=0;
+  for(let i=0;i<200&&!p.exhausted;i++){e.tick();swings+=e.drainEvents().filter(v=>v.type==='swing').length;}
+  assert.ok(p.exhausted);assert.ok(swings>=5&&swings<=8);assert.ok(p.stamina<18);
+  tick(e,40);assert.equal(e.drainEvents().filter(v=>v.type==='swing').length,0);assert.ok(p.exhausted);
+  tick(e,90);assert.ok(e.drainEvents().some(v=>v.type==='swing'));assert.ok(p.stamina>=0&&p.stamina<=100);
+  e.input(0,'attack',false);tick(e,360);assert.equal(p.stamina,100);assert.equal(p.exhausted,false);
+});
+test('empty stamina blocks kicks, weapons and both throws without consuming their objects',()=>{
+  for(const kind of ['kick','weapon','lid','throw']){const {e,p,foe}=arena();p.stamina=0;foe.x=p.x+25;foe.stun=100;
+    if(kind==='kick'){p.z=70;p.vz=0;}if(kind==='weapon'){p.weapon='pipe';p.weaponHits=22;foe.x=p.x+60;}if(kind==='lid')e.state.props=[{kind:'lid',x:p.x,y:p.y,hp:1,open:false}];
+    e.input(0,'attack',true);tick(e,8);assert.equal(p.action,null,kind);assert.equal(foe.hp,200,kind);if(kind==='lid')assert.equal(e.state.props[0].open,false);if(kind==='weapon')assert.equal(p.weaponHits,22);
+  }
+});
+test('sprinting exhaustion slows movement until recovery; jumping and Special remain available',()=>{
+  const {e,p}=arena();p.stamina=.1;e.input(0,'run',true);e.input(0,'right',true);e.tick();assert.ok(p.exhausted);assert.equal(p.stamina,0);const x=p.x;e.tick();assert.ok(Math.abs(p.x-x-205*STEP)<.01);
+  e.input(0,'jump',true);e.tick();assert.ok(p.z>0);p.energy=100;e.input(0,'special',true);e.tick();assert.equal(p.energy,0);assert.equal(p.action.kind,'special');
+});
+test('stamina is independent in co-op, pauses, and resets on respawn and stage load',()=>{
+  const {e,p}=arena({players:2});e.input(0,'attack',true);tick(e,1);assert.ok(p.stamina<100);assert.equal(e.state.players[1].stamina,100);
+  e.input(0,'run',true);e.pause();const snapshot=JSON.stringify(e.state);tick(e,120);assert.equal(JSON.stringify(e.state),snapshot);assert.equal(p.running,false);e.pause();
+  p.stamina=0;p.exhausted=true;p.dead=.01;p.hp=0;tick(e,1);assert.equal(p.stamina,100);assert.equal(p.exhausted,false);
+  p.stamina=2;e.state.status='clear';e.advance();assert.equal(p.stamina,100);assert.equal(p.running,false);
+});
+test('grounded gait advances with actual travel and freezes for idle, blocked and stunned actors',()=>{
+  const {e,p,foe}=arena();foe.stun=0;foe.x=600;foe.decision=100;foe.defend=0;const walk=p.walk;e.tick();assert.equal(p.walk,walk);assert.ok(foe.moving);assert.ok(foe.walk>0);
+  e.input(0,'right',true);tick(e,5);assert.ok(p.walk>walk);const phase=p.walk;p.x=e.state.camera+910;tick(e,5);assert.equal(p.walk,phase);
+  foe.stun=100;const enemyPhase=foe.walk;tick(e,5);assert.equal(foe.moving,false);assert.equal(foe.walk,enemyPhase);
+});
