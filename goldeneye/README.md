@@ -5,6 +5,11 @@ The browser downloads the published game, verifies its size and SHA-256 from
 `game-manifest.json`, and passes the verified bytes to EmulatorJS.
 Saves use browser storage through EmulatorJS; export backups from its toolbar.
 
+Alec Trevelyan uses Vlad Tenev's likeness in both his 006 and Janus outfits.
+Natalya uses Celina Tenev's likeness in her skirt and jungle outfits. Original
+dialogue names, mission roles and body animations are retained. Restart the
+mission after this update; older emulator states include older model data.
+
 Click the game to capture the mouse: mouse aims, left-click fires, right-click
 holds sights, WASD moves/strafe, R reloads/interacts, X changes weapons, and Esc
 releases the cursor. Enter releases it and opens Start/the watch. Sensitivity
