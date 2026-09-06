@@ -1,0 +1,2 @@
+html,body,#emulator{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+#mouse-reticle{position:fixed;pointer-events:none;left:50%;top:50%;width:4px;height:4px;transform:translate(-50%,-50%);border-radius:50%;background:#fff;box-shadow:0 0 0 1px #000;z-index:4}#mouse-reticle[hidden]{display:none}

@@ -1,0 +1,11 @@
+.game-logo{display:inline-flex;align-items:baseline;white-space:nowrap;position:relative;font-family:Impact,'Arial Narrow',sans-serif;font-weight:400;line-height:1;letter-spacing:.005em;color:#dfb65e;text-shadow:0 2px 0 #694915}
+.game-logo>span{color:inherit}
+.game-logo .eye{position:relative;color:#dfb65e}
+.game-logo .eye img{position:absolute;width:150%;max-width:none;height:auto;left:-23%;top:2%;transform:rotate(-9deg);filter:drop-shadow(0 1px 1px #310800);pointer-events:none}
+.game-logo .edition{font-size:.63em;margin-left:.23em;color:#f3d892}
+.intro h1{font-size:clamp(37px,8.2vw,92px);margin:30px 0}
+.intro h1 small{color:#b7c3ab;font-size:10px;letter-spacing:2px;line-height:1.5;margin-top:22px}
+.toolbar .game-logo{font-size:28px;text-shadow:none}
+.toolbar .game-logo .eye img{filter:none}
+@media(max-width:650px){.toolbar .game-logo{font-size:22px}.intro h1{font-size:clamp(32px,9.1vw,57px)}}
+@media(max-width:380px){.toolbar .game-logo{font-size:16px}.toolbar button{font-size:11px;padding:10px}.toolbar nav{gap:6px}}
