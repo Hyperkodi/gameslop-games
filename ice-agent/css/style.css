@@ -1,0 +1,697 @@
+/* ========================================
+   ICE AGENT GAME - STYLING
+   ======================================== */
+
+/* ========================================
+   RESET & GLOBAL
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+/* ========================================
+   SCREENS
+   ======================================== */
+
+.screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e3c72 100%);
+    z-index: 100;
+}
+
+.menu-content {
+    text-align: center;
+    padding: 40px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 4px solid #ffd700;
+    border-radius: 10px;
+    max-width: 600px;
+    width: 90%;
+}
+
+.menu-content.wide {
+    max-width: 900px;
+}
+
+/* ========================================
+   TYPOGRAPHY
+   ======================================== */
+
+.game-title {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 4px 4px 0 #ff0000, 8px 8px 0 #000;
+    margin-bottom: 10px;
+    letter-spacing: 5px;
+}
+
+.game-subtitle {
+    font-size: 2rem;
+    color: #fff;
+    text-shadow: 2px 2px 0 #000;
+    margin-bottom: 5px;
+}
+
+.game-tagline {
+    font-size: 1.2rem;
+    color: #aaa;
+    margin-bottom: 30px;
+}
+
+.screen-title {
+    font-size: 2.5rem;
+    color: #ffd700;
+    text-shadow: 3px 3px 0 #000;
+    margin-bottom: 30px;
+}
+
+.credits {
+    margin-top: 30px;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* ========================================
+   BUTTONS
+   ======================================== */
+
+.btn {
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 15px 40px;
+    margin: 10px;
+    border: 3px solid #ffd700;
+    background: linear-gradient(180deg, #ff6600 0%, #ff3300 100%);
+    color: #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: all 0.2s;
+    box-shadow: 0 5px 0 #990000;
+}
+
+.btn:hover {
+    background: linear-gradient(180deg, #ff8800 0%, #ff5500 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #990000;
+}
+
+.btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #990000;
+}
+
+.btn-primary {
+    background: linear-gradient(180deg, #00ff00 0%, #00cc00 100%);
+    border-color: #00ff00;
+    box-shadow: 0 5px 0 #006600;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(180deg, #00ff44 0%, #00dd00 100%);
+    box-shadow: 0 7px 0 #006600;
+}
+
+.btn-primary:active {
+    box-shadow: 0 2px 0 #006600;
+}
+
+.btn-secondary {
+    background: linear-gradient(180deg, #666 0%, #444 100%);
+    border-color: #888;
+    box-shadow: 0 5px 0 #222;
+}
+
+.btn-secondary:hover {
+    background: linear-gradient(180deg, #777 0%, #555 100%);
+    box-shadow: 0 7px 0 #222;
+}
+
+.btn-secondary:active {
+    box-shadow: 0 2px 0 #222;
+}
+
+.menu-buttons {
+    margin: 20px 0;
+}
+
+/* ========================================
+   DIFFICULTY BUTTONS
+   ======================================== */
+
+.difficulty-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.btn-difficulty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.difficulty-label {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.difficulty-desc {
+    font-size: 0.9rem;
+    font-weight: normal;
+    opacity: 0.8;
+}
+
+.btn-easy {
+    background: linear-gradient(180deg, #4CAF50 0%, #45a049 100%);
+    border-color: #4CAF50;
+    box-shadow: 0 5px 0 #2d6930;
+}
+
+.btn-normal {
+    background: linear-gradient(180deg, #2196F3 0%, #1976D2 100%);
+    border-color: #2196F3;
+    box-shadow: 0 5px 0 #0d47a1;
+}
+
+.btn-hard {
+    background: linear-gradient(180deg, #f44336 0%, #d32f2f 100%);
+    border-color: #f44336;
+    box-shadow: 0 5px 0 #b71c1c;
+}
+
+/* ========================================
+   VOLUME CONTROLS
+   ======================================== */
+
+.volume-controls {
+    margin-top: 30px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.volume-control {
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.volume-control label {
+    font-size: 1rem;
+    margin-right: 15px;
+}
+
+.volume-control input[type="range"] {
+    flex: 1;
+    max-width: 200px;
+}
+
+/* ========================================
+   STATS DISPLAY
+   ======================================== */
+
+.stats-container {
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 1.1rem;
+}
+
+.stat-label {
+    color: #ffd700;
+}
+
+.stat-value {
+    color: #fff;
+    font-weight: bold;
+}
+
+/* ========================================
+   LEADERBOARD
+   ======================================== */
+
+.leaderboard-container {
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 20px 0;
+    border: 2px solid #ffd700;
+    border-radius: 5px;
+}
+
+#leaderboardTable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+#leaderboardTable thead {
+    background: #ffd700;
+    color: #000;
+    position: sticky;
+    top: 0;
+}
+
+#leaderboardTable th,
+#leaderboardTable td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+#leaderboardTable tr:nth-child(even) {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+#leaderboardTable tr:hover {
+    background: rgba(255, 215, 0, 0.2);
+}
+
+/* ========================================
+   ACHIEVEMENTS
+   ======================================== */
+
+.achievement-container {
+    max-height: 500px;
+    overflow-y: auto;
+    margin: 20px 0;
+}
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    margin: 10px 0;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #666;
+    border-radius: 5px;
+    transition: all 0.3s;
+}
+
+.achievement-item.unlocked {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #ffd700;
+}
+
+.achievement-icon {
+    font-size: 2rem;
+    margin-right: 15px;
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 5px;
+}
+
+.achievement-progress {
+    font-size: 0.9rem;
+    color: #aaa;
+}
+
+/* ========================================
+   GAME CANVAS
+   ======================================== */
+
+#gameCanvas {
+    display: block;
+    margin: 0 auto;
+    background: #87CEEB;
+    border: 4px solid #000;
+}
+
+/* ========================================
+   MOBILE CONTROLS
+   ======================================== */
+
+.mobile-control {
+    position: fixed;
+    z-index: 200;
+    display: none;
+}
+
+/* Joystick */
+.joystick {
+    bottom: 20px;
+    left: 20px;
+    width: 150px;
+    height: 150px;
+}
+
+.joystick-base {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    position: relative;
+}
+
+.joystick-stick {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 3px solid #fff;
+    border-radius: 50%;
+    transition: transform 0.05s;
+}
+
+/* Shoot Area */
+.shoot-area {
+    bottom: 20px;
+    right: 20px;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 0, 0, 0.2);
+    border: 3px solid rgba(255, 0, 0, 0.5);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.shoot-crosshair {
+    position: absolute;
+    font-size: 2rem;
+    color: #ff0000;
+    pointer-events: none;
+    transition: all 0.05s;
+}
+
+.shoot-label {
+    font-size: 1rem;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Weapon Panel */
+.weapon-panel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 200;
+}
+
+.weapon-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    color: #ffd700;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.weapon-btn:active {
+    background: rgba(255, 215, 0, 0.3);
+}
+
+/* Action Panel */
+.action-panel {
+    position: fixed;
+    bottom: 180px;
+    right: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 200;
+}
+
+.action-btn {
+    width: 60px;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #00ff00;
+    color: #00ff00;
+    font-size: 1.5rem;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.action-btn:active {
+    background: rgba(0, 255, 0, 0.3);
+}
+
+/* ========================================
+   ORIENTATION WARNING
+   ======================================== */
+
+.orientation-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.warning-content {
+    text-align: center;
+    padding: 40px;
+}
+
+.warning-icon {
+    font-size: 5rem;
+    margin-bottom: 20px;
+    animation: rotate 2s linear infinite;
+}
+
+.warning-text {
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 2.5rem;
+    }
+
+    .game-subtitle {
+        font-size: 1.5rem;
+    }
+
+    .screen-title {
+        font-size: 2rem;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 12px 30px;
+    }
+
+    .menu-content {
+        padding: 20px;
+    }
+
+    #leaderboardTable {
+        font-size: 0.75rem;
+    }
+
+    #leaderboardTable th,
+    #leaderboardTable td {
+        padding: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-title {
+        font-size: 2rem;
+    }
+
+    .game-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .btn {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+    }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.btn-primary {
+    animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.screen {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* ========================================
+   SCROLLBAR STYLING
+   ======================================== */
+
+.leaderboard-container::-webkit-scrollbar,
+.achievement-container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.leaderboard-container::-webkit-scrollbar-track,
+.achievement-container::-webkit-scrollbar-track {
+    background: #222;
+}
+
+.leaderboard-container::-webkit-scrollbar-thumb,
+.achievement-container::-webkit-scrollbar-thumb {
+    background: #ffd700;
+    border-radius: 5px;
+}
+
+.leaderboard-container::-webkit-scrollbar-thumb:hover,
+.achievement-container::-webkit-scrollbar-thumb:hover {
+    background: #ffed4e;
+}
+
+/* ========================================
+   HINTS
+   ======================================== */
+
+.hint {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* ========================================
+   LOADING STATE
+   ======================================== */
+
+.loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #333;
+    border-top: 5px solid #ffd700;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.hidden {
+    display: none !important;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-gold {
+    color: #ffd700;
+}
+
+.text-red {
+    color: #ff0000;
+}
+
+.text-green {
+    color: #00ff00;
+}

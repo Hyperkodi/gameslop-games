@@ -1,0 +1,93 @@
+========================================
+ICE AGENT GAME - QUICK SETUP GUIDE
+========================================
+
+TOKEN-SAVING STRATEGY:
+You've already used ~106k tokens building the core systems.
+To complete the game efficiently, use Claude Code in VS Code.
+
+========================================
+STEP 1: Open Project in VS Code
+========================================
+1. Extract/open ice-agent-game-ULTIMATE folder
+2. Open in VS Code
+3. Open terminal (Ctrl+`)
+
+========================================
+STEP 2: Generate Remaining Files
+========================================
+Run: claude-code-agent
+
+Then copy-paste the LONG PROMPT from README.md
+(The one starting with "I have a game project with config.js...")
+
+This will generate all 10 remaining files in one go.
+
+========================================
+STEP 3: Add Music & Sounds
+========================================
+Drop MP3 files into:
+- assets/music/ (11 music tracks listed in README)
+- assets/sounds/ (30+ sound effects listed in README)
+
+Files are named clearly (e.g. jump.mp3, pistol-shoot.mp3)
+Game works without sounds but they make it EPIC!
+
+========================================
+STEP 4: Test Locally
+========================================
+Open index.html in browser
+Should see start screen with your photo background
+
+If errors:
+- Check browser console (F12)
+- Make sure all JS files loaded
+- Check file paths
+
+========================================
+STEP 5: Deploy to Web
+========================================
+Netlify (easiest):
+1. Go to netlify.com
+2. Drag folder
+3. Done!
+
+GitHub Pages:
+1. Create repo
+2. Push files
+3. Enable Pages in settings
+
+========================================
+CUSTOMIZATION
+========================================
+Edit js/config.js to change:
+- Enemy difficulty
+- Weapon stats
+- Power-up durations
+- Spawn rates
+- Level progression
+
+Everything is documented!
+
+========================================
+ESTIMATED COMPLETION TIME
+========================================
+- Generating files: 5 minutes (40-60k tokens)
+- Adding sounds: 10 minutes (finding/adding MP3s)
+- Testing: 5 minutes
+- Deployment: 2 minutes
+
+TOTAL: ~22 minutes to complete game
+
+========================================
+WHAT YOU HAVE SO FAR
+========================================
+✅ Complete configuration system
+✅ Professional sound manager
+✅ Achievement & leaderboard system
+✅ Crypto integration hooks
+✅ Comprehensive documentation
+
+REMAINING: Game logic, UI, and assets
+
+========================================

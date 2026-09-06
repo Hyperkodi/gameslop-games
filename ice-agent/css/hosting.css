@@ -1,0 +1,7 @@
+/* Viewport and host controls only; retain the supplied game artwork and UI. */
+#gameCanvas{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100vw,calc(100dvh * 16 / 9));height:auto;border:0;touch-action:none}
+.screen{padding:12px 0 70px;overflow:auto}.menu-content{max-height:calc(100dvh - 86px);overflow-y:auto}
+#arcade-tools{position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:1100;display:flex;gap:5px;white-space:nowrap}
+#arcade-tools a,#arcade-tools button{display:grid;place-items:center;min-height:44px;padding:6px 9px;background:#111d;color:#ffd700;border:1px solid #a88f23;border-radius:5px;font:bold 10px 'Courier New',monospace;text-decoration:none;cursor:pointer;touch-action:manipulation}
+#arcade-tools button:disabled{opacity:.45}
+@media(pointer:coarse){.joystick{left:12px;bottom:12px;width:120px;height:120px}.shoot-area{right:12px;bottom:12px;width:160px;height:130px}.weapon-panel{top:8px;right:auto;left:50%;transform:translateX(-50%);flex-direction:row;gap:4px}.weapon-btn{width:44px;height:44px}.action-panel{right:12px;bottom:154px;flex-direction:row;gap:6px}.action-btn{width:44px;height:44px}.mobile-control,.weapon-panel,.action-panel{touch-action:none}}
