@@ -140,6 +140,7 @@
       const speed=p.hurt>0?0:p.action&&p.z===0?95:205;p.moving=!!(dx||dy);p.walk+=dt*(p.moving?12:2);
       const boundary=Math.min(state.arena?state.camera+915:state.width-40,state.players.some(q=>q!==p&&q.lives>0)?state.camera+910:state.width-40);
       routeMove(p,clamp(p.x+dx*speed*norm*dt,state.camera+30,boundary)-p.x,dy*speed*.85*norm*dt);
+      if(state.arena)p.y=clamp(p.y,Math.max(bounds(p.x).min,state.cameraY+180),Math.min(bounds(p.x).max,state.cameraY+487));
       const teammates=state.players.filter(q=>q!==p&&q.lives>0);if(teammates.length){const lo=Math.min(...teammates.map(q=>q.y))-300,hi=Math.max(...teammates.map(q=>q.y))+300;p.y=clamp(p.y,Math.max(bounds(p.x).min,lo),Math.min(bounds(p.x).max,hi));}
       if(p.z>0||p.vz>0){p.z+=p.vz*dt;p.vz-=1150*dt;if(p.z<=0){p.z=0;p.vz=0;p.airKick=false;fx('dust',p.x,p.y,{life:.25,max:.25});}}
       if(p.action){p.action.age+=dt;if(!p.action.struck&&p.action.age>=.085)strike(p,p.action);if(p.action.age>=p.action.duration)p.action=null;}
