@@ -1,0 +1,14 @@
+{
+  "source_revision": "ccf99ac328dda5aa981c4b8c2ecf2d5b3e572548",
+  "emscripten": "5.0.7",
+  "files": {
+    "eduke32.js": {
+      "bytes": 208785,
+      "sha256": "4594190a2b5b6c763d3f4e2acc46589fc3ac901d07c6fc632dc08215e439e30f"
+    },
+    "eduke32.wasm": {
+      "bytes": 3511672,
+      "sha256": "b1a0b22ea90ae16428f190e7e4ed43cd0e83589d21f91576fbece85517fd951d"
+    }
+  }
+}

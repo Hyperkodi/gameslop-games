@@ -1,0 +1,1384 @@
+Third-party notices for Gameslop Duke 3D Browser
+
+The full license headers for all engine components are retained in the accompanying engine source archive. GPLv2 and the Build license are supplied separately. SDL source is also provided.
+
+
+LICENSE
+Emscripten is available under 2 licenses, the MIT license and the
+University of Illinois/NCSA Open Source License.
+
+Both are permissive open source licenses, with little if any
+practical difference between them.
+
+The reason for offering both is that (1) the MIT license is
+well-known, while (2) the University of Illinois/NCSA Open Source
+License allows Emscripten's code to be integrated upstream into
+LLVM, which uses that license, should the opportunity arise.
+
+The full text of both licenses follows.
+
+==============================================================================
+
+Copyright (c) 2010-2014 Emscripten authors, see AUTHORS file.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+==============================================================================
+
+Copyright (c) 2010-2014 Emscripten authors, see AUTHORS file.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the
+"Software"), to deal with the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+    Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimers.
+
+    Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following disclaimers
+    in the documentation and/or other materials provided with the
+    distribution.
+
+    Neither the names of Mozilla,
+    nor the names of its contributors may be used to endorse
+    or promote products derived from this Software without specific prior
+    written permission. 
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
+
+==============================================================================
+
+This program uses portions of Node.js source code located in src/library_path.js,
+in accordance with the terms of the MIT license. Node's license follows:
+
+    """
+        Copyright Joyent, Inc. and other Node contributors. All rights reserved.
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to
+        deal in the Software without restriction, including without limitation the
+        rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+        sell copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+        FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+        IN THE SOFTWARE.
+    """
+
+The musl libc project is bundled in this repo, and it has the MIT license, see
+system/lib/libc/musl/COPYRIGHT
+
+The third_party/ subdirectory contains code with other licenses. None of it is
+used by default, but certain options use it (e.g., the optional closure compiler
+flag will run closure compiler from third_party/).
+
+
+
+LICENSE.txt
+Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
+  
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+  
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required. 
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+
+
+LICENSE.txt
+HIDAPI can be used under one of three licenses.
+
+1. The GNU General Public License, version 3.0, in LICENSE-gpl3.txt
+2. A BSD-Style License, in LICENSE-bsd.txt.
+3. The more liberal original HIDAPI license. LICENSE-orig.txt
+
+The license chosen is at the discretion of the user of HIDAPI. For example:
+1. An author of GPL software would likely use HIDAPI under the terms of the
+GPL.
+
+2. An author of commercial closed-source software would likely use HIDAPI
+under the terms of the BSD-style license or the original HIDAPI license.
+
+
+
+License.txt
+
+Simple DirectMedia Layer
+Copyright (C) 1997-2025 Sam Lantinga <slouken@libsdl.org>
+  
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+  
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required. 
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+
+license.txt
+  __            _                    _    
+ / _|          | |                  | |   
+| |_ ___  _ __ | |_ _ __   __ _  ___| | __
+|  _/ _ \| '_ \| __| '_ \ / _` |/ __| |/ /
+| || (_) | | | | |_| |_) | (_| | (__|   < 
+|_| \___/|_| |_|\__| .__/ \__,_|\___|_|\_\
+                   | |                    
+                   |_|                              
+----------------------------------------------------------------------
+Product	: font-pack.zip
+Website	: http://www.spicypixel.net
+Author	: Marc Russell
+Released: 16th January 2008
+----------------------------------------------------------------------
+
+What is this?
+-------------
+font-pack is a package of free art assets to be used under the terms of this document. It is available to game developers and hobbyists alike.
+
+Contents
+--------
+The contents of the font-pack ZIP file include 20 bitmap fonts
+
+Usage License & Restrictions
+----------------------------
+font-pack is distributed under the "Common Public License Version 1.0."
+The terms of which are given below. If you do not understand the terms of the license please refer to a solicitor. It should however, be relatively clear how this package can be used.
+
+THE ACCOMPANYING PROGRAM IS PROVIDED UNDER THE TERMS OF THIS COMMON 
+PUBLIC LICENSE ("AGREEMENT"). ANY USE, REPRODUCTION OR DISTRIBUTION OF 
+THE PROGRAM CONSTITUTES RECIPIENT'S ACCEPTANCE OF THIS AGREEMENT.
+
+1. DEFINITIONS
+
+"Contribution" means:
+
+    a) in the case of the initial Contributor, the initial code and 
+    documentation distributed under this Agreement, and
+
+    b) in the case of each subsequent Contributor:
+
+    i) changes to the Program, and
+
+    ii) additions to the Program;
+
+    where such changes and/or additions to the Program originate from 
+    and are distributed by that particular Contributor. A Contribution 
+    'originates' from a Contributor if it was added to the Program by 
+    such Contributor itself or anyone acting on such Contributor's 
+    behalf. Contributions do not include additions to the Program which: 
+    (i) are separate modules of software distributed in conjunction with 
+    the Program under their own license agreement, and (ii) are not 
+    derivative works of the Program.
+
+"Contributor" means any person or entity that distributes the Program.
+
+"Licensed Patents " mean patent claims licensable by a Contributor which 
+are necessarily infringed by the use or sale of its Contribution alone 
+or when combined with the Program.
+
+"Program" means the Contributions distributed in accordance with this 
+Agreement.
+
+"Recipient" means anyone who receives the Program under this Agreement, 
+including all Contributors.
+
+2. GRANT OF RIGHTS
+
+    a) Subject to the terms of this Agreement, each Contributor hereby 
+    grants Recipient a non-exclusive, worldwide, royalty-free copyright 
+    license to reproduce, prepare derivative works of, publicly display, 
+    publicly perform, distribute and sublicense the Contribution of such 
+    Contributor, if any, and such derivative works, in source code and 
+    object code form.
+
+    b) Subject to the terms of this Agreement, each Contributor hereby 
+    grants Recipient a non-exclusive, worldwide, royalty-free patent 
+    license under Licensed Patents to make, use, sell, offer to sell, 
+    import and otherwise transfer the Contribution of such Contributor, 
+    if any, in source code and object code form. This patent license 
+    shall apply to the combination of the Contribution and the Program 
+    if, at the time the Contribution is added by the Contributor, such 
+    addition of the Contribution causes such combination to be covered 
+    by the Licensed Patents. The patent license shall not apply to any 
+    other combinations which include the Contribution. No hardware per 
+    se is licensed hereunder.
+
+    c) Recipient understands that although each Contributor grants the 
+    licenses to its Contributions set forth herein, no assurances are 
+    provided by any Contributor that the Program does not infringe the 
+    patent or other intellectual property rights of any other entity. 
+    Each Contributor disclaims any liability to Recipient for claims 
+    brought by any other entity based on infringement of intellectual 
+    property rights or otherwise. As a condition to exercising the 
+    rights and licenses granted hereunder, each Recipient hereby assumes 
+    sole responsibility to secure any other intellectual property rights 
+    needed, if any. For example, if a third party patent license is 
+    required to allow Recipient to distribute the Program, it is 
+    Recipient's responsibility to acquire that license before 
+    distributing the Program.
+
+    d) Each Contributor represents that to its knowledge it has 
+    sufficient copyright rights in its Contribution, if any, to grant 
+    the copyright license set forth in this Agreement.
+
+3. REQUIREMENTS
+
+A Contributor may choose to distribute the Program in object code form 
+under its own license agreement, provided that:
+
+    a) it complies with the terms and conditions of this Agreement; and
+
+    b) its license agreement:
+
+    i) effectively disclaims on behalf of all Contributors all 
+    warranties and conditions, express and implied, including warranties 
+    or conditions of title and non-infringement, and implied warranties 
+    or conditions of merchantability and fitness for a particular 
+    purpose;
+
+    ii) effectively excludes on behalf of all Contributors all liability 
+    for damages, including direct, indirect, special, incidental and 
+    consequential damages, such as lost profits;
+
+    iii) states that any provisions which differ from this Agreement are 
+    offered by that Contributor alone and not by any other party; and
+
+    iv) states that source code for the Program is available from such 
+    Contributor, and informs licensees how to obtain it in a reasonable 
+    manner on or through a medium customarily used for software 
+    exchange. 
+
+When the Program is made available in source code form:
+
+    a) it must be made available under this Agreement; and
+
+    b) a copy of this Agreement must be included with each copy of the 
+    Program. 
+
+Contributors may not remove or alter any copyright notices contained 
+within the Program.
+
+Each Contributor must identify itself as the originator of its 
+Contribution, if any, in a manner that reasonably allows subsequent 
+Recipients to identify the originator of the Contribution.
+
+4. COMMERCIAL DISTRIBUTION
+
+Commercial distributors of software may accept certain responsibilities 
+with respect to end users, business partners and the like. While this 
+license is intended to facilitate the commercial use of the Program, the 
+Contributor who includes the Program in a commercial product offering 
+should do so in a manner which does not create potential liability for 
+other Contributors. Therefore, if a Contributor includes the Program in 
+a commercial product offering, such Contributor ("Commercial 
+Contributor") hereby agrees to defend and indemnify every other 
+Contributor ("Indemnified Contributor") against any losses, damages and 
+costs (collectively "Losses") arising from claims, lawsuits and other 
+legal actions brought by a third party against the Indemnified 
+Contributor to the extent caused by the acts or omissions of such 
+Commercial Contributor in connection with its distribution of the 
+Program in a commercial product offering. The obligations in this 
+section do not apply to any claims or Losses relating to any actual or 
+alleged intellectual property infringement. In order to qualify, an 
+Indemnified Contributor must: a) promptly notify the Commercial 
+Contributor in writing of such claim, and b) allow the Commercial 
+Contributor to control, and cooperate with the Commercial Contributor 
+in, the defense and any related settlement negotiations. The Indemnified 
+Contributor may participate in any such claim at its own expense.
+
+For example, a Contributor might include the Program in a commercial 
+product offering, Product X. That Contributor is then a Commercial 
+Contributor. If that Commercial Contributor then makes performance 
+claims, or offers warranties related to Product X, those performance 
+claims and warranties are such Commercial Contributor's responsibility 
+alone. Under this section, the Commercial Contributor would have to 
+defend claims against the other Contributors related to those 
+performance claims and warranties, and if a court requires any other 
+Contributor to pay any damages as a result, the Commercial Contributor 
+must pay those damages.
+
+5. NO WARRANTY
+
+EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, THE PROGRAM IS PROVIDED 
+ON AN "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
+EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES 
+OR CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR 
+A PARTICULAR PURPOSE. Each Recipient is solely responsible for 
+determining the appropriateness of using and distributing the Program 
+and assumes all risks associated with its exercise of rights under this 
+Agreement, including but not limited to the risks and costs of program 
+errors, compliance with applicable laws, damage to or loss of data, 
+programs or equipment, and unavailability or interruption of operations.
+
+6. DISCLAIMER OF LIABILITY
+
+EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, NEITHER RECIPIENT NOR 
+ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY DIRECT, INDIRECT, 
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING 
+WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND ON ANY THEORY OF 
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING 
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OR 
+DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED 
+HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+7. GENERAL
+
+If any provision of this Agreement is invalid or unenforceable under 
+applicable law, it shall not affect the validity or enforceability of 
+the remainder of the terms of this Agreement, and without further action 
+by the parties hereto, such provision shall be reformed to the minimum 
+extent necessary to make such provision valid and enforceable.
+
+If Recipient institutes patent litigation against a Contributor with 
+respect to a patent applicable to software (including a cross-claim or 
+counterclaim in a lawsuit), then any patent licenses granted by that 
+Contributor to such Recipient under this Agreement shall terminate as of 
+the date such litigation is filed. In addition, if Recipient institutes 
+patent litigation against any entity (including a cross-claim or 
+counterclaim in a lawsuit) alleging that the Program itself (excluding 
+combinations of the Program with other software or hardware) infringes 
+such Recipient's patent(s), then such Recipient's rights granted under 
+Section 2(b) shall terminate as of the date such litigation is filed.
+
+All Recipient's rights under this Agreement shall terminate if it fails 
+to comply with any of the material terms or conditions of this Agreement 
+and does not cure such failure in a reasonable period of time after 
+becoming aware of such noncompliance. If all Recipient's rights under 
+this Agreement terminate, Recipient agrees to cease use and distribution 
+of the Program as soon as reasonably practicable. However, Recipient's 
+obligations under this Agreement and any licenses granted by Recipient 
+relating to the Program shall continue and survive.
+
+Everyone is permitted to copy and distribute copies of this Agreement, 
+but in order to avoid inconsistency the Agreement is copyrighted and may 
+only be modified in the following manner. The Agreement Steward reserves 
+the right to publish new versions (including revisions) of this 
+Agreement from time to time. No one other than the Agreement Steward has 
+the right to modify this Agreement. IBM is the initial Agreement 
+Steward. IBM may assign the responsibility to serve as the Agreement 
+Steward to a suitable separate entity. Each new version of the Agreement 
+will be given a distinguishing version number. The Program (including 
+Contributions) may always be distributed subject to the version of the 
+Agreement under which it was received. In addition, after a new version 
+of the Agreement is published, Contributor may elect to distribute the 
+Program (including its Contributions) under the new version. Except as 
+expressly stated in Sections 2(a) and 2(b) above, Recipient receives no 
+rights or licenses to the intellectual property of any Contributor under 
+this Agreement, whether expressly, by implication, estoppel or 
+otherwise. All rights in the Program not expressly granted under this 
+Agreement are reserved.
+
+This Agreement is governed by the laws of the State of New York and the 
+intellectual property laws of the United States of America. No party to 
+this Agreement will bring a legal action under this Agreement more than 
+one year after the cause of action arose. Each party waives its rights 
+to a jury trial in any resulting litigation.
+
+
+
+source/build/src/smmalloc.cpp
+// The MIT License (MIT)
+//
+// 	Copyright (c) 2017-2021 Sergey Makeev
+//
+// 	Permission is hereby granted, free of charge, to any person obtaining a copy
+// 	of this software and associated documentation files (the "Software"), to deal
+// 	in the Software without restriction, including without limitation the rights
+// 	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// 	copies of the Software, and to permit persons to whom the Software is
+// 	furnished to do so, subject to the following conditions:
+//
+//      The above copyright notice and this permission notice shall be included in
+// 	all copies or substantial portions of the Software.
+//
+// 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// 	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// 	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// 	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// 	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// 	THE SOFTWARE.
+
+
+source/build/src/miniz.c
+/**************************************************************************
+ *
+ * Copyright 2013-2014 RAD Game Tools and Valve Software
+ * Copyright 2010-2014 Rich Geldreich and Tenacious Software LLC
+ * All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ **************************************************************************/
+
+
+
+source/build/src/lz4.c
+/*
+   LZ4 - Fast LZ compression algorithm
+   Copyright (C) 2011-2023, Yann Collet.
+
+   BSD 2-Clause License (http://www.opensource.org/licenses/bsd-license.php)
+
+   Redistribution and use in source and binary forms, with or without
+   modification, are permitted provided that the following conditions are
+   met:
+
+       * Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+       * Redistributions in binary form must reproduce the above
+   copyright notice, this list of conditions and the following disclaimer
+   in the documentation and/or other materials provided with the
+   distribution.
+
+   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+   "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+   LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+   A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+   OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+   SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+   LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+   THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+   (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+   You can contact the author at :
+    - LZ4 homepage : http://www.lz4.org
+    - LZ4 source repository : https://github.com/lz4/lz4
+*/
+
+/*-************************************
+*  Tuning parameters
+**************************************/
+/*
+ * LZ4_HEAPMODE :
+ * Select how stateless compression functions like `LZ4_compress_default()`
+ * allocate memory for their hash table,
+ * in memory stack (0:default, fastest), or in memory heap (1:requires malloc()).
+ */
+#ifndef LZ4_HEAPMODE
+#  define LZ4_HEAPMODE 0
+#endif
+
+/*
+ * LZ4_ACCELERATION_DEFAULT :
+ * Select "acceleration" for LZ4_compress_fast() when parameter value <= 0
+ */
+#define LZ4_ACCELERATION_DEFAULT 1
+/*
+ * LZ4_ACCELERATION_MAX :
+ * Any "acceleration" value higher than this threshold
+ * get treated as LZ4_ACCELERATION_MAX instead (fix #876)
+ */
+#define LZ4_ACCELERATION_MAX 65537
+
+
+/*-************************************
+*  CPU Feature Detection
+**************************************/
+/* LZ4_FORCE_MEMORY_ACCESS
+ * By default, access to unaligned memory is controlled by `memcpy()`, which is safe and portable.
+ * Unfortunately, on some target/compiler combinations, the generated assembly is sub-optimal.
+ * The below switch allow to select different access method for improved performance.
+ * Method 0 (default) : use `memcpy()`. Safe and portable.
+ * Method 1 : `__packed` statement. It depends on compiler extension (ie, not portable).
+ *            This method is safe if your compiler supports it, and *generally* as fast or faster than `memcpy`.
+ * Method 2 : direct access. This method is portable but violate C standard.
+ *            It can generate buggy code on targets which assembly generation depends on alignment.
+ *            But in some circumstances, it's the only known way to get the most performance (ie GCC + ARMv6)
+ * See https://fastcompression.blogspot.fr/2015/08/accessing-unaligned-memory.html for details.
+ * Prefer these methods in priority order (0 > 1 > 2)
+ */
+#ifndef LZ4_FORCE_MEMORY_ACCESS   /* can be defined externally */
+#  if defined(__GNUC__) && \
+  ( defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_6J__) || defined(__ARM_ARCH_6K__) \
+  || defined(__ARM_ARCH_6Z__) || defined(__ARM_ARCH_6ZK__) || defined(__ARM_ARCH_6T2__) )
+#    define LZ4_FORCE_MEMORY_ACCESS 2
+#  elif (defined(__INTEL_COMPILER) && !defined(_WIN32)) || defined(__GNUC__) || defined(_MSC_VER)
+#    define LZ4_FORCE_MEMORY_ACCESS 1
+#  endif
+#endif
+
+/*
+ * LZ4_FORCE_SW_BITCOUNT
+ * Define this parameter if your target system or compiler does not support hardware bit count
+ */
+#if defined(_MSC_VER) && defined(_WIN32_WCE)   /* Visual Studio for WinCE doesn't support Hardware bit count */
+#  undef  LZ4_FORCE_SW_BITCOUNT  /* avoid double def */
+#  define LZ4_FORCE_SW_BITCOUNT
+#endif
+
+
+
+/*-************************************
+*  Dependency
+**************************************/
+/*
+ * LZ4_SRC_INCLUDED:
+ * Amalgamation flag, whether lz4.c is included
+ */
+#ifndef LZ4_SRC_INCLUDED
+#  define LZ4_SRC_INCLUDED 1
+#endif
+
+#ifndef LZ4_DISABLE_DEPRECATE_WARNINGS
+#  define LZ4_DISABLE_DEPRECATE_WARNINGS /* due to LZ4_decompress_safe_withPrefix64k */
+#endif
+
+#ifndef LZ4_STATIC_LINKING_ONLY
+#  define LZ4_STATIC_LINKING_ONLY
+#endif
+
+
+source/build/src/xxhash.c
+/*
+ * xxHash - Extremely Fast Hash algorithm
+ * Copyright (C) 2012-2023 Yann Collet
+ *
+ * BSD 2-Clause License (https://www.opensource.org/licenses/bsd-license.php)
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *    * Redistributions of source code must retain the above copyright
+ *      notice, this list of conditions and the following disclaimer.
+ *    * Redistributions in binary form must reproduce the above
+ *      copyright notice, this list of conditions and the following disclaimer
+ *      in the documentation and/or other materials provided with the
+ *      distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * You can contact the author at:
+ *   - xxHash homepage: https://www.xxhash.com
+ *   - xxHash source repository: https://github.com/Cyan4973/xxHash
+ */
+
+/*
+ * xxhash.c instantiates functions defined in xxhash.h
+ */
+
+#define XXH_STATIC_LINKING_ONLY /* access advanced declarations */
+#define XXH_IMPLEMENTATION      /* access definitions */
+
+
+
+source/build/src/loguru.cpp
+#if defined(__GNUC__) || defined(__clang__)
+// Disable all warnings from gcc/clang:
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+
+#pragma GCC diagnostic ignored "-Wc++98-compat"
+#pragma GCC diagnostic ignored "-Wc++98-compat-pedantic"
+#pragma GCC diagnostic ignored "-Wexit-time-destructors"
+#pragma GCC diagnostic ignored "-Wformat-nonliteral"
+#pragma GCC diagnostic ignored "-Wglobal-constructors"
+#pragma GCC diagnostic ignored "-Wgnu-zero-variadic-macro-arguments"
+#pragma GCC diagnostic ignored "-Wmissing-prototypes"
+#pragma GCC diagnostic ignored "-Wpadded"
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#pragma GCC diagnostic ignored "-Wunused-macros"
+#pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
+#elif defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable:4365) // conversion from 'X' to 'Y', signed/unsigned mismatch
+#endif
+
+// EDUKE32 MODIFICATION
+
+
+source/imgui/src/imgui.cpp
+// dear imgui, v1.92.6 WIP
+// (main code and documentation)
+
+// Help:
+// - Call and read ImGui::ShowDemoWindow() in imgui_demo.cpp. All applications in examples/ are doing that.
+// - Read top of imgui.cpp for more details, links and comments.
+// - Add '#define IMGUI_DEFINE_MATH_OPERATORS' before including imgui.h (or in imconfig.h) to access courtesy maths operators for ImVec2 and ImVec4.
+
+// Resources:
+// - FAQ ........................ https://dearimgui.com/faq (in repository as docs/FAQ.md)
+// - Homepage ................... https://github.com/ocornut/imgui
+// - Releases & Changelog ....... https://github.com/ocornut/imgui/releases
+// - Gallery .................... https://github.com/ocornut/imgui/issues?q=label%3Agallery (please post your screenshots/video there!)
+// - Wiki ....................... https://github.com/ocornut/imgui/wiki (lots of good stuff there)
+//   - Getting Started            https://github.com/ocornut/imgui/wiki/Getting-Started (how to integrate in an existing app by adding ~25 lines of code)
+//   - Third-party Extensions     https://github.com/ocornut/imgui/wiki/Useful-Extensions (ImPlot & many more)
+//   - Bindings/Backends          https://github.com/ocornut/imgui/wiki/Bindings (language bindings + backends for various tech/engines)
+//   - Debug Tools                https://github.com/ocornut/imgui/wiki/Debug-Tools
+//   - Glossary                   https://github.com/ocornut/imgui/wiki/Glossary
+//   - Software using Dear ImGui  https://github.com/ocornut/imgui/wiki/Software-using-dear-imgui
+// - Issues & support ........... https://github.com/ocornut/imgui/issues
+// - Test Engine & Automation ... https://github.com/ocornut/imgui_test_engine (test suite, test engine to automate your apps)
+// - Web version of the Demo .... https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html (w/ source code browser)
+
+// For FIRST-TIME users having issues compiling/linking/running:
+// please post in https://github.com/ocornut/imgui/discussions if you cannot find a solution in resources above.
+// Everything else should be asked in 'Issues'! We are building a database of cross-linked knowledge there.
+// Since 1.92, we encourage font loading questions to also be posted in 'Issues'.
+
+// Copyright (c) 2014-2026 Omar Cornut
+// Developed by Omar Cornut and every direct or indirect contributors to the GitHub.
+// See LICENSE.txt for copyright and licensing details (standard MIT License).
+// This library is free but needs your support to sustain development and maintenance.
+// Businesses: you can support continued development via B2B invoiced technical support, maintenance and sponsoring contracts.
+// PLEASE reach out at omar AT dearimgui DOT com. See https://github.com/ocornut/imgui/wiki/Funding
+// Businesses: you can also purchase licenses for the Dear ImGui Automation/Test Engine.
+
+// It is recommended that you don't modify imgui.cpp! It will become difficult for you to update the library.
+// Note that 'ImGui::' being a namespace, you can add functions into the namespace from your own source files, without
+// modifying imgui.h or imgui.cpp. You may include imgui_internal.h to access internal data structures, but it doesn't
+// come with any guarantee of forward compatibility. Discussing your changes on the GitHub Issue Tracker may lead you
+// to a better solution or official support for them.
+
+/*
+
+Index of this file:
+
+DOCUMENTATION
+
+- MISSION STATEMENT
+- CONTROLS GUIDE
+- PROGRAMMER GUIDE
+  - READ FIRST
+  - HOW TO UPDATE TO A NEWER VERSION OF DEAR IMGUI
+  - GETTING STARTED WITH INTEGRATING DEAR IMGUI IN YOUR CODE/ENGINE
+  - HOW A SIMPLE APPLICATION MAY LOOK LIKE
+  - USING CUSTOM BACKEND / CUSTOM ENGINE
+- API BREAKING CHANGES (read me when you update!)
+- FREQUENTLY ASKED QUESTIONS (FAQ)
+  - Read all answers online: https://www.dearimgui.com/faq, or in docs/FAQ.md (with a Markdown viewer)
+
+CODE
+(search for "[SECTION]" in the code to find them)
+
+// [SECTION] INCLUDES
+// [SECTION] FORWARD DECLARATIONS
+// [SECTION] CONTEXT AND MEMORY ALLOCATORS
+// [SECTION] USER FACING STRUCTURES (ImGuiStyle, ImGuiIO, ImGuiPlatformIO)
+// [SECTION] MISC HELPERS/UTILITIES (Geometry functions)
+// [SECTION] MISC HELPERS/UTILITIES (String, Format, Hash functions)
+// [SECTION] MISC HELPERS/UTILITIES (File functions)
+// [SECTION] MISC HELPERS/UTILITIES (ImText* functions)
+// [SECTION] MISC HELPERS/UTILITIES (Color functions)
+// [SECTION] ImGuiStorage
+// [SECTION] ImGuiTextFilter
+// [SECTION] ImGuiTextBuffer, ImGuiTextIndex
+// [SECTION] ImGuiListClipper
+// [SECTION] STYLING
+// [SECTION] RENDER HELPERS
+// [SECTION] INITIALIZATION, SHUTDOWN
+// [SECTION] MAIN CODE (most of the code! lots of stuff, needs tidying up!)
+// [SECTION] FONTS, TEXTURES
+// [SECTION] ID STACK
+// [SECTION] INPUTS
+// [SECTION] ERROR CHECKING, STATE RECOVERY
+// [SECTION] ITEM SUBMISSION
+// [SECTION] LAYOUT
+// [SECTION] SCROLLING
+// [SECTION] TOOLTIPS
+// [SECTION] POPUPS
+// [SECTION] WINDOW FOCUS
+// [SECTION] KEYBOARD/GAMEPAD NAVIGATION
+// [SECTION] DRAG AND DROP
+// [SECTION] LOGGING/CAPTURING
+// [SECTION] SETTINGS
+// [SECTION] LOCALIZATION
+// [SECTION] VIEWPORTS, PLATFORM WINDOWS
+// [SECTION] PLATFORM DEPENDENT HELPERS
+// [SECTION] METRICS/DEBUGGER WINDOW
+// [SECTION] DEBUG LOG WINDOW
+// [SECTION] OTHER DEBUG TOOLS (ITEM PICKER, ID STACK TOOL)
+
+*/
+
+//-----------------------------------------------------------------------------
+// DOCUMENTATION
+//-----------------------------------------------------------------------------
+
+/*
+
+ MISSION STATEMENT
+ =================
+
+ - Easy to use to create code-driven and data-driven tools.
+ - Easy to use to create ad hoc short-lived tools and long-lived, more elaborate tools.
+ - Easy to hack and improve.
+ - Minimize setup and maintenance.
+ - Minimize state storage on user side.
+ - Minimize state synchronization.
+ - Portable, minimize dependencies, run on target (consoles, phones, etc.).
+ - Efficient runtime and memory consumption.
+
+ Designed primarily for developers and content-creators, not the typical end-user!
+ Some of the current weaknesses (which we aim to address in the future) includes:
+
+ - Doesn't look fancy by default.
+ - Limited layout features, intricate layouts are typically crafted in code.
+
+
+ CONTROLS GUIDE
+ ==============
+
+ - MOUSE CONTROLS
+   - Mouse wheel:                   Scroll vertically.
+   - Shift+Mouse wheel:             Scroll horizontally.
+   - Click [X]:                     Close a window, available when 'bool* p_open' is passed to ImGui::Begin().
+   - Click ^, Double-Click title:   Collapse window.
+   - Drag on corner/border:         Resize window (double-click to auto fit window to its contents).
+   - Drag on any empty space:       Move window (unless io.ConfigWindowsMoveFromTitleBarOnly = true).
+   - Left-click outside popup:      Close popup stack (right-click over underlying popup: Partially close popup stack).
+
+ - TEXT EDITOR
+   - Hold Shift or Drag Mouse:      Select text.
+   - Ctrl+Left/Right:               Word jump.
+   - Ctrl+Shift+Left/Right:         Select words.
+   - Ctrl+A or Double-Click:        Select All.
+   - Ctrl+X, Ctrl+C, Ctrl+V:        Use OS clipboard.
+   - Ctrl+Z                         Undo.
+   - Ctrl+Y or Ctrl+Shift+Z:        Redo.
+   - ESCAPE:                        Revert text to its original value.
+   - On macOS, controls are automatically adjusted to match standard macOS text editing and behaviors.
+     (for 99% of shortcuts, Ctrl is replaced by Cmd on macOS).
+
+ - KEYBOARD CONTROLS
+   - Basic:
+     - Tab, Shift+Tab               Cycle through text editable fields.
+     - Ctrl+Tab, Ctrl+Shift+Tab     Cycle through windows.
+     - Ctrl+Click                   Input text into a Slider or Drag widget.
+   - Extended features with `io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard`:
+     - Tab, Shift+Tab:              Cycle through every items.
+     - Arrow keys                   Move through items using directional navigation. Tweak value.
+     - Arrow keys + Alt, Shift      Tweak slower, tweak faster (when using arrow keys).
+     - Enter                        Activate item (prefer text input when possible).
+     - Space                        Activate item (prefer tweaking with arrows when possible).
+     - Escape                       Deactivate item, leave child window, close popup.
+     - Page Up, Page Down           Previous page, next page.
+     - Home, End                    Scroll to top, scroll to bottom.
+     - Alt                          Toggle between scrolling layer and menu layer.
+     - Ctrl+Tab then Ctrl+Arrows    Move window. Hold Shift to resize instead of moving.
+   - Output when ImGuiConfigFlags_NavEnableKeyboard set,
+     - io.WantCaptureKeyboard flag is set when keyboard is claimed.
+     - io.NavActive: true when a window is focused and it doesn't have the ImGuiWindowFlags_NoNavInputs flag set.
+     - io.NavVisible: true when the navigation cursor is visible (usually goes to back false when mouse is used).
+
+ - GAMEPAD CONTROLS
+   - Enable with 'io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad'.
+   - Particularly useful to use Dear ImGui on a console system (e.g. PlayStation, Switch, Xbox) without a mouse!
+   - Download controller mapping PNG/PSD at http://dearimgui.com/controls_sheets
+   - Backend support: backend needs to:
+      - Set 'io.BackendFlags |= ImGuiBackendFlags_HasGamepad' + call io.AddKeyEvent/AddKeyAnalogEvent() with ImGuiKey_Gamepad_XXX keys.
+      - For analog values (0.0f to 1.0f), backend is responsible to handling a dead-zone and rescaling inputs accordingly.
+        Backend code will probably need to transform your raw inputs (such as e.g. remapping your 0.2..0.9 raw input range to 0.0..1.0 imgui range, etc.).
+   - If you need to share inputs between your game and the Dear ImGui interface, the easiest approach is to go all-or-nothing,
+     with a buttons combo to toggle the target. Please reach out if you think the game vs navigation input sharing could be improved.
+
+ - REMOTE INPUTS SHARING & MOUSE EMULATION
+   - PS4/PS5 users: Consider emulating a mouse cursor with DualShock touch pad or a spare analog stick as a mouse-emulation fallback.
+   - Consoles/Tablet/Phone users: Consider using a Synergy 1.x server (on your PC) + run examples/libs/synergy/uSynergy.c (on your console/tablet/phone app)
+     in order to share your PC mouse/keyboard.
+   - See https://github.com/ocornut/imgui/wiki/Useful-Extensions#remoting for other remoting solutions.
+   - On a TV/console system where readability may be lower or mouse inputs may be awkward, you may want to set the io.ConfigNavMoveSetMousePos flag.
+     Enabling io.ConfigNavMoveSetMousePos + ImGuiBackendFlags_HasSetMousePos instructs Dear ImGui to move your mouse cursor along with navigation movements.
+     When enabled, the NewFrame() function may alter 'io.MousePos' and set 'io.WantSetMousePos' to notify you that it wants the mouse cursor to be moved.
+     When that happens your backend NEEDS to move the OS or underlying mouse cursor on the next frame. Some of the backends in examples/ do that.
+     (If you set the NavEnableSetMousePos flag but don't honor 'io.WantSetMousePos' properly, Dear ImGui will misbehave as it will see your mouse moving back & forth!)
+     (In a setup when you may not have easy control over the mouse cursor, e.g. uSynergy.c doesn't expose moving remote mouse cursor, you may want
+     to set a boolean to ignore your other external mouse positions until the external source is moved again.)
+
+
+ PROGRAMMER GUIDE
+ ================
+
+ READ FIRST
+ ----------
+ - Remember to check the wonderful Wiki: https://github.com/ocornut/imgui/wiki
+ - Your code creates the UI every frame of your application loop, if your code doesn't run the UI is gone!
+   The UI can be highly dynamic, there are no construction or destruction steps, less superfluous
+   data retention on your side, less state duplication, less state synchronization, fewer bugs.
+ - Call and read ImGui::ShowDemoWindow() for demo code demonstrating most features.
+   Or browse https://pthom.github.io/imgui_manual_online/manual/imgui_manual.html for interactive web version.
+ - The library is designed to be built from sources. Avoid pre-compiled binaries and packaged versions. See imconfig.h to configure your build.
+ - Dear ImGui is an implementation of the IMGUI paradigm (immediate-mode graphical user interface, a term coined by Casey Muratori).
+   You can learn about IMGUI principles at http://www.johno.se/book/imgui.html, http://mollyrocket.com/861 & more links in Wiki.
+ - Dear ImGui is a "single pass" rasterizing implementation of the IMGUI paradigm, aimed at ease of use and high-performances.
+   For every application frame, your UI code will be called only once. This is in contrast to e.g. Unity's implementation of an IMGUI,
+   where the UI code is called multiple times ("multiple passes") from a single entry point. There are pros and cons to both approaches.
+ - Our origin is on the top-left. In axis aligned bounding boxes, Min = top-left, Max = bottom-right.
+ - Please make sure you have asserts enabled (IM_ASSERT redirects to assert() by default, but can be redirected).
+   If you get an assert, read the messages and comments around the assert.
+ - This codebase aims to be highly optimized:
+   - A typical idle frame should never call malloc/free.
+   - We rely on a maximum of constant-time or O(N) algorithms. Limiting searches/scans as much as possible.
+   - We put particular energy in making sure performances are decent with typical "Debug" build settings as well.
+     Which mean we tend to avoid over-relying on "zero-cost abstraction" as they aren't zero-cost at all.
+ - This codebase aims to be both highly opinionated and highly flexible:
+   - This code works because of the things it choose to solve or not solve.
+   - C++: this is a pragmatic C-ish codebase: we don't use fancy C++ features, we don't include C++ headers,
+     and ImGui:: is a namespace. We rarely use member functions (and when we did, I am mostly regretting it now).
+     This is to increase compatibility, increase maintainability and facilitate use from other languages.
+   - C++: ImVec2/ImVec4 do not expose math operators by default, because it is expected that you use your own math types.
+     See FAQ "How can I use my own math types instead of ImVec2/ImVec4?" for details about setting up imconfig.h for that.
+     We can can optionally export math operators for ImVec2/ImVec4 using IMGUI_DEFINE_MATH_OPERATORS, which we use internally.
+   - C++: pay attention that ImVector<> manipulates plain-old-data and does not honor construction/destruction
+     (so don't use ImVector in your code or at our own risk!).
+   - Building: We don't use nor mandate a build system for the main library.
+     This is in an effort to ensure that it works in the real world aka with any esoteric build setup.
+     This is also because providing a build system for the main library would be of little-value.
+     The build problems are almost never coming from the main library but from specific backends.
+
+
+ HOW TO UPDATE TO A NEWER VERSION OF DEAR IMGUI
+ ----------------------------------------------
+ - Update submodule or copy/overwrite every file.
+ - About imconfig.h:
+   - You may modify your copy of imconfig.h, in this case don't overwrite it.
+   - or you may locally branch to modify imconfig.h and merge/rebase latest.
+   - or you may '#define IMGUI_USER_CONFIG "my_config_file.h"' globally from your build system to
+     specify a custom path for your imconfig.h file and instead not have to modify the default one.
+
+ - Overwrite all the sources files except for imconfig.h (if you have modified your copy of imconfig.h)
+ - Or maintain your own branch where you have imconfig.h modified as a top-most commit which you can regularly rebase over "master".
+ - You can also use '#define IMGUI_USER_CONFIG "my_config_file.h" to redirect configuration to your own file.
+ - Read the "API BREAKING CHANGES" section (below). This is where we list occasional API breaking changes.
+   If a function/type has been renamed / or marked obsolete, try to fix the name in your code before it is permanently removed
+   from the public API. If you have a problem with a missing function/symbols, search for its name in the code, there will
+   likely be a comment about it. Please report any issue to the GitHub page!
+ - To find out usage of old API, you can add '#define IMGUI_DISABLE_OBSOLETE_FUNCTIONS' in your configuration file.
+ - Try to keep your copy of Dear ImGui reasonably up to date!
+
+
+ GETTING STARTED WITH INTEGRATING DEAR IMGUI IN YOUR CODE/ENGINE
+ ---------------------------------------------------------------
+ - See https://github.com/ocornut/imgui/wiki/Getting-Started.
+ - Run and study the examples and demo in imgui_demo.cpp to get acquainted with the library.
+ - In the majority of cases you should be able to use unmodified backends files available in the backends/ folder.
+ - Add the Dear ImGui source files + selected backend source files to your projects or using your preferred build system.
+   It is recommended you build and statically link the .cpp files as part of your project and NOT as a shared library (DLL).
+ - You can later customize the imconfig.h file to tweak some compile-time behavior, such as integrating Dear ImGui types with your own maths types.
+ - When using Dear ImGui, your programming IDE is your friend: follow the declaration of variables, functions and types to find comments about them.
+ - Dear ImGui never touches or knows about your GPU state. The only function that knows about GPU is the draw function that you provide.
+   Effectively it means you can create widgets at any time in your code, regardless of considerations of being in "update" vs "render"
+   phases of your own application. All rendering information is stored into command-lists that you will retrieve after calling ImGui::Render().
+ - Refer to the backends and demo applications in the examples/ folder for instruction on how to setup your code.
+ - If you are running over a standard OS with a common graphics API, you should be able to use unmodified imgui_impl_*** files from the examples/ folder.
+
+
+ HOW A SIMPLE APPLICATION MAY LOOK LIKE
+ --------------------------------------
+
+ USING THE EXAMPLE BACKENDS (= imgui_impl_XXX.cpp files from the backends/ folder).
+ The sub-folders in examples/ contain examples applications following this structure.
+
+     // Application init: create a dear imgui context, setup some options, load fonts
+     ImGui::CreateContext();
+     ImGuiIO& io = ImGui::GetIO();
+     // TODO: Set optional io.ConfigFlags values, e.g. 'io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard' to enable keyboard controls.
+     // TODO: Fill optional fields of the io structure later.
+     // TODO: Load TTF/OTF fonts if you don't want to use the default font.
+
+     // Initialize helper Platform and Renderer backends (here we are using imgui_impl_win32.cpp and imgui_impl_dx11.cpp)
+     ImGui_ImplWin32_Init(hwnd);
+     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dDeviceContext);
+
+     // Application main loop
+     while (true)
+     {
+         // Feed inputs to dear imgui, start new frame
+         ImGui_ImplDX11_NewFrame();
+         ImGui_ImplWin32_NewFrame();
+         ImGui::NewFrame();
+
+         // Any application code here
+         ImGui::Text("Hello, world!");
+
+         // Render dear imgui into framebuffer
+         ImGui::Render();
+         ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+         g_pSwapChain->Present(1, 0);
+     }
+
+     // Shutdown
+     ImGui_ImplDX11_Shutdown();
+     ImGui_ImplWin32_Shutdown();
+     ImGui::DestroyContext();
+
+ To decide whether to dispatch mouse/keyboard inputs to Dear ImGui to the rest of your application,
+ you should read the 'io.WantCaptureMouse', 'io.WantCaptureKeyboard' and 'io.WantTextInput' flags!
+ Please read the FAQ entry "How can I tell whether to dispatch mouse/keyboard to Dear ImGui or my application?" about this.
+
+
+USING CUSTOM BACKEND / CUSTOM ENGINE
+------------------------------------
+
+IMPLEMENTING YOUR PLATFORM BACKEND:
+ -> see https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md for basic instructions.
+ -> the Platform backends in impl_impl_XXX.cpp files contain many implementations.
+
+IMPLEMENTING YOUR RenderDrawData() function:
+ -> see https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md
+ -> the Renderer Backends in impl_impl_XXX.cpp files contain many implementations of a ImGui_ImplXXXX_RenderDrawData() function.
+
+IMPLEMENTING SUPPORT for ImGuiBackendFlags_RendererHasTextures:
+ -> see https://github.com/ocornut/imgui/blob/master/docs/BACKENDS.md
+ -> the Renderer Backends in impl_impl_XXX.cpp files contain many implementations of a ImGui_ImplXXXX_UpdateTexture() function.
+
+ Basic application/backend skeleton:
+
+     // Application init: create a Dear ImGui context, setup some options, load fonts
+     ImGui::CreateContext();
+     ImGuiIO& io = ImGui::GetIO();
+     // TODO: set io.ConfigXXX values, e.g.
+     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable keyboard controls
+
+     // TODO: Load TTF/OTF fonts if you don't want to use the default font.
+     io.Fonts->AddFontFromFileTTF("NotoSans.ttf");
+
+     // Application main loop
+     while (true)
+     {
+        // Setup low-level inputs, e.g. on Win32: calling GetKeyboardState(), or write to those fields from your Windows message handlers, etc.
+        // (In the examples/ app this is usually done within the ImGui_ImplXXX_NewFrame() function from one of the demo Platform Backends)
+        io.DeltaTime = 1.0f/60.0f;              // set the time elapsed since the previous frame (in seconds)
+        io.DisplaySize.x = 1920.0f;             // set the current display width
+        io.DisplaySize.y = 1280.0f;             // set the current display height here
+        io.AddMousePosEvent(mouse_x, mouse_y);  // update mouse position
+        io.AddMouseButtonEvent(0, mouse_b[0]);  // update mouse button states
+        io.AddMouseButtonEvent(1, mouse_b[1]);  // update mouse button states
+
+        // Call NewFrame(), after this point you can use ImGui::* functions anytime
+        // (So you want to try calling NewFrame() as early as you can in your main loop to be able to use Dear ImGui everywhere)
+        ImGui::NewFrame();
+
+        // Most of your application code here
+        ImGui::Text("Hello, world!");
+        MyGameUpdate(); // may use any Dear ImGui functions, e.g. ImGui::Begin("My window"); ImGui::Text("Hello, world!"); ImGui::End();
+        MyGameRender(); // may use any Dear ImGui functions as well!
+
+        // End the dear imgui frame
+        // (You want to try calling EndFrame/Render as late as you can, to be able to use Dear ImGui in your own game rendering code)
+        ImGui::EndFrame(); // this is automatically called by Render(), but available
+        ImGui::Render();
+
+        // Update textures
+        ImDrawData* draw_data = ImGui::GetDrawData();
+        for (ImTextureData* tex : *draw_data->Textures)
+            if (tex->Status != ImTextureStatus_OK)
+                MyImGuiBackend_UpdateTexture(tex);
+
+        // Render dear imgui contents, swap buffers
+        MyImGuiBackend_RenderDrawData(draw_data);
+        SwapBuffers();
+     }
+
+     // Shutdown
+     ImGui::DestroyContext();
+
+
+
+ API BREAKING CHANGES
+ ====================
+
+ Occasionally introducing changes that are breaking the API. We try to make the breakage minor and easy to fix.
+ Below is a change-log of API breaking changes only. If you are using one of the functions listed, expect to have to fix some code.
+ When you are not sure about an old symbol or function name, try using the Search/Find function of your IDE to look for comments or references in all imgui files.
+ You can read releases logs https://github.com/ocornut/imgui/releases for more details.
+
+ - 2026/01/08 (1.92.6) - Commented out legacy names obsoleted in 1.90 (Sept 2023): 'BeginChildFrame()' --> 'BeginChild()' with 'ImGuiChildFlags_FrameStyle'. 'EndChildFrame()' --> 'EndChild()'. 'ShowStackToolWindow()' --> 'ShowIDStackToolWindow()'. 'IM_OFFSETOF()' --> 'offsetof()'.
+ - 2026/01/07 (1.92.6) - Popups: changed compile-time 'ImGuiPopupFlags popup_flags = 1' default value to be '= 0' for BeginPopupContextItem(), BeginPopupContextWindow(), BeginPopupContextVoid(), OpenPopupOnItemClick(). Default value has same meaning before and after.
+                         - Refer to GitHub topic #9157 if you have any question.
+                         - Before this version, those functions had a 'ImGuiPopupFlags popup_flags = 1' default value in their function signature.
+                           Explicitly passing a literal 0 meant ImGuiPopupFlags_MouseButtonLeft. The default literal 1 meant ImGuiPopupFlags_MouseButtonRight.
+                           This was introduced by a change on 2020/06/23 (1.77) while changing the signature from 'int mouse_button' to 'ImGuiPopupFlags popup_flags' and trying to preserve then-legacy behavior.
+                           We have now changed this behavior to cleanup a very old API quirk, facilitate use by bindings, and to remove the last and error-prone non-zero default value.
+                           Also because we deemed it extremely rare to use those helper functions with the Left mouse button! As using the LMB would generally be triggered via another widget, e.g. a Button() + a OpenPopup()/BeginPopup() call.
+                         - Before: The default = 1 means ImGuiPopupFlags_MouseButtonRight. Explicitly passing a literal 0 means ImGuiPopupFlags_MouseButtonLeft.
+                         - After:  The default = 0 means ImGuiPopupFlags_MouseButtonRight. Explicitly passing a literal 1 also means ImGuiPopupFlags_MouseButtonRight (if legacy behavior are enabled) or will assert (if legacy behavior are disabled).
+                         - TL;DR: if you don't want to use right mouse button for popups, always specify it explicitly using a named ImGuiPopupFlags_MouseButtonXXXX value.
+                         Recap:
+                         - BeginPopupContextItem("foo");                                         // Behavior unchanged (use Right button)
+                         - BeginPopupContextItem("foo", ImGuiPopupFlags_MouseButtonLeft);        // Behavior unchanged (use Left button)
+                         - BeginPopupContextItem("foo", ImGuiPopupFlags_MouseButtonLeft | xxx);  // Behavior unchanged (use Left button + flags)
+                         - BeginPopupContextItem("foo", ImGuiPopupFlags_MouseButtonRight | xxx); // Behavior unchanged (use Right button + flags)
+                         - BeginPopupContextItem("foo", 1);                                      // Behavior unchanged (as a courtesy we legacy interpret 1 as ImGuiPopupFlags_MouseButtonRight, will assert if disabling legacy behaviors.
+                         - BeginPopupContextItem("foo", 0);                                      // !! Behavior changed !! Was Left button. Now will defaults to Right button! --> Use ImGuiPopupFlags_MouseButtonLeft.
+                         - BeginPopupContextItem("foo", ImGuiPopupFlags_NoReopen);               // !! Behavior changed !! Was Left button + flags. Now will defaults to Right button! --> Use ImGuiPopupFlags_MouseButtonLeft | xxx.
+ - 2025/12/23 (1.92.6) - Fonts:AddFontDefault() now automatically selects an embedded font between the new scalable AddFontDefaultVector() and the classic pixel-clean AddFontDefaultBitmap().
+                         The default selection is based on (style.FontSizeBase * FontScaleMain * FontScaleDpi) reaching a small threshold. Prefer calling either based on your own logic. You can call AddFontDefaultBitmap() to ensure legacy behavior.
+ - 2025/12/23 (1.92.6) - Fonts: removed ImFontConfig::PixelSnapV added in 1.92 which turns out is unnecessary (and misdocumented). Post-rescale GlyphOffset is always rounded.
+ - 2025/12/17 (1.92.6) - Renamed helper macro IM_ARRAYSIZE() -> IM_COUNTOF(). Kept redirection/legacy name for now.
+ - 2025/12/11 (1.92.6) - Hashing: handling of "###" operator to reset to seed within a string identifier doesn't include the "###" characters in the output hash anymore.
+                         - Before: GetID("Hello###World") == GetID("###World") != GetID("World");
+                         - Now:    GetID("Hello###World") == GetID("###World") == GetID("World");
+                         - This has the property of facilitating concatenating and manipulating identifiers using "###", and will allow fixing other dangling issues.
+                         - This will invalidate hashes (stored in .ini data) for Tables and Windows that are using the "###" operators. (#713, #1698)
+ - 2025/11/24 (1.92.6) - Fonts: Fixed handling of `ImFontConfig::FontDataOwnedByAtlas = false` which did erroneously make a copy of the font data, essentially defeating the purpose of this flag and wasting memory.
+                         (trivia: undetected since July 2015, this is perhaps the oldest bug in Dear ImGui history, albeit for a rarely used feature, see #9086)
+                         HOWEVER, fixing this bug is likely to surface bugs in user code using `FontDataOwnedByAtlas = false`.
+                         - Prior to 1.92, font data only needed to be available during the atlas->AddFontXXX() call.
+                         - Since 1.92, font data needs to available until atlas->RemoveFont(), or more typically until a shutdown of the owning context or font atlas.
+                         - The fact that handling of `FontDataOwnedByAtlas = false` was broken bypassed the issue altogether.
+ - 2025/11/06 (1.92.5) - BeginChild: commented out some legacy names which were obsoleted in 1.90.0 (Nov 2023), 1.90.9 (July 2024), 1.91.1 (August 2024):
+                         - ImGuiChildFlags_Border                    --> ImGuiChildFlags_Borders
+                         - ImGuiWindowFlags_NavFlattened             --> ImGuiChildFlags_NavFlattened (moved to ImGuiChildFlags). BeginChild(name, size, 0, ImGuiWindowFlags_NavFlattened) --> BeginChild(name, size, ImGuiChildFlags_NavFlattened, 0)
+                         - ImGuiWindowFlags_AlwaysUseWindowPadding   --> ImGuiChildFlags_AlwaysUseWindowPadding (moved to ImGuiChildFlags). BeginChild(name, size, 0, ImGuiWindowFlags_AlwaysUseWindowPadding) --> BeginChild(name, size, ImGuiChildFlags_AlwaysUseWindowPadding, 0)
+ - 2025/11/06 (1.92.5) - Keys: commented out legacy names which were obsoleted in 1.89.0 (August 2022):
+                         - ImGuiKey_ModCtrl  --> ImGuiMod_Ctrl
+                         - ImGuiKey_ModShift --> ImGuiMod_Shift
+                         - ImGuiKey_ModAlt   --> ImGuiMod_Alt
+                         - ImGuiKey_ModSuper --> ImGuiMod_Super
+ - 2025/11/06 (1.92.5) - IO: commented out legacy io.ClearInputCharacters() obsoleted in 1.89.8 (Aug 2023). Calling io.ClearInputKeys() is enough.
+ - 2025/11/06 (1.92.5) - Commented out legacy SetItemAllowOverlap() obsoleted in 1.89.7: this never worked right. Use SetNextItemAllowOverlap() _before_ item instead.
+ - 2025/10/14 (1.92.4) - TreeNode, Selectable, Clipper: commented out legacy names which were obsoleted in 1.89.7 (July 2023) and 1.89.9 (Sept 2023);
+                         - ImGuiTreeNodeFlags_AllowItemOverlap       --> ImGuiTreeNodeFlags_AllowOverlap
+                         - ImGuiSelectableFlags_AllowItemOverlap     --> ImGuiSelectableFlags_AllowOverlap
+                         - ImGuiListClipper::IncludeRangeByIndices() --> ImGuiListClipper::IncludeItemsByIndex()
+ - 2025/08/08 (1.92.2) - Backends: SDL_GPU3: Changed ImTextureID type from SDL_GPUTextureSamplerBinding* to SDL_GPUTexture*, which is more natural and easier for user to manage. If you need to change the current sampler, you can access the ImGui_ImplSDLGPU3_RenderState struct. (#8866, #8163, #7998, #7988)
+ - 2025/07/31 (1.92.2) - Tabs: Renamed ImGuiTabBarFlags_FittingPolicyResizeDown to ImGuiTabBarFlags_FittingPolicyShrink. Kept inline redirection enum (will obsolete).
+ - 2025/06/25 (1.92.0) - Layout: commented out legacy ErrorCheckUsingSetCursorPosToExtendParentBoundaries() fallback obsoleted in 1.89 (August 2022) which allowed a SetCursorPos()/SetCursorScreenPos() call WITHOUT AN ITEM
+                         to extend parent window/cell boundaries. Replaced with assert/tooltip that would already happens if previously using IMGUI_DISABLE_OBSOLETE_FUNCTIONS. (#5548, #4510, #3355, #1760, #1490, #4152, #150)
+                         - Incorrect way to make a window content size 200x200:
+                              Begin(...) + SetCursorScreenPos(GetCursorScreenPos() + ImVec2(200,200)) + End();
+                         - Correct ways to make a window content size 200x200:
+                              Begin(...) + SetCursorScreenPos(GetCursorScreenPos() + ImVec2(200,200)) + Dummy(ImVec2(0,0)) + End();
+                              Begin(...) + Dummy(ImVec2(200,200)) + End();
+                         - TL;DR; if the assert triggers, you can add a Dummy({0,0}) call to validate extending parent boundaries.
+ - 2025/06/11 (1.92.0) - THIS VERSION CONTAINS THE LARGEST AMOUNT OF BREAKING CHANGES SINCE 2015! I TRIED REALLY HARD TO KEEP THEM TO A MINIMUM, REDUCE THE AMOUNT OF INTERFERENCES, BUT INEVITABLY SOME USERS WILL BE AFFECTED.
+                         IN ORDER TO HELP US IMPROVE THE TRANSITION PROCESS, INCL. DOCUMENTATION AND COMMENTS, PLEASE REPORT **ANY** DOUBT, CONFUSION, QUESTIONS, FEEDBACK TO: https://github.com/ocornut/imgui/issues/
+                         As part of the plan to reduce impact of API breaking changes, several unfinished changes/features/refactors related to font and text systems and scaling will be part of subsequent releases (1.92.1+).
+                         If you are updating from an old version, and expecting a massive or difficult update, consider first updating to 1.91.9 to reduce the amount of changes.
+                       - Hard to read? Refer to 'docs/Changelog.txt' for a less compact and more complete version of this!
+                       - Fonts: **IMPORTANT**: if your app was solving the OSX/iOS Retina screen specific logical vs display scale problem by setting io.DisplayFramebufferScale (e.g. to 2.0f) + setting io.FontGlobalScale (e.g. to 1.0f/2.0f) + loading fonts at scaled sizes (e.g. size X * 2.0f):
+                         This WILL NOT map correctly to the new system! Because font will rasterize as requested size.
+                         - With a legacy backend (< 1.92): Instead of setting io.FontGlobalScale = 1.0f/N -> set ImFontCfg::RasterizerDensity = N. This already worked before, but is now pretty much required.
+                         - With a new backend (1.92+): This should be all automatic. FramebufferScale is automatically used to set current font RasterizerDensity. FramebufferScale is a per-viewport property provided by backend through the Platform_GetWindowFramebufferScale() handler in 'docking' branch.
+                       - Fonts: **IMPORTANT** on Font Sizing: Before 1.92, fonts were of a single size. They can now be dynamically sized.
+                         - PushFont() API now has a REQUIRED size parameter.
+                         - Before 1.92: PushFont() always used font "default" size specified in AddFont() call. It is equivalent to calling PushFont(font, font->LegacySize).
+                         - Since  1.92: PushFont(font, 0.0f) preserve the current font size which is a shared value.
+                         - To use old behavior: use 'ImGui::PushFont(font, font->LegacySize)' at call site.
+                         - Kept inline single parameter function. Will obsolete.
+                       - Fonts: **IMPORTANT** on Font Merging:
+                         - When searching for a glyph in multiple merged fonts: we search for the FIRST font source which contains the desired glyph.
+                           Because the user doesn't need to provide glyph ranges any more, it is possible that a glyph that you expected to fetch from a secondary/merged icon font may be erroneously fetched from the primary font.
+                         - When searching for a glyph in multiple merged fonts: we now search for the FIRST font source which contains the desired glyph. This is technically a different behavior than before!
+                         - e.g. If you are merging fonts you may have glyphs that you expected to load from Font Source 2 which exists in Font Source 1.
+                           After the update and when using a new backend, those glyphs may now loaded from Font Source 1!
+                         - We added `ImFontConfig::GlyphExcludeRanges[]` to specify ranges to exclude from a given font source:
+                             // Add Font Source 1 but ignore ICON_MIN_FA..ICON_MAX_FA range
+                             static ImWchar exclude_ranges[] = { ICON_MIN_FA, ICON_MAX_FA, 0 };
+                             ImFontConfig cfg1;
+                             cfg1.GlyphExcludeRanges = exclude_ranges;
+                             io.Fonts->AddFontFromFileTTF("segoeui.ttf", 0.0f, &cfg1);
+                             // Add Font Source 2, which expects to use the range above
+                             ImFontConfig cfg2;
+                             cfg2.MergeMode = true;
+                             io.Fonts->AddFontFromFileTTF("FontAwesome4.ttf", 0.0f, &cfg2);
+                         - You can use `Metrics/Debugger->Fonts->Font->Input Glyphs Overlap Detection Tool` to see list of glyphs available in multiple font sources. This can facilitate understanding which font input is providing which glyph.
+                       - Fonts: **IMPORTANT** on Thread Safety:
+                          - A few functions such as font->CalcTextSizeA() were, by sheer luck (== accidentally) thread-safe even thou we had never provided that guarantee. They are definitively not thread-safe anymore as new glyphs may be loaded.
+                       - Fonts: ImFont::FontSize was removed and does not make sense anymore. ImFont::LegacySize is the size passed to AddFont().
+                       - Fonts: Removed support for PushFont(NULL) which was a shortcut for "default font".
+                       - Fonts: Renamed/moved 'io.FontGlobalScale' to 'style.FontScaleMain'.
+                       - Textures: all API functions taking a 'ImTextureID' parameter are now taking a 'ImTextureRef'. Affected functions are: ImGui::Image(), ImGui::ImageWithBg(), ImGui::ImageButton(), ImDrawList::AddImage(), ImDrawList::AddImageQuad(), ImDrawList::AddImageRounded().
+                       - Fonts: obsoleted ImFontAtlas::GetTexDataAsRGBA32(), GetTexDataAsAlpha8(), Build(), SetTexID(), IsBuilt() functions. The new protocol for backends to handle textures doesn't need them. Kept redirection functions (will obsolete).
+                       - Fonts: ImFontConfig::OversampleH/OversampleV default to automatic (== 0) since v1.91.8. It is quite important you keep it automatic until we decide if we want to provide a way to express finer policy, otherwise you will likely waste texture space when using large glyphs. Note that the imgui_freetype backend doesn't use and does not need oversampling.
+                       - Fonts: specifying glyph ranges is now unnecessary. The value of ImFontConfig::GlyphRanges[] is only useful for legacy backends. All GetGlyphRangesXXXX() functions are now marked obsolete: GetGlyphRangesDefault(), GetGlyphRangesGreek(), GetGlyphRangesKorean(), GetGlyphRangesJapanese(), GetGlyphRangesChineseSimplifiedCommon(), GetGlyphRangesChineseFull(), GetGlyphRangesCyrillic(), GetGlyphRangesThai(), GetGlyphRangesVietnamese().
+                       - Fonts: removed ImFontAtlas::TexDesiredWidth to enforce a texture width. (#327)
+                       - Fonts: if you create and manage ImFontAtlas instances yourself (instead of relying on ImGuiContext to create one), you'll need to call ImFontAtlasUpdateNewFrame() yourself. An assert will trigger if you don't.
+                       - Fonts: obsolete ImGui::SetWindowFontScale() which is not useful anymore. Prefer using 'PushFont(NULL, style.FontSizeBase * factor)' or to manipulate other scaling factors.
+                       - Fonts: obsoleted ImFont::Scale which is not useful anymore.
+                       - Fonts: generally reworked Internals of ImFontAtlas and ImFont. While in theory a vast majority of users shouldn't be affected, some use cases or extensions might be. Among other things:
+                          - ImDrawCmd::TextureId has been changed to ImDrawCmd::TexRef.
+                          - ImFontAtlas::TexID has been changed to ImFontAtlas::TexRef.
+                          - ImFontAtlas::ConfigData[] has been renamed to ImFontAtlas::Sources[]
+                          - ImFont::ConfigData[], ConfigDataCount has been renamed to Sources[], SourceCount.
+                          - Each ImFont has a number of ImFontBaked instances corresponding to actively used sizes. ImFont::GetFontBaked(size) retrieves the one for a given size.
+                          - Fields moved from ImFont to ImFontBaked: IndexAdvanceX[], Glyphs[], Ascent, Descent, FindGlyph(), FindGlyphNoFallback(), GetCharAdvance().
+                          - Fields moved from ImFontAtlas to ImFontAtlas->Tex: ImFontAtlas::TexWidth => TexData->Width, ImFontAtlas::TexHeight => TexData->Height, ImFontAtlas::TexPixelsAlpha8/TexPixelsRGBA32 => TexData->GetPixels().
+                          - Widget code may use ImGui::GetFontBaked() instead of ImGui::GetFont() to access font data for current font at current font size (and you may use font->GetFontBaked(size) to access it for any other size.)
+                       - Fonts: (users of imgui_freetype): renamed ImFontAtlas::FontBuilderFlags to ImFontAtlas::FontLoaderFlags. Renamed ImFontConfig::FontBuilderFlags to ImFontConfig::FontLoaderFlags. Renamed ImGuiFreeTypeBuilderFlags to ImGuiFreeTypeLoaderFlags.
+                         If you used runtime imgui_freetype selection rather than the default IMGUI_ENABLE_FREETYPE compile-time option: Renamed/reworked ImFontBuilderIO into ImFontLoader. Renamed ImGuiFreeType::GetBuilderForFreeType() to ImGuiFreeType::GetFontLoader().
+                           - old:  io.Fonts->FontBuilderIO = ImGuiFreeType::GetBuilderForFreeType()
+                           - new:  io.Fonts->FontLoader = ImGuiFreeType::GetFontLoader()
+                           - new:  io.Fonts->SetFontLoader(ImGuiFreeType::GetFontLoader()) to change dynamically at runtime [from 1.92.1]
+                       - Fonts: (users of custom rectangles, see #8466): Renamed AddCustomRectRegular() to AddCustomRect(). Added GetCustomRect() as a replacement for GetCustomRectByIndex() + CalcCustomRectUV().
+                           - The output type of GetCustomRect() is now ImFontAtlasRect, which include UV coordinates. X->x, Y->y, Width->w, Height->h.
+                           - old:
+                                const ImFontAtlasCustomRect* r = atlas->GetCustomRectByIndex(custom_rect_id);
+                                ImVec2 uv0, uv1;
+                                atlas->GetCustomRectUV(r, &uv0, &uv1);
+                                ImGui::Image(atlas->TexRef, ImVec2(r->w, r->h), uv0, uv1);
+                           - new;
+                                ImFontAtlasRect r;
+                                atlas->GetCustomRect(custom_rect_id, &r);
+                                ImGui::Image(atlas->TexRef, ImVec2(r.w, r.h), r.uv0, r.uv1);
+                           - We added a redirecting typedef but haven't attempted to magically redirect the field names, as this API is rarely used and the fix is simple.
+                           - Obsoleted AddCustomRectFontGlyph() as the API does not make sense for scalable fonts. Kept existing function which uses the font "default size" (Sources[0]->LegacySize). Added a helper AddCustomRectFontGlyphForSize() which is immediately marked obsolete, but can facilitate transitioning old code.
+                           - Prefer adding a font source (ImFontConfig) using a custom/procedural loader.
+                       - DrawList: Renamed ImDrawList::PushTextureID()/PopTextureID() to PushTexture()/PopTexture().
+                       - Backends: removed ImGui_ImplXXXX_CreateFontsTexture()/ImGui_ImplXXXX_DestroyFontsTexture() for all backends that had them. They should not be necessary any more.
+ - 2025/05/23 (1.92.0) - Fonts: changed ImFont::CalcWordWrapPositionA() to ImFont::CalcWordWrapPosition()
+                            - old:  const char* ImFont::CalcWordWrapPositionA(float scale, const char* text, ....);
+                            - new:  const char* ImFont::CalcWordWrapPosition (float size,  const char* text, ....);
+                         The leading 'float scale' parameters was changed to 'float size'. This was necessary as 'scale' is assuming standard font size which is a concept we aim to eliminate in an upcoming update. Kept inline redirection function.
+ - 2025/05/15 (1.92.0) - TreeNode: renamed ImGuiTreeNodeFlags_NavLeftJumpsBackHere to ImGuiTreeNodeFlags_NavLeftJumpsToParent for clarity. Kept inline redirection enum (will obsolete).
+ - 2025/05/15 (1.92.0) - Commented out PushAllowKeyboardFocus()/PopAllowKeyboardFocus() which was obsoleted in 1.89.4. Use PushItemFlag(ImGuiItemFlags_NoTabStop, !tab_stop)/PopItemFlag() instead. (#3092)
+ - 2025/05/15 (1.92.0) - Commented out ImGuiListClipper::ForceDisplayRangeByIndices() which was obsoleted in 1.89.6. Use ImGuiListClipper::IncludeItemsByIndex() instead.
+ - 2025/03/05 (1.91.9) - BeginMenu(): Internals: reworked mangling of menu windows to use "###Menu_00" etc. instead of "##Menu_00", allowing them to also store the menu name before it. This shouldn't affect code unless directly accessing menu window from their mangled name.
+ - 2025/04/16 (1.91.9) - Internals: RenderTextEllipsis() function removed the 'float clip_max_x' parameter directly preceding 'float ellipsis_max_x'. Values were identical for a vast majority of users. (#8387)
+ - 2025/02/27 (1.91.9) - Image(): removed 'tint_col' and 'border_col' parameter from Image() function. Added ImageWithBg() replacement. (#8131, #8238)
+                            - old: void Image      (ImTextureID tex_id, ImVec2 image_size, ImVec2 uv0 = (0,0), ImVec2 uv1 = (1,1), ImVec4 tint_col = (1,1,1,1), ImVec4 border_col = (0,0,0,0));
+                            - new: void Image      (ImTextureID tex_id, ImVec2 image_size, ImVec2 uv0 = (0,0), ImVec2 uv1 = (1,1));
+                            - new: void ImageWithBg(ImTextureID tex_id, ImVec2 image_size, ImVec2 uv0 = (0,0), ImVec2 uv1 = (1,1), ImVec4 bg_col = (0,0,0,0), ImVec4 tint_col = (1,1,1,1));
+                            - TL;DR: 'border_col' had misleading side-effect on layout, 'bg_col' was missing, parameter order couldn't be consistent with ImageButton().
+                            - new behavior always use ImGuiCol_Border color + style.ImageBorderSize / ImGuiStyleVar_ImageBorderSize.
+                            - old behavior altered border size (and therefore layout) based on border color's alpha, which caused variety of problems + old behavior a fixed 1.0f for border size which was not tweakable.
+                            - kept legacy signature (will obsolete), which mimics the old behavior,  but uses Max(1.0f, style.ImageBorderSize) when border_col is specified.
+                            - added ImageWithBg() function which has both 'bg_col' (which was missing) and 'tint_col'. It was impossible to add 'bg_col' to Image() with a parameter order consistent with other functions, so we decided to remove 'tint_col' and introduce ImageWithBg().
+ - 2025/02/25 (1.91.9) - internals: fonts: ImFontAtlas::ConfigData[] has been renamed to ImFontAtlas::Sources[]. ImFont::ConfigData[], ConfigDataCount has been renamed to Sources[], SourcesCount.
+ - 2025/02/06 (1.91.9) - renamed ImFontConfig::GlyphExtraSpacing.x to ImFontConfig::GlyphExtraAdvanceX.
+ - 2025/01/22 (1.91.8) - removed ImGuiColorEditFlags_AlphaPreview (made value 0): it is now the default behavior.
+                         prior to 1.91.8: alpha was made opaque in the preview by default _unless_ using ImGuiColorEditFlags_AlphaPreview. We now display the preview as transparent by default. You can use ImGuiColorEditFlags_AlphaOpaque to use old behavior.
+                         the new flags (ImGuiColorEditFlags_AlphaOpaque, ImGuiColorEditFlags_AlphaNoBg + existing ImGuiColorEditFlags_AlphaPreviewHalf) may be combined better and allow finer controls:
+ - 2025/01/14 (1.91.7) - renamed ImGuiTreeNodeFlags_SpanTextWidth to ImGuiTreeNodeFlags_SpanLabelWidth for consistency with other names. Kept redirection enum (will obsolete). (#6937)
+ - 2024/11/27 (1.91.6) - changed CRC32 table from CRC32-adler to CRC32c polynomial in order to be compatible with the result of SSE 4.2 instructions.
+                         As a result, old .ini data may be partially lost (docking and tables information particularly).
+                         Because some users have crafted and storing .ini data as a way to workaround limitations of the docking API, we are providing a '#define IMGUI_USE_LEGACY_CRC32_ADLER' compile-time option to keep using old CRC32 tables if you cannot afford invalidating old .ini data.
+ - 2024/11/06 (1.91.5) - commented/obsoleted out pre-1.87 IO system (equivalent to using IMGUI_DISABLE_OBSOLETE_KEYIO or IMGUI_DISABLE_OBSOLETE_FUNCTIONS before)
+                            - io.KeyMap[] and io.KeysDown[] are removed (obsoleted February 2022).
+                            - io.NavInputs[] and ImGuiNavInput are removed (obsoleted July 2022).
+                            - GetKeyIndex() is removed (obsoleted March 2022). The indirection is now unnecessary.
+                            - pre-1.87 backends are not supported:
+                               - backends need to call io.AddKeyEvent(), io.AddMouseEvent() instead of writing to io.KeysDown[], io.MouseDown[] fields.
+                               - backends need to call io.AddKeyAnalogEvent() for gamepad values instead of writing to io.NavInputs[] fields.
+                            - for more reference:
+                              - read 1.87 and 1.88 part of this section or read Changelog for 1.87 and 1.88.
+                              - read https://github.com/ocornut/imgui/issues/4921
+                            - if you have trouble updating a very old codebase using legacy backend-specific key codes: consider updating to 1.91.4 first, then #define IMGUI_DISABLE_OBSOLETE_KEYIO, then update to latest.
+                       - obsoleted ImGuiKey_COUNT (it is unusually error-prone/misleading since valid keys don't start at 0). probably use ImGuiKey_NamedKey_BEGIN/ImGuiKey_NamedKey_END?
+                       - fonts: removed const qualifiers from most font functions in prevision for upcoming font improvements.
+ - 2024/10/18 (1.91.4) - renamed ImGuiCol_NavHighlight to ImGuiCol_NavCursor (for consistency with newly exposed and reworked features). Kept inline redirection enum (will obsolete).
+ - 2024/10/14 (1.91.4) - moved ImGuiConfigFlags_NavEnableSetMousePos to standalone io.ConfigNavMoveSetMousePos bool.
+                         moved ImGuiConfigFlags_NavNoCaptureKeyboard to standalone io.ConfigNavCaptureKeyboard bool (note the inverted value!).
+                         kept legacy names (will obsolete) + code that copies settings once the first time. Dynamically changing the old value won't work. Switch to using the new value!
+ - 2024/10/10 (1.91.4) - the typedef for ImTextureID now defaults to ImU64 instead of void*. (#1641)
+                         this removes the requirement to redefine it for backends which are e.g. storing descriptor sets or other 64-bits structures when building on 32-bits archs. It therefore simplify various building scripts/helpers.
+                         you may have compile-time issues if you were casting to 'void*' instead of 'ImTextureID' when passing your types to functions taking ImTextureID values, e.g. ImGui::Image().
+                         in doubt it is almost always better to do an intermediate intptr_t cast, since it allows casting any pointer/integer type without warning:
+                            - May warn:    ImGui::Image((void*)MyTextureData, ...);
+                            - May warn:    ImGui::Image((void*)(intptr_t)MyTextureData, ...);
+                            - Won't warn:  ImGui::Image((ImTextureID)(intptr_t)MyTextureData, ...);
+  -                      note that you can always define ImTextureID to be your own high-level structures (with dedicated constructors) if you like.
+ - 2024/10/03 (1.91.3) - drags: treat v_min==v_max as a valid clamping range when != 0.0f. Zero is a still special value due to legacy reasons, unless using ImGuiSliderFlags_ClampZeroRange. (#7968, #3361, #76)
+                       - drags: extended behavior of ImGuiSliderFlags_AlwaysClamp to include _ClampZeroRange. It considers v_min==v_max==0.0f as a valid clamping range (aka edits not allowed).
+                         although unlikely, it you wish to only clamp on text input but want v_min==v_max==0.0f to mean unclamped drags, you can use _ClampOnInput instead of _AlwaysClamp. (#7968, #3361, #76)
+ - 2024/09/10 (1.91.2) - internals: using multiple overlaid ButtonBehavior() with same ID will now have io.ConfigDebugHighlightIdConflicts=true feature emit a warning. (#8030)
+                         it was one of the rare case where using same ID is legal. workarounds: (1) use single ButtonBehavior() call with multiple _MouseButton flags, or (2) surround the calls with PushItemFlag(ImGuiItemFlags_AllowDuplicateId, true); ... PopItemFlag()
+ - 2024/08/23 (1.91.1) - renamed ImGuiChildFlags_Border to ImGuiChildFlags_Borders for consistency. kept inline redirection flag.
+ - 2024/08/22 (1.91.1) - moved some functions from ImGuiIO to ImGuiPlatformIO structure:
+                            - io.GetClipboardTextFn         -> platform_io.Platform_GetClipboardTextFn + changed 'void* user_data' to 'ImGuiContext* ctx'. Pull your user data from platform_io.ClipboardUserData.
+                            - io.SetClipboardTextFn         -> platform_io.Platform_SetClipboardTextFn + same as above line.
+                            - io.PlatformOpenInShellFn      -> platform_io.Platform_OpenInShellFn (#7660)
+                            - io.PlatformSetImeDataFn       -> platform_io.Platform_SetImeDataFn
+                            - io.PlatformLocaleDecimalPoint -> platform_io.Platform_LocaleDecimalPoint (#7389, #6719, #2278)
+                            - access those via GetPlatformIO() instead of GetIO().
+                         some were introduced very recently and often automatically setup by core library and backends, so for those we are exceptionally not maintaining a legacy redirection symbol.
+                       - commented the old ImageButton() signature obsoleted in 1.89 (~August 2022). As a reminder:
+                            - old ImageButton() before 1.89 used ImTextureId as item id (created issue with e.g. multiple buttons in same scope, transient texture id values, opaque computation of ID)
+                            - new ImageButton() since 1.89 requires an explicit 'const char* str_id'
+                            - old ImageButton() before 1.89 had frame_padding' override argument.
+                            - new ImageButton() since 1.89 always use style.FramePadding, which you can freely override with PushStyleVar()/PopStyleVar().
+ - 2024/07/25 (1.91.0) - obsoleted GetContentRegionMax(), GetWindowContentRegionMin() and GetWindowContentRegionMax(). (see #7838 on GitHub for more info)
+                         you should never need those functions. you can do everything with GetCursorScreenPos() and GetContentRegionAvail() in a more simple way.
+                            - instead of:  GetWindowContentRegionMax().x - GetCursorPos().x
+                            - you can use: GetContentRegionAvail().x
+                            - instead of:  GetWindowContentRegionMax().x + GetWindowPos().x
+                            - you can use: GetCursorScreenPos().x + GetContentRegionAvail().x // when called from left edge of window
+                            - instead of:  GetContentRegionMax()
+                            - you can use: GetContentRegionAvail() + GetCursorScreenPos() - GetWindowPos() // right edge in local coordinates
+                            - instead of:  GetWindowContentRegionMax().x - GetWindowContentRegionMin().x
+                            - you can use: GetContentRegionAvail() // when called from left edge of window
+ - 2024/07/15 (1.91.0) - renamed ImGuiSelectableFlags_DontClosePopups to ImGuiSelectableFlags_NoAutoClosePopups. (#1379, #1468, #2200, #4936, #5216, #7302, #7573)
+                         (internals: also renamed ImGuiItemFlags_SelectableDontClosePopup into ImGuiItemFlags_AutoClosePopups with inverted behaviors)
+ - 2024/07/15 (1.91.0) - obsoleted PushButtonRepeat()/PopButtonRepeat() in favor of using new PushItemFlag(ImGuiItemFlags_ButtonRepeat, ...)/PopItemFlag().
+ - 2024/07/02 (1.91.0) - commented out obsolete ImGuiModFlags (renamed to ImGuiKeyChord in 1.89). (#4921, #456)
+                       - commented out obsolete ImGuiModFlags_XXX values (renamed to ImGuiMod_XXX in 1.89). (#4921, #456)
+                            - ImGuiModFlags_Ctrl -> ImGuiMod_Ctrl, ImGuiModFlags_Shift -> ImGuiMod_Shift etc.
+ - 2024/07/02 (1.91.0) - IO, IME: renamed platform IME hook and added explicit context for consistency and future-proofness.
+                            - old: io.SetPlatformImeDataFn(ImGuiViewport* viewport, ImGuiPlatformImeData* data);
+                            - new: io.PlatformSetImeDataFn(ImGuiContext* ctx, ImGuiViewport* viewport, ImGuiPlatformImeData* data);
+ - 2024/06/21 (1.90.9) - BeginChild: added ImGuiChildFlags_NavFlattened as a replacement for the window flag ImGuiWindowFlags_NavFlattened: the feature only ever made sense for BeginChild() anyhow.
+                            - old: BeginChild("Name", size, 0, ImGuiWindowFlags_NavFlattened);
+                            - new: BeginChild("Name", size, ImGuiChildFlags_NavFlattened, 0);
+ - 2024/06/21 (1.90.9) - io: ClearInputKeys() (first exposed in 1.89.8) doesn't clear mouse data, newly added ClearInputMouse() does.
+ - 2024/06/20 (1.90.9) - renamed ImGuiDragDropFlags_SourceAutoExpirePayload to ImGuiDragDropFlags_PayloadAutoExpire.
+ - 2024/06/18 (1.90.9) - style: renamed ImGuiCol_TabActive -> ImGuiCol_TabSelected, ImGuiCol_TabUnfocused -> ImGuiCol_TabDimmed, ImGuiCol_TabUnfocusedActive -> ImGuiCol_TabDimmedSelected.
+ - 2024/06/10 (1.90.9) - removed old nested structure: renaming ImGuiStorage::ImGuiStoragePair type to ImGuiStoragePair (simpler for many languages).
+ - 2024/06/06 (1.90.8) - reordered ImGuiInputTextFlags values. This should not be breaking unless you are using generated headers that have values not matching the main library.
+ - 2024/06/06 (1.90.8) - removed 'ImGuiButtonFlags_MouseButtonDefault_ = ImGuiButtonFlags_MouseButtonLeft', was mostly unused and misleading.
+ - 2024/05/27 (1.90.7) - commented out obsolete symbols marked obsolete in 1.88 (May 2022):
+                            - old: CaptureKeyboardFromApp(bool)
+                            - new: SetNextFrameWantCaptureKeyboard(bool)
+                            - old: CaptureMouseFromApp(bool)
+                            - new: SetNextFrameWantCaptureMouse(bool)
+ - 2024/05/22 (1.90.7) - inputs (internals): renamed ImGuiKeyOwner_None to ImGuiKeyOwner_NoOwner, to make use more explicit and reduce confusion with the default it is a non-zero value and cannot be the default value (never made public, but disclosing as I expect a few users caught on owner-aware inputs).
+                       - inputs (internals): renamed ImGuiInputFlags_RouteGlobalLow -> ImGuiInputFlags_RouteGlobal, ImGuiInputFlags_RouteGlobal -> ImGuiInputFlags_RouteGlobalOverFocused, ImGuiInputFlags_RouteGlobalHigh -> ImGuiInputFlags_RouteGlobalHighest.
+                       - inputs (internals): Shortcut(), SetShortcutRouting(): swapped last two parameters order in function signatures:
+                            - old: Shortcut(ImGuiKeyChord key_chord, ImGuiID owner_id = 0, ImGuiInputFlags flags = 0);
+                            - new: Shortcut(ImGuiKeyChord key_chord, ImGuiInputFlags flags = 0, ImGuiID owner_id = 0);
+                       - inputs (internals): owner-aware versions of IsKeyPressed(), IsKeyChordPressed(), IsMouseClicked(): swapped last two parameters order in function signatures.
+                            - old: IsKeyPressed(ImGuiKey key, ImGuiID owner_id, ImGuiInputFlags flags = 0);
+                            - new: IsKeyPressed(ImGuiKey key, ImGuiInputFlags flags, ImGuiID owner_id = 0);
+                            - old: IsMouseClicked(ImGuiMouseButton button, ImGuiID owner_id, ImGuiInputFlags flags = 0);
+                            - new: IsMouseClicked(ImGuiMouseButton button, ImGuiInputFlags flags, ImGuiID owner_id = 0);
+                         for various reasons those changes makes sense. They are being made because making some of those API public.
+                         only past users of imgui_internal.h with the extra parameters will be affected. Added asserts for valid flags in various functions to detect _some_ misuses, BUT NOT ALL.
+ - 2024/05/16 (1.90.7) - inputs: on macOS X, Cmd and Ctrl keys are now automatically swapped by io.AddKeyEvent() as this naturally align with how macOS X uses those keys.
+                           - it shouldn't really affect you unless you had custom shortcut swapping in place for macOS X apps.
+                           - removed ImGuiMod_Shortcut which was previously dynamically remapping to Ctrl or Cmd/Super. It is now unnecessary to specific cross-platform idiomatic shortcuts. (#2343, #4084, #5923, #456)
+ - 2024/05/14 (1.90.7) - backends: SDL_Renderer2 and SDL_Renderer3 backend now take a SDL_Renderer* in their RenderDrawData() functions.
+ - 2024/04/18 (1.90.6) - TreeNode: Fixed a layout inconsistency when using an empty/hidden label followed by a SameLine() call. (#7505, #282)
+                           - old: TreeNode("##Hidden"); SameLine(); Text("Hello");     // <-- This was actually incorrect! BUT appeared to look ok with the default style where ItemSpacing.x == FramePadding.x * 2 (it didn't look aligned otherwise).
+                           - new: TreeNode("##Hidden"); SameLine(0, 0); Text("Hello"); // <-- This is correct for all styles values.
+                         with the fix, IF you were successfully using TreeNode("")+SameLine(); you will now have extra spacing between your TreeNode and the following item.
+                         You'll need to change the SameLine() call to SameLine(0,0) to remove this extraneous spacing. This seemed like the more sensible fix that's not making things less consistent.
+                         (Note: when using this idiom you are likely to also use ImGuiTreeNodeFlags_SpanAvailWidth).
+ - 2024/03/18 (1.90.5) - merged the radius_x/radius_y parameters in ImDrawList::AddEllipse(), AddEllipseFilled() and PathEllipticalArcTo() into a single ImVec2 parameter. Exceptionally, because those functions were added in 1.90, we are not adding inline redirection functions. The transition is easy and should affect few users. (#2743, #7417)
+ - 2024/03/08 (1.90.5) - inputs: more formally obsoleted GetKeyIndex() when IMGUI_DISABLE_OBSOLETE_FUNCTIONS is set. It has been unnecessary and a no-op since 1.87 (it returns the same value as passed when used with a 1.87+ backend using io.AddKeyEvent() function). (#4921)
+                           - IsKeyPressed(GetKeyIndex(ImGuiKey_XXX)) -> use IsKeyPressed(ImGuiKey_XXX)
+ - 2024/01/15 (1.90.2) - commented out obsolete ImGuiIO::ImeWindowHandle marked obsolete in 1.87, favor of writing to 'void* ImGuiViewport::PlatformHandleRaw'.
+ - 2023/12/19 (1.90.1) - commented out obsolete ImGuiKey_KeyPadEnter redirection to ImGuiKey_KeypadEnter.
+ - 2023/11/06 (1.90.1) - removed CalcListClipping() marked obsolete in 1.86. Prefer using ImGuiListClipper which can return non-contiguous ranges.
+ - 2023/11/05 (1.90.1) - imgui_freetype: commented out ImGuiFreeType::BuildFontAtlas() obsoleted in 1.81. prefer using #define IMGUI_ENABLE_FREETYPE or see commented code for manual calls.
+ - 2023/11/05 (1.90.1) - internals,columns: commented out legacy ImGuiColumnsFlags_XXX symbols redirecting to ImGuiOldColumnsFlags_XXX, obsoleted from imgui_internal.h in 1.80.
+ - 2023/11/09 (1.90.0) - removed IM_OFFSETOF() macro in favor of using offsetof() available in C++11. Kept redirection define (will obsolete).
+ - 2023/11/07 (1.90.0) - removed BeginChildFrame()/EndChildFrame() in favor of using BeginChild() with the ImGuiChildFlags_FrameStyle flag. kept inline redirection function (will obsolete).
+                         those functions were merely PushStyle/PopStyle helpers, the removal isn't so much motivated by needing to add the feature in BeginChild(), but by the necessity to avoid BeginChildFrame() signature mismatching BeginChild() signature and features.
+ - 2023/11/02 (1.90.0) - BeginChild: upgraded 'bool border = true' parameter to 'ImGuiChildFlags flags' type, added ImGuiChildFlags_Border equivalent. As with our prior "bool-to-flags" API updates, the ImGuiChildFlags_Border value is guaranteed to be == true forever to ensure a smoother transition, meaning all existing calls will still work.
+                           - old: BeginChild("Name", size, true)
+                           - new: BeginChild("Name", size, ImGuiChildFlags_Border)
+                           - old: BeginChild("Name", size, false)
+                           - new: BeginChild("Name", size) or BeginChild("Name", 0) or BeginChild("Name", size, ImGuiChildFlags_None)
+                         **AMEND FROM THE FUTURE: from 1.91.1, 'ImGuiChildFlags_Border' is called 'ImGuiChildFlags_Borders'**
+ - 2023/11/02 (1.90.0) - BeginChild: added child-flag ImGuiChildFlags_AlwaysUseWindowPadding as a replacement for the window-flag ImGuiWindowFlags_AlwaysUseWindowPadding: the feature only ever made sense for BeginChild() anyhow.
+                           - old: BeginChild("Name", size, 0, ImGuiWindowFlags_AlwaysUseWindowPadding);
+                           - new: BeginChild("Name", size, ImGuiChildFlags_AlwaysUseWindowPadding, 0);
+ - 2023/09/27 (1.90.0) - io: removed io.MetricsActiveAllocations introduced in 1.63. Same as 'g.DebugMemAllocCount - g.DebugMemFreeCount' (still displayed in Metrics, unlikely to be accessed by end-user).
+ - 2023/09/26 (1.90.0) - debug tools: Renamed ShowStackToolWindow() ("Stack Tool") to ShowIDStackToolWindow() ("ID Stack Tool"), as earlier name was misleading. Kept inline redirection function. (#4631)
+ - 2023/09/15 (1.90.0) - ListBox, Combo: changed signature of "name getter" callback in old one-liner ListBox()/Combo() apis. kept inline redirection function (will obsolete).
+                           - old: bool Combo(const char* label, int* current_item, bool (*getter)(void* user_data, int idx, const char** out_text), ...)
+                           - new: bool Combo(const char* label, int* current_item, const char* (*getter)(void* user_data, int idx), ...);
+                           - old: bool ListBox(const char* label, int* current_item, bool (*getting)(void* user_data, int idx, const char** out_text), ...);
+                           - new: bool ListBox(const char* label, int* current_item, const char* (*getter)(void* user_data, int idx), ...);
+ - 2023/09/08 (1.90.0) - commented out obsolete redirecting functions:
+                           - GetWindowContentRegionWidth()  -> use GetWindowContentRegionMax().x - GetWindowContentRegionMin().x. Consider that generally 'GetContentRegionAvail().x' is more useful.
+                           - ImDrawCornerFlags_XXX          -> use ImDrawFlags_RoundCornersXXX flags. Read 1.82 Changelog for details + grep commented names in sources.
+                       - commented out runtime support for hardcoded ~0 or 0x01..0x0F rounding flags values for AddRect()/AddRectFilled()/PathRect()/AddImageRounded() -> use ImDrawFlags_RoundCornersXXX flags. Read 1.82 Changelog for details
+ - 2023/08/25 (1.89.9) - clipper: Renamed IncludeRangeByIndices() (also called ForceDisplayRangeByIndices() before 1.89.6) to IncludeItemsByIndex(). Kept inline redirection function. Sorry!
+ - 2023/07/12 (1.89.8) - ImDrawData: CmdLists now owned, changed from ImDrawList** to ImVector<ImDrawList*>. Majority of users shouldn't be affected, but you cannot compare to NULL nor reassign manually anymore. Instead use AddDrawList(). (#6406, #4879, #1878)
+ - 2023/06/28 (1.89.7) - overlapping items: obsoleted 'SetItemAllowOverlap()' (called after item) in favor of calling 'SetNextItemAllowOverlap()' (called before item). 'SetItemAllowOverlap()' didn't and couldn't work reliably since 1.89 (2022-11-15).
+ - 2023/06/28 (1.89.7) - overlapping items: renamed 'ImGuiTreeNodeFlags_AllowItemOverlap' to 'ImGuiTreeNodeFlags_AllowOverlap', 'ImGuiSelectableFlags_AllowItemOverlap' to 'ImGuiSelectableFlags_AllowOverlap'. Kept redirecting enums (will obsolete).
+ - 2023/06/28 (1.89.7) - overlapping items: IsItemHovered() now by default return false when querying an item using AllowOverlap mode which is being overlapped. Use ImGuiHoveredFlags_AllowWhenOverlappedByItem to revert to old behavior.
+ - 2023/06/28 (1.89.7) - overlapping items: Selectable and TreeNode don't allow overlap when active so overlapping widgets won't appear as hovered. While this fixes a common small visual issue, it also means that calling IsItemHovered() after a non-reactive elements - e.g. Text() - overlapping an active one may fail if you don't use IsItemHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem). (#6610)
+ - 2023/06/20 (1.89.7) - moved io.HoverDelayShort/io.HoverDelayNormal to style.HoverDelayShort/style.HoverDelayNormal. As the fields were added in 1.89 and expected to be left unchanged by most users, or only tweaked once during app initialization, we are exceptionally accepting the breakage.
+ - 2023/05/30 (1.89.6) - backends: renamed "imgui_impl_sdlrenderer.cpp" to "imgui_impl_sdlrenderer2.cpp" and "imgui_impl_sdlrenderer.h" to "imgui_impl_sdlrenderer2.h". This is in prevision for the future release of SDL3.
+ - 2023/05/22 (1.89.6) - listbox: commented out obsolete/redirecting functions that were marked obsolete more than two years ago:
+                           - ListBoxHeader()  -> use BeginListBox() (note how two variants of ListBoxHeader() existed. Check commented versions in imgui.h for reference)
+                           - ListBoxFooter()  -> use EndListBox()
+ - 2023/05/15 (1.89.6) - clipper: commented out obsolete redirection constructor 'ImGuiListClipper(int items_count, float items_height = -1.0f)' that was marked obsolete in 1.79. Use default constructor + clipper.Begin().
+ - 2023/05/15 (1.89.6) - clipper: renamed ImGuiListClipper::ForceDisplayRangeByIndices() to ImGuiListClipper::IncludeRangeByIndices().
+ - 2023/03/14 (1.89.4) - commented out redirecting enums/functions names that were marked obsolete two years ago:
+                           - ImGuiSliderFlags_ClampOnInput        -> use ImGuiSliderFlags_AlwaysClamp
+                           - ImGuiInputTextFlags_AlwaysInsertMode -> use ImGuiInputTextFlags_AlwaysOverwrite
+                           - ImDrawList::AddBezierCurve()         -> use ImDrawList::AddBezierCubic()
+                           - ImDrawList::PathBezierCurveTo()      -> use ImDrawList::PathBezierCubicCurveTo()
+ - 2023/03/09 (1.89.4) - renamed PushAllowKeyboardFocus()/PopAllowKeyboardFocus() to PushTabStop()/PopTabStop(). Kept inline redirection functions (will obsolete).
+ - 2023/03/09 (1.89.4) - tooltips: Added 'bool' return value to BeginTooltip() for API consistency. Please only submit contents and call EndTooltip() if BeginTooltip() returns true. In reality the function will _currently_ always return true, but further changes down the line may change this, best to clarify API sooner.
+ - 2023/02/15 (1.89.4) - moved the optional "courtesy maths operators" implementation from imgui_internal.h in imgui.h.
+                         Even though we encourage using your own maths types and operators by setting up IM_VEC2_CLASS_EXTRA,
+                         it has been frequently requested by people to use our own. We had an opt-in define which was
+                         previously fulfilled in imgui_internal.h. It is now fulfilled in imgui.h. (#6164)
+                           - OK:     #define IMGUI_DEFINE_MATH_OPERATORS / 

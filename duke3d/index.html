@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101312">
+  <meta name="description" content="Play your own Duke Nukem 3D game files in a browser. Keyboard, mouse, landscape touch controls and local saves.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; frame-src 'self'; object-src 'none'; base-uri 'none'">
+  <title>Slop Nukem 3D — Gameslop</title>
+  <link rel="icon" href="mods/branding/icon.jpg">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="branding.css">
+</head>
+<body>
+<main id="launcher">
+  <header class="masthead"><a class="brand" href="../" aria-label="Gameslop arcade"><img src="mods/branding/icon.jpg" alt="" width="48" height="48"><span>GAME<span class="brand-red">SLOP</span><small>GOOD GAMES. ZERO PRETENSE.</small></span></a><span class="lab-badge">BROWSER EDITION</span></header>
+  <section class="hero" aria-labelledby="game-title">
+    <div class="hero-copy"><p class="eyebrow"><span>+</span> GAMESLOP PRESENTS</p><h1 id="game-title">SLOP<br><span>NUKEM</span> <em>3D</em></h1><p class="intro">Big guns. Red hands.<br>Maximum slop.</p><a class="primary" href="#game-setup">LOAD YOUR GAME <span aria-hidden="true">→</span></a><p class="play-note">YOUR GAME FILE <span>/</span> YOUR BROWSER</p></div>
+    <div class="hero-art" aria-hidden="true"><div class="target-ring"></div><span class="art-number">3D</span><div class="mascot"></div><span class="art-caption">ALL SLOP.<br><b>NO BRAKES.</b></span><span class="crosshair crosshair-top">+</span><span class="crosshair crosshair-bottom">+</span></div>
+    <div class="hero-strip"><span><i aria-hidden="true"></i> FIRST-PERSON MAYHEM</span><span>KEYBOARD / MOUSE / LANDSCAPE TOUCH</span></div>
+  </section>
+  <section id="game-setup" class="panel" aria-label="Start game">
+    <span class="label">YOUR GAME FILE</span>
+    <h2 id="edition">Bring your DUKE3D.GRP</h2>
+    <p id="file-info">Your game file is read on your device. It is never uploaded.</p>
+    <button id="choose" aria-describedby="file-help">Choose game file</button>
+    <input id="game-file" type="file" accept=".grp" hidden>
+    <p id="file-help" class="small">Original v1.3D, Atomic Edition, or the free v1.3D shareware episode.</p>
+    <label class="check"><input id="remember" type="checkbox" checked> Remember this file on this device</label>
+    <label class="check"><input id="ansem" type="checkbox" checked disabled> Ansem enemy artwork</label>
+    <label class="check"><input id="hands" type="checkbox" checked disabled> Red Gameslop mascot hands</label>
+    <p id="ansem-note" class="small">Custom menus and artwork require a supported retail game file.</p>
+    <a class="small" href="mods/ansem/preview.html">Preview Ansem's animations →</a>
+    <button id="play" class="primary" disabled>CHOOSE A FILE TO PLAY <span>→</span></button>
+    <button id="forget" class="secondary" hidden>Forget game file</button>
+  </section>
+  <details class="help"><summary>Don’t have the game files?</summary><p>The <a href="https://hendricks266.duke4.net/files/3dduke13_data.7z">free shareware download</a> includes the first episode. Extract the archive and choose <b>DUKE3D.GRP</b> above. For the full campaign, use your own <a href="https://www.zoom-platform.com/product/duke-nukem-3d-atomic-edition">Atomic Edition copy</a>.</p><p>No original game maps, artwork, music or sounds are included in this browser player.</p></details>
+  <section class="options" aria-label="Game preferences">
+    <label>Touch controls <select id="touch-mode"><option value="auto">Automatic</option><option value="on">Always on</option><option value="off">Off</option></select></label>
+    <label>Look sensitivity <input id="sensitivity" type="range" min="0.3" max="2" step="0.1" value="1"></label>
+    <label>Sound <input id="sound" type="checkbox" checked></label>
+  </section>
+  <details class="help"><summary>Controls & saved games</summary><p><b>WASD</b> move · <b>Mouse</b> aim / fire · <b>Space</b> jump · <b>E</b> use · <b>Ctrl</b> crouch · <b>1–0</b> weapons · <b>Esc</b> menu / release mouse.</p><p>On phones, turn sideways. Use the left stick to move and drag the right side to look. Use the on-screen arrow buttons and Enter to navigate the original menus.</p><p><b>F2</b> saves during play; <b>F3</b> loads. On mobile, use the Save and Load buttons. Saves are kept in this browser, with export/import below for backups. Clearing browser data removes local saves.</p></details>
+  <div class="backup"><button id="export" disabled>Export saves</button><button id="import-button" disabled>Import saves</button><input id="import" type="file" accept=".json" hidden disabled></div>
+  <p class="small" id="storage-note">No account or tracking. Browser storage is used for your game and saves.</p>
+  <footer>Independent browser player. Not affiliated with or endorsed by Duke Nukem’s rights holders.<br><a href="credits.html">Credits, licenses & engine source</a></footer>
+</main>
+<section id="game" hidden>
+  <header><span>GAMESLOP <small>/ SLOP NUKEM 3D</small></span><nav><button id="pause">Menu</button><button id="save-game">Save</button><button id="load-game">Load</button><button id="fullscreen">Fullscreen</button><button id="quit">Exit</button></nav></header>
+  <div id="viewport"></div>
+  <div id="touch" hidden>
+    <div id="stick" aria-label="Movement joystick"><span></span></div>
+    <div id="look" aria-label="Drag to look"><span>DRAG TO LOOK</span></div>
+    <div class="actions"><button data-key="224">DUCK</button><button data-key="8">USE</button><button data-key="44">JUMP</button><button class="fire" data-key="228">FIRE</button></div>
+    <div class="weapons"><button id="weapon-prev">◀ GUN</button><button id="weapon-next">GUN ▶</button></div>
+  </div>
+  <div id="touch-menu" hidden><button data-key="82">↑</button><button data-key="81">↓</button><button data-key="80">←</button><button data-key="79">→</button><button data-key="40">ENTER</button><button data-key="41">BACK</button><button data-key="28">YES</button></div>
+  <div id="rotate" hidden>Turn your phone sideways for touch controls.</div>
+  <div id="loading" hidden><strong id="loading-text">Loading engine…</strong><p>This can take a few seconds on a phone.</p><button id="cancel">Back to launcher</button></div>
+  <div id="game-note">Click the game to capture your mouse · Esc opens the menu</div>
+</section>
+<div id="status" role="status" aria-live="polite"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
