@@ -32,20 +32,21 @@
     const stage=()=>stages[state.stage],center=()=>stage().encounters[Math.min(state.gate,stage().encounters.length-1)],lastGate=()=>state.gate===stage().encounters.length-1;
     const ground=x=>Content.floor(stage(),x),bounds=x=>Content.bounds(stage(),x);
     function routeMove(p,dx,dy){const x=p.x+dx;if(Content.walkable(stage(),x,p.y))p.x=x;const b=bounds(p.x);p.y=clamp(p.y+dy,b.min,b.max);}
-    function story(index){state.story={text:stage().story[index],life:7,index};emit('story');}
-    function player(id){return {id,x:130+id*70,y:416+id*36,z:0,vz:0,face:1,hp:100,lives:rules().lives,energy:40,held:{},queued:{},cooldown:0,action:null,comboStep:0,comboUntil:0,invincible:2,hurt:0,dead:0,weapon:null,weaponHits:0,walk:0,moving:false};}
+
+    function player(id){return {id,x:130+id*70,y:416+id*36,z:0,vz:0,face:1,hp:100,maxHp:100,upgrades:[],lives:rules().lives,energy:40,held:{},queued:{},cooldown:0,action:null,comboStep:0,comboUntil:0,invincible:2,hurt:0,dead:0,weapon:null,weaponHits:0,walk:0,moving:false};}
     function release(){for(const p of state.players){p.held={};p.queued={};}}
     function stageLoad(index,startGate=0){
-      state.stage=index;state.enemies=[];state.pickups=[];state.effects=[];state.shots=[];state.props=[];state.camera=0;state.gate=0;state.arena=false;state.transition=2.4;state.shake=0;state.flash=0;state.hitstop=0;state.combo=0;state.comboTime=0;
+      state.stage=index;state.enemies=[];state.pickups=[];state.effects=[];state.shots=[];state.props=[];state.camera=0;state.gate=0;state.arena=false;state.transition=0;state.ending=null;state.waveDelay=0;state.shake=0;state.flash=0;state.hitstop=0;state.combo=0;state.comboTime=0;
       release();
       state.width=stage().width;state.hazards=[];state.checkpoint=startGate;state.gate=startGate;state.wave=0;
       state.cameraY=0;state.missiles=[];state.traps=[];state.story=null;state.storySeen=new Set();
-      state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,hp:100,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
+      state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,hp:p.maxHp,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
       const spawnX=startGate?center()-360:130;
       state.players.forEach((p,i)=>{p.x=spawnX+i*65;p.y=416+i*35+ground(p.x);});state.camera=Math.max(0,spawnX-130);state.cameraY=ground(spawnX);
-      for(let i=0;i<Math.floor(state.width/370);i++){const x=350+i*370;if(x<spawnX)continue;const kind=i%3===0?'food':i%3===1?'weapon':'energy';state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,weapon:stage().weapons[Math.floor(i/3)%2]});}
-      for(let i=0;i<8;i++){const x=720+i*1010;if(x<spawnX||x>state.width-1000)continue;const y=420+ground(x);state.props.push({id:nextId++,x,y,hp:1,kind:'lid',open:false});state.traps.push({x:x+230,y:365+ground(x+230),kind:stage().trap,phase:i*.7,active:false,warning:false});}
-      story(startGate?1:0);
+      for(let i=0;i<Math.floor(state.width/370);i++){const x=350+i*370;if(x<spawnX)continue;const kind=i%3===0?'food':i%3===1?'weapon':'energy';state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,food:Object.keys(Content.foods)[Math.floor(i/3)%4],weapon:stage().weapons[Math.floor(i/3)%2]});}
+      for(let i=0;i<9;i++){const x=720+i*(state.width-1700)/9;if(x<spawnX)continue;const y=420+ground(x);const kind=i===1||i===6?'lid':i%3===0?'barrel':i%3===1?'gong':'switch';state.props.push({id:nextId++,x,y,hp:kind==='lid'?1:24,kind,open:false});state.traps.push({x:x+180,y:365+ground(x+180),kind:i%3===0?'pendulum':i%3===1?'crusher':stage().trap,phase:i*.7,active:false,warning:false});}
+      const heartX=stage().encounters[5]-170;
+      if(state.players.some(p=>!p.upgrades.includes(index)))state.pickups.push({x:Math.max(spawnX+120,heartX),y:411+ground(Math.max(spawnX+120,heartX)),kind:'heart'});
       emit('stage',{stage:index});
     }
     function start({players=1,difficulty='normal'}={}){
@@ -54,7 +55,7 @@
       state.players=Array.from({length:players===2?2:1},(_,i)=>player(i));stageLoad(0);
     }
     function input(id,action,down){
-      const p=state.players[id];if(state.status!=='playing'||!p||!['left','right','up','down','attack','jump','special'].includes(action)||!!p.held[action]===!!down)return;
+      const p=state.players[id];if(state.status!=='playing'||state.ending||!p||!['left','right','up','down','attack','jump','special'].includes(action)||!!p.held[action]===!!down)return;
       p.held[action]=!!down;if(down)p.queued[action]=true;state.inputLog.push({tick:state.tick,player:id,action,down:!!down});
     }
     function pause(){if(state.status==='playing'){state.status='paused';release();}else if(state.status==='paused')state.status='playing';}
@@ -62,16 +63,26 @@
     function continueRun(){if(state.status!=='gameover'||state.continues<=0)return;state.continues--;state.players.forEach(p=>{p.lives=rules().lives;p.energy=40;});state.status='playing';stageLoad(state.stage,state.checkpoint);}
     function fx(kind,x,y,extra={}){state.effects.push({kind,x,y,life:.45,max:.45,...extra});}
     function spawn(kind,x,y,boss=false){
-      const hp=Math.round((boss?440+state.stage*55:kind==='brute'?65:kind==='thrower'?30:kind==='swift'?30:37)*rules().health*(boss&&state.players.length===2?1.6:1));
-      const e={id:nextId++,kind,boss,x,y,z:kind==='flyer'?82:0,hp,maxHp:hp,face:-1,cooldown:.65+rng()*.7,stun:0,down:0,windup:0,attack:null,vx:0,thrown:0,throwHits:[],phase:0,walk:0,dead:0,enraged:false,superTimer:4};state.enemies.push(e);return e;
+      const hp=Math.round((boss?440+state.stage*55:kind==='guard'?52:kind==='thrower'?30:kind==='swift'?32:37)*(boss?1:.75+rng()*.5)*rules().health*(boss&&state.players.length===2?1.6:1));
+      const e={id:nextId++,kind,boss,x,y,z:kind==='flyer'?82:0,hp,maxHp:hp,face:-1,cooldown:.65+rng()*.7,stun:0,down:0,windup:0,attack:null,vx:0,thrown:0,throwHits:[],phase:0,walk:0,dead:0,enraged:false,superTimer:4,defend:0,decision:1+rng()*2,jumpTimer:1.5+rng()*2,vz:0};state.enemies.push(e);return e;
     }
-    function beginArena(){
-      state.arena=true;const at=center();
-      const count=(lastGate()?2:3+(state.gate+state.wave)%3)+(state.players.length-1)*2+(state.difficulty==='hard'?2:0);
-      for(let i=0;i<count;i++){const flank=state.wave>0&&i%2===0,x=flank?Math.max(state.camera+45,at-200):at+110+(i%3)*70;spawn(['grunt','swift','guard','thrower','brute'][(i+state.stage+state.gate+state.wave)%5],x,350+(i%4)*42+ground(x));}
-      if(state.gate>0&&!lastGate())spawn('flyer',at+260,425+ground(at+260));
-      if(lastGate()){spawn('boss',at+200,419+ground(at+200),true);story(2);}
+    function beginArena(reinforcement=false){
+      if(!reinforcement){state.arena=true;state.wave=0;state.waveCount=lastGate()?1:1+Number(rng()<.48)+Number(state.difficulty==='hard'&&rng()<.25);}
+      state.waveDelay=0;const at=center(),hard=state.difficulty==='hard',easy=state.difficulty==='easy';
+      const count=lastGate()?1:Math.min(6,(easy?2:hard?3:2)+Math.floor(rng()*(hard?4:3))+(state.players.length-1));
+      const weights=easy?[55,14,14,10,7]:hard?[20,20,22,23,15]:[36,18,19,17,10];
+      for(let i=0;i<count;i++){let roll=rng()*100,n=0;while(n<4&&roll>=weights[n])roll-=weights[n++];const x=clamp(at+70+(i%3)*90,state.camera+60,state.camera+880);spawn(Content.enemyKinds[n],x,355+(i%4)*36+ground(x));}
+      if(lastGate())spawn('boss',clamp(at+200,state.camera+80,state.camera+850),419+ground(at+200),true);
       emit('arena');
+    }
+    function endBoss(e){
+      if(state.ending)return;
+      state.ending={age:0,next:0,x:e.x,y:e.y,fade:0};e.dead=4.5;state.shots=[];state.hazards=[];state.missiles=[];state.enemies.forEach(n=>{n.hp=0;n.dead=n.boss?4.5:.5;});release();emit('bossdown');
+    }
+    function endingTick(dt){const end=state.ending;end.age+=dt;
+      if(end.age<2.5&&end.age>=end.next){end.next+=.15;const x=end.x+(rng()-.5)*150,y=end.y-30-rng()*120;fx('explosion',x,y,{life:.85,max:.85,radius:35+rng()*45});state.shake=12;state.flash=.055;if(Math.floor(end.next/.15)%2===0)emit('explosion');if(end.age>1.9)fx('explosion',end.x,end.y-65,{life:1.1,max:1.1,radius:180});}
+      state.enemies.forEach(e=>e.dead=Math.max(0,e.dead-dt));end.fade=clamp((end.age-2.3)/2,0,1);
+      if(end.age>=4.3){state.status='clear';state.arena=false;state.gate=stage().encounters.length;release();emit('clear');}
     }
     function hitEnemy(e,damage,face,force=80){
       if(e.hp<=0)return;const actual=Math.min(e.hp,damage);e.hp-=damage;
@@ -81,7 +92,7 @@
       e.vx=face*force*(e.boss?.18:1);
       if(force>=220&&!e.boss){e.down=.65;e.stun=.8;}
       state.score+=Math.round(actual*10);state.combo++;state.comboTime=2;state.bestCombo=Math.max(state.bestCombo,state.combo);state.shake=Math.max(state.shake,force>=220?7:3);state.hitstop=.035;fx('hit',e.x,e.y-40,{color:stages[state.stage].color});emit('hit',{heavy:force>=220});
-      if(e.hp<=0){e.dead=.7;state.kills++;state.score+=e.boss?2000:120;state.players.filter(p=>p.lives>0).forEach(p=>p.energy=clamp(p.energy+8,0,100));emit(e.boss?'bossdown':'ko');if(e.boss)fx('burst',e.x,e.y-60,{life:1.2,max:1.2});else if(rng()<.12)state.pickups.push({x:e.x,y:e.y,kind:rng()<.5?'food':'energy'});}
+      if(e.hp<=0){e.dead=.7;state.kills++;state.score+=e.boss?2000:120;state.players.filter(p=>p.lives>0).forEach(p=>p.energy=clamp(p.energy+8,0,100));if(e.boss)endBoss(e);else emit('ko');if(e.boss)fx('explosion',e.x,e.y-60,{life:1.2,max:1.2,radius:100});else if(rng()<.12)state.pickups.push({x:e.x,y:e.y,kind:rng()<.5?'food':'energy',food:Object.keys(Content.foods)[Math.floor(rng()*4)]});}
     }
     function hurtPlayer(p,damage,face){
       if(p.lives<=0||p.dead>0||p.invincible>0)return false;
@@ -97,7 +108,7 @@
         if(e.kind==='guard'&&e.face===-p.face&&a.kind!=='kick'&&a.step!==3&&!weapon){fx('word',e.x,e.y-e.z-115,{text:'BLOCK',life:.35,max:.35});emit('block');continue;}
         hitEnemy(e,damage,p.face,a.step===3||a.kind==='kick'?280:65);p.energy=clamp(p.energy+5,0,100);
       }
-      for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});}}
+      for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;if(prop.kind==='barrel')state.missiles.push({x:prop.x,y:prop.y,z:20,vx:p.face*360,life:2.2,hits:[],kind:'barrel'});else if(prop.kind==='gong'){for(const e of state.enemies)if(!e.boss&&Math.abs(e.x-prop.x)<280){e.stun=2;e.windup=0;e.attack=null;}fx('ring',prop.x,prop.y-45,{life:1,max:1});}else if(prop.kind==='switch'){for(const t of state.traps)if(Math.abs(t.x-prop.x)<300)t.disabled=true;fx('word',prop.x,prop.y-90,{text:'TRAPS OFF'});}else state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});}}
       if(p.weapon&&--p.weaponHits<=0)p.weapon=null;
     }
     function attack(p){
@@ -118,7 +129,7 @@
     }
     function movePlayer(p,dt){
       p.invincible=Math.max(0,p.invincible-dt);p.hurt=Math.max(0,p.hurt-dt);p.cooldown=Math.max(0,p.cooldown-dt);
-      if(p.dead>0){p.dead=Math.max(0,p.dead-dt);p.queued={};if(p.dead===0&&p.lives>0){p.hp=100;p.invincible=3;p.z=0;p.vz=0;p.action=null;}return;}
+      if(p.dead>0){p.dead=Math.max(0,p.dead-dt);p.queued={};if(p.dead===0&&p.lives>0){p.hp=p.maxHp;p.invincible=3;p.z=0;p.vz=0;p.action=null;}return;}
       if(p.lives<=0)return;
       const dx=Number(!!p.held.right)-Number(!!p.held.left),dy=Number(!!p.held.down)-Number(!!p.held.up),norm=dx&&dy?Math.SQRT1_2:1;
       if(dx&&!p.action)p.face=Math.sign(dx);
@@ -127,21 +138,21 @@
       if((p.held.attack||p.queued.attack)&&p.cooldown===0&&p.hurt<=0)attack(p);
       p.queued={};
       const speed=p.hurt>0?0:p.action&&p.z===0?95:205;p.moving=!!(dx||dy);p.walk+=dt*(p.moving?12:2);
-      const boundary=Math.min(state.arena?center()+340:state.width-40,state.players.some(q=>q!==p&&q.lives>0)?state.camera+910:state.width-40);
+      const boundary=Math.min(state.arena?state.camera+915:state.width-40,state.players.some(q=>q!==p&&q.lives>0)?state.camera+910:state.width-40);
       routeMove(p,clamp(p.x+dx*speed*norm*dt,state.camera+30,boundary)-p.x,dy*speed*.85*norm*dt);
       const teammates=state.players.filter(q=>q!==p&&q.lives>0);if(teammates.length){const lo=Math.min(...teammates.map(q=>q.y))-300,hi=Math.max(...teammates.map(q=>q.y))+300;p.y=clamp(p.y,Math.max(bounds(p.x).min,lo),Math.min(bounds(p.x).max,hi));}
       if(p.z>0||p.vz>0){p.z+=p.vz*dt;p.vz-=1150*dt;if(p.z<=0){p.z=0;p.vz=0;p.airKick=false;fx('dust',p.x,p.y,{life:.25,max:.25});}}
       if(p.action){p.action.age+=dt;if(!p.action.struck&&p.action.age>=.085)strike(p,p.action);if(p.action.age>=p.action.duration)p.action=null;}
       for(let i=state.pickups.length-1;i>=0;i--){const item=state.pickups[i];if(p.z>25||Math.abs(p.x-item.x)>33||Math.abs(p.y-item.y)>25)continue;
-        if(item.kind==='food'&&p.hp>=100)continue;
-        if(item.kind==='food')p.hp=clamp(p.hp+35,0,100);else if(item.kind==='energy')p.energy=clamp(p.energy+30,0,100);else{p.weapon=item.weapon||stage().weapon;p.weaponHits=Content.weapons[p.weapon].hits;}
-        state.pickups.splice(i,1);state.score+=100;fx('word',p.x,p.y-100,{text:item.kind==='food'?'+35 HEALTH':item.kind==='energy'?'+30 SPECIAL':'WEAPON UP',color:'#ffe3a0',life:.9,max:.9});emit('pickup');
+        if(item.kind==='food'&&p.hp>=p.maxHp)continue;
+        if(item.kind==='food')p.hp=clamp(p.hp+(Content.foods[item.food||'burger']?.heal||35),0,p.maxHp);else if(item.kind==='heart'){for(const q of state.players)if(!q.upgrades.includes(state.stage)){q.upgrades.push(state.stage);q.maxHp++;q.hp=Math.min(q.maxHp,q.hp+1);}}else if(item.kind==='energy')p.energy=clamp(p.energy+30,0,100);else{p.weapon=item.weapon||stage().weapon;p.weaponHits=Content.weapons[p.weapon].hits;}
+        state.pickups.splice(i,1);state.score+=100;fx('word',p.x,p.y-100,{text:item.kind==='food'?'+'+(Content.foods[item.food||'burger']?.heal||35)+' HP':item.kind==='heart'?'+1 MAX HP':item.kind==='energy'?'+30 SPECIAL':'WEAPON UP',color:'#ffe3a0',life:.9,max:.9});emit('pickup');
       }
     }
     function enemyAttack(e,target){
       const patterns=[['punch','charge','shot'],['punch','volley','slam'],['punch','pounce','slam'],['punch','blink','shot'],['punch','volley','charge'],['slam','pulse','blink']];
       const kind=e.boss?(e.superTimer<=0||e.phase%3===2?'super':patterns[state.stage][e.phase%3]):e.kind==='thrower'?'shot':'punch';
-      e.attack={kind,x:target.x,y:target.y,face:e.face};e.windup=kind==='super'?1.1:e.boss?.8:e.kind==='brute'?.7:.48;e.phase++;
+      e.attack={kind,x:target.x,y:target.y,face:e.face};e.windup=kind==='super'?1.1:e.boss?.8:e.kind==='guard'?.75:.62;e.phase++;
       if(kind==='super'){e.superTimer=e.enraged?6:9;emit('super');fx('word',e.x,e.y-160,{text:stage().superName,life:1.2,max:1.2,color:stage().color});}
     }
     function bossPower(e,a){
@@ -170,12 +181,12 @@
       state.hazards=state.hazards.filter(h=>h.life>0);
     }
     function sceneryTick(dt){
-      if(state.story)state.story.life-=dt;
-      for(const t of state.traps){const phase=(state.time+t.phase)%4.5;t.warning=phase>2.3&&phase<3.2;t.active=phase>=3.2&&phase<4.1;
+
+      for(const t of state.traps){if(t.disabled){t.warning=false;t.active=false;continue;}const phase=(state.time+t.phase)%4.5;t.warning=phase>2.3&&phase<3.2;t.active=phase>=3.2&&phase<4.1;
         if(!t.active){t.hits=[];continue;}
-        const rx=t.kind==='rail'?100:38,ry=t.kind==='arrows'||t.kind==='laser'?125:30;
-        for(const p of state.players)if(Math.abs(p.x-t.x)<rx&&Math.abs(p.y-t.y)<ry&&p.z<(t.kind==='steam'?105:40))hurtPlayer(p,16,Math.sign(p.x-t.x)||1);
-        for(const e of state.enemies)if(!e.boss&&e.hp>0&&e.z<40&&!t.hits?.includes(e.id)&&Math.abs(e.x-t.x)<rx&&Math.abs(e.y-t.y)<ry){(t.hits||=[]).push(e.id);hitEnemy(e,25,1,220);}
+        const area=Content.trapArea(t,state.time),{x,rx,ry}=area;
+        for(const p of state.players)if(Math.abs(p.x-x)<rx&&Math.abs(p.y-t.y)<ry&&p.z<(['steam','crusher','pendulum'].includes(t.kind)?190:40))hurtPlayer(p,16,Math.sign(p.x-t.x)||1);
+        for(const e of state.enemies)if(!e.boss&&e.hp>0&&e.z<40&&!t.hits?.includes(e.id)&&Math.abs(e.x-x)<rx&&Math.abs(e.y-t.y)<ry){(t.hits||=[]).push(e.id);hitEnemy(e,25,1,220);}
       }
       for(const prop of state.props)if(prop.kind==='lid'&&prop.open)for(const p of state.players)if(p.z<8&&Math.abs(p.x-prop.x)<21&&Math.abs(p.y-prop.y)<12&&p.action?.kind!=='propThrow'){if(hurtPlayer(p,14,p.face)){p.z=10;p.vz=230;fx('word',p.x,p.y-100,{text:'WATCH YOUR STEP!'});}}
       for(const m of state.missiles){m.x+=m.vx*dt;m.life-=dt;for(const e of state.enemies)if(e.hp>0&&!m.hits.includes(e.id)&&Math.abs(m.x-e.x)<45&&Math.abs(m.y-e.y)<34&&Math.abs(e.z-m.z)<90){m.hits.push(e.id);hitEnemy(e,45,Math.sign(m.vx),360);}}
@@ -204,20 +215,27 @@
       const alive=state.players.filter(p=>p.lives>0&&p.dead<=0);if(!alive.length)return;
       const target=alive.reduce((best,p)=>Math.hypot(p.x-e.x,p.y-e.y)<Math.hypot(best.x-e.x,best.y-e.y)?p:best);
       if(e.kind==='flyer'){moveFlyer(e,target,dt);return;}
+      if(!e.boss){
+        if(e.z>0||e.vz>0){e.z+=e.vz*dt;e.vz-=850*dt;if(e.z<0){e.z=0;e.vz=0;}}
+        e.jumpTimer-=dt;e.decision-=dt;e.defend=Math.max(0,e.defend-dt);
+        if(e.decision<=0){e.decision=2.5+rng()*2;if(rng()<.4)e.defend=.7+rng()*.7;}
+        if(['swift','thrower'].includes(e.kind)&&e.jumpTimer<=0&&e.stun<=0){e.vz=e.kind==='swift'?380:290;e.z=.1;e.jumpTimer=3+rng()*2;}
+      }
       if(e.stun>0)return;
+      if(!e.boss&&e.defend>0&&!e.windup){e.face=target.x<e.x?-1:1;routeMove(e,-e.face*35*dt,(e.id%2?1:-1)*15*dt);return;}
       if(e.charge>0){e.charge=Math.max(0,e.charge-dt);e.vx=e.face*460;for(const p of alive)if(Math.abs(p.x-e.x)<55&&Math.abs(p.y-e.y)<34&&p.z<38)hurtPlayer(p,18,e.face);return;}
       const dx=target.x-e.x,dy=target.y-e.y;
-      if(e.windup>0){e.windup-=dt;if(e.windup<=0){const a=e.attack;e.attack=null;e.cooldown=e.boss?1.1:e.kind==='swift'?.8:1.3;
+      if(e.windup>0){e.windup-=dt;if(e.windup<=0){const a=e.attack;e.attack=null;e.cooldown=e.boss?1.1:1.7+rng()*.9;
         if(a.kind==='super')bossPower(e,a);
         else if(['shot','volley','pulse'].includes(a.kind)){
           const aim=Math.atan2(a.y-e.y,a.x-e.x),angles=a.kind==='pulse'?Array.from({length:10},(_,i)=>i*Math.PI/5):a.kind==='volley'?[-.28,0,.28].map(n=>aim+n):[aim];
-          for(const angle of angles)state.shots.push({x:e.x,y:e.y,vx:Math.cos(angle)*310,vy:Math.sin(angle)*310,life:3,owner:e.id});emit('shot');
+          for(const angle of angles)state.shots.push({x:e.x,y:e.y,vx:Math.cos(angle)*310,vy:Math.sin(angle)*310,life:3,owner:e.id,z:34+(e.z||0),kind:e.boss?'orb':['arc','bomb','venom','shuriken','bullet','pulse'][state.stage]});emit('shot');
         }
         else if(a.kind==='charge'){e.charge=.5;e.vx=a.face*460;fx('word',e.x,e.y-130,{text:'CHARGE!',life:.6,max:.6});}
         else if(a.kind==='blink'){fx('burst',e.x,e.y-40);e.x=clamp(a.x-a.face*100,state.camera+30,Math.min(state.width-40,center()+320));e.y=clamp(a.y,bounds(e.x).min,bounds(e.x).max);e.face=a.face;e.cooldown=.22;fx('burst',e.x,e.y-40);}
         else if(a.kind==='pounce'){e.x=clamp(a.x,state.camera+30,Math.min(state.width-40,center()+320));e.y=clamp(a.y,bounds(e.x).min,bounds(e.x).max);fx('slam',e.x,e.y,{life:.5,max:.5});for(const p of alive)if(Math.abs(p.x-e.x)<85&&Math.abs(p.y-e.y)<55&&p.z<35)hurtPlayer(p,20,Math.sign(p.x-e.x)||1);emit('slam');}
         else if(a.kind==='slam'){fx('slam',e.x,e.y,{life:.5,max:.5});state.shake=8;for(const p of alive)if(Math.abs(p.x-e.x)<140&&Math.abs(p.y-e.y)<85&&p.z<35)hurtPlayer(p,20,Math.sign(p.x-e.x)||1);emit('slam');}
-        else{fx('swipe',e.x+a.face*48,e.y-37,{face:a.face});for(const p of alive)if((p.x-e.x)*a.face>-15&&(p.x-e.x)*a.face<(e.boss?105:80)&&Math.abs(p.y-e.y)<32&&p.z<38)hurtPlayer(p,e.boss?19:e.kind==='brute'?17:11,a.face);}
+        else{fx('swipe',e.x+a.face*48,e.y-37,{face:a.face});for(const p of alive)if((p.x-e.x)*a.face>-15&&(p.x-e.x)*a.face<(e.boss?105:80)&&Math.abs(p.y-e.y)<32&&Math.abs(p.z-e.z)<38)hurtPlayer(p,e.boss?19:e.kind==='brute'?17:11,a.face);}
       }return;}
       e.face=dx<0?-1:1;
       if(e.boss&&e.superTimer<=0&&e.cooldown===0){enemyAttack(e,target);return;}
@@ -232,23 +250,23 @@
       if(state.status!=='playing')return;dt=Math.min(dt,.05);state.tick++;state.time+=dt;
       state.transition=Math.max(0,state.transition-dt);state.flash=Math.max(0,state.flash-dt);state.shake=Math.max(0,state.shake-dt*24);state.comboTime=Math.max(0,state.comboTime-dt);if(!state.comboTime)state.combo=0;
       state.effects.forEach(f=>f.life-=dt);state.effects=state.effects.filter(f=>f.life>0).slice(-90);
+      if(state.ending){endingTick(dt);return;}
+      const fallenBoss=state.enemies.find(e=>e.boss&&e.hp<=0);if(fallenBoss){endBoss(fallenBoss);return;}
       if(state.hitstop>0){state.hitstop-=dt;return;}
-      state.players.forEach(p=>movePlayer(p,dt));state.enemies.forEach(e=>moveEnemy(e,dt));moveHazards(dt);sceneryTick(dt);
-      for(const b of state.shots){b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(const p of state.players)if(b.life>0&&Math.abs(p.x-b.x)<24&&Math.abs(p.y-b.y)<22&&p.z<34&&hurtPlayer(p,13,Math.sign(b.vx)))b.life=0;}
+      state.players.forEach(p=>{if(!state.ending)movePlayer(p,dt);});if(state.ending)return;state.enemies.forEach(e=>moveEnemy(e,dt));moveHazards(dt);sceneryTick(dt);if(state.ending)return;
+      for(const b of state.shots){b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;for(const p of state.players)if(b.life>0&&Math.abs(p.x-b.x)<24&&Math.abs(p.y-b.y)<22&&Math.abs(p.z+20-(b.z||34))<28&&hurtPlayer(p,13,Math.sign(b.vx)))b.life=0;}
       state.shots=state.shots.filter(b=>b.life>0&&b.x>state.camera-60&&b.x<state.camera+1050);
       state.enemies=state.enemies.filter(e=>e.hp>0||e.dead>0);
       const alive=state.players.filter(p=>p.lives>0||p.dead>0);if(!alive.length){state.status='gameover';release();emit('gameover');return;}
       const standing=state.players.filter(p=>p.lives>0);if(!standing.length)return;
       const lead=Math.max(...standing.map(p=>p.x)),tail=Math.min(...standing.map(p=>p.x));
-      const cameraTarget=Math.min(lead-310,tail-45,state.width-960);state.camera=clamp(Math.max(state.camera,cameraTarget),0,state.width-960);
-      const low=Math.min(...standing.map(p=>p.y)),high=Math.max(...standing.map(p=>p.y)),turning=standing.some(p=>stage().turns.some(t=>p.x>=t.x&&p.x<=t.end));
-      const cameraYTarget=turning?clamp(Math.min(high-416,low-180),0,600):ground(lead);state.cameraY+=clamp(cameraYTarget-state.cameraY,-dt*320,dt*320);
-      const turn=Content.nextTurn(stage(),standing[0]);if(turn&&!state.storySeen.has(turn.x)){state.storySeen.add(turn.x);story(1);}
+      const cameraTarget=Math.min(lead-310,tail-45,state.width-960);if(!state.arena)state.camera=clamp(Math.max(state.camera,cameraTarget),0,state.width-960);
+      const cameraYTarget=clamp(ground((lead+tail)/2),0,stage().depth);if(!state.arena)state.cameraY+=clamp(cameraYTarget-state.cameraY,-dt*320,dt*320);
       if(!state.arena&&state.gate<stage().encounters.length&&lead>center()-330)beginArena();
       if(state.arena&&!state.enemies.some(e=>e.hp>0)){
-        if(!lastGate()&&state.gate%3===2&&state.wave===0){state.wave=1;beginArena();fx('word',lead+150,230,{text:'AMBUSH!',life:1.1,max:1.1});return;}
+        if(state.wave+1<state.waveCount){state.waveDelay+=dt;if(state.waveDelay>=1.1){state.wave++;beginArena(true);}return;}
         state.arena=false;state.wave=0;state.gate++;state.hazards=[];state.shots=[];state.players.forEach(p=>p.energy=clamp(p.energy+12,0,100));emit('gate');
-        if(state.gate<stage().encounters.length&&state.gate%3===0){state.checkpoint=state.gate;for(const p of state.players)if(p.lives>0){p.hp=clamp(p.hp+45,0,100);p.energy=clamp(p.energy+25,0,100);}fx('word',lead,240,{text:'CHECKPOINT / +45 HEALTH',life:2,max:2,color:'#9fffc9'});emit('pickup');}
+        if(state.gate<stage().encounters.length&&state.gate%3===0){state.checkpoint=state.gate;for(const p of state.players)if(p.lives>0){p.hp=clamp(p.hp+45,0,p.maxHp);p.energy=clamp(p.energy+25,0,100);}fx('word',lead,240,{text:'CHECKPOINT / +45 HEALTH',life:2,max:2,color:'#9fffc9'});emit('pickup');}
         if(state.gate===stage().encounters.length){state.status='clear';release();emit('clear');}
       }
       if(state.inputLog.length>100000)state.inputLog.splice(0,1000);

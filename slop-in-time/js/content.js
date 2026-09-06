@@ -9,18 +9,18 @@
     blade:{name:'Plasma blade',reach:135,damage:28,hits:24,speed:.88},coil:{name:'Arc baton',reach:118,damage:25,hits:26,speed:.8}
   };
   const pairs=[['pipe','bat'],['saber','anchor'],['club','spear'],['staff','katana'],['wrench','hammer'],['blade','coil']];
-  const stories=[
-    ['The arcade clocks stopped at midnight. Someone stole the next day.','Volt has sealed the skyrail. Take the service alley south.','His substation powers the time rift. Pull the plug.'],
-    ['The rift spits you into 1712. Brassjaw has your stolen clock core.','The main pier is burning. Follow the lower wharf around it.','That ship is leaving with tomorrow aboard. Stop its captain.'],
-    ['Wrong century. Very wrong century. The clock core woke the valley.','The bone bridge has collapsed. Head down through the fern ravine.','King Fossil is guarding the rift. Make extinction wait.'],
-    ['The Iron Ronin mistook the clock core for a fallen star.','The castle gate is barred. Turn south through the moon garden.','He will not surrender the star. You will have to earn it.'],
-    ['Boiler Bill is feeding stolen time into his runaway locomotive.','The railway is blocked. Take the lower maintenance crossing.','One last train. One very large wrench. End this ride.'],
-    ['Every stolen second leads here: the Timekeeper’s foundry.','The assembly line is locked. Follow the coolant channel south.','Break the Timekeeper. Give everyone their tomorrow back.']
-  ];
-  function configure(stages){stages.forEach((s,i)=>{s.weapons=pairs[i];s.story=stories[i];s.flyer=['Shock drone','Powder parrot','Pterodactyl','Tengu','Steam gyrocopter','Rift sentry'][i];s.trap=['steam','cannon','spikes','arrows','rail','laser'][i];s.turns=[2,5].map((gate,n)=>({x:s.encounters[gate]+355,end:s.encounters[gate]+555,drop:300,offset:n*300}));});}
-  function bounds(stage,x){let offset=0;for(const t of stage.turns){if(x<t.x)break;if(x<=t.end)return {min:335+offset,max:487+offset+t.drop};offset+=t.drop;}return {min:335+offset,max:487+offset};}
-  function floor(stage,x){return bounds(stage,x).min-335;}
+  const foods={hotdog:{name:'Hot dog',heal:15},pizza:{name:'Pizza',heal:25},burger:{name:'Hamburger',heal:35},ramen:{name:'Ramen',heal:50}};
+  const enemyKinds=['grunt','guard','swift','thrower','flyer'];
+  const rosters=[['Street punk','Riot shield','Volt runner','Arc skater','Shock drone'],['Deckhand','Shell guard','Boarding raider','Powder gunner','Powder parrot'],['Raptor','Armored saurian','Leaping hunter','Venom spitter','Pterodactyl'],['Shinobi','Iron guard','Shadow jumper','Shuriken adept','Tengu'],['Outlaw','Boiler guard','Dynamite runner','Gunslinger','Steam gyrocopter'],['Sentinel','Aegis unit','Blink striker','Pulse lancer','Rift sentry']];
+  function configure(stages){stages.forEach((s,i)=>{
+    s.weapons=pairs[i];s.enemies=enemyKinds.map((kind,n)=>({kind,name:rosters[i][n]}));s.flyer=rosters[i][4];s.trap=['steam','cannon','spikes','arrows','rail','laser'][i];
+    const plans=[[1,4],[2,6],[1,3,6],[0,4,7],[2,5],[1,5,7]][i];let offset=0;
+    s.turns=plans.map((gate,n)=>{const drop=[150,190,130,170,145,160][i]*(n%2? .8:1),t={x:s.encounters[gate]+350,end:s.encounters[gate+1]-345,drop,offset};offset+=drop;return t;});s.depth=offset;
+  });}
+  function floor(stage,x){let offset=0;for(const t of stage.turns){if(x<t.x)break;if(x<t.end){const u=(x-t.x)/(t.end-t.x);return offset+t.drop*u*u*(3-2*u);}offset+=t.drop;}return offset;}
+  function bounds(stage,x){const offset=floor(stage,x);return {min:335+offset,max:487+offset};}
   function walkable(stage,x,y){const b=bounds(stage,x);return y>=b.min&&y<=b.max;}
-  function nextTurn(stage,p){return stage.turns.find(t=>p.x<t.end+35&&p.x>t.x-160&&p.y<335+t.offset+t.drop+28);}
-  const api={weapons,configure,bounds,floor,walkable,nextTurn};root.SlopTimeContent=api;if(typeof module!=='undefined')module.exports=api;
+  function nextTurn(stage,p){return stage.turns.find(t=>p.x<t.end&&p.x>t.x-100);}
+  function trapArea(t,time){return {x:t.x+(t.kind==='rail'?(time*440)%200-100:t.kind==='pendulum'?Math.sin(time*2)*55:0),rx:t.kind==='rail'?24:t.kind==='pendulum'?26:t.kind==='crusher'?43:38,ry:['arrows','laser'].includes(t.kind)?125:30};}
+  const api={trapArea,weapons,foods,enemyKinds,configure,bounds,floor,walkable,nextTurn};root.SlopTimeContent=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);
