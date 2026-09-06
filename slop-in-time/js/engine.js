@@ -43,7 +43,12 @@
       state.players.forEach((p,i)=>Object.assign(p,{x:130+i*65,y:416+i*35,z:0,vz:0,airKick:false,stamina:100,exhausted:false,running:false,moving:false,walk:0,hp:p.maxHp,invincible:2,dead:0,hurt:0,action:null,cooldown:0,weapon:null,weaponHits:0,energy:Math.max(40,p.energy),lives:Math.max(1,p.lives)}));
       const spawnX=startGate?center()-360:130;
       state.players.forEach((p,i)=>{p.x=spawnX+i*65;p.y=416+i*35+ground(p.x);});state.camera=Math.max(0,spawnX-130);state.cameraY=ground(spawnX);
-      for(let i=0;i<Math.floor(state.width/370);i++){const x=350+i*370;if(x<spawnX)continue;const kind=i%3===0?'food':i%3===1?'weapon':'energy';state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,food:Object.keys(Content.foods)[Math.floor(i/3)%4],weapon:stage().weapons[Math.floor(i/3)%2]});}
+      for(let i=0;i<Math.floor(state.width/370);i++){
+        const x=350+i*370,group=Math.floor(i/3),kind=i%3===0?'food':i%3===1?'weapon':'energy';
+        // Keep alternate supply placements, preserving every weapon and food variety.
+        if(x<spawnX||kind!=='weapon'&&group%2!==0)continue;
+        state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,food:Object.keys(Content.foods)[Math.floor(group/2)%4],weapon:stage().weapons[group%2]});
+      }
       // Three widely spaced sites. All sit in the upper lane on flat ground.
       const controls={steam:'hydrant',puddle:'cutoff',cannon:'powder',cargo:'capstan',geyser:'slab',gate:'winch',cart:'brake',boiler:'valve',press:'console',arc:'battery'};
       for(const [i,gate] of [2,5,8].entries()){const x=stage().encounters[gate]-120;if(x<spawnX)continue;const kind=stage().traps[i%2],id=nextId++;
@@ -119,7 +124,7 @@
       e.vx=face*force*(e.boss?.18:1);
       if(force>=220&&!e.boss){e.down=.65;e.stun=.8;}
       state.score+=Math.round(actual*10);state.combo++;state.comboTime=2;state.bestCombo=Math.max(state.bestCombo,state.combo);state.shake=Math.max(state.shake,force>=220?7:3);state.hitstop=.035;fx('hit',e.x,e.y-40,{color:stages[state.stage].color});emit('hit',{heavy:force>=220});
-      if(e.hp<=0){e.dead=.7;state.kills++;state.score+=e.boss?2000:120;state.players.filter(p=>p.lives>0).forEach(p=>p.energy=clamp(p.energy+8,0,100));if(e.boss)endBoss(e);else emit('ko');if(e.boss)fx('explosion',e.x,e.y-60,{life:1.2,max:1.2,radius:100});else if(rng()<.12)state.pickups.push({x:e.x,y:e.y,kind:rng()<.5?'food':'energy',food:Object.keys(Content.foods)[Math.floor(rng()*4)]});}
+      if(e.hp<=0){e.dead=.7;state.kills++;state.score+=e.boss?2000:120;state.players.filter(p=>p.lives>0).forEach(p=>p.energy=clamp(p.energy+8,0,100));if(e.boss)endBoss(e);else emit('ko');if(e.boss)fx('explosion',e.x,e.y-60,{life:1.2,max:1.2,radius:100});else if(rng()<.06)state.pickups.push({x:e.x,y:e.y,kind:rng()<.5?'food':'energy',food:Object.keys(Content.foods)[Math.floor(rng()*4)]});}
     }
     function hurtPlayer(p,damage,face){
       if(p.lives<=0||p.dead>0||p.invincible>0)return false;
