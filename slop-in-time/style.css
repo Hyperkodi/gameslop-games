@@ -11,3 +11,7 @@
 @media(prefers-reduced-motion:reduce){.overlay[data-state="clear"] .overlay-card{animation:none}}
 
 @media(pointer:coarse){.touch-actions [data-action=run]{grid-column:2;grid-row:1;width:100%;height:44px;border-radius:9px;background:#345645ed}.touch-actions [data-action=run].running{background:#53874f;border-color:#d7f4a1}.touch-actions [data-action=run].tired{background:#573e36;color:#ffc79b}}
+
+@media(pointer:coarse){.touch-actions{grid-template-rows:44px 44px 84px}.touch-actions [data-action=throwWeapon]{grid-column:1/-1;grid-row:1;width:112px;height:44px;border-radius:9px;background:#675039ed;border-color:#d9bd8a}.touch-actions [data-action=special],.touch-actions [data-action=run]{grid-row:2}.touch-actions [data-action=attack],.touch-actions [data-action=jump]{grid-row:3}}
+@media(pointer:coarse) and (max-width:360px){.touch-actions{grid-template-rows:44px 44px 76px}}
+@media(pointer:coarse) and (orientation:portrait){.cabinet:fullscreen .screen,.cabinet.expanded .screen{width:min(100vw,calc((100dvh - 302px)*16/9))}}

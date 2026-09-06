@@ -8,7 +8,10 @@
     wrench:{name:'Rail wrench',reach:105,damage:30,hits:22,speed:1.08},hammer:{name:'Boiler hammer',reach:112,damage:40,hits:12,speed:1.45},
     blade:{name:'Plasma blade',reach:135,damage:28,hits:24,speed:.88},coil:{name:'Arc baton',reach:118,damage:25,hits:26,speed:.8}
   };
-  const pairs=[['pipe','bat'],['saber','anchor'],['club','spear'],['staff','katana'],['wrench','hammer'],['blade','coil']];
+  Object.assign(weapons,{chain:{name:'Street chain',reach:145,damage:33,hits:20,speed:1.15},trident:{name:'Coral trident',reach:165,damage:40,hits:21,speed:1.1},axe:{name:'Obsidian axe',reach:120,damage:46,hits:17,speed:1.25},naginata:{name:'Storm naginata',reach:175,damage:50,hits:22,speed:1.12},pickaxe:{name:'Railbreaker pick',reach:130,damage:56,hits:18,speed:1.3},photon:{name:'Photon hammer',reach:145,damage:64,hits:20,speed:1.25}});
+  const pairs=[['pipe','bat','chain'],['saber','anchor','trident'],['club','spear','axe'],['staff','katana','naginata'],['wrench','hammer','pickaxe'],['blade','coil','photon']];
+  // Later-era equipment keeps pace with sturdier enemies.
+  pairs.forEach((ids,era)=>ids.slice(0,2).forEach(id=>weapons[id].damage=Math.round(weapons[id].damage*(1+era*.12))));
   const foods={hotdog:{name:'Hot dog',heal:15},pizza:{name:'Pizza',heal:25},burger:{name:'Hamburger',heal:35},ramen:{name:'Ramen',heal:50}};
   const enemyKinds=['grunt','guard','swift','thrower','flyer'];
   const rosters=[['Street punk','Riot shield','Volt runner','Arc skater','Shock drone'],['Deckhand','Shell guard','Boarding raider','Powder gunner','Powder parrot'],['Raptor','Armored saurian','Leaping hunter','Venom spitter','Pterodactyl'],['Shinobi','Iron guard','Shadow jumper','Shuriken adept','Tengu'],['Outlaw','Boiler guard','Dynamite runner','Gunslinger','Steam gyrocopter'],['Sentinel','Aegis unit','Blink striker','Pulse lancer','Rift sentry']];
