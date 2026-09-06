@@ -18,7 +18,7 @@ Landscape is recommended on phones. Expand requests browser fullscreen, with an 
 
 Close in on a stunned or weakened ordinary enemy and attack to throw it. A thrown enemy damages others in its path. Bosses resist grabs and their warned attacks cannot be interrupted by ordinary punches. Move around enemy attacks or jump over them. Jump alone never attacks and now reaches about 170 pixels. Press Attack while airborne to kick; ordinary ground punches cannot reach a high-flying enemy. Shield guards block frontal jabs but are vulnerable to finishers, weapons, and jump kicks.
 
-Collect hot dogs (+15 HP), pizza (+25), hamburgers (+35), ramen (+50), retro game cartridges (+30 Special), and era-specific melee weapons. The segmented health meter shows exact current/max HP. Each era has one heart that permanently adds one maximum HP for both co-op players during the current run, surviving deaths, stages and continues. A new run starts at 100 HP; collected hearts cannot be farmed by continuing. Food cannot heal beyond maximum HP. Every era has two weapons, with different reach, damage, swing speed and durability; there are twelve in total. Attack near a closed manhole, hatch or stone cover to lift and throw it through enemies. The open hole remains a hazard. There are only two throwable covers per era. Attack a barrel to roll it into enemies, a gong to stun nearby ordinary enemies, or a switch to disable nearby traps. Crushers and swinging weights cannot be jumped; move around their warning areas. Low hazards can be jumped. Steam rises in translucent clouds. Landing attacks and scoring knockouts charges Special. A full meter unleashes an area attack without costing health.
+Collect hot dogs (+15 HP), pizza (+25), hamburgers (+35), ramen (+50), retro game cartridges (+30 Special), and era-specific melee weapons. The segmented health meter shows exact current/max HP. Each era has one heart that permanently adds one maximum HP for both co-op players during the current run, surviving deaths, stages and continues. A new run starts at 100 HP; collected hearts cannot be farmed by continuing. Food cannot heal beyond maximum HP. Every era has two weapons, with different reach, damage, swing speed and durability; there are twelve in total. Attack near a closed manhole, hatch or stone cover to lift and throw it through enemies. The open hole remains a hazard. There are only two throwable covers per era. Hit themed interactive scenery to stun foes or neutralize hazards. Use the clear lower lane to avoid overhead and tall hazards. Low hazards can be jumped. Steam rises in translucent clouds. Landing attacks and scoring knockouts charges Special. A full meter unleashes an area attack without costing health.
 
 Easy gives five lives and lighter enemy damage; Normal gives three lives; Hard gives two lives, extra enemies, and tougher opponents. Two continues resume at the latest checkpoint (after encounters 3, 6 and 9). Checkpoints restore 45 health and 25 special energy. Clearing an era restores health. Best scores are saved locally by difficulty and player count. Co-op requires both players to use the same browser; touch controls Player 1.
 
@@ -75,4 +75,22 @@ Encounter release eases the horizontal camera toward its follow position, capped
 
 Fighters arrive from outside the screen in a staggered sequence: basic fighters leap in with an extended kick, guards charge, fast enemies flip, ranged fighters vault, and flyers swoop. Bosses have heavier themed arrivals: mech stomp, crab scuttle, fossil bound, spectral descent, locomotive charge, and rift materialization. Entrances count toward the six-enemy limit, pause with the game, and remain harmless/protected until landing, followed by a short attack recovery.
 
-The six-era trap proposal is in `docs/slop-in-time-trap-proposal.html` at the source repository root. It is a review artifact only: trap replacement is awaiting user approval. Run `tools/cdp-drivers/slop-in-time-entrance-qa.js` for actual entrance and camera-release browser checks.
+The six-era trap proposal is in `docs/slop-in-time-trap-proposal.html` at the source repository root. The approved design is implemented sparsely: three sites per era, never the reserve ideas. Run `tools/cdp-drivers/slop-in-time-entrance-qa.js` for actual entrance and camera-release browser checks.
+
+
+## Sparse themed traps
+
+There are exactly three hazard sites per era (after the opening encounters), spaced more than 1,700 world pixels apart. Each uses the upper lane and leaves at least 72 pixels clear below. Two themed types alternate across the three sites; difficulty does not add traps. Enemy entrance landings avoid the danger lane.
+
+| Era | Hazards | Interactive scenery |
+| --- | --- | --- |
+| City | Wall-fed steam grate, live cabinet/cable/puddle | Hydrant, cutoff, rolling scooter |
+| Pirate | Mounted cannon, crane-supported cargo sling | Guided powder barrel, capstan/net release |
+| Jungle | Cracked-cliff rockfall, mineral geyser | Rolling log, slab to plug the vent |
+| Temple | Guardian dart slots/pressure tiles, chained gate | Shrine bell, gate winch |
+| West | Cart on rails, connected boiler outlet | Cart brake, cooling valve |
+| Future | Gantry press, paired reactor nodes | Six-second pause console, battery canister |
+
+Cycles start quietly when approached, with at least a full second of warning. Dart tiles require grounded contact. All hazards have a clear bypass; ordinary enemies can also be caught by them. Most controls disable their linked trap for the current stage visit. The press console becomes reusable after six seconds and restarts with a fresh warning cycle. Controls activate with Attack; guided objects travel to their linked mechanism. Two manholes remain per era. The old shared wrecking balls and generic crushers are no longer placed or drawn.
+
+`tools/cdp-drivers/slop-in-time-traps-qa.js` checks all twelve hazard appearances, all linked controls, clear bypass lanes and the three-site limit in the browser.

@@ -13,7 +13,7 @@
   const enemyKinds=['grunt','guard','swift','thrower','flyer'];
   const rosters=[['Street punk','Riot shield','Volt runner','Arc skater','Shock drone'],['Deckhand','Shell guard','Boarding raider','Powder gunner','Powder parrot'],['Raptor','Armored saurian','Leaping hunter','Venom spitter','Pterodactyl'],['Shinobi','Iron guard','Shadow jumper','Shuriken adept','Tengu'],['Outlaw','Boiler guard','Dynamite runner','Gunslinger','Steam gyrocopter'],['Sentinel','Aegis unit','Blink striker','Pulse lancer','Rift sentry']];
   function configure(stages){stages.forEach((s,i)=>{
-    s.weapons=pairs[i];s.enemies=enemyKinds.map((kind,n)=>({kind,name:rosters[i][n]}));s.flyer=rosters[i][4];s.trap=['steam','cannon','spikes','arrows','rail','laser'][i];
+    s.weapons=pairs[i];s.enemies=enemyKinds.map((kind,n)=>({kind,name:rosters[i][n]}));s.flyer=rosters[i][4];s.traps=[['steam','puddle'],['cannon','cargo'],['rockfall','geyser'],['darts','gate'],['cart','boiler'],['press','arc']][i];s.trap=s.traps[0];
     const plans=[[1,4],[2,6],[1,3,6],[0,4,7],[2,5],[1,5,7]][i];let offset=0;
     s.turns=plans.map((gate,n)=>{const drop=[150,190,130,170,145,160][i]*(n%2? .8:1),t={x:s.encounters[gate]+350,end:s.encounters[gate+1]-345,drop,offset};offset+=drop;return t;});s.depth=offset;
   });}
@@ -21,6 +21,6 @@
   function bounds(stage,x){const offset=floor(stage,x);return {min:335+offset,max:487+offset};}
   function walkable(stage,x,y){const b=bounds(stage,x);return y>=b.min&&y<=b.max;}
   function nextTurn(stage,p){return stage.turns.find(t=>p.x<t.end&&p.x>t.x-100);}
-  function trapArea(t,time){return {x:t.x+(t.kind==='rail'?(time*440)%200-100:t.kind==='pendulum'?Math.sin(time*2)*55:0),rx:t.kind==='rail'?24:t.kind==='pendulum'?26:t.kind==='crusher'?43:38,ry:['arrows','laser'].includes(t.kind)?125:30};}
+  function trapArea(t){const u=Math.max(0,Math.min(1,((t.clock||0)-3.3)/1.2)),moving=['cannon','cart','darts'].includes(t.kind);return {x:t.x+(moving?-70+u*140:t.kind==='cargo'?Math.sin(u*Math.PI*2)*40:0),rx:moving?22:t.kind==='cargo'?29:['puddle','arc'].includes(t.kind)?70:45,ry:27,height:['steam','boiler','geyser','rockfall','cargo','gate','press'].includes(t.kind)?200:40};}
   const api={trapArea,weapons,foods,enemyKinds,configure,bounds,floor,walkable,nextTurn};root.SlopTimeContent=api;if(typeof module!=='undefined')module.exports=api;
 })(typeof window!=='undefined'?window:globalThis);

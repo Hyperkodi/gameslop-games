@@ -44,7 +44,15 @@
       const spawnX=startGate?center()-360:130;
       state.players.forEach((p,i)=>{p.x=spawnX+i*65;p.y=416+i*35+ground(p.x);});state.camera=Math.max(0,spawnX-130);state.cameraY=ground(spawnX);
       for(let i=0;i<Math.floor(state.width/370);i++){const x=350+i*370;if(x<spawnX)continue;const kind=i%3===0?'food':i%3===1?'weapon':'energy';state.pickups.push({x,y:355+(i%3)*55+ground(x),kind,food:Object.keys(Content.foods)[Math.floor(i/3)%4],weapon:stage().weapons[Math.floor(i/3)%2]});}
-      for(let i=0;i<9;i++){const x=720+i*(state.width-1700)/9;if(x<spawnX)continue;const y=420+ground(x);const kind=i===1||i===6?'lid':i%3===0?'barrel':i%3===1?'gong':'switch';state.props.push({id:nextId++,x,y,hp:kind==='lid'?1:24,kind,open:false});state.traps.push({x:x+180,y:365+ground(x+180),kind:i%3===0?'pendulum':i%3===1?'crusher':stage().trap,phase:i*.7,active:false,warning:false});}
+      // Three widely spaced sites. All sit in the upper lane on flat ground.
+      const controls={steam:'hydrant',puddle:'cutoff',cannon:'powder',cargo:'capstan',geyser:'slab',gate:'winch',cart:'brake',boiler:'valve',press:'console',arc:'battery'};
+      for(const [i,gate] of [2,5,8].entries()){const x=stage().encounters[gate]-120;if(x<spawnX)continue;const kind=stage().traps[i%2],id=nextId++;
+        state.traps.push({id,x,y:367+ground(x),kind,clock:0,active:false,warning:false,disabled:false});
+        if(controls[kind])state.props.push({id:nextId++,x:x-135,y:425+ground(x-135),hp:24,kind:controls[kind],target:id});
+      }
+      const extra=['scooter',null,'log','bell',null,null][index],extraX=stage().encounters[4]-80;
+      if(extra&&extraX>=spawnX)state.props.push({id:nextId++,x:extraX,y:425+ground(extraX),kind:extra,hp:24});
+      for(const gate of [3,7]){const x=stage().encounters[gate]+40;if(x>=spawnX)state.props.push({id:nextId++,x,y:445+ground(x),hp:1,kind:'lid',open:false});}
       const heartX=stage().encounters[5]-170;
       if(state.players.some(p=>!p.upgrades.includes(index)))state.pickups.push({x:Math.max(spawnX+120,heartX),y:411+ground(Math.max(spawnX+120,heartX)),kind:'heart'});
       emit('stage',{stage:index});
@@ -69,7 +77,7 @@
     function enter(e,index){
       const side=e.boss?1:(index+state.gate+state.wave)%3===2?-1:1;
       const style=e.boss?['stomp','scuttle','bound','descend','charge','rift'][state.stage]:{grunt:'kick',guard:'charge',swift:'flip',thrower:'vault',flyer:'swoop'}[e.kind];
-      const x=side<0?state.camera+210+(index%2)*80:e.x,y=clamp(e.y,bounds(x).min,Math.min(bounds(x).max,state.cameraY+475));
+      const x=side<0?state.camera+210+(index%2)*80:e.x;let y=clamp(e.y,bounds(x).min,Math.min(bounds(x).max,state.cameraY+475));for(const t of state.traps)if(Math.abs(x-t.x)<210&&Math.abs(y-t.y)<75)y=Math.min(bounds(x).max,state.cameraY+475,t.y+95);
       const fixed=['descend','rift'].includes(style),startX=fixed?x:state.camera+(side<0?-140:1100);
       e.entrance={style,side,age:0,delay:.15+index*.18,duration:e.boss?1.65:e.kind==='guard'?1.15:1.05,startX,landX:x,landY:y,progress:0};
       e.x=startX;e.y=y;e.z=0;e.face=-side;
@@ -119,6 +127,14 @@
       if(p.hp<=0){p.hp=0;p.lives--;p.dead=1.4;p.airKick=false;p.held={};p.queued={};p.weapon=null;p.weaponHits=0;emit('death');}
       return true;
     }
+    function activateProp(prop,p){
+      const target=state.traps.find(t=>t.id===prop.target),rolling=['barrel','scooter','log','powder','battery','slab'].includes(prop.kind);
+      if(rolling){const guided=target&&['powder','battery','slab'].includes(prop.kind);state.missiles.push({x:prop.x,y:prop.y,z:20,vx:guided?240:p.face*360,life:2.8,hits:[],kind:prop.kind,target:guided?target.id:null});return;}
+      if(['gong','bell','capstan'].includes(prop.kind)){for(const e of state.enemies)if(!e.boss&&!e.entrance&&Math.abs(e.x-(target?.x||prop.x))<260){e.stun=2;e.windup=0;e.attack=null;}fx('ring',target?.x||prop.x,target?.y||prop.y,{life:1,max:1});}
+      if(target){target.disabled=true;target.active=false;target.warning=false;target.clock=0;if(prop.kind==='console'){target.resume=6;prop.reset=6;}if(prop.kind==='capstan'){target.released=1;for(const e of state.enemies)if(!e.boss&&Math.abs(e.x-target.x)<90&&Math.abs(e.y-target.y)<45)hitEnemy(e,30,p.face,220);}fx('word',prop.x,prop.y-90,{text:prop.kind==='console'?'PAUSED 6s':prop.kind==='capstan'?'NET RELEASED':'SAFE'});}
+      else if(prop.kind==='switch'){for(const t of state.traps)if(Math.abs(t.x-prop.x)<300)t.disabled=true;}
+      else if(!['gong','bell'].includes(prop.kind))state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});
+    }
     function strike(p,a){
       a.struck=true;
       if(a.kind==='propThrow'){state.missiles.push({x:p.x+p.face*28,y:p.y,z:48,vx:p.face*580,life:1.35,hits:[],kind:'lid'});emit('throw');return;}
@@ -127,7 +143,7 @@
         if(e.kind==='guard'&&e.face===-p.face&&a.kind!=='kick'&&a.step!==3&&!weapon){fx('word',e.x,e.y-e.z-115,{text:'BLOCK',life:.35,max:.35});emit('block');continue;}
         hitEnemy(e,damage,p.face,a.step===3||a.kind==='kick'?280:65);p.energy=clamp(p.energy+5,0,100);
       }
-      for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;if(prop.kind==='barrel')state.missiles.push({x:prop.x,y:prop.y,z:20,vx:p.face*360,life:2.2,hits:[],kind:'barrel'});else if(prop.kind==='gong'){for(const e of state.enemies)if(!e.boss&&!e.entrance&&Math.abs(e.x-prop.x)<280){e.stun=2;e.windup=0;e.attack=null;}fx('ring',prop.x,prop.y-45,{life:1,max:1});}else if(prop.kind==='switch'){for(const t of state.traps)if(Math.abs(t.x-prop.x)<300)t.disabled=true;fx('word',prop.x,prop.y-90,{text:'TRAPS OFF'});}else state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});}}
+      for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;activateProp(prop,p);}}
       if(p.weapon&&--p.weaponHits<=0)p.weapon=null;
     }
     function attack(p){
@@ -202,14 +218,23 @@
     }
     function sceneryTick(dt){
 
-      for(const t of state.traps){if(t.disabled){t.warning=false;t.active=false;continue;}const phase=(state.time+t.phase)%4.5;t.warning=phase>2.3&&phase<3.2;t.active=phase>=3.2&&phase<4.1;
-        if(!t.active){t.hits=[];continue;}
-        const area=Content.trapArea(t,state.time),{x,rx,ry}=area;
-        for(const p of state.players)if(Math.abs(p.x-x)<rx&&Math.abs(p.y-t.y)<ry&&p.z<(['steam','crusher','pendulum'].includes(t.kind)?190:40))hurtPlayer(p,16,Math.sign(p.x-t.x)||1);
-        for(const e of state.enemies)if(!e.boss&&!e.entrance&&e.hp>0&&e.z<40&&!t.hits?.includes(e.id)&&Math.abs(e.x-x)<rx&&Math.abs(e.y-t.y)<ry){(t.hits||=[]).push(e.id);hitEnemy(e,25,1,220);}
+      for(const prop of state.props)if(prop.reset>0){prop.reset-=dt;if(prop.reset<=0)prop.hp=24;}
+      for(const t of state.traps){
+        if(t.released>0)t.released=Math.max(0,t.released-dt);
+        if(t.resume>0){t.resume-=dt;if(t.resume<=0){t.disabled=false;t.clock=0;}}
+        if(t.disabled){t.warning=false;t.active=false;continue;}
+        const nearby=state.players.some(p=>p.lives>0&&Math.abs(p.x-t.x)<480);
+        if(!nearby){t.clock=0;t.warning=false;t.active=false;t.hits=[];continue;}
+        if(t.kind==='darts'&&!t.clock){if(!state.players.concat(state.enemies).some(p=>!p.entrance&&p.hp>0&&p.z<10&&Math.abs(p.x-t.x)<65&&Math.abs(p.y-t.y)<28)){t.warning=false;t.active=false;continue;}t.clock=2.3-dt;}
+        const wasWarning=t.warning,wasActive=t.active;t.clock=(t.clock||0)+dt;if(t.clock>=6.2)t.clock=0;t.warning=t.clock>=2.3&&t.clock<3.3;t.active=t.clock>=3.3&&t.clock<4.5;
+        if(t.warning&&!wasWarning)emit('trapwarning');if(t.active&&!wasActive)emit(['steam','boiler','geyser'].includes(t.kind)?'trapsteam':'trapfire');
+        if(!t.active){t.hits=[];continue;}if(t.kind==='rockfall'&&t.clock<4.05)continue;
+        const {x,rx,ry,height}=Content.trapArea(t);
+        for(const p of state.players)if(Math.abs(p.x-x)<rx&&Math.abs(p.y-t.y)<ry&&p.z<height)hurtPlayer(p,16,Math.sign(p.x-t.x)||1);
+        for(const e of state.enemies)if(!e.boss&&!e.entrance&&e.hp>0&&e.z<height&&!t.hits?.includes(e.id)&&Math.abs(e.x-x)<rx&&Math.abs(e.y-t.y)<ry){(t.hits||=[]).push(e.id);hitEnemy(e,25,1,220);}
       }
       for(const prop of state.props)if(prop.kind==='lid'&&prop.open)for(const p of state.players)if(p.z<8&&Math.abs(p.x-prop.x)<21&&Math.abs(p.y-prop.y)<12&&p.action?.kind!=='propThrow'){if(hurtPlayer(p,14,p.face)){p.z=10;p.vz=230;fx('word',p.x,p.y-100,{text:'WATCH YOUR STEP!'});}}
-      for(const m of state.missiles){m.x+=m.vx*dt;m.life-=dt;for(const e of state.enemies)if(e.hp>0&&!e.entrance&&!m.hits.includes(e.id)&&Math.abs(m.x-e.x)<45&&Math.abs(m.y-e.y)<34&&Math.abs(e.z-m.z)<90){m.hits.push(e.id);hitEnemy(e,45,Math.sign(m.vx),360);}}
+      for(const m of state.missiles){const oldX=m.x,target=m.target==null?null:state.traps.find(t=>t.id===m.target);if(target){const dx=target.x-m.x,dy=target.y-m.y,d=Math.hypot(dx,dy);if(d<14){target.disabled=true;target.active=false;target.warning=false;target.clock=0;target.plugged=m.kind==='slab';m.life=0;fx('ring',target.x,target.y,{life:.5,max:.5});}else{m.vx=dx/d*240;m.y+=dy/d*240*dt;}}m.x+=m.vx*dt;if(!target)m.y+=ground(m.x)-ground(oldX);m.life-=dt;if(m.life<=0)continue;for(const e of state.enemies)if(e.hp>0&&!e.entrance&&!m.hits.includes(e.id)&&Math.abs(m.x-e.x)<45&&Math.abs(m.y-e.y)<34&&Math.abs(e.z-m.z)<90){m.hits.push(e.id);hitEnemy(e,45,Math.sign(m.vx),360);}}
       state.missiles=state.missiles.filter(m=>m.life>0&&Math.abs(m.x-state.camera)<1150);
     }
     function moveFlyer(e,target,dt){
