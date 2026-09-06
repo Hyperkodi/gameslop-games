@@ -34,15 +34,26 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden)window.Gold
 window.addEventListener('error',event=>parent.postMessage({type:'error',message:event.message},location.origin));
 window.addEventListener('unhandledrejection',event=>parent.postMessage({type:'error',message:String(event.reason)},location.origin));
 
-// The launcher validates and patches the selected game entirely in-browser.
-(() => {
-  const game=parent.GoldenEyePublic;
-  if(!game?.gameUrl)throw Error('Choose your GoldenEye game file from the launcher.');
-  window.EJS_gameUrl=game.gameUrl;
-  window.EJS_gameName='Gameslop GoldenEye Roster v1';
+// Verify the published Gameslop build before starting the core.
+(async () => {
+  const manifestResponse=await fetch('game-manifest.json',{cache:'no-store'});
+  if(!manifestResponse.ok)throw Error('Could not load the game. Return to the launcher and try again.');
+  const game=await manifestResponse.json();
+  if(game.schema!==1||game.size!==12582912||game.file!=='data/gameslop.z64'||!/^[a-f0-9]{64}$/.test(game.sha256))throw Error('Invalid game build. Reload this page and try again.');
+  const url=new URL(game.file,location.href);url.searchParams.set('build',game.sha256);
+  const response=await fetch(url);
+  if(!response.ok)throw Error('Could not download the game. Check your connection and try again.');
+  const bytes=await response.arrayBuffer();
+  const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),b=>b.toString(16).padStart(2,'0')).join('');
+  if(bytes.byteLength!==game.size||digest!==game.sha256)throw Error('The game download was incomplete. Return to the launcher and try again.');
+  window.EJS_gameUrl=URL.createObjectURL(new Blob([bytes],{type:'application/octet-stream'}));
+  window.EJS_CacheLimit=0;
   window.GoldenEyeLocal.build={mode:'roster',sha256:game.sha256};
   const loader=document.createElement('script');
   loader.src=window.EJS_pathtodata+'loader.js';
   loader.onerror=()=>parent.postMessage({type:'error',message:'Could not load the emulator. Check your connection and try again.'},location.origin);
   document.body.append(loader);
-})();
+})().catch(error=>{
+  document.getElementById('emulator').textContent=error.message;
+  parent.postMessage({type:'error',message:error.message},location.origin);
+});

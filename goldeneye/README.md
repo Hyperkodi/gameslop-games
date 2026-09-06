@@ -1,9 +1,8 @@
 # GoldenEye 64 / Gameslop browser player
 
-Static HTTPS player. Select an original GoldenEye 007 (USA) `.zip` or `.z64`.
-The browser validates its SHA-256, applies `gameslop.patch`, verifies the final
-hash, and passes a local Blob URL to EmulatorJS. No upload endpoint or game ROM
-is included. Selected bytes remain in memory until the page is closed/reloaded.
+Static HTTPS player. Press Play to start the Gameslop edition directly.
+The browser downloads the published game, verifies its size and SHA-256 from
+`game-manifest.json`, and passes the verified bytes to EmulatorJS.
 Saves use browser storage through EmulatorJS; export backups from its toolbar.
 
 Click the game to capture the mouse: mouse aims, left-click fires, right-click
@@ -16,10 +15,10 @@ The runtime is EmulatorJS 4.2.3, loaded from its versioned CDN. See
 `credits.html` for source and license links. A network connection is needed.
 
 From the repository root, `python tools/build-goldeneye-public.py` packages
-the current verified local build. It copies only the allowlisted browser shell
-and original Gameslop artwork, then builds a sorted changed-byte delta. It
-never copies the source ROM, runtime downloads, private QA files or build logs.
-The local game's `build-manifest.json` pins both source and target hashes.
+the current verified local build. It copies the browser shell, Gameslop artwork,
+and the finished game to `data/gameslop.z64`. The unmodified source game,
+runtime downloads, private QA files and build logs are not included.
+The local game's `build-manifest.json` pins the exact published build.
 
 Deploy `games/goldeneye/` to the `goldeneye/` path of the existing Pages mirror.
 Test with `node --test tools/goldeneye-public.test.cjs tools/goldeneye-mouse.test.cjs`.

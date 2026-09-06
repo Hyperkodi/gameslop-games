@@ -11,12 +11,11 @@ $('mouse-sensitivity').addEventListener('input',event=>{
 });
 function status(text){$('status').textContent=text;}
 $('play').addEventListener('click',()=>{
-  if(!window.GoldenEyePublic?.gameUrl)return;
   $('mouse-tools').hidden=true;
   $('launcher').hidden=true;$('game').hidden=false;status('Starting GoldenEye 64…');
   const options=new URLSearchParams();const query=new URLSearchParams(location.search);
   if(query.get('core')==='parallel')options.set('core','parallel');
-  frame=document.createElement('iframe');frame.title='GoldenEye 64 local game';frame.allow='autoplay; fullscreen; gamepad';frame.src='engine.html'+(options.size?'?'+options:'');$('viewport').replaceChildren(frame);
+  frame=document.createElement('iframe');frame.title='GoldenEye 64 game';frame.allow='autoplay; fullscreen; gamepad';frame.src='engine.html'+(options.size?'?'+options:'');$('viewport').replaceChildren(frame);
 });
 $('fullscreen').addEventListener('click',async()=>{
   try{if(document.fullscreenElement)await document.exitFullscreen();else await $('game').requestFullscreen();frame?.contentWindow.focus();}catch{status('Fullscreen is unavailable in this browser.');}
