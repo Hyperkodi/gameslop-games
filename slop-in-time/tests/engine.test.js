@@ -19,11 +19,33 @@ test('enemy windup is visible before damage, and a jump dodges a ground strike',
 test('taking damage respawns locally, exhausted lives lead to gameover, continues are limited',()=>{const {e,p,foe}=arena();p.lives=1;p.hp=1;p.invincible=0;foe.x=p.x+45;foe.cooldown=0;tick(e,125);assert.equal(e.state.status,'gameover');assert.equal(p.lives,0);e.continueRun();assert.equal(e.state.status,'playing');assert.equal(e.state.continues,1);assert.equal(p.hp,100);e.state.status='gameover';e.continueRun();e.state.status='gameover';e.continueRun();assert.equal(e.state.status,'gameover');assert.equal(e.state.continues,0);});
 test('pause clears pending input and freezes all combat state',()=>{const {e,p}=arena();e.input(0,'jump',true);e.pause();const before=JSON.stringify(e.state);tick(e,50);assert.equal(JSON.stringify(e.state),before);e.pause();tick(e,1);assert.equal(p.z,0);});
 test('one co-op player can be out while the other continues fighting',()=>{const {e,p}=arena({players:2});p.lives=0;p.dead=0;tick(e,1);assert.equal(e.state.status,'playing');assert.equal(e.state.players[1].hp,100);});
-test('all twenty-four encounters and six bosses advance to a victory ending',()=>{const e=createEngine();e.start();let bosses=0;for(let stage=0;stage<6;stage++){assert.equal(e.state.stage,stage);for(let gate=0;gate<4;gate++){e.state.players[0].x=480+gate*700-300;e.tick();assert.equal(e.state.arena,true);bosses+=e.state.enemies.filter(x=>x.boss).length;e.state.enemies.forEach(x=>{x.hp=0;x.dead=0;});e.tick();assert.equal(e.state.gate,gate+1);}assert.equal(e.state.status,'clear');e.advance();}assert.equal(bosses,6);assert.equal(e.state.status,'victory');});
-test('all six eras can be fought to victory with real inputs and finite player health',()=>{const e=createEngine({seed:5});e.start({difficulty:'normal'});for(let i=0;i<180000&&!['gameover','victory'].includes(e.state.status);i++){
+test('sixty encounters, eighteen ambushes and six bosses advance to victory',()=>{const e=createEngine();e.start();let bosses=0,ambushes=0;for(let stage=0;stage<6;stage++){assert.equal(e.state.stage,stage);for(let gate=0;gate<stages[stage].encounters.length;gate++){e.state.players[0].x=stages[stage].encounters[gate]-300;e.tick();assert.equal(e.state.arena,true);bosses+=e.state.enemies.filter(x=>x.boss).length;e.state.enemies.forEach(x=>{x.hp=0;x.dead=0;});e.tick();if(e.state.wave===1){ambushes++;e.state.enemies.forEach(x=>{x.hp=0;x.dead=0;});e.tick();}assert.equal(e.state.gate,gate+1);}assert.equal(e.state.status,'clear');e.advance();}assert.equal(bosses,6);assert.equal(ambushes,18);assert.equal(e.state.status,'victory');});
+test('all six eras can be fought to victory with real inputs and finite player health',()=>{const e=createEngine({seed:5});e.start({difficulty:'normal'});for(let i=0;i<300000&&!['gameover','victory'].includes(e.state.status);i++){
   if(e.state.status==='clear'){e.advance();continue;}
   const p=e.state.players[0],enemies=e.state.enemies.filter(x=>x.hp>0),target=enemies.sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
   const dx=target?target.x-p.x:100,dy=target?target.y-p.y:0;
   e.input(0,'right',dx>40||(!target));e.input(0,'left',dx< -40);e.input(0,'up',dy< -8);e.input(0,'down',dy>8);e.input(0,'attack',true);e.input(0,'jump',!!target&&i%70===0);e.input(0,'special',p.energy>=100&&!!target);e.tick();
 }assert.equal(e.state.status,'victory',JSON.stringify({status:e.state.status,gate:e.state.gate,player:e.state.players[0],enemies:e.state.enemies}));assert.ok(e.state.kills>=90);});
 test('identical seed and input sequence reproduce combat results',()=>{function run(){const e=createEngine({seed:7});e.start();for(let i=0;i<900;i++){e.input(0,'right',i<150);e.input(0,'attack',i>90);e.input(0,'jump',i%90===0);e.tick(STEP);}return {score:e.state.score,players:e.state.players,enemies:e.state.enemies,hash:e.hash()};}assert.deepEqual(run(),run());});
+
+test('every route exceeds Commando length with varied encounter spacing and seven landmarks',()=>{
+  for(const s of stages){assert.ok(s.width>6600);assert.equal(s.encounters.length,10);assert.equal(s.landmarks.length,7);assert.equal(new Set(s.landmarks).size,7);assert.ok(new Set(s.encounters.slice(1).map((x,i)=>x-s.encounters[i])).size>3);assert.ok(s.encounters.at(-1)+350<s.width);}
+});
+test('a continue resumes at the latest supply checkpoint with clean combat state',()=>{
+  const e=createEngine();e.start();const p=e.state.players[0];e.state.gate=2;p.x=stages[0].encounters[2]-300;e.tick();p.hp=30;
+  for(let i=0;i<2;i++){e.state.enemies=[];e.tick();}assert.equal(e.state.checkpoint,3);assert.equal(p.hp,75);
+  e.state.status='gameover';e.state.hazards=[{kind:'steam'}];e.continueRun();assert.equal(e.state.gate,3);assert.equal(e.state.hazards.length,0);assert.equal(p.hp,100);assert.ok(p.x>2000);assert.ok(e.state.camera>0);assert.ok(e.state.props.every(prop=>prop.x>=p.x));
+});
+function bossFixture(index){const e=createEngine();e.start();for(let i=0;i<index;i++){e.state.status='clear';e.advance();}e.state.gate=9;const p=e.state.players[0];p.x=stages[index].encounters[9]-300;p.invincible=100;e.tick();const boss=e.state.enemies.find(x=>x.boss);e.state.enemies=[boss];boss.superTimer=0;boss.cooldown=0;return {e,p,boss};}
+test('each boss telegraphs a distinct superpower that resolves even from across the arena',()=>{
+  const kinds=[];for(let stage=0;stage<6;stage++){const {e,p,boss}=bossFixture(stage);e.tick();assert.equal(boss.attack.kind,'super');assert.ok(boss.windup>=1);assert.equal(e.state.hazards.length,0);tick(e,67);assert.ok(e.state.hazards.length>=2);assert.ok(e.state.hazards.every(h=>h.delay>0));assert.equal(p.hp,100);kinds.push(e.state.hazards[0].kind);boss.hp=0;e.tick();assert.equal(e.state.hazards.length,0);}assert.equal(new Set(kinds).size,6);
+});
+test('red rage phase starts at thirty percent, persists and accelerates recovery',()=>{
+  const {e,boss}=bossFixture(0);boss.superTimer=100;boss.cooldown=2;boss.hp=boss.maxHp*.31;e.tick();assert.equal(boss.enraged,false);boss.hp=boss.maxHp*.3;e.tick();assert.equal(boss.enraged,true);assert.ok(boss.superTimer<=1);assert.equal(e.drainEvents().filter(x=>x.type==='enrage').length,1);const before=boss.cooldown;e.tick();assert.ok(before-boss.cooldown>STEP);assert.equal(e.drainEvents().filter(x=>x.type==='enrage').length,0);
+});
+test('superpower damage respects warnings, depth, jumping and player invulnerability',()=>{
+  for(const stage of [0,1,2,3,4,5]){const {e,p,boss}=bossFixture(stage);e.tick();tick(e,67);boss.cooldown=100;boss.windup=0;boss.attack=null;boss.superTimer=100;
+    const h=e.state.hazards[0];e.state.hazards=[h];h.delay=0;h.vx=0;if(h.kind==='time'){p.x=h.x+29;p.y=h.y;}else{p.x=h.x;p.y=h.y;}p.invincible=0;p.z=0;e.tick();assert.ok(p.hp<100,'damage '+h.kind);const hp=p.hp;e.tick();assert.equal(p.hp,hp,'invulnerability '+h.kind);
+  }
+  const {e,p,boss}=bossFixture(2);e.tick();tick(e,67);boss.cooldown=100;const h=e.state.hazards[0];e.state.hazards=[h];h.delay=0;h.vx=0;p.x=h.x;p.y=h.y;p.invincible=0;p.z=70;p.vz=0;e.tick();assert.equal(p.hp,100,'jump dodges quake');
+});
