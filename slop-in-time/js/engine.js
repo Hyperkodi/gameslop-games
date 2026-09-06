@@ -66,13 +66,32 @@
       const hp=Math.round((boss?440+state.stage*55:kind==='guard'?52:kind==='thrower'?30:kind==='swift'?32:37)*(boss?1:.75+rng()*.5)*rules().health*(boss&&state.players.length===2?1.6:1));
       const e={id:nextId++,kind,boss,x,y,z:kind==='flyer'?82:0,hp,maxHp:hp,face:-1,cooldown:.65+rng()*.7,stun:0,down:0,windup:0,attack:null,vx:0,thrown:0,throwHits:[],phase:0,walk:0,dead:0,enraged:false,superTimer:4,defend:0,decision:1+rng()*2,jumpTimer:1.5+rng()*2,vz:0};state.enemies.push(e);return e;
     }
+    function enter(e,index){
+      const side=e.boss?1:(index+state.gate+state.wave)%3===2?-1:1;
+      const style=e.boss?['stomp','scuttle','bound','descend','charge','rift'][state.stage]:{grunt:'kick',guard:'charge',swift:'flip',thrower:'vault',flyer:'swoop'}[e.kind];
+      const x=side<0?state.camera+210+(index%2)*80:e.x,y=clamp(e.y,bounds(x).min,Math.min(bounds(x).max,state.cameraY+475));
+      const fixed=['descend','rift'].includes(style),startX=fixed?x:state.camera+(side<0?-140:1100);
+      e.entrance={style,side,age:0,delay:.15+index*.18,duration:e.boss?1.65:e.kind==='guard'?1.15:1.05,startX,landX:x,landY:y,progress:0};
+      e.x=startX;e.y=y;e.z=0;e.face=-side;
+    }
+    function enterTick(e,dt){
+      const a=e.entrance;a.age+=dt;if(a.age<a.delay)return;
+      const u=clamp((a.age-a.delay)/a.duration,0,1),ease=1-(1-u)**2;a.progress=u;
+      e.x=a.startX+(a.landX-a.startX)*ease;e.y=a.landY+ground(e.x)-ground(a.landX);
+      const peak={kick:115,flip:155,vault:125,bound:85,stomp:30,swoop:150}[a.style]||0;
+      e.z=a.style==='descend'?260*(1-ease):a.style==='swoop'?82+peak*(1-ease):Math.sin(u*Math.PI)*peak;
+      e.walk+=dt*16;
+      if(!a.announced){a.announced=true;emit('arrival');}
+      if(['charge','scuttle'].includes(a.style)&&Math.floor(u*12)>Math.floor((u-dt/a.duration)*12))fx('dust',e.x,e.y,{life:.3,max:.3});
+      if(u===1){e.x=a.landX;e.y=a.landY;e.z=e.kind==='flyer'?82:0;e.entrance=null;e.cooldown=.8;e.jumpTimer=1.5;fx(e.kind==='flyer'?'ring':'dust',e.x,e.y,{life:.4,max:.4,color:stage().color});if(e.boss){state.shake=5;emit('slam');}else emit('land');}
+    }
     function beginArena(reinforcement=false){
       if(!reinforcement){state.arena=true;state.wave=0;state.waveCount=lastGate()?1:1+Number(rng()<.48)+Number(state.difficulty==='hard'&&rng()<.25);}
       state.waveDelay=0;const at=center(),hard=state.difficulty==='hard',easy=state.difficulty==='easy';
       const count=lastGate()?1:Math.min(6,(easy?2:hard?3:2)+Math.floor(rng()*(hard?4:3))+(state.players.length-1));
       const weights=easy?[55,14,14,10,7]:hard?[20,20,22,23,15]:[36,18,19,17,10];
-      for(let i=0;i<count;i++){let roll=rng()*100,n=0;while(n<4&&roll>=weights[n])roll-=weights[n++];const x=clamp(at+70+(i%3)*90,state.camera+60,state.camera+880);spawn(Content.enemyKinds[n],x,355+(i%4)*36+ground(x));}
-      if(lastGate())spawn('boss',clamp(at+200,state.camera+80,state.camera+850),419+ground(at+200),true);
+      for(let i=0;i<count;i++){let roll=rng()*100,n=0;while(n<4&&roll>=weights[n])roll-=weights[n++];const x=clamp(at+70+(i%3)*90,state.camera+60,state.camera+880);enter(spawn(Content.enemyKinds[n],x,355+(i%4)*36+ground(x)),i);}
+      if(lastGate())enter(spawn('boss',clamp(at+200,state.camera+80,state.camera+850),419+ground(at+200),true),count);
       emit('arena');
     }
     function endBoss(e){
@@ -85,7 +104,7 @@
       if(end.age>=4.3){state.status='clear';state.arena=false;state.gate=stage().encounters.length;release();emit('clear');}
     }
     function hitEnemy(e,damage,face,force=80){
-      if(e.hp<=0)return;const actual=Math.min(e.hp,damage);e.hp-=damage;
+      if(e.hp<=0||e.entrance)return;const actual=Math.min(e.hp,damage);e.hp-=damage;
       // Boss windups are armored: repeated punches cannot lock them out of
       // their attacks. Their visible warnings must still be dodged.
       if(!e.boss){e.windup=0;e.attack=null;e.stun=.4;}else e.stun=0;
@@ -104,17 +123,17 @@
       a.struck=true;
       if(a.kind==='propThrow'){state.missiles.push({x:p.x+p.face*28,y:p.y,z:48,vx:p.face*580,life:1.35,hits:[],kind:'lid'});emit('throw');return;}
       const weapon=p.weapon&&Content.weapons[p.weapon],reach=weapon?weapon.reach:a.kind==='kick'?103:a.step===3?98:84,damage=weapon?weapon.damage:a.kind==='kick'?22:a.step===3?20:12;
-      for(const e of state.enemies){if(e.hp<=0||e.down>.3||Math.abs(e.y-p.y)>33||p.z>e.z+110||e.z>p.z+65)continue;const dx=(e.x-p.x)*p.face;if(dx<-18||dx>reach)continue;
+      for(const e of state.enemies){if(e.hp<=0||e.entrance||e.down>.3||Math.abs(e.y-p.y)>33||p.z>e.z+110||e.z>p.z+65)continue;const dx=(e.x-p.x)*p.face;if(dx<-18||dx>reach)continue;
         if(e.kind==='guard'&&e.face===-p.face&&a.kind!=='kick'&&a.step!==3&&!weapon){fx('word',e.x,e.y-e.z-115,{text:'BLOCK',life:.35,max:.35});emit('block');continue;}
         hitEnemy(e,damage,p.face,a.step===3||a.kind==='kick'?280:65);p.energy=clamp(p.energy+5,0,100);
       }
-      for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;if(prop.kind==='barrel')state.missiles.push({x:prop.x,y:prop.y,z:20,vx:p.face*360,life:2.2,hits:[],kind:'barrel'});else if(prop.kind==='gong'){for(const e of state.enemies)if(!e.boss&&Math.abs(e.x-prop.x)<280){e.stun=2;e.windup=0;e.attack=null;}fx('ring',prop.x,prop.y-45,{life:1,max:1});}else if(prop.kind==='switch'){for(const t of state.traps)if(Math.abs(t.x-prop.x)<300)t.disabled=true;fx('word',prop.x,prop.y-90,{text:'TRAPS OFF'});}else state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});}}
+      for(const prop of state.props){if(prop.kind==='lid'||prop.hp<=0||Math.abs(prop.y-p.y)>38||(prop.x-p.x)*p.face<-15||(prop.x-p.x)*p.face>reach)continue;prop.hp-=damage;fx('debris',prop.x,prop.y-25,{color:'#dfac73'});emit('break');if(prop.hp<=0){state.score+=50;if(prop.kind==='barrel')state.missiles.push({x:prop.x,y:prop.y,z:20,vx:p.face*360,life:2.2,hits:[],kind:'barrel'});else if(prop.kind==='gong'){for(const e of state.enemies)if(!e.boss&&!e.entrance&&Math.abs(e.x-prop.x)<280){e.stun=2;e.windup=0;e.attack=null;}fx('ring',prop.x,prop.y-45,{life:1,max:1});}else if(prop.kind==='switch'){for(const t of state.traps)if(Math.abs(t.x-prop.x)<300)t.disabled=true;fx('word',prop.x,prop.y-90,{text:'TRAPS OFF'});}else state.pickups.push({x:prop.x,y:prop.y,kind:prop.kind});}}
       if(p.weapon&&--p.weaponHits<=0)p.weapon=null;
     }
     function attack(p){
       const lid=state.props.find(prop=>prop.kind==='lid'&&!prop.open&&Math.abs(prop.x-p.x)<52&&Math.abs(prop.y-p.y)<30);
       if(lid&&p.z===0){lid.open=true;lid.hp=0;p.action={kind:'propThrow',age:0,duration:.5,struck:false,step:3};p.cooldown=.5;return;}
-      const target=state.enemies.find(e=>!e.boss&&e.kind!=='flyer'&&e.hp>0&&e.down<=0&&Math.abs(e.y-p.y)<25&&(e.x-p.x)*p.face>-8&&(e.x-p.x)*p.face<45&&(e.stun>0||e.hp<e.maxHp*.5));
+      const target=state.enemies.find(e=>!e.boss&&!e.entrance&&e.kind!=='flyer'&&e.hp>0&&e.down<=0&&Math.abs(e.y-p.y)<25&&(e.x-p.x)*p.face>-8&&(e.x-p.x)*p.face<45&&(e.stun>0||e.hp<e.maxHp*.5));
       if(target&&p.z===0){
         p.action={kind:'throw',age:0,duration:.46,struck:true,step:3};p.cooldown=.5;target.thrown=.55;target.throwHits=[];target.stun=.8;hitEnemy(target,23,p.face,530);p.energy=clamp(p.energy+10,0,100);fx('word',p.x,p.y-100,{text:'THROW!',life:.7,max:.7});emit('throw');return;
       }
@@ -124,7 +143,7 @@
     }
     function special(p){
       if(p.energy<100)return;p.energy=0;p.invincible=1;p.action={kind:'special',age:0,duration:.6,struck:true};p.cooldown=.65;state.flash=.22;state.shake=12;
-      state.shots=state.shots.filter(b=>Math.abs(b.x-p.x)>185);for(const e of state.enemies)if(Math.abs(e.x-p.x)<185&&Math.abs(e.y-p.y)<125)hitEnemy(e,42,p.face,420);
+      state.shots=state.shots.filter(b=>Math.abs(b.x-p.x)>185);for(const e of state.enemies)if(!e.entrance&&Math.abs(e.x-p.x)<185&&Math.abs(e.y-p.y)<125)hitEnemy(e,42,p.face,420);
       fx('special',p.x,p.y,{life:.75,max:.75,color:p.id?'#81e7fa':'#ffe6a0'});emit('special');
     }
     function movePlayer(p,dt){
@@ -138,7 +157,7 @@
       if((p.held.attack||p.queued.attack)&&p.cooldown===0&&p.hurt<=0)attack(p);
       p.queued={};
       const speed=p.hurt>0?0:p.action&&p.z===0?95:205;p.moving=!!(dx||dy);p.walk+=dt*(p.moving?12:2);
-      const boundary=Math.min(state.arena?state.camera+915:state.width-40,state.players.some(q=>q!==p&&q.lives>0)?state.camera+910:state.width-40);
+      const boundary=Math.min(state.camera+910,state.width-40);
       routeMove(p,clamp(p.x+dx*speed*norm*dt,state.camera+30,boundary)-p.x,dy*speed*.85*norm*dt);
       if(state.arena)p.y=clamp(p.y,Math.max(bounds(p.x).min,state.cameraY+180),Math.min(bounds(p.x).max,state.cameraY+487));
       const teammates=state.players.filter(q=>q!==p&&q.lives>0);if(teammates.length){const lo=Math.min(...teammates.map(q=>q.y))-300,hi=Math.max(...teammates.map(q=>q.y))+300;p.y=clamp(p.y,Math.max(bounds(p.x).min,lo),Math.min(bounds(p.x).max,hi));}
@@ -187,10 +206,10 @@
         if(!t.active){t.hits=[];continue;}
         const area=Content.trapArea(t,state.time),{x,rx,ry}=area;
         for(const p of state.players)if(Math.abs(p.x-x)<rx&&Math.abs(p.y-t.y)<ry&&p.z<(['steam','crusher','pendulum'].includes(t.kind)?190:40))hurtPlayer(p,16,Math.sign(p.x-t.x)||1);
-        for(const e of state.enemies)if(!e.boss&&e.hp>0&&e.z<40&&!t.hits?.includes(e.id)&&Math.abs(e.x-x)<rx&&Math.abs(e.y-t.y)<ry){(t.hits||=[]).push(e.id);hitEnemy(e,25,1,220);}
+        for(const e of state.enemies)if(!e.boss&&!e.entrance&&e.hp>0&&e.z<40&&!t.hits?.includes(e.id)&&Math.abs(e.x-x)<rx&&Math.abs(e.y-t.y)<ry){(t.hits||=[]).push(e.id);hitEnemy(e,25,1,220);}
       }
       for(const prop of state.props)if(prop.kind==='lid'&&prop.open)for(const p of state.players)if(p.z<8&&Math.abs(p.x-prop.x)<21&&Math.abs(p.y-prop.y)<12&&p.action?.kind!=='propThrow'){if(hurtPlayer(p,14,p.face)){p.z=10;p.vz=230;fx('word',p.x,p.y-100,{text:'WATCH YOUR STEP!'});}}
-      for(const m of state.missiles){m.x+=m.vx*dt;m.life-=dt;for(const e of state.enemies)if(e.hp>0&&!m.hits.includes(e.id)&&Math.abs(m.x-e.x)<45&&Math.abs(m.y-e.y)<34&&Math.abs(e.z-m.z)<90){m.hits.push(e.id);hitEnemy(e,45,Math.sign(m.vx),360);}}
+      for(const m of state.missiles){m.x+=m.vx*dt;m.life-=dt;for(const e of state.enemies)if(e.hp>0&&!e.entrance&&!m.hits.includes(e.id)&&Math.abs(m.x-e.x)<45&&Math.abs(m.y-e.y)<34&&Math.abs(e.z-m.z)<90){m.hits.push(e.id);hitEnemy(e,45,Math.sign(m.vx),360);}}
       state.missiles=state.missiles.filter(m=>m.life>0&&Math.abs(m.x-state.camera)<1150);
     }
     function moveFlyer(e,target,dt){
@@ -205,12 +224,13 @@
     }
     function moveEnemy(e,dt){
       if(e.hp<=0&&e.thrown<=0){e.dead=Math.max(0,e.dead-dt);return;}
+      if(e.entrance&&e.hp>0){enterTick(e,dt);return;}
       if(e.boss&&e.hp>0){
         if(!e.enraged&&e.hp/e.maxHp<=BOSS_RAGE){e.enraged=true;e.superTimer=Math.min(e.superTimer,1);state.shake=8;emit('enrage');fx('word',e.x,e.y-170,{text:'ENRAGED!',color:'#ff6655',life:1.2,max:1.2});}
         e.superTimer-=dt;
       }
       e.stun=Math.max(0,e.stun-dt);e.down=Math.max(0,e.down-dt);e.cooldown=Math.max(0,e.cooldown-dt*(e.enraged?1.3:1));e.walk+=dt*8;
-      if(e.thrown>0){e.thrown-=dt;for(const other of state.enemies)if(other!==e&&other.hp>0&&!e.throwHits.includes(other.id)&&Math.abs(other.x-e.x)<45&&Math.abs(other.y-e.y)<35){e.throwHits.push(other.id);hitEnemy(other,20,Math.sign(e.vx),280);}}
+      if(e.thrown>0){e.thrown-=dt;for(const other of state.enemies)if(other!==e&&other.hp>0&&!other.entrance&&!e.throwHits.includes(other.id)&&Math.abs(other.x-e.x)<45&&Math.abs(other.y-e.y)<35){e.throwHits.push(other.id);hitEnemy(other,20,Math.sign(e.vx),280);}}
       routeMove(e,clamp(e.x+e.vx*dt,state.camera+20,Math.min(state.width-30,center()+350))-e.x,0);e.vx*=Math.exp(-6*dt);
       if(e.hp<=0){e.dead=Math.max(0,e.dead-dt);return;}
       const alive=state.players.filter(p=>p.lives>0&&p.dead<=0);if(!alive.length)return;
@@ -245,7 +265,7 @@
       const speed=e.kind==='swift'?115:e.kind==='brute'?57:e.boss?(e.enraged?100:78):83;
       const laneOffset=(e.id%3-1)*13,moveY=dy+laneOffset;
       routeMove(e,Math.abs(dx)>range*.75?Math.sign(dx)*speed*dt:0,Math.abs(moveY)>5?Math.sign(moveY)*speed*.72*dt:0);
-      for(const other of state.enemies)if(other!==e&&other.hp>0&&Math.abs(other.x-e.x)<30&&Math.abs(other.y-e.y)<22)routeMove(e,0,(e.id>other.id?1:-1)*24*dt);
+      for(const other of state.enemies)if(other!==e&&other.hp>0&&!other.entrance&&Math.abs(other.x-e.x)<30&&Math.abs(other.y-e.y)<22)routeMove(e,0,(e.id>other.id?1:-1)*24*dt);
     }
     function tick(dt=STEP){
       if(state.status!=='playing')return;dt=Math.min(dt,.05);state.tick++;state.time+=dt;
@@ -261,9 +281,9 @@
       const alive=state.players.filter(p=>p.lives>0||p.dead>0);if(!alive.length){state.status='gameover';release();emit('gameover');return;}
       const standing=state.players.filter(p=>p.lives>0);if(!standing.length)return;
       const lead=Math.max(...standing.map(p=>p.x)),tail=Math.min(...standing.map(p=>p.x));
-      const cameraTarget=Math.min(lead-310,tail-45,state.width-960);if(!state.arena)state.camera=clamp(Math.max(state.camera,cameraTarget),0,state.width-960);
+      const cameraTarget=Math.min(lead-310,tail-45,state.width-960);if(!state.arena){const distance=Math.max(0,cameraTarget-state.camera);state.camera=clamp(state.camera+Math.min(distance*(1-Math.exp(-5*dt)),300*dt),0,state.width-960);}
       const cameraYTarget=clamp(ground((lead+tail)/2),0,stage().depth);if(!state.arena)state.cameraY+=clamp(cameraYTarget-state.cameraY,-dt*320,dt*320);
-      if(!state.arena&&state.gate<stage().encounters.length&&lead>center()-330)beginArena();
+      if(!state.arena&&state.gate<stage().encounters.length&&lead>center()-330&&state.camera>=Math.max(0,center()-660))beginArena();
       if(state.arena&&!state.enemies.some(e=>e.hp>0)){
         if(state.wave+1<state.waveCount){state.waveDelay+=dt;if(state.waveDelay>=1.1){state.wave++;beginArena(true);}return;}
         state.arena=false;state.wave=0;state.gate++;state.hazards=[];state.shots=[];state.players.forEach(p=>p.energy=clamp(p.energy+12,0,100));emit('gate');

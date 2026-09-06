@@ -67,3 +67,12 @@ The adventure update adds `js/content.js` for route geometry, weapons, foods, en
 Each era has five themed enemies: basic fighter, shield guard, fast jumper, jumping projectile specialist, and flyer. Easy weights are 55/14/14/10/7 percent, Normal 36/18/19/17/10, and Hard 20/20/22/23/15. Ground enemies sometimes retreat defensively, and ordinary attacks have longer recovery. Projectile appearances match their era: arc bolts, bombs, venom, shurikens, bullets and pulses.
 
 `tools/cdp-drivers/slop-in-time-revision-qa.js` captures all six diagonal routes, thirty enemy appearances, every food/cartridge/heart, interactive objects, cloud steam, and the boss explosion/fade/clear sequence. The existing mobile QA still covers all touch controls, rotation, co-op and browser fullscreen. No additional raster downloads are required: this revision reuses the stitched scene and character atlases with native Canvas pickup, trap and effect artwork.
+
+
+## Camera and entrance update
+
+Encounter release eases the horizontal camera toward its follow position, capped at 300 world pixels per second. Players remain inside the visible screen and the next encounter waits until its arena is in view. Player world positions are not recentered on release.
+
+Fighters arrive from outside the screen in a staggered sequence: basic fighters leap in with an extended kick, guards charge, fast enemies flip, ranged fighters vault, and flyers swoop. Bosses have heavier themed arrivals: mech stomp, crab scuttle, fossil bound, spectral descent, locomotive charge, and rift materialization. Entrances count toward the six-enemy limit, pause with the game, and remain harmless/protected until landing, followed by a short attack recovery.
+
+The six-era trap proposal is in `docs/slop-in-time-trap-proposal.html` at the source repository root. It is a review artifact only: trap replacement is awaiting user approval. Run `tools/cdp-drivers/slop-in-time-entrance-qa.js` for actual entrance and camera-release browser checks.
