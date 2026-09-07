@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 128" role="img" aria-label="Slopper">
+ <defs>
+  <linearGradient id="purple" x2="0" y2="1"><stop stop-color="#9a009e"/><stop offset=".5" stop-color="#b311b8"/><stop offset="1" stop-color="#85008f"/></linearGradient>
+  <linearGradient id="gold"><stop stop-color="#9c5f1c"/><stop offset=".42" stop-color="#efc959"/><stop offset=".7" stop-color="#fff3a1"/><stop offset="1" stop-color="#b18023"/></linearGradient>
+  <g id="letters" fill-rule="evenodd">
+   <path transform="translate(12 15) rotate(-4 34 48)" d="M67 3 65 26 27 23 26 38 63 44 68 57 66 90 54 98 0 94 2 71 44 75 44 61 8 55 1 44 3 12 17 1Z"/>
+   <path transform="translate(88 15) rotate(3 34 48)" d="M4 0 28 3 27 73 66 71 67 98 0 96Z"/>
+   <path transform="translate(166 15) rotate(-3 34 48)" d="M14 2 55 0 69 15 70 81 56 97 13 98 0 83 1 18ZM26 24 24 73 45 73 46 24Z"/>
+   <path transform="translate(245 15) rotate(4 34 48)" d="M1 0 51 2 68 17 66 53 49 67 25 65 25 98 1 96ZM26 23 25 44 43 44 45 24Z"/>
+   <path transform="translate(324 15) rotate(-3 34 48)" d="M1 0 51 2 68 17 66 53 49 67 25 65 25 98 1 96ZM26 23 25 44 43 44 45 24Z"/>
+   <path transform="translate(403 15) rotate(2 34 48)" d="M1 1 65 0 64 23 26 24 26 38 57 37 57 59 25 58 26 74 66 73 67 97 0 97Z"/>
+   <path transform="translate(481 15) rotate(-4 34 48)" d="M1 1 49 0 66 14 66 48 51 61 70 89 48 100 24 65 25 97 0 98ZM25 23 25 43 43 43 43 23Z"/>
+  </g>
+ </defs>
+ <use href="#letters" transform="translate(5 2)" fill="#946323" stroke="#b09042" stroke-width="5" stroke-linejoin="round"/>
+ <use href="#letters" fill="url(#purple)" stroke="url(#gold)" stroke-width="4" stroke-linejoin="round" paint-order="stroke fill"/>
+</svg>

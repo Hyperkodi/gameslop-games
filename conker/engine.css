@@ -1,4 +1,7 @@
 html,body,#emulator{margin:0;width:100%;height:100%;overflow:hidden;background:#000}
+.native-credit{position:fixed;width:calc(552 * var(--unit));height:calc(126 * var(--unit));transform:translate(-50%,-50%);background:#000;pointer-events:none;z-index:9}
+.native-credit[hidden]{display:none}
+.native-credit img{display:block;width:100%;height:100%;opacity:var(--letter-opacity,1);filter:blur(calc(.55 * var(--unit)))}
 .native-title{position:fixed;width:calc(320 * var(--unit));height:calc(136 * var(--unit));transform:translate(-50%,-50%) rotate(-9deg);pointer-events:none;z-index:10}
 .native-title[hidden]{display:none}
 .native-imprint{position:absolute;inset:0;display:grid;place-items:center;box-sizing:border-box;background:#efe5c7;color:#a52019;border:calc(4 * var(--unit)) solid #a52019;box-shadow:0 0 0 calc(3 * var(--unit)) #efe5c7;font:900 calc(67 * var(--unit))/1 Impact,'Arial Narrow',sans-serif;opacity:0}
