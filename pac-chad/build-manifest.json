@@ -1,6 +1,6 @@
 {
   "version": "pac-chad-campaign-v3",
-  "buildHash": "0de01c50b6748a0be1958275e63a9fbb38bb4d9e5a0a4e59b45427481159bc32",
+  "buildHash": "20f07e41d5677c8afb40d26c84bdb8083720c5d83abd079cfd697d0fc226f16f",
   "files": [
     {
       "path": "assets/chad-chomp.png",
@@ -11,6 +11,11 @@
       "path": "assets/chad.png",
       "bytes": 1951616,
       "sha256": "5326ceb595fa58a2446ddab070867410f91cb27c47b67d1d66a1bf69991dfde9"
+    },
+    {
+      "path": "assets/gameslop-wordmark.png",
+      "bytes": 107870,
+      "sha256": "5af5a94e88dd2af595b59668c28237d4db937bbea0fc564241cf6e98ea290ff0"
     },
     {
       "path": "assets/hex.png",
@@ -184,8 +189,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 9259,
-      "sha256": "08a84fd5854395ef51e9258ede7d5e4c179de7c41e785e30c14daf3788cb4dd3"
+      "bytes": 9276,
+      "sha256": "5e3a9db39693e59ba6fe6271d87ca83a7677512af3add5ef21e796f852001196"
     },
     {
       "path": "integration/gameslop-sdk.js",
@@ -194,8 +199,8 @@
     },
     {
       "path": "js/app.mjs",
-      "bytes": 15889,
-      "sha256": "7c9f841bc1eaf195332bb6ddfc7bd45ebb5211c46ce442a2be0b5e3bccbac670"
+      "bytes": 15894,
+      "sha256": "436b9ecabbb9dc9977ab854106641a6421105780e8f785778d9c1735bb36dc72"
     },
     {
       "path": "js/audio.mjs",
@@ -254,8 +259,8 @@
     },
     {
       "path": "style.css",
-      "bytes": 18030,
-      "sha256": "44abf92548dce5d99c49f6355bfe8d00ae86199bd895c42da0acdb9370502a24"
+      "bytes": 23454,
+      "sha256": "f85773d1fd47eca583635cfb7092c08091a2dd351300736d3e134e9eace72f6a"
     }
   ]
 }

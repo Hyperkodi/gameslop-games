@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#10110e">
-  <meta name="description" content="Pac-Chad. Big jaw. Bigger score. A Gameslop maze chase with combos, clever ghosts and ten levels to conquer.">
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="PAC-CHAD. Eat the Meek. High Testosterone, Higher Scores. Ten levels of Gameslop arcade action.">
   <title>Pac-Chad | Gameslop</title>
   <link rel="icon" href="assets/chad.png">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <header class="masthead"><a href="../" class="brand" aria-label="Gameslop arcade">GAME<span>SLOP</span><i>GOOD GAMES. ZERO PRETENSE.</i></a><span class="edition">ARCADE EXPERIMENT / 008</span><a href="#cast" class="text-link">MEET THE CHASERS ↗</a></header>
+<body class="gameslop-landing">
+  <header class="masthead"><a href="../" class="brand" aria-label="Gameslop arcade"><img src="assets/gameslop-wordmark.png" alt="Game Slop" width="400" height="269"></a><span class="edition">GAMESLOP ARCADE</span><a href="#cast" class="text-link">MEET THE CHASERS ↗</a></header>
   <main>
     <section class="intro" id="intro">
-      <div class="intro-copy"><p class="eyebrow"><span class="live-dot"></span> A GAMESLOP MAZE CHASE</p><h1>PAC<span>-CHAD</span><sup>™</sup></h1><p class="tagline">BIG JAW. BIGGER SCORE.</p><p class="description">Eat the maze. Outsmart the chase.<br>Ten mazes. One final chase. Clear them all.</p><div class="run-facts"><span><b>10</b> LEVELS</span><span><b>3</b> LIVES</span><span><b>5×</b> MAX COMBO</span></div></div>
+      <div class="intro-copy"><p class="eyebrow"><span class="live-dot"></span> A GAMESLOP MAZE CHASE</p><h1>PAC-CHAD</h1><p class="tagline">Eat the Meek</p><p class="description">High Testosterone, Higher Scores</p><div class="run-facts"><span><b>10</b> LEVELS</span><span><b>3</b> LIVES</span><span><b>5×</b> MAX COMBO</span></div></div>
       <div class="hero-art" aria-label="Gigachad's head pursued by the four colorful ghosts"><div class="hero-orbit"></div><span class="hero-label">THE FACE OF CONFIDENCE.</span><img class="hero-chad" src="assets/chad.png" alt="Gigachad: swept-back hair, black beard, square jaw and confident grin"><img class="hero-ghost g1" src="assets/rook.png" alt=""><img class="hero-ghost g2" src="assets/hex.png" alt=""><img class="hero-ghost g3" src="assets/ivy.png" alt=""><img class="hero-ghost g4" src="assets/riot.png" alt=""><span class="hero-score">+1600</span></div>
     </section>
     <section class="cabinet" id="cabinet" aria-label="Pac-Chad arcade cabinet">
       <div class="toolbar"><span class="stage-indicator"><b id="stage-number">01/10</b> <span id="stage-name">AFTERHOURS</span></span><div class="toolbar-actions"><button id="sound" aria-pressed="false">SOUND ON</button><button id="pause" disabled>PAUSE</button><button id="fullscreen">FULLSCREEN ↗</button></div></div>
       <div class="hud"><div><small>SCORE</small><strong id="score">000000</strong></div><div class="hud-combo"><small id="combo-label">KEEP EATING</small><strong id="combo">1×</strong><div class="meter"><i id="combo-meter"></i></div></div><div><small>TIME PLAYED</small><strong id="time">00:00</strong></div><div><small>LIVES</small><strong id="lives" aria-label="3 lives">♥ ♥ ♥</strong></div></div>
-      <div id="special-status" class="special-status"><img id="special-icon" src="assets/power-gym-pass.svg" alt="Gym membership card"><div><small id="special-state">LEVEL SPECIAL ? FIND IT IN THE MAZE</small><strong id="special-name">Gym Pass</strong><span id="special-description">Eat ghosts ? double ghost points</span></div><b id="special-time">5s</b><i id="special-meter"></i></div>
+      <div id="special-status" class="special-status"><img id="special-icon" src="assets/power-gym-pass.svg" alt="Gym membership card"><div><small id="special-state">LEVEL SPECIAL &middot; FIND IT IN THE MAZE</small><strong id="special-name">Gym Pass</strong><span id="special-description">Eat ghosts &middot; double ghost points</span></div><b id="special-time">5s</b><i id="special-meter"></i></div>
       <div class="play-space">
         <div class="viewport" id="viewport"><canvas id="game" tabindex="0" aria-label="Pac-Chad maze. Arrow keys or WASD move, Space uses your ability, P pauses."></canvas>
           <div class="start-panel overlay" id="start-panel"><div class="start-card"><p class="eyebrow">READY TO GET CHASED?</p><h2>CHOOSE YOUR EDGE.</h2><div class="ability-options" role="group" aria-label="Choose an ability"><button class="ability-choice selected" data-ability="dash" aria-pressed="true"><b>↯ DASH</b><span>Burst through trouble.<br>Briefly untouchable.</span></button><button class="ability-choice" data-ability="decoy" aria-pressed="false"><b>◈ DECOY</b><span>Send a fake Chad.<br>Let them chase him.</span></button></div><button id="start" class="primary" disabled>LOADING THE CAST…</button><p class="start-help">ARROWS / WASD TO MOVE · SPACE FOR ABILITY<br>ON MOBILE: SWIPE OR USE THE PAD</p><p id="platform-note" class="muted">Practice run · Personal best saved on this device</p></div></div>
@@ -40,7 +40,7 @@
       <article style="--cast:#62e8bd"><div class="portrait"><img src="assets/riot.png" alt="Riot, a feminine ghost with rainbow-colored space buns, a smooth chin and red cat-eye glasses"></div><div class="cast-copy"><small>04 / THE CHARGER</small><h3>RIOT</h3><p>Rainbow buns. Red frames.<br>See the warning? Leave that lane.</p></div></article>
     </div></section>
     <section class="records"><div><p class="eyebrow">YOUR NEXT SCORE TO BEAT.</p><h2>THE PERSONAL BEST BOARD.</h2><p>Best single runs on this device. Unlimited attempts.</p><p class="muted" id="online-board-note">X leaderboards and tournament rankings will live on Gameslop.</p></div><ol id="personal-board"><li>YOUR FIRST RUN GOES HERE.</li></ol></section>
-    <footer><a class="brand" href="../">GAME<span>SLOP</span></a><span>PAC-CHAD / BIG JAW. BIGGER SCORE.</span><a href="#intro">BACK TO TOP ↑</a></footer>
+    <footer><a class="brand" href="../"><img src="assets/gameslop-wordmark.png" alt="Game Slop arcade" width="400" height="269"></a><span>PAC-CHAD / Eat the Meek</span><a href="#intro">BACK TO TOP ↑</a></footer>
   </main>
   <script type="module" src="js/app.mjs"></script>
 </body>

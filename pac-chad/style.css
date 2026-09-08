@@ -11,3 +11,91 @@ button{touch-action:manipulation}
 @media(max-width:600px){.special-status{gap:7px;padding:5px 9px;min-height:65px}.special-status>img{width:45px;height:45px}.special-status strong{font-size:12px}.special-status small{font-size:8px;letter-spacing:0}.special-status span{font-size:10px}.special-status>b{font-size:16px}.powerup-grid{grid-template-columns:1fr}.powerup-grid article{padding:12px}.powerup-grid img{width:80px;height:80px}.powerup-grid h3{font-size:22px}}
 @media(max-height:550px) and (orientation:landscape){.special-status{min-height:43px;height:43px;padding:3px 12px}.special-status>img{width:36px;height:36px}.special-status>div{display:flex;align-items:center;gap:12px}.special-status small{display:none}.special-status strong{font-size:12px;max-width:220px}.special-status span{font-size:10px}.special-status>b{font-size:17px}.playing .powerup-guide{display:none}}
 @media(min-width:901px) and (min-height:551px){.viewport{height:clamp(540px,68vh,760px)}}
+
+/* Gameslop landing shell: official wordmark and gameslop.gg brand palette.
+   Maze themes and effect colors belong to the game renderer. */
+.gameslop-landing {
+  --slop-red: #fa170b;
+  --slop-cream: #f9eed2;
+  --slop-ink: #050505;
+  --slop-muted: #b7b0a6;
+  background: radial-gradient(ellipse at 84% 240px, #38100d80, transparent 560px), var(--slop-ink);
+  color: var(--slop-cream);
+}
+.gameslop-landing ::selection { background: var(--slop-red); color: #fff; }
+.gameslop-landing .masthead {
+  min-height: 96px;
+  padding: 8px 5%;
+  border-color: #ffffff26;
+  background: #050505ed;
+}
+.gameslop-landing .brand { display: inline-flex; align-items: center; flex-shrink: 0; }
+.gameslop-landing .brand img { display: block; width: 134px; height: 80px; object-fit: contain; }
+.gameslop-landing .edition,
+.gameslop-landing .text-link { font: 900 10px Arial, sans-serif; letter-spacing: 1.6px; }
+.gameslop-landing .edition { color: #b7b0a6; }
+.gameslop-landing .text-link { border-color: var(--slop-red); border-bottom-width: 2px; padding-block: 10px; }
+.gameslop-landing .intro { min-height: 480px; gap: 28px; padding-block: 40px; }
+.gameslop-landing .intro-copy { position: relative; z-index: 1; }
+.gameslop-landing .intro .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--slop-cream); font: 900 10px Arial, sans-serif; letter-spacing: 2px; }
+.gameslop-landing .intro .live-dot { width: 28px; height: 4px; border-radius: 0; margin: 0; background: var(--slop-red); box-shadow: none; }
+.gameslop-landing h1 {
+  margin: 25px 0 18px;
+  color: var(--slop-cream);
+  font-size: clamp(64px, 8.8vw, 126px);
+  letter-spacing: -3px;
+  line-height: .94;
+  text-shadow: 4px 4px 0 var(--slop-red);
+}
+.gameslop-landing .tagline { margin: 0; font: 36px/1.1 Impact, 'Arial Black', sans-serif; letter-spacing: .2px; color: var(--slop-red); }
+.gameslop-landing .description { margin: 16px 0 0; color: #eee4d2; font-size: clamp(15px, 1.4vw, 19px); line-height: 1.5; }
+.gameslop-landing .run-facts { gap: 36px; margin-top: 34px; color: var(--slop-muted); }
+.gameslop-landing .run-facts b { color: var(--slop-cream); }
+.gameslop-landing .hero-art { background: radial-gradient(ellipse, #fa170b26, transparent 65%); }
+.gameslop-landing .hero-orbit { border-color: #fa170b80; box-shadow: 0 0 0 32px #fa170b06; }
+.gameslop-landing .hero-label { color: var(--slop-cream); }
+.gameslop-landing .hero-score { color: var(--slop-cream); text-shadow: 3px 3px var(--slop-red); }
+.gameslop-landing .cabinet { border: 3px solid var(--slop-cream); box-shadow: 8px 8px 0 var(--slop-red); }
+.gameslop-landing .toolbar,
+.gameslop-landing .cabinet-foot { background: #101010; border-color: #ffffff26; }
+.gameslop-landing .start-card,
+.gameslop-landing .modal-card { background: #111; border: 2px solid var(--slop-cream); box-shadow: 6px 6px var(--slop-red); }
+.gameslop-landing .primary { background: var(--slop-red); color: #fff; border: 2px solid var(--slop-cream); box-shadow: 4px 4px var(--slop-cream); }
+.gameslop-landing .primary:hover { transform: translate(2px, 2px); box-shadow: 2px 2px var(--slop-cream); }
+.gameslop-landing .ability-choice { background: #191919; border-color: #ffffff45; }
+.gameslop-landing .ability-choice.selected { background: #fa170b19; border-color: var(--slop-red); box-shadow: inset 0 0 0 1px var(--slop-red); }
+.gameslop-landing .ability-choice.selected b { color: var(--slop-cream); }
+.gameslop-landing .how-to,
+.gameslop-landing .powerup-guide,
+.gameslop-landing .cast-section,
+.gameslop-landing footer { border-color: #ffffff26; }
+.gameslop-landing .how-to p,
+.gameslop-landing .section-head > p,
+.gameslop-landing .powerup-guide > p:not(.eyebrow) { color: var(--slop-muted); }
+.gameslop-landing .step-no { color: var(--slop-red); }
+.gameslop-landing .powerup-grid article { background: #111; border-color: #ffffff26; border-left-color: var(--power-color); }
+.gameslop-landing .cast-grid article { background: #111; border-color: #ffffff26; overflow: hidden; }
+.gameslop-landing .portrait { overflow: hidden; }
+.gameslop-landing .portrait img { width: 100%; height: 100%; object-fit: contain; }
+.gameslop-landing .records li { background: #111; border-color: #ffffff26; }
+.gameslop-landing footer { min-height: 115px; color: var(--slop-muted); }
+.gameslop-landing :is(button, a, canvas):focus-visible { outline-color: #ffe600; }
+.gameslop-landing .cabinet:fullscreen,
+.gameslop-landing .cabinet.full-window { box-shadow: none; }
+@media (max-width: 900px) {
+  .gameslop-landing .intro { gap: 12px; }
+  .gameslop-landing h1 { font-size: clamp(64px, 9vw, 100px); }
+}
+@media (max-width: 600px) {
+  .gameslop-landing .masthead { min-height: 78px; padding-block: 5px; }
+  .gameslop-landing .brand img { width: 108px; height: 66px; }
+  .gameslop-landing .text-link { font-size: 8px; letter-spacing: .8px; }
+  .gameslop-landing .intro { min-height: 0; padding-block: 34px 24px; gap: 0; }
+  .gameslop-landing h1 { font-size: clamp(50px, 16vw, 86px); letter-spacing: -2px; margin: 20px 0 17px; text-shadow: 3px 3px var(--slop-red); }
+  .gameslop-landing .tagline { font-size: 30px; }
+  .gameslop-landing .description { font-size: 15px; margin-top: 12px; }
+  .gameslop-landing .run-facts { margin-top: 26px; gap: 30px; }
+  .gameslop-landing .cabinet { border-width: 2px; box-shadow: 4px 4px var(--slop-red); }
+  .gameslop-landing .start-card,
+  .gameslop-landing .modal-card { box-shadow: 3px 3px var(--slop-red); }
+}

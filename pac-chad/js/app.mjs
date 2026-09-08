@@ -60,7 +60,7 @@ function updateHUD(){
   const icon='assets/power-'+special.id+'.svg';if($('special-icon').getAttribute('src')!==icon){$('special-icon').src=icon;$('special-icon').alt=special.object;}
   $('special-status').style.setProperty('--special-color',special.color);$('special-status').classList.toggle('active',active);
   $('special-name').textContent=special.name;$('special-description').textContent=special.effect;
-  $('special-state').textContent=active?(state.special.id==='pre-workout'?state.special.charges+' BLOCKS LEFT':'SPECIAL ACTIVE'):state.maze.pickup.collected?'USED THIS LEVEL':'LEVEL SPECIAL ? FIND THE STAR';
+  $('special-state').textContent=active?(state.special.id==='pre-workout'?state.special.charges+' BLOCKS LEFT':'SPECIAL ACTIVE'):state.maze.pickup.collected?'USED THIS LEVEL':'LEVEL SPECIAL \u00b7 FIND THE STAR';
   $('special-time').textContent=active?(state.special.ticks/60).toFixed(1)+'s':state.maze.pickup.collected?'USED':'5s';
   $('special-meter').style.width=active?(state.special.ticks/SPECIAL_TICKS*100)+'%':'0%';
   $('score').textContent=number(state.score).padStart(6,'0');$('combo').textContent=state.multiplier+'×';$('combo-label').textContent=state.combo?state.combo+' IN A ROW':'KEEP EATING';
