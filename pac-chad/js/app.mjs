@@ -4,6 +4,7 @@ import {Recorder} from './replay.mjs';
 import {Renderer} from './renderer.mjs';
 import {Audio} from './audio.mjs';
 import {Platform} from './platform.mjs';
+import {createDisplay} from './display.mjs';
 const $=id=>document.getElementById(id),number=n=>n.toLocaleString('en-US');
 const audio=new Audio(),platform=new Platform();
 const storageKey='pac-chad:personal:campaign:v3';
@@ -35,9 +36,9 @@ async function start(){
   clearInput();paused=false;hostPaused=false;lastFinished=null;renderer.particles=[];renderer.labels=[];
   for(const id of ['start-panel','results-panel','pause-panel'])$(id).hidden=true;
   document.body.classList.add('playing');$('cabinet').scrollIntoView({behavior:'instant',block:'start'});$('game').focus({preventScroll:true});
-  phase='countdown';countdown=180;accumulator=0;previous=performance.now();$('countdown').hidden=false;$('pause').disabled=true;$('start').disabled=false;$('again').disabled=false;updateHUD();
+  phase='countdown';countdown=180;accumulator=0;previous=performance.now();$('countdown').hidden=false;$('pause').disabled=true;$('start').disabled=false;$('again').disabled=false;updateHUD();display.sync();
 }
-function title(){audio.reset();audio.ui('select');phase='title';paused=false;hostPaused=false;clearInput();state=createRun({ability});$('pause-panel').hidden=true;$('results-panel').hidden=true;$('countdown').hidden=true;$('start-panel').hidden=false;$('pause').disabled=true;$('pause').textContent='PAUSE';$('power-status').hidden=true;document.body.classList.remove('playing');$('start').focus({preventScroll:true});updateHUD();}
+function title(){audio.reset();audio.ui('select');phase='title';paused=false;hostPaused=false;clearInput();state=createRun({ability});$('pause-panel').hidden=true;$('results-panel').hidden=true;$('countdown').hidden=true;$('start-panel').hidden=false;$('pause').disabled=true;$('pause').textContent='PAUSE';$('power-status').hidden=true;document.body.classList.remove('playing');$('start').focus({preventScroll:true});updateHUD();display.sync();}
 async function finish(){
   if(phase==='results')return;
   phase='results';$('pause').disabled=true;$('results-panel').hidden=false;$('power-status').hidden=true;
@@ -76,7 +77,7 @@ function updateHUD(){
 const keyDirections={ArrowUp:0,KeyW:0,ArrowRight:1,KeyD:1,ArrowDown:2,KeyS:2,ArrowLeft:3,KeyA:3};
 window.addEventListener('keydown',e=>{
   if(['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)||e.metaKey||e.ctrlKey||e.altKey)return;
-  if(e.code==='Escape'&&$('cabinet').classList.contains('full-window')){exitFallback();return;}
+  if(e.code==='Escape'&&$('cabinet').classList.contains('full-window')){display.exit();return;}
   if(phase!=='run'&&phase!=='countdown')return;
   if(e.code in keyDirections){e.preventDefault();if(!paused)desired=keyDirections[e.code];}
   if(e.code==='Space'){e.preventDefault();if(!e.repeat&&!paused)queuedAbility=true;}
@@ -96,22 +97,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden){audio.stop
 window.addEventListener('blur',()=>{audio.stop();pause(true,true);});
 $('start').addEventListener('click',start);$('again').addEventListener('click',start);$('pause').addEventListener('click',()=>pause(!paused));$('resume').addEventListener('click',()=>pause(false));$('quit').addEventListener('click',title);
 $('sound').addEventListener('click',()=>{audio.muted=!audio.muted;audio.unlock();$('sound').textContent=audio.muted?'SOUND OFF':'SOUND ON';$('sound').setAttribute('aria-pressed',String(audio.muted));});
-function exitFallback(){$('cabinet').classList.remove('full-window');document.documentElement.style.overflow='';$('fullscreen').textContent='FULLSCREEN ↗';renderer.resize();}
-let fullscreenBusy=false,lastFullscreenTouch=-1000;
-async function toggleFullscreen(){
-  if(fullscreenBusy)return;fullscreenBusy=true;const cabinet=$('cabinet');
-  try{
-    if(document.fullscreenElement){await document.exitFullscreen();return;}
-    if(cabinet.classList.contains('full-window')){exitFallback();return;}
-    try{if(!cabinet.requestFullscreen)throw Error();await cabinet.requestFullscreen();try{screen.orientation?.lock?.('landscape')?.catch(()=>{});}catch{}}
-    catch{cabinet.classList.add('full-window');document.documentElement.style.overflow='hidden';$('fullscreen').textContent='EXIT FULLSCREEN';renderer.resize();}
-  }catch{toast('FULLSCREEN IS UNAVAILABLE',2500);}finally{fullscreenBusy=false;}
-}
-// Some mobile browsers suppress the next synthesized click after a maze swipe.
-// A trusted touch release is also a fullscreen activation, with its later click deduplicated.
-$('fullscreen').addEventListener('pointerup',e=>{if(e.pointerType!=='touch')return;e.preventDefault();lastFullscreenTouch=performance.now();toggleFullscreen();});
-$('fullscreen').addEventListener('click',e=>{if(e.detail===0||performance.now()-lastFullscreenTouch>700)toggleFullscreen();});
-document.addEventListener('fullscreenchange',()=>{$('fullscreen').textContent=document.fullscreenElement?'EXIT FULLSCREEN':'FULLSCREEN ↗';renderer.resize();});
+const display=createDisplay({cabinet:$('cabinet'),button:$('fullscreen'),resize:()=>renderer.resize(),isPlaying:()=>['countdown','run','results'].includes(phase)});
 $('save-replay').addEventListener('click',()=>{if(!lastFinished)return;const url=URL.createObjectURL(new Blob([JSON.stringify(lastFinished)],{type:'application/json'}));const link=document.createElement('a');link.href=url;link.download='pac-chad-run.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 function frame(now){
   const dt=Math.min(250,now-previous);previous=now;

@@ -1,6 +1,6 @@
 {
   "version": "pac-chad-campaign-v3",
-  "buildHash": "20f07e41d5677c8afb40d26c84bdb8083720c5d83abd079cfd697d0fc226f16f",
+  "buildHash": "4cade7fbf11659302750fe19c06a65de44cf5b87f447ad0be53133aa1dcd8a8b",
   "files": [
     {
       "path": "assets/chad-chomp.png",
@@ -199,8 +199,8 @@
     },
     {
       "path": "js/app.mjs",
-      "bytes": 15894,
-      "sha256": "436b9ecabbb9dc9977ab854106641a6421105780e8f785778d9c1735bb36dc72"
+      "bytes": 14611,
+      "sha256": "b3750e457c8d374ca164cea4f18617e85c0916215f8fd265cb8ab8feb9bf5ff4"
     },
     {
       "path": "js/audio.mjs",
@@ -211,6 +211,11 @@
       "path": "js/chomp.mjs",
       "bytes": 923,
       "sha256": "bebcf9351e1f10cffcf1696d56a73216a7d23f4d4bf298642306c1efccf998b5"
+    },
+    {
+      "path": "js/display.mjs",
+      "bytes": 3274,
+      "sha256": "a72fd864176c8e1ec83331eebabdb986c6ed46269a35271b44d6b653d226df9f"
     },
     {
       "path": "js/model.mjs",
@@ -234,8 +239,8 @@
     },
     {
       "path": "js/renderer.mjs",
-      "bytes": 9203,
-      "sha256": "dd3127b59426b3e74c03b96b033d1c60717cac7482ab84ed1c6f678cb2fcf388"
+      "bytes": 9452,
+      "sha256": "7942b3129c7c0ab2adffce4b0f87c92789344bea98e3508df17475516c938ed4"
     },
     {
       "path": "js/replay.mjs",
@@ -259,8 +264,8 @@
     },
     {
       "path": "style.css",
-      "bytes": 23454,
-      "sha256": "f85773d1fd47eca583635cfb7092c08091a2dd351300736d3e134e9eace72f6a"
+      "bytes": 28223,
+      "sha256": "81ba371352f99b0df42b3776fd784a8206f52d031e331643bf2ddf96a8b08e8b"
     }
   ]
 }

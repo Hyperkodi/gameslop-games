@@ -3,7 +3,7 @@ import {CHOMP_ATLAS,chompFrame} from './chomp.mjs';
 import {specialIs,canEat} from './powerups.mjs';
 import {drawPickup,drawPlayerEffect,drawGhostEffect} from './powerup-render.mjs';
 export class Renderer {
-  constructor(canvas,images){this.canvas=canvas;this.ctx=canvas.getContext('2d',{alpha:false});this.images=images;this.particles=[];this.labels=[];this.shake=0;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.width=0;this.height=0;}
+  constructor(canvas,images){this.canvas=canvas;this.ctx=canvas.getContext('2d',{alpha:false});this.images=images;this.particles=[];this.labels=[];this.shake=0;this.reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;this.width=0;this.height=0;this.touch=navigator.maxTouchPoints>0||matchMedia('(any-pointer: coarse)').matches;}
   resize(){const r=this.canvas.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);this.width=r.width;this.height=r.height;if(this.canvas.width!==Math.round(r.width*dpr)||this.canvas.height!==Math.round(r.height*dpr)){this.canvas.width=Math.round(r.width*dpr);this.canvas.height=Math.round(r.height*dpr);}this.dpr=dpr;}
   events(state){for(const e of state.events){if(e.type==='ghost'){this.labels.push({x:e.x,y:e.y,text:'+'+e.points,life:60});for(let i=0;i<12;i++)this.particles.push({x:e.x,y:e.y,vx:Math.cos(i*Math.PI/6)*.05,vy:Math.sin(i*Math.PI/6)*.05,life:35});}if(e.type==='hit'&&!this.reduced)this.shake=12;}}
   draw(s,now=0){
@@ -85,5 +85,16 @@ export class Renderer {
     }
     c.restore();
   }
-  minimap(s,w,h,ox,oy,tile){const c=this.ctx,scale=w<500?3.4:4,x=w-WIDTH*scale-12,y=12;c.fillStyle='#05080ae8';c.fillRect(x-5,y-5,WIDTH*scale+10,HEIGHT*scale+10);c.fillStyle='#6f83a688';for(let k=0;k<s.maze.tiles.length;k++)if(s.maze.tiles[k])c.fillRect(x+(k%WIDTH)*scale,y+Math.floor(k/WIDTH)*scale,scale,scale);for(const g of s.ghosts){const p=position(g);c.fillStyle=CAST[g.kind].color;c.fillRect(x+p.x*scale,y+p.y*scale,scale+1,scale+1);}if(!s.maze.pickup.collected){const item=s.maze.pickup;c.fillStyle='#ffdb76';c.font='bold 12px Arial';c.textAlign='center';c.fillText('?',x+(item.x+.5)*scale,y+(item.y+1)*scale);}const p=position(s.player);c.fillStyle='#fff8d0';c.fillRect(x+p.x*scale-1,y+p.y*scale-1,scale+2,scale+2);c.strokeStyle='#d9efb665';c.lineWidth=1;c.strokeRect(x+Math.max(0,-ox/tile)*scale,y+Math.max(0,-oy/tile)*scale,Math.min(WIDTH,w/tile)*scale,Math.min(HEIGHT,h/tile)*scale);}
+  minimap(s,w,h,ox,oy,tile){
+    const c=this.ctx,touch=this.touch;
+    const scale=touch?Math.min(2.4,w*.16/WIDTH,h*.16/HEIGHT):3;
+    const mw=WIDTH*scale,mh=HEIGHT*scale,x=w-mw-8,y=8;
+    this.overviewMetrics={width:mw+6,height:mh+6};
+    c.fillStyle='#05080ae0';c.fillRect(x-3,y-3,mw+6,mh+6);
+    c.fillStyle='#6f83a688';for(let k=0;k<s.maze.tiles.length;k++)if(s.maze.tiles[k])c.fillRect(x+(k%WIDTH)*scale,y+Math.floor(k/WIDTH)*scale,scale,scale);
+    for(const g of s.ghosts){const p=position(g);c.fillStyle=CAST[g.kind].color;c.fillRect(x+p.x*scale,y+p.y*scale,scale+1,scale+1);}
+    if(!s.maze.pickup.collected){const item=s.maze.pickup;c.fillStyle='#ffdb76';c.font='bold 9px Arial';c.textAlign='center';c.fillText('\u2605',x+(item.x+.5)*scale,y+(item.y+1)*scale);}
+    const p=position(s.player);c.fillStyle='#fff8d0';c.fillRect(x+p.x*scale-1,y+p.y*scale-1,scale+2,scale+2);
+    c.strokeStyle='#d9efb665';c.lineWidth=1;c.strokeRect(x+Math.max(0,-ox/tile)*scale,y+Math.max(0,-oy/tile)*scale,Math.min(WIDTH,w/tile)*scale,Math.min(HEIGHT,h/tile)*scale);
+  }
 }
