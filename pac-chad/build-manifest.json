@@ -1,11 +1,11 @@
 {
   "version": "pac-chad-score-attack-v1",
-  "buildHash": "85ce7523aacb4c4ee14e0f5af661d14d6f89f3f0ae1e7d299b9803958d105749",
+  "buildHash": "1c12980994eefa4e24fe42b49157bda05d3791004e104e7b963d3c0c14fb0836",
   "files": [
     {
       "path": "assets/chad-chomp.png",
-      "bytes": 1819685,
-      "sha256": "11ec28e98acec7d8d3fa6811b941bc960db86b40692efd7fdfebc9223952f18a"
+      "bytes": 1565864,
+      "sha256": "ad829782e95042369287739df4ca5a066b8be80407a987167441c94bf36393d7"
     },
     {
       "path": "assets/chad.png",
@@ -154,8 +154,8 @@
     },
     {
       "path": "js/chomp.mjs",
-      "bytes": 831,
-      "sha256": "a36590f02fbd89626289a2debc832e9f4768b7524f1436c50fd3f556422c9a3e"
+      "bytes": 923,
+      "sha256": "bebcf9351e1f10cffcf1696d56a73216a7d23f4d4bf298642306c1efccf998b5"
     },
     {
       "path": "js/model.mjs",
@@ -169,8 +169,8 @@
     },
     {
       "path": "js/renderer.mjs",
-      "bytes": 8252,
-      "sha256": "a63eedcd879501e2da71a980b4c3784727bcaeb8c7539764532e41510732db8f"
+      "bytes": 8432,
+      "sha256": "3dec5733e5dc9034f6a2e1f35cc98a3dbd4c4395c4f98d969fcdc34cdd30a2c3"
     },
     {
       "path": "js/replay.mjs",

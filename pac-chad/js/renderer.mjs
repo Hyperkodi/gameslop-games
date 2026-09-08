@@ -8,7 +8,9 @@ export class Renderer {
     const c=this.ctx,w=this.width,h=this.height;if(!w||!h)return;
     const theme=THEMES[s.stage%3];
     c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle=theme.floor;c.fillRect(0,0,w,h);
-    const tile=Math.min(46,Math.max(w<600?38:34,Math.min(w/WIDTH,h/HEIGHT)));
+    // Closer follow camera makes portraits legible; the minimap retains the full route.
+    // Short landscape viewports keep enough vertical space to see nearby junctions.
+    const tile=Math.min(56,Math.max(h<320?44:48,Math.min(w/19,h/13)));
     const p=position(s.player),viewW=w/tile,viewH=h/tile;
     const cx=Math.max(viewW/2,Math.min(WIDTH-viewW/2,p.x+.5)),cy=Math.max(viewH/2,Math.min(HEIGHT-viewH/2,p.y+.5));
     const ox=WIDTH*tile<=w?(w-WIDTH*tile)/2:w/2-cx*tile,oy=HEIGHT*tile<=h?(h-HEIGHT*tile)/2:h/2-cy*tile;
@@ -69,8 +71,8 @@ export class Renderer {
     if(flip)c.scale(-1,1);
     if(chomp){
       const a=CHOMP_ATLAS,f=a.frames[mouthFrame],size=tile*1.4,scale=size/a.logicalHeight;
-      c.drawImage(img,f.column*a.cell+a.cropX-f.dx,f.row*a.cell,a.cropWidth,a.cell,
-        -a.cropWidth/2*scale,-size*.56+f.dy*scale,a.cropWidth*scale,a.cell*scale);
+      c.drawImage(img,f.column*a.cell+a.cropX-f.dx,f.sourceY,a.cropWidth,f.sourceHeight,
+        -a.cropWidth/2*scale,-size*.56+f.dy*scale,a.cropWidth*scale,f.sourceHeight*scale);
     }else{
       const size=tile*(id==='chad'?1.28:1.35),ratio=img.naturalWidth/img.naturalHeight;
       c.drawImage(img,-size*ratio/2,-size*.56,size*ratio,size);
