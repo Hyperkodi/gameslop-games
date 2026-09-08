@@ -314,7 +314,7 @@
       for(const p of s.players){const x=p.id?650:26;colorBars(p,x);}
       function colorBars(p,x){
         const color=p.id?'#77e5e8':'#ff6a55',stamina=p.stamina??100,tired=stamina<18,staminaColor=tired?'#ffa276':'#b9e788';
-        box(x-10,12,294,97,'#08151bdf',7);text((p.id?'2P / ECHO':'1P / SLOP')+' ×'+p.lives+(p.strength?' STR'+p.strength*20+'%':''),x,33,13,color);
+        box(x-10,12,294,97,'#08151bdf',7);text((p.id?'2P / ECHO':'1P / SLOPPY')+' ×'+p.lives+(p.strength?' STR'+p.strength*20+'%':''),x,33,13,color);
         box(x,43,264,12,'#343a40',3);box(x,43,264*p.hp/(p.maxHp||100),12,color,3);for(let n=1;n<20;n++)box(x+n*13.2,43,2,12,'#08151b');text(Math.ceil(p.hp)+' / '+(p.maxHp||100)+' HP',x+264,33,11,'#fff0ce','right');
         text(tired?'STAMINA / LOW':'STAMINA',x,71,9,staminaColor);box(x+90,63,112,8,'#343a40',2);box(x+90,63,112*stamina/(p.maxStamina||100),8,staminaColor,2);text(Math.floor(stamina)+'/'+(p.maxStamina||100),x+264,71,8,staminaColor,'right');
         text(p.energy>=100?'SPECIAL READY':'SPECIAL',x,94,9,p.energy>=100?'#ffe79b':'#adbdb4');box(x+99,86,133,6,'#343a40',2);box(x+99,86,133*p.energy/100,6,p.energy>=100?'#ffe79b':'#80cab8',2);text(Math.floor(p.energy)+'%',x+264,94,9,'#adbdb4','right');

@@ -1,4 +1,4 @@
-# Slop in Time
+# Sloppy in Time
 
 An original GameSlop arcade brawler inspired by classic time-travel beat ’em ups. Six eras, sixty encounters, six bosses, solo and same-screen local co-op. Uses the supplied GameSlop mascot and original scenery, enemy artwork, music, and sounds.
 
