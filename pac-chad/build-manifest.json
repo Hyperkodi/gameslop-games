@@ -1,6 +1,6 @@
 {
   "version": "pac-chad-campaign-v3",
-  "buildHash": "b74e647b8b49bab4d6fad63595bc95183d19472bdbd25d51d9ff4d86b20b0f75",
+  "buildHash": "5f3e737897471b0bd50210b095ec6a7f2f8ca17824d79a8fb801c668b80c0387",
   "files": [
     {
       "path": "assets/Blue.mp3",
@@ -51,6 +51,106 @@
       "path": "assets/ivy.png",
       "bytes": 1374913,
       "sha256": "22e9252e3a9d6beb739fea1fd7f67108a9d03e19475e85a6a7bfb5a2fd956020"
+    },
+    {
+      "path": "assets/music-acid-works.mp3",
+      "bytes": 1462779,
+      "sha256": "5b2e8fabd6011856c59c2fa756b1f6313b5d9ea0a90fdea9ce3d598bc68cf0e3"
+    },
+    {
+      "path": "assets/music-acid-works.ogg",
+      "bytes": 3498652,
+      "sha256": "9bcf2918175ef6beb65952b2f3e8464fc119a8a3fb9f8bc32614ff171b7f0339"
+    },
+    {
+      "path": "assets/music-afterhours.mp3",
+      "bytes": 2218584,
+      "sha256": "6d718a4226d06a6bd47240eac1e1c01e41f72e385fa93e25cdb81fbb59fb9e95"
+    },
+    {
+      "path": "assets/music-afterhours.ogg",
+      "bytes": 5109242,
+      "sha256": "12e89d89f0c0ed155ddd402c4e7e6d3d8bbab44936df9d47d8ada74704364d8c"
+    },
+    {
+      "path": "assets/music-chad-citadel.mp3",
+      "bytes": 1793529,
+      "sha256": "e736e3479b3294a64ab2552251cc9eff2250660d963c365408ab240e2aae90c1"
+    },
+    {
+      "path": "assets/music-chad-citadel.ogg",
+      "bytes": 4652809,
+      "sha256": "396e522f584478c179b958312889f3e6c31e3a253e6bc32e095976f52d5fe055"
+    },
+    {
+      "path": "assets/music-deep-signal.mp3",
+      "bytes": 1141962,
+      "sha256": "e1b38528ab530f1969d978eb90c14978727d0d617716dcb7e90ebb1e832f604c"
+    },
+    {
+      "path": "assets/music-deep-signal.ogg",
+      "bytes": 2804167,
+      "sha256": "6d5b13e2d00e40b8224c793e92214a572cbddfc87bb2c249e44203a35c3fb0d4"
+    },
+    {
+      "path": "assets/music-frost-byte.mp3",
+      "bytes": 1782897,
+      "sha256": "0004f75d42948258f7d08cb7ae1c41ae38842007434c01e11b70eddfaef9fba1"
+    },
+    {
+      "path": "assets/music-frost-byte.ogg",
+      "bytes": 3179784,
+      "sha256": "4fba11e1f895ee0ce6b4b5d1b41c8aa21a69c9d6836fc1da30b1bd9a3c0e34ce"
+    },
+    {
+      "path": "assets/music-gold-rush.mp3",
+      "bytes": 3008834,
+      "sha256": "8bd6b48f7f22d2bec778c76f875937510e9ff0f08ebafca0539da0f0533b6d4e"
+    },
+    {
+      "path": "assets/music-gold-rush.ogg",
+      "bytes": 4478735,
+      "sha256": "62759eb9b4bfb2c1ae5605f9cb9fae530cf0867f8443533ace3639d20681f20e"
+    },
+    {
+      "path": "assets/music-hot-pink-panic.mp3",
+      "bytes": 2239707,
+      "sha256": "487f993c3777b46a96771e678cd8233acdf9a711366e93de227e8500e1bd9e08"
+    },
+    {
+      "path": "assets/music-hot-pink-panic.ogg",
+      "bytes": 5379859,
+      "sha256": "3b8c980fee1a8e3a10d8fd4f991018b1dbd2cba21d1b52f888b3aa49ba93099d"
+    },
+    {
+      "path": "assets/music-redline.mp3",
+      "bytes": 1472437,
+      "sha256": "7ff91bad4ffb2a3525bb2b5bc4a6757f4ae8233a890f4353c308a631f100d7ce"
+    },
+    {
+      "path": "assets/music-redline.ogg",
+      "bytes": 3408618,
+      "sha256": "e828e4d9ca88982c1440fb60b49708b030dd452bbf5f600c278a60cc7deb687e"
+    },
+    {
+      "path": "assets/music-sunset-strip.mp3",
+      "bytes": 968480,
+      "sha256": "ca0814a997ba3db6f87bc4951af0daf97b567a9efb1be8d9534216661960499d"
+    },
+    {
+      "path": "assets/music-sunset-strip.ogg",
+      "bytes": 2268106,
+      "sha256": "b172705f201e5b5a815e62aca1c09d9507b959de3cb62191ca5cfb8dedee7481"
+    },
+    {
+      "path": "assets/music-violet-vault.mp3",
+      "bytes": 1551286,
+      "sha256": "6e6593bdc54ef0253e7227320433de2f23936649f0f72ee03dbef81bfb9e4a5f"
+    },
+    {
+      "path": "assets/music-violet-vault.ogg",
+      "bytes": 3637381,
+      "sha256": "08301c4f269d91ac01e502f014c59612f3595b43bf9fd80d008d78d0746a8425"
     },
     {
       "path": "assets/power-absolute-aura.svg",
@@ -214,8 +314,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 9276,
-      "sha256": "5e3a9db39693e59ba6fe6271d87ca83a7677512af3add5ef21e796f852001196"
+      "bytes": 9984,
+      "sha256": "8b3c2340ef2d0812dee69c5e1f505560c29c61d3037d8c7b1cf15b5cdce3ad88"
     },
     {
       "path": "integration/gameslop-sdk.js",
@@ -224,8 +324,8 @@
     },
     {
       "path": "js/app.mjs",
-      "bytes": 14611,
-      "sha256": "b3750e457c8d374ca164cea4f18617e85c0916215f8fd265cb8ab8feb9bf5ff4"
+      "bytes": 15482,
+      "sha256": "b219bb4477e0ad1fed695b86ef2bb2b3d6770049968c4f57f80de949b362445e"
     },
     {
       "path": "js/audio.mjs",
@@ -251,6 +351,16 @@
       "path": "js/model.mjs",
       "bytes": 15045,
       "sha256": "f63150c65eaf0426225cc3e1c7ff66056f8c76bfa20948176b02987b5dd13e4a"
+    },
+    {
+      "path": "js/music-bank.mjs",
+      "bytes": 1692,
+      "sha256": "d351d0083ac6236dfe84442aef0fea2e332b05ea0aad279a85261226d90f4bf4"
+    },
+    {
+      "path": "js/music.mjs",
+      "bytes": 4580,
+      "sha256": "37d27c98b4a9b77e1c54801d715df6640d98894f3f35238a8406c9df667caadc"
     },
     {
       "path": "js/platform.mjs",
@@ -289,13 +399,13 @@
     },
     {
       "path": "sound-lab.html",
-      "bytes": 3008,
-      "sha256": "b07cf55c5a00e05a95f33b7027c3e5598763499ab15336c937bfb8aa6f533172"
+      "bytes": 4366,
+      "sha256": "664f959bd1a8285c871ea3e2c92555f467233af01770f9d817f63ab1280161ad"
     },
     {
       "path": "style.css",
-      "bytes": 28223,
-      "sha256": "81ba371352f99b0df42b3776fd784a8206f52d031e331643bf2ddf96a8b08e8b"
+      "bytes": 28552,
+      "sha256": "fd7d4b73cb3ca8599609a52b90dc12b1ff563a3c45fde8811c2845c868fea4e4"
     }
   ]
 }

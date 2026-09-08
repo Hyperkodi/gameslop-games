@@ -198,3 +198,9 @@ button{touch-action:manipulation}
   .touch-landscape .special-status > img { width: 28px; height: 28px; }
   .touch-landscape .ability-button { width: 76px; height: 76px; margin-bottom: 6px; }
 }
+
+.music-credits{padding:24px 0;border-top:1px solid #383d31;color:#b3b9a5;font-size:13px;line-height:1.7}
+.music-credits a,.pause-credit a{color:#f9eed2;text-underline-offset:3px}
+.music-credits summary{cursor:pointer;color:#f9eed2}
+.music-credits li{padding:3px 0}
+.pause-credit{font-size:11px!important;margin:8px 0!important}
