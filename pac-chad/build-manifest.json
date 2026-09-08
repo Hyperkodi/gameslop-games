@@ -1,7 +1,32 @@
 {
   "version": "pac-chad-campaign-v3",
-  "buildHash": "4cade7fbf11659302750fe19c06a65de44cf5b87f447ad0be53133aa1dcd8a8b",
+  "buildHash": "b74e647b8b49bab4d6fad63595bc95183d19472bdbd25d51d9ff4d86b20b0f75",
   "files": [
+    {
+      "path": "assets/Blue.mp3",
+      "bytes": 49581,
+      "sha256": "40d63f0e90de89ad59f806b43b568d71e029e85448ff5ecdd2d08009b8f68800"
+    },
+    {
+      "path": "assets/Chad.mp3",
+      "bytes": 25389,
+      "sha256": "16e7eb2c9e5197afc437d6ffe1429708cd40a3a4fdfdc297f3496bdd41fbacaf"
+    },
+    {
+      "path": "assets/Green.mp3",
+      "bytes": 65709,
+      "sha256": "aa45cc31d8ff415e1383cdb6b3d1d612d584dadfa75f1ffac9a888936d5fe7b3"
+    },
+    {
+      "path": "assets/Purple.mp3",
+      "bytes": 65709,
+      "sha256": "495aa55c808e2c45ea14c6c8c576db4906ce9f417184e56fda82a080cb5d6dc5"
+    },
+    {
+      "path": "assets/Rainbow.mp3",
+      "bytes": 65709,
+      "sha256": "8ac9bc4516712b0f3e61820ca16da274927ac66ee7752e9697c517dddf52f15f"
+    },
     {
       "path": "assets/chad-chomp.png",
       "bytes": 1565864,
@@ -204,8 +229,13 @@
     },
     {
       "path": "js/audio.mjs",
-      "bytes": 4715,
-      "sha256": "c3443ac2d96ede6efc1eeaab064d6761dfd021be95e6bee8ebef87d1ec4d496a"
+      "bytes": 4944,
+      "sha256": "4ce7e8e22a56e7b45811454cd1088c942e269059a716e52f154c179eaab13cef"
+    },
+    {
+      "path": "js/character-sounds.mjs",
+      "bytes": 585,
+      "sha256": "fedb82fc6740c3f0338fb73297ebac7610b9170a8738eeaec91ea0ca437b6601"
     },
     {
       "path": "js/chomp.mjs",
@@ -219,8 +249,8 @@
     },
     {
       "path": "js/model.mjs",
-      "bytes": 15019,
-      "sha256": "f2caecbe977b2e12e6218adaab07aaa2d50dc8903d218520b80fa3a7b9bad6ed"
+      "bytes": 15045,
+      "sha256": "f63150c65eaf0426225cc3e1c7ff66056f8c76bfa20948176b02987b5dd13e4a"
     },
     {
       "path": "js/platform.mjs",
@@ -249,8 +279,8 @@
     },
     {
       "path": "js/sound-bank.mjs",
-      "bytes": 2576,
-      "sha256": "78de88b1cb9daa302994fb86a9ea8481ebe79661bc55456b88fa9a927663a980"
+      "bytes": 2651,
+      "sha256": "900e44fcd6545eda6a8c02676f4a0e1588736546ef4c2a6962d9d9d820ff97e7"
     },
     {
       "path": "ruleset.json",
@@ -259,8 +289,8 @@
     },
     {
       "path": "sound-lab.html",
-      "bytes": 2995,
-      "sha256": "2d0e39bd51cb971d1af7f1692bd97efd6ee5044824da93778f70d7569b7224e2"
+      "bytes": 3008,
+      "sha256": "b07cf55c5a00e05a95f33b7027c3e5598763499ab15336c937bfb8aa6f533172"
     },
     {
       "path": "style.css",

@@ -204,7 +204,7 @@ function collide(s) {
     if(Math.hypot(p.x-q.x,p.y-q.y)>0.69) continue;
     if(canEat(s)) {
       g.returning=true; g.warning=0;g.charge=0;
-      const points=200*2**Math.min(s.chain++,3)*ghostBonus(s);s.score+=points;s.ghostsEaten++;event(s,'ghost',{x:q.x,y:q.y,points});
+      const points=200*2**Math.min(s.chain++,3)*ghostBonus(s);s.score+=points;s.ghostsEaten++;event(s,'ghost',{x:q.x,y:q.y,points,character:CAST[g.kind].id});
     } else if(specialIs(s,'absolute-aura')||specialIs(s,'pre-workout')&&s.special.charges>0){
       repel(s,g);if(specialIs(s,'pre-workout')){s.special.charges--;if(!s.special.charges){s.special=null;event(s,'special-end');}}
     } else if(s.invulnerable===0 && s.dash===0) {

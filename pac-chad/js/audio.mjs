@@ -54,10 +54,12 @@ export class Audio {
     if(e.type==='special-end')e={...e,type:'power-end'};
     if(e.type==='repel')e={...e,type:'gate'};
     if(this.muted||!this.ctx||this.ctx.state!=='running')return;
-    const id=e.type==='ability'?ability:e.type,now=this.ctx.currentTime;
-    const cooldown=SOUND_BANK[id]?.cooldown??(id==='pellet'?.12:id==='warning'?.45:0);
-    if(now-(this.last.get(id)??-Infinity)<cooldown)return;
-    this.last.set(id,now);
+    const cue=e.type==='ghost'&&SOUND_BANK['ghost-'+e.character]?'ghost-'+e.character:e.type==='ability'?ability:e.type,now=this.ctx.currentTime;
+    const cooldown=SOUND_BANK[cue]?.cooldown??(cue==='pellet'?.12:cue==='warning'?.45:0);
+    if(now-(this.last.get(cue)??-Infinity)<cooldown)return;
+    this.last.set(cue,now);
+    // Keep captures audible while an individual voice is loading or unavailable.
+    const id=this.buffers.has(cue)?cue:e.type==='ghost'?'ghost':cue;
     const loaded=this.buffers.get(id);
     if(!loaded){this.fallback(e);return;}
     const source=this.ctx.createBufferSource(),gain=this.ctx.createGain();source.buffer=loaded.buffer;

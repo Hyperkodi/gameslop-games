@@ -1,4 +1,5 @@
-// Original locally synthesized sound pack. Rebuild: npm run audio:build
+// Synthesized arcade cues plus user-provided character recordings.
+import {CHARACTER_SOUNDS} from './character-sounds.mjs';
 export const SOUND_BANK = {
   "pellet": {
     "file": "assets/sfx-pellet.wav",
@@ -119,5 +120,6 @@ export const SOUND_BANK = {
     "volume": 0.42,
     "cooldown": 0.5,
     "label": "New personal best"
-  }
+  },
+  ...CHARACTER_SOUNDS
 };
