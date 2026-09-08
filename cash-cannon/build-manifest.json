@@ -4,13 +4,13 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "a5b31f77c5f2d2bb0c5d1aa73d07d0118d04c61cbde8293795039a566feab0ab",
-      "bytes": 6123
+      "sha256": "bb3cad9c52ea01bb87cbbbe396d408d40a3f1ed0b68db11c2a941531b3d60be8",
+      "bytes": 6141
     },
     {
       "path": "style.css",
-      "sha256": "1c19a6c3da0b0727afea4839117fb72262c71483bcc2f85116292740a5c2b9cd",
-      "bytes": 14302
+      "sha256": "c00f8d64acff7697935c6d8d2ff3cf392f9c7507639b2a7b0564e8e04782cd8d",
+      "bytes": 14337
     },
     {
       "path": "js/animations.mjs",
