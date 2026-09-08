@@ -1,16 +1,24 @@
-import {createRun,step,CAST,THEMES,RUN_TICKS,VERSION} from './model.mjs';
+import {createRun,step,CAST,THEMES,LEVEL_COUNT,VERSION} from './model.mjs';
+import {POWERUPS,SPECIAL_TICKS} from './powerups.mjs';
 import {Recorder} from './replay.mjs';
 import {Renderer} from './renderer.mjs';
 import {Audio} from './audio.mjs';
 import {Platform} from './platform.mjs';
 const $=id=>document.getElementById(id),number=n=>n.toLocaleString('en-US');
 const audio=new Audio(),platform=new Platform();
-const storageKey='pac-chad:personal:v1';
+const storageKey='pac-chad:personal:campaign:v3';
 let scores=[];try{const saved=JSON.parse(localStorage.getItem(storageKey)||'[]');if(Array.isArray(saved))scores=saved.filter(x=>x&&Number.isSafeInteger(x.score)&&x.score>=0&&['dash','decoy'].includes(x.ability)&&typeof x.date==='string').slice(0,5);}catch{}
 function board(){const list=$('personal-board');list.replaceChildren();if(!scores.length){const li=document.createElement('li');li.textContent='YOUR FIRST RUN GOES HERE.';list.append(li);}scores.forEach((r,i)=>{const li=document.createElement('li');const label=document.createElement('span');label.textContent=`0${i+1} / ${r.ability.toUpperCase()}`;const value=document.createElement('b');value.textContent=number(r.score);li.append(label,value);list.append(li);});$('best').textContent=number(scores[0]?.score||0).padStart(6,'0');}
 board();
+for(const [i,spec] of POWERUPS.entries()){
+  const card=document.createElement('article');card.style.setProperty('--power-color',spec.color);
+  const img=document.createElement('img');img.src='assets/power-'+spec.id+'.svg';img.alt=spec.object;
+  const copy=document.createElement('div'),level=document.createElement('small'),name=document.createElement('h3'),effect=document.createElement('p');
+  level.textContent='LEVEL '+String(i+1).padStart(2,'0')+' / 5 SECONDS';name.textContent=spec.name;effect.textContent=spec.effect;
+  copy.append(level,name,effect);card.append(img,copy);$('powerup-guide').append(card);
+}
 const images={};
-try{await Promise.all(['chad','chad-chomp',...CAST.map(c=>c.id)].map(id=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[id]=img;resolve();};img.onerror=()=>reject(new Error('Could not load '+id));img.src=`assets/${id}.png`;})));}catch(e){$('start').textContent='ART COULD NOT LOAD. RELOAD TO RETRY.';$('platform-note').textContent=e.message;throw e;}
+try{await Promise.all(['chad','chad-chomp',...CAST.map(c=>c.id),...POWERUPS.map(p=>'power-'+p.id)].map(id=>new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>{images[id]=img;resolve();};img.onerror=()=>reject(new Error('Could not load '+id));img.src=`assets/${id}.${id.startsWith('power-')?'svg':'png'}`;})));}catch(e){$('start').textContent='ART COULD NOT LOAD. RELOAD TO RETRY.';$('platform-note').textContent=e.message;throw e;}
 const renderer=new Renderer($('game'),images);renderer.resize();new ResizeObserver(()=>renderer.resize()).observe($('viewport'));
 let state=createRun(),recorder=new Recorder(),ability='dash',phase='title',desired=4,queuedAbility=false,paused=false,hostPaused=false,countdown=0,previous=performance.now(),accumulator=0,toastUntil=0,lastFinished=null,padAbility=false;
 function toast(text,ms=1800){$('toast').textContent=text;$('toast').classList.add('visible');toastUntil=performance.now()+ms;}
@@ -36,9 +44,11 @@ async function finish(){
   lastFinished={configuration:{version:VERSION,seed:state.seed,ability:state.ability,score:state.score},evidence:recorder.export()};
   const isBest=state.score>(scores[0]?.score||0);
   audio.event({type:isBest?'best':'end'});
-  $('result-reason').textContent=state.reason==='time_up'?'FIVE MINUTES. ALL CHAD.':'OUT OF LIVES. STILL CHAD.';
-  $('result-title').textContent=isBest?'NEW PERSONAL BEST.':'CHAD ENERGY.';
-  $('final-score').textContent=number(state.score);$('result-pellets').textContent=state.pelletsEaten;$('result-ghosts').textContent=state.ghostsEaten;$('result-mazes').textContent=state.stage;
+  $('result-reason').textContent=state.reason==='campaign_complete'?'TEN LEVELS. ALL CHAD.':'OUT OF LIVES. STILL CHAD.';
+  $('result-title').textContent=state.reason==='campaign_complete'?'CAMPAIGN COMPLETE.':isBest?'NEW PERSONAL BEST.':'CHAD ENERGY.';
+  $('save-replay').disabled=!lastFinished.evidence;
+  $('save-replay').textContent=lastFinished.evidence?'SAVE RUN REPLAY ↓':'REPLAY LIMIT REACHED';
+  $('final-score').textContent=number(state.score);$('result-pellets').textContent=state.pelletsEaten;$('result-ghosts').textContent=state.ghostsEaten;$('result-mazes').textContent=state.clearedStages;
   scores.push({score:state.score,ability:state.ability,date:new Date().toISOString()});scores.sort((a,b)=>b.score-a.score);scores=scores.slice(0,5);
   let stored=true;try{localStorage.setItem(storageKey,JSON.stringify(scores));}catch{stored=false;}
   board();$('result-status').textContent=platform.sdk?'Sending your run to Gameslop…':stored?'Saved to this device.':'This browser could not save your run.';
@@ -46,15 +56,22 @@ async function finish(){
   $('again').focus({preventScroll:true});
 }
 function updateHUD(){
+  const special=POWERUPS[state.stage],active=!!state.special;
+  const icon='assets/power-'+special.id+'.svg';if($('special-icon').getAttribute('src')!==icon){$('special-icon').src=icon;$('special-icon').alt=special.object;}
+  $('special-status').style.setProperty('--special-color',special.color);$('special-status').classList.toggle('active',active);
+  $('special-name').textContent=special.name;$('special-description').textContent=special.effect;
+  $('special-state').textContent=active?(state.special.id==='pre-workout'?state.special.charges+' BLOCKS LEFT':'SPECIAL ACTIVE'):state.maze.pickup.collected?'USED THIS LEVEL':'LEVEL SPECIAL ? FIND THE STAR';
+  $('special-time').textContent=active?(state.special.ticks/60).toFixed(1)+'s':state.maze.pickup.collected?'USED':'5s';
+  $('special-meter').style.width=active?(state.special.ticks/SPECIAL_TICKS*100)+'%':'0%';
   $('score').textContent=number(state.score).padStart(6,'0');$('combo').textContent=state.multiplier+'×';$('combo-label').textContent=state.combo?state.combo+' IN A ROW':'KEEP EATING';
   $('combo-meter').style.width=Math.max(0,100*(1-(state.tick-state.lastPellet)/150))+'%';
-  const secs=Math.max(0,Math.ceil((RUN_TICKS-state.tick)/60));$('time').textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
+  const secs=Math.floor(state.tick/60);$('time').textContent=String(Math.floor(secs/60)).padStart(2,'0')+':'+String(secs%60).padStart(2,'0');
   $('lives').textContent=Array.from({length:3},(_,i)=>i<state.lives?'♥':'♡').join(' ');$('lives').setAttribute('aria-label',state.lives+' lives');
-  $('stage-number').textContent=String(state.stage+1).padStart(2,'0');$('stage-name').textContent=THEMES[state.stage%3].name;
+  $('stage-number').textContent=String(state.stage+1).padStart(2,'0')+'/'+LEVEL_COUNT;$('stage-name').textContent=THEMES[state.stage].name;
   $('ability-status').textContent=ability.toUpperCase()+(state.energy===600?' READY':' '+Math.ceil((600-state.energy)/60)+'s');
   $('touch-ability').querySelector('i').style.height=100-state.energy/6+'%';$('touch-ability').querySelector('span').textContent=state.energy===600?ability.toUpperCase():Math.ceil((600-state.energy)/60)+'s';
   $('power-status').hidden=!state.power||phase!=='run';if(state.power)$('power-status').querySelector('b').textContent=(state.power/60).toFixed(1);
-  $('status').textContent=state.power?'CHAD MODE. FLIP THE CHASE.':state.dash?'DASH ACTIVE':state.decoy?'DECOY ON THE MOVE':state.maze.remaining+' PELLETS TO THE NEXT MAZE';
+  $('status').textContent=state.reason==='campaign_complete'?'ALL TEN LEVELS CLEARED':state.power?'CHAD MODE. FLIP THE CHASE.':state.dash?'DASH ACTIVE':state.decoy?'DECOY ON THE MOVE':state.maze.remaining+' PELLETS TO THE NEXT MAZE';
 }
 const keyDirections={ArrowUp:0,KeyW:0,ArrowRight:1,KeyD:1,ArrowDown:2,KeyS:2,ArrowLeft:3,KeyA:3};
 window.addEventListener('keydown',e=>{

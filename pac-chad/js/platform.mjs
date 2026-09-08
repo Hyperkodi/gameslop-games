@@ -12,7 +12,7 @@ export class Platform {
   async finish(state){
     if(!this.sdk||!this.run)return 'Saved to your personal best board on this device.';
     this.run=null;
-    try{await this.sdk.submit(state.score,{outcome:state.reason==='time_up'?'victory':'defeat',reason:state.reason});return 'Run sent to Gameslop. Official rankings are not enabled for this build.';}
+    try{await this.sdk.submit(state.score,{outcome:state.reason==='campaign_complete'?'victory':'defeat',reason:state.reason});return 'Run sent to Gameslop. Official rankings are not enabled for this build.';}
     catch{return 'Saved on this device. Gameslop could not accept this run.';}
   }
 }

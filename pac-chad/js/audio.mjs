@@ -50,6 +50,9 @@ export class Audio {
     osc.connect(gain);gain.connect(this.master||this.ctx.destination);this.track(osc,gain);osc.start(t);osc.stop(t+duration+.01);
   }
   event(e,ability='dash'){
+    if(e.type==='special')e={...e,type:'power'};
+    if(e.type==='special-end')e={...e,type:'power-end'};
+    if(e.type==='repel')e={...e,type:'gate'};
     if(this.muted||!this.ctx||this.ctx.state!=='running')return;
     const id=e.type==='ability'?ability:e.type,now=this.ctx.currentTime;
     const cooldown=SOUND_BANK[id]?.cooldown??(id==='pellet'?.12:id==='warning'?.45:0);

@@ -1,6 +1,6 @@
 {
-  "version": "pac-chad-score-attack-v1",
-  "buildHash": "1c12980994eefa4e24fe42b49157bda05d3791004e104e7b963d3c0c14fb0836",
+  "version": "pac-chad-campaign-v3",
+  "buildHash": "0de01c50b6748a0be1958275e63a9fbb38bb4d9e5a0a4e59b45427481159bc32",
   "files": [
     {
       "path": "assets/chad-chomp.png",
@@ -21,6 +21,56 @@
       "path": "assets/ivy.png",
       "bytes": 1374913,
       "sha256": "22e9252e3a9d6beb739fea1fd7f67108a9d03e19475e85a6a7bfb5a2fd956020"
+    },
+    {
+      "path": "assets/power-absolute-aura.svg",
+      "bytes": 1733,
+      "sha256": "b8cf5f5704fd32edb2be04853dbcbb4f3bf0718aef8495264530a5db0e98e450"
+    },
+    {
+      "path": "assets/power-cheat-day.svg",
+      "bytes": 1746,
+      "sha256": "a45ff5dc346d4af315b06e13e4d00fb1b1db9ebaa19c3a40e69df0b2a3c07002"
+    },
+    {
+      "path": "assets/power-cold-plunge.svg",
+      "bytes": 1770,
+      "sha256": "cb57e867ecb07b083650f0907e4c551f6eadde9394edbbd619e6a03507d505f8"
+    },
+    {
+      "path": "assets/power-final-form.svg",
+      "bytes": 1846,
+      "sha256": "fee798325017cec18a00249a1a532338e53e00e67ff6fbb7730db56ecdace9ff"
+    },
+    {
+      "path": "assets/power-ghosted.svg",
+      "bytes": 1696,
+      "sha256": "8f9fc8afbacef72ae42ab908a3c9edce26533019bb6d059862ad9eca794bf373"
+    },
+    {
+      "path": "assets/power-gym-pass.svg",
+      "bytes": 1842,
+      "sha256": "4ebdc18a21efdda81b21583474c7db5b9cf5007d19b6d554a8213fb41e326389"
+    },
+    {
+      "path": "assets/power-leg-day.svg",
+      "bytes": 1580,
+      "sha256": "64b93e70b8e16197f1f0ad73379ff2b2b30f092ed12e6fdf1ba3889fa9b07a8b"
+    },
+    {
+      "path": "assets/power-mirror-check.svg",
+      "bytes": 1677,
+      "sha256": "cf0a444b79903a6752bada6577aa24cd9e7aacdc4ff496380bb9d6cf922ceee2"
+    },
+    {
+      "path": "assets/power-pre-workout.svg",
+      "bytes": 1601,
+      "sha256": "008240a4e5193f069b4d2832e5bc8defbeebe59aad7ac2cda6217ad2af4f876c"
+    },
+    {
+      "path": "assets/power-steak.svg",
+      "bytes": 1776,
+      "sha256": "56104309d9bc17abb1e3ee4144fa7af42dc3463e25f29d0664a06b54b1385544"
     },
     {
       "path": "assets/riot.png",
@@ -134,8 +184,8 @@
     },
     {
       "path": "index.html",
-      "bytes": 8494,
-      "sha256": "b9fd4e314994fd3d11e810af8a26743a22f64ea9ebaa763e5e969d1259ea6e27"
+      "bytes": 9259,
+      "sha256": "08a84fd5854395ef51e9258ede7d5e4c179de7c41e785e30c14daf3788cb4dd3"
     },
     {
       "path": "integration/gameslop-sdk.js",
@@ -144,13 +194,13 @@
     },
     {
       "path": "js/app.mjs",
-      "bytes": 13996,
-      "sha256": "32d3305a02ef5b465e76b0faddc0ad785bd67664a96580597a4c7b1a0812ff79"
+      "bytes": 15889,
+      "sha256": "7c9f841bc1eaf195332bb6ddfc7bd45ebb5211c46ce442a2be0b5e3bccbac670"
     },
     {
       "path": "js/audio.mjs",
-      "bytes": 4563,
-      "sha256": "824591809dea33b3d09e252f175a721dfdfd5fffcd5eea0185a425387f311847"
+      "bytes": 4715,
+      "sha256": "c3443ac2d96ede6efc1eeaab064d6761dfd021be95e6bee8ebef87d1ec4d496a"
     },
     {
       "path": "js/chomp.mjs",
@@ -159,23 +209,33 @@
     },
     {
       "path": "js/model.mjs",
-      "bytes": 10654,
-      "sha256": "06df86aa09331ded9f7f6d65fe9f6b04f461cf230668fbef7b1d32d9e88f22bf"
+      "bytes": 15019,
+      "sha256": "f2caecbe977b2e12e6218adaab07aaa2d50dc8903d218520b80fa3a7b9bad6ed"
     },
     {
       "path": "js/platform.mjs",
-      "bytes": 1310,
-      "sha256": "c8641b91cce66241e24c372f044a517dae71ee7da0750ebfe39344b941777075"
+      "bytes": 1320,
+      "sha256": "acdc1bb586f1555eb251c34ac0199a727c0e874ee16541fd4aaeb3df6a62e08f"
+    },
+    {
+      "path": "js/powerup-render.mjs",
+      "bytes": 2921,
+      "sha256": "2c134e5348c812eaeb90be9324744fdef5cc90ffa1e21c825173dd9bfcf9e7b4"
+    },
+    {
+      "path": "js/powerups.mjs",
+      "bytes": 1667,
+      "sha256": "5674c2ebebcc1b8ff1a20671674df02472cb3e1a97e01bdcf0fcfdc33e6ac0d5"
     },
     {
       "path": "js/renderer.mjs",
-      "bytes": 8432,
-      "sha256": "3dec5733e5dc9034f6a2e1f35cc98a3dbd4c4395c4f98d969fcdc34cdd30a2c3"
+      "bytes": 9203,
+      "sha256": "dd3127b59426b3e74c03b96b033d1c60717cac7482ab84ed1c6f678cb2fcf388"
     },
     {
       "path": "js/replay.mjs",
-      "bytes": 1843,
-      "sha256": "c52c5621e263a1272fc190dff65dc2412b39bf059c74687147274a5b0f8ae6db"
+      "bytes": 2157,
+      "sha256": "558cf96983ac93e6df1c66aaf0e5d8e391c73401104574b45ace5d75c9dbde4e"
     },
     {
       "path": "js/sound-bank.mjs",
@@ -184,8 +244,8 @@
     },
     {
       "path": "ruleset.json",
-      "bytes": 532,
-      "sha256": "965a587b4576782cffc88ebbc5c32282ca78885b60272bf30a83dc518cf05c0e"
+      "bytes": 837,
+      "sha256": "3fd4f3236c8b2812fec20d36f06bc6f31f4da06dccee89d60ea295bc867578ee"
     },
     {
       "path": "sound-lab.html",
@@ -194,8 +254,8 @@
     },
     {
       "path": "style.css",
-      "bytes": 15540,
-      "sha256": "4bd7a5f284fefd5420fd21f30c066ddee54f515140cfe3926c4b4eda6eff2f30"
+      "bytes": 18030,
+      "sha256": "44abf92548dce5d99c49f6355bfe8d00ae86199bd895c42da0acdb9370502a24"
     }
   ]
 }
