@@ -6,3 +6,7 @@
 .hazard-card{min-width:0}.hazard-card canvas{height:auto;max-width:100%;aspect-ratio:4/3}.hero>div{min-width:0}.scores li strong{font:25px Impact,sans-serif;color:var(--cream)}
 .hero{overflow:hidden}
 .hazard-card canvas{aspect-ratio:26/23}.exchange-guide{padding:0 0 60px}.exchange-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}.exchange-card{min-width:0;background:#101b17;border:1px solid #35483a;text-align:center;padding:12px 8px}.exchange-card canvas{display:block;width:100%;height:auto;aspect-ratio:180/235}.exchange-card h3{font:700 13px Arial;margin:0 0 8px;color:#e9e4cc}@media(max-width:800px){.exchange-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:540px){.exchange-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.exchange-guide .section-heading{display:block}.exchange-card canvas{max-height:215px;object-fit:contain}}
+
+.game-hud .altitude-readout{margin-top:6px;font:11px monospace;letter-spacing:0;color:#e4edd4;white-space:nowrap}@media(max-width:540px){.game-hud .altitude-readout{font-size:9px}}
+
+.touch-landscape .game-hud .altitude-readout{font-size:10px}

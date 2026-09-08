@@ -4,13 +4,13 @@
   "files": [
     {
       "path": "index.html",
-      "sha256": "bb3cad9c52ea01bb87cbbbe396d408d40a3f1ed0b68db11c2a941531b3d60be8",
-      "bytes": 6141
+      "sha256": "c168371d70363ed3983ac29e5a5e600bb1395862b02d6662650cca8cc7a117ab",
+      "bytes": 6202
     },
     {
       "path": "style.css",
-      "sha256": "c00f8d64acff7697935c6d8d2ff3cf392f9c7507639b2a7b0564e8e04782cd8d",
-      "bytes": 14337
+      "sha256": "1664fb0431e1f95afcc3dd66b71ebba720d5fc4f0aeabd3e3fb1bf5d72391796",
+      "bytes": 14581
     },
     {
       "path": "js/animations.mjs",
@@ -19,8 +19,8 @@
     },
     {
       "path": "js/app.mjs",
-      "sha256": "6baae58d60646742a22a609caec87f01af2aae3ce83f2cebedd16da886d26a14",
-      "bytes": 8252
+      "sha256": "a8f870f3d0c4829d2b81f31127a912af6a267c153672f00950a4c7cd440c6640",
+      "bytes": 8372
     },
     {
       "path": "js/audio.mjs",
@@ -49,8 +49,8 @@
     },
     {
       "path": "js/renderer.mjs",
-      "sha256": "e18a7b0c5d799d2e9afd7ceca276ecb58560cc116c5824b726ddec9c9b8146f4",
-      "bytes": 7504
+      "sha256": "9f9d7573f843ea97621273b3175e25b7bc0fbf1c0ce790a05ccf2edb0070b453",
+      "bytes": 7411
     },
     {
       "path": "assets/cashcat.png",

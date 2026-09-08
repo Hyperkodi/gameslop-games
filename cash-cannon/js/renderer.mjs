@@ -74,6 +74,5 @@ export class Renderer{
     if(this.cat)c.drawImage(this.cat,-size*.5,-size*.58,size,size);c.restore();
     this.particles=this.particles.filter(p=>p.life>0);for(const p of this.particles){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy-=380*dt;p.life-=dt;c.globalAlpha=clamp(p.life,0,1);c.fillStyle=p.color;c.fillRect(sx(p.x),sy(p.y),p.size*z,p.size*z);}c.globalAlpha=1;c.restore();
     if(this.flash>0){c.globalAlpha=this.flash;c.fillStyle='#fff8d8';c.fillRect(0,0,w,h);c.globalAlpha=1;this.flash=Math.max(0,this.flash-dt*2);}
-    if(this.cameraY>50){text(c,'↑ '+Math.round(s.y/10)+'m ALTITUDE',w/2,44,12,'#e4edd4');}
   }
 }

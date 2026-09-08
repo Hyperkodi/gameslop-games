@@ -16,6 +16,8 @@ function board(){
 }
 function hud(){
   $('distance').textContent=metres(state.score)+' m';$('boosts').textContent=state.boosts+'×';
+  $('altitude').hidden=!(renderer?.cameraY>50);
+  $('altitude').textContent='↑ '+Math.round(state.y/10)+'m ALTITUDE';
   $('angle-value').textContent=state.angle+'°';$('angle').value=state.angle;
   const power=Math.round(state.power*100);$('power-value').textContent=power+'%';$('power-fill').style.width=power+'%';document.querySelector('.power-meter').setAttribute('aria-valuenow',power);
   const aiming=active&&!paused&&state.phase==='aim';for(const id of ['angle','angle-down','angle-up','fire'])$(id).disabled=!aiming;
