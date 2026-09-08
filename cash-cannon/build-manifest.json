@@ -1,0 +1,121 @@
+{
+  "game": "cash-cannon",
+  "ruleset": "cash-cannon-v2",
+  "files": [
+    {
+      "path": "index.html",
+      "sha256": "a5b31f77c5f2d2bb0c5d1aa73d07d0118d04c61cbde8293795039a566feab0ab",
+      "bytes": 6123
+    },
+    {
+      "path": "style.css",
+      "sha256": "1c19a6c3da0b0727afea4839117fb72262c71483bcc2f85116292740a5c2b9cd",
+      "bytes": 14302
+    },
+    {
+      "path": "js/animations.mjs",
+      "sha256": "77cbe55a5eb527c6f0e63ac1b88e2208b1b686cb2301fb8e44af2a58ccecfcdd",
+      "bytes": 493
+    },
+    {
+      "path": "js/app.mjs",
+      "sha256": "6baae58d60646742a22a609caec87f01af2aae3ce83f2cebedd16da886d26a14",
+      "bytes": 8252
+    },
+    {
+      "path": "js/audio.mjs",
+      "sha256": "ef7a6cfb0ef98440e3bd7b70dee11adc64c6e8f10d37bd55e3928a9bff69a88b",
+      "bytes": 1415
+    },
+    {
+      "path": "js/display.mjs",
+      "sha256": "31676cbad69b6e5b120e29edc420c81ce0411e458b8fb76027ed6f7523a33b88",
+      "bytes": 3284
+    },
+    {
+      "path": "js/exchanges.mjs",
+      "sha256": "16f2309734f96a3830a385b022434c7a83accc006fab3eeec6c895169a60fd83",
+      "bytes": 1265
+    },
+    {
+      "path": "js/hazards.mjs",
+      "sha256": "50f6666273b916cbe39e2b91687f0c8cc309c04587dd6516c34ad9c3abd4d3f6",
+      "bytes": 8306
+    },
+    {
+      "path": "js/model.mjs",
+      "sha256": "5add24c0bf9517c49ad9d1ee5c59337f0ea018476014c56df9d294ec211e1836",
+      "bytes": 6095
+    },
+    {
+      "path": "js/renderer.mjs",
+      "sha256": "e18a7b0c5d799d2e9afd7ceca276ecb58560cc116c5824b726ddec9c9b8146f4",
+      "bytes": 7504
+    },
+    {
+      "path": "assets/cashcat.png",
+      "sha256": "3b823f7dd0ff2f27edd2bc5d1de053ca0bf1ed6c0339dc0087c0f5f6b314b1f3",
+      "bytes": 2420366
+    },
+    {
+      "path": "assets/cex/binance.ico",
+      "sha256": "8318ebbcb1cb4729eb0f78bb058dc618c3b63f9f9f0070a1a7a3265fdc79b833",
+      "bytes": 4286
+    },
+    {
+      "path": "assets/cex/bitfinex.ico",
+      "sha256": "8e1c6ffdb0f07584eaf8c117010e1f887b1781dc2ce57cdcc606d2303bfe8cd7",
+      "bytes": 15406
+    },
+    {
+      "path": "assets/cex/bitget.png",
+      "sha256": "96566dc4bc8606740f518de4126b24537e7d287ed7e8181eb9e641cfb80847a7",
+      "bytes": 820
+    },
+    {
+      "path": "assets/cex/bybit.jpg",
+      "sha256": "1ee1353c5c0edb2bce81b73b59f13727502f32a987d5031abc74f583a3c96a08",
+      "bytes": 263215
+    },
+    {
+      "path": "assets/cex/coinbase.png",
+      "sha256": "e1bd2ac5c40582e51c35f720b7a1bdf85e0ac4dbe9af226502021fa466083475",
+      "bytes": 1574
+    },
+    {
+      "path": "assets/cex/crypto-com.ico",
+      "sha256": "d88ab80a018afdd384bda19e2dd8823628c2f84eee26f33b51c9938c0d086614",
+      "bytes": 102825
+    },
+    {
+      "path": "assets/cex/gemini.png",
+      "sha256": "3e177b393c53ae976ff33c6929099f7f75aba0ae5262af124b50db5fd0530fe3",
+      "bytes": 18216
+    },
+    {
+      "path": "assets/cex/kraken.png",
+      "sha256": "3aa58eccf2ec3a7fa82aacb34b538a23e11141d340d3d3eebc34eb1729b1c153",
+      "bytes": 5465
+    },
+    {
+      "path": "assets/cex/kucoin.png",
+      "sha256": "e3d5326f47644dcab23eb52d55286473dff9ab47a7de416f83aeb606da8c9197",
+      "bytes": 2764
+    },
+    {
+      "path": "assets/cex/mexc.png",
+      "sha256": "c8be682c630fe5eae2a3bcce9ba420206d7c5cc0fca87d8497bc72ddd1a051a6",
+      "bytes": 11405
+    },
+    {
+      "path": "assets/cex/okx.png",
+      "sha256": "2c13b2131e9568bf6946cf6e980440040a3dd09ec5a4ca750b7ec1c2310a7903",
+      "bytes": 331
+    },
+    {
+      "path": "assets/gameslop-wordmark.png",
+      "sha256": "5af5a94e88dd2af595b59668c28237d4db937bbea0fc564241cf6e98ea290ff0",
+      "bytes": 107870
+    }
+  ]
+}
