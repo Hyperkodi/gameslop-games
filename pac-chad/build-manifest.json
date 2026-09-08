@@ -1,0 +1,201 @@
+{
+  "version": "pac-chad-score-attack-v1",
+  "buildHash": "85ce7523aacb4c4ee14e0f5af661d14d6f89f3f0ae1e7d299b9803958d105749",
+  "files": [
+    {
+      "path": "assets/chad-chomp.png",
+      "bytes": 1819685,
+      "sha256": "11ec28e98acec7d8d3fa6811b941bc960db86b40692efd7fdfebc9223952f18a"
+    },
+    {
+      "path": "assets/chad.png",
+      "bytes": 1951616,
+      "sha256": "5326ceb595fa58a2446ddab070867410f91cb27c47b67d1d66a1bf69991dfde9"
+    },
+    {
+      "path": "assets/hex.png",
+      "bytes": 1473110,
+      "sha256": "7923d05adf6db5192d17587aad1eff664030a27ac641ee83b2e8c2b263f15204"
+    },
+    {
+      "path": "assets/ivy.png",
+      "bytes": 1374913,
+      "sha256": "22e9252e3a9d6beb739fea1fd7f67108a9d03e19475e85a6a7bfb5a2fd956020"
+    },
+    {
+      "path": "assets/riot.png",
+      "bytes": 1659896,
+      "sha256": "eb9231251af32361341f43573866088a0fbf56a1e70f4a6b5a82eb137a0ff5d6"
+    },
+    {
+      "path": "assets/rook.png",
+      "bytes": 1392795,
+      "sha256": "ad9951ad6a33d2ce2f23cb172042425c9182fd9a7f9eccb1853a8b4b43a20ff2"
+    },
+    {
+      "path": "assets/sfx-best.wav",
+      "bytes": 142928,
+      "sha256": "1e303c95b7fb1ac242346d95bbc8ec1c3d3d85e7fcdbb6b3d6b20dfc05612ae7"
+    },
+    {
+      "path": "assets/sfx-combo.wav",
+      "bytes": 42380,
+      "sha256": "1c7859fa8ad646afa95c386b4a2431cd65a3e5c8a168d95a02789d885c8b13dc"
+    },
+    {
+      "path": "assets/sfx-countdown.wav",
+      "bytes": 16802,
+      "sha256": "8a09be39768683a9fe042a7c25fe1d67c15b823f482f12234fb58f36c301c0d5"
+    },
+    {
+      "path": "assets/sfx-dash.wav",
+      "bytes": 35324,
+      "sha256": "195f53b5d81c19a7744f22d07592a24e41feaae11087db04192116443fae8592"
+    },
+    {
+      "path": "assets/sfx-decoy.wav",
+      "bytes": 67076,
+      "sha256": "c1d1464cca094662dd79d358f2601c7e546d7f0b64c40a8e68faaa964795ab81"
+    },
+    {
+      "path": "assets/sfx-end.wav",
+      "bytes": 98830,
+      "sha256": "49ded3e8d035559cc07a38b3c740d695543f359094c3be87b36a2efc1d1a58cd"
+    },
+    {
+      "path": "assets/sfx-gate-warning.wav",
+      "bytes": 43262,
+      "sha256": "5cd402a7e0e10348f3d0fbac10ae34b4d8054ddf60776c42f6155fc914f3e207"
+    },
+    {
+      "path": "assets/sfx-gate.wav",
+      "bytes": 60022,
+      "sha256": "4c54b9c83fda2f16815c9566dc5191af8029955ebe7012d2667c4a4ec55bcc9e"
+    },
+    {
+      "path": "assets/sfx-ghost.wav",
+      "bytes": 45908,
+      "sha256": "fbc54268df6d5dcb8c8e1dbc2988e1951a1a5fd246ad4f18832623817d91988b"
+    },
+    {
+      "path": "assets/sfx-hit.wav",
+      "bytes": 57374,
+      "sha256": "aa846c4e3bbe70dc9c1afa0b26edf22b1d8524397553e6b8cddcf6e6b2912e1a"
+    },
+    {
+      "path": "assets/sfx-pause.wav",
+      "bytes": 24742,
+      "sha256": "0ff43a0721c3d5b03620024d6504bff4357eb6208a7fc5a884547b6ade5e2dba"
+    },
+    {
+      "path": "assets/sfx-pellet.wav",
+      "bytes": 10188,
+      "sha256": "0705800359280d1044d5c740f175e3ae481501fd9577d284c458b5b53b1b3d97"
+    },
+    {
+      "path": "assets/sfx-power-end.wav",
+      "bytes": 42380,
+      "sha256": "bff9e699c2eba74cab2bfc7237b9f14c2e2b9094cc5630911d3f58eca3b15e26"
+    },
+    {
+      "path": "assets/sfx-power.wav",
+      "bytes": 97066,
+      "sha256": "d814a2b4aaebc9fc5c0817675e236457554e3e011fe14e2b48ac9d2df829685d"
+    },
+    {
+      "path": "assets/sfx-ready.wav",
+      "bytes": 40616,
+      "sha256": "98ab05c32c31bf38d8a9bf8bcf22f916d57522df6e9e2dd162ac0029b4329d1b"
+    },
+    {
+      "path": "assets/sfx-resume.wav",
+      "bytes": 24742,
+      "sha256": "2b6fe3f41627b5ae1aed5dbfee1313ae23dd1927dc604eab19227684e67412d3"
+    },
+    {
+      "path": "assets/sfx-select.wav",
+      "bytes": 15040,
+      "sha256": "973ed1c27f81dcc88c1d601042ba4708c9b11bdc28bb47b11ac9a25d7b6b71d1"
+    },
+    {
+      "path": "assets/sfx-stage.wav",
+      "bytes": 130580,
+      "sha256": "08238c1e4049e3fa10ed475643279c6996c81cbf8b3dc72ac860502ec8665b9b"
+    },
+    {
+      "path": "assets/sfx-start.wav",
+      "bytes": 56492,
+      "sha256": "b657cafa96039f3540ace0bf7de182b55b40cddaa38d2a033779882df8d25487"
+    },
+    {
+      "path": "assets/sfx-warning.wav",
+      "bytes": 23858,
+      "sha256": "b6883864bc2cff95a02345f112c4a866ab4a569fb15cacf41ee14289525661ed"
+    },
+    {
+      "path": "index.html",
+      "bytes": 8494,
+      "sha256": "b9fd4e314994fd3d11e810af8a26743a22f64ea9ebaa763e5e969d1259ea6e27"
+    },
+    {
+      "path": "integration/gameslop-sdk.js",
+      "bytes": 13192,
+      "sha256": "71f1cd4f8f3e4b769421522eb6b3cf3387095c6099383e7c2268484d41404061"
+    },
+    {
+      "path": "js/app.mjs",
+      "bytes": 13996,
+      "sha256": "32d3305a02ef5b465e76b0faddc0ad785bd67664a96580597a4c7b1a0812ff79"
+    },
+    {
+      "path": "js/audio.mjs",
+      "bytes": 4563,
+      "sha256": "824591809dea33b3d09e252f175a721dfdfd5fffcd5eea0185a425387f311847"
+    },
+    {
+      "path": "js/chomp.mjs",
+      "bytes": 831,
+      "sha256": "a36590f02fbd89626289a2debc832e9f4768b7524f1436c50fd3f556422c9a3e"
+    },
+    {
+      "path": "js/model.mjs",
+      "bytes": 10654,
+      "sha256": "06df86aa09331ded9f7f6d65fe9f6b04f461cf230668fbef7b1d32d9e88f22bf"
+    },
+    {
+      "path": "js/platform.mjs",
+      "bytes": 1310,
+      "sha256": "c8641b91cce66241e24c372f044a517dae71ee7da0750ebfe39344b941777075"
+    },
+    {
+      "path": "js/renderer.mjs",
+      "bytes": 8252,
+      "sha256": "a63eedcd879501e2da71a980b4c3784727bcaeb8c7539764532e41510732db8f"
+    },
+    {
+      "path": "js/replay.mjs",
+      "bytes": 1843,
+      "sha256": "c52c5621e263a1272fc190dff65dc2412b39bf059c74687147274a5b0f8ae6db"
+    },
+    {
+      "path": "js/sound-bank.mjs",
+      "bytes": 2576,
+      "sha256": "78de88b1cb9daa302994fb86a9ea8481ebe79661bc55456b88fa9a927663a980"
+    },
+    {
+      "path": "ruleset.json",
+      "bytes": 532,
+      "sha256": "965a587b4576782cffc88ebbc5c32282ca78885b60272bf30a83dc518cf05c0e"
+    },
+    {
+      "path": "sound-lab.html",
+      "bytes": 2995,
+      "sha256": "2d0e39bd51cb971d1af7f1692bd97efd6ee5044824da93778f70d7569b7224e2"
+    },
+    {
+      "path": "style.css",
+      "bytes": 15540,
+      "sha256": "4bd7a5f284fefd5420fd21f30c066ddee54f515140cfe3926c4b4eda6eff2f30"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#10110e">
+  <meta name="description" content="Pac-Chad. Big jaw. Bigger score. A Gameslop maze chase with combos, clever ghosts and five minutes to make it count.">
+  <title>Pac-Chad | Gameslop</title>
+  <link rel="icon" href="assets/chad.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="masthead"><a href="../" class="brand" aria-label="Gameslop arcade">GAME<span>SLOP</span><i>GOOD GAMES. ZERO PRETENSE.</i></a><span class="edition">ARCADE EXPERIMENT / 008</span><a href="#cast" class="text-link">MEET THE CHASERS ↗</a></header>
+  <main>
+    <section class="intro" id="intro">
+      <div class="intro-copy"><p class="eyebrow"><span class="live-dot"></span> A GAMESLOP MAZE CHASE</p><h1>PAC<span>-CHAD</span><sup>™</sup></h1><p class="tagline">BIG JAW. BIGGER SCORE.</p><p class="description">Eat the maze. Outsmart the chase.<br>Five minutes to become the final boss of the leaderboard.</p><div class="run-facts"><span><b>05:00</b> ON THE CLOCK</span><span><b>3</b> LIVES</span><span><b>5×</b> MAX COMBO</span></div></div>
+      <div class="hero-art" aria-label="Gigachad's head pursued by the four colorful ghosts"><div class="hero-orbit"></div><span class="hero-label">THE FACE OF CONFIDENCE.</span><img class="hero-chad" src="assets/chad.png" alt="Gigachad: swept-back hair, black beard, square jaw and confident grin"><img class="hero-ghost g1" src="assets/rook.png" alt=""><img class="hero-ghost g2" src="assets/hex.png" alt=""><img class="hero-ghost g3" src="assets/ivy.png" alt=""><img class="hero-ghost g4" src="assets/riot.png" alt=""><span class="hero-score">+1600</span></div>
+    </section>
+    <section class="cabinet" id="cabinet" aria-label="Pac-Chad arcade cabinet">
+      <div class="toolbar"><span class="stage-indicator"><b id="stage-number">01</b> <span id="stage-name">AFTERHOURS</span></span><div class="toolbar-actions"><button id="sound" aria-pressed="false">SOUND ON</button><button id="pause" disabled>PAUSE</button><button id="fullscreen">FULLSCREEN ↗</button></div></div>
+      <div class="hud"><div><small>SCORE</small><strong id="score">000000</strong></div><div class="hud-combo"><small id="combo-label">KEEP EATING</small><strong id="combo">1×</strong><div class="meter"><i id="combo-meter"></i></div></div><div><small>TIME LEFT</small><strong id="time">05:00</strong></div><div><small>LIVES</small><strong id="lives" aria-label="3 lives">♥ ♥ ♥</strong></div></div>
+      <div class="play-space">
+        <div class="viewport" id="viewport"><canvas id="game" tabindex="0" aria-label="Pac-Chad maze. Arrow keys or WASD move, Space uses your ability, P pauses."></canvas>
+          <div class="start-panel overlay" id="start-panel"><div class="start-card"><p class="eyebrow">READY TO GET CHASED?</p><h2>CHOOSE YOUR EDGE.</h2><div class="ability-options" role="group" aria-label="Choose an ability"><button class="ability-choice selected" data-ability="dash" aria-pressed="true"><b>↯ DASH</b><span>Burst through trouble.<br>Briefly untouchable.</span></button><button class="ability-choice" data-ability="decoy" aria-pressed="false"><b>◈ DECOY</b><span>Send a fake Chad.<br>Let them chase him.</span></button></div><button id="start" class="primary" disabled>LOADING THE CAST…</button><p class="start-help">ARROWS / WASD TO MOVE · SPACE FOR ABILITY<br>ON MOBILE: SWIPE OR USE THE PAD</p><p id="platform-note" class="muted">Practice run · Personal best saved on this device</p></div></div>
+          <div class="overlay" id="pause-panel" hidden><div class="modal-card"><p class="eyebrow">TAKE A BREATH.</p><h2>JAW ON PAUSE.</h2><p>The clock is paused. Your run is right here.</p><button id="resume" class="primary">BACK TO THE CHASE →</button><button id="quit" class="secondary">END RUN & RETURN</button></div></div>
+          <div class="overlay" id="results-panel" hidden><div class="modal-card results-card"><p class="eyebrow" id="result-reason">RUN COMPLETE</p><h2 id="result-title">CHAD ENERGY.</h2><strong class="final-score" id="final-score">0</strong><div class="result-stats"><span><b id="result-pellets">0</b> PELLETS</span><span><b id="result-ghosts">0</b> GHOSTS</span><span><b id="result-mazes">0</b> MAZES</span></div><p id="result-status" class="muted"></p><button id="again" class="primary">ONE MORE RUN →</button><button id="save-replay" class="secondary">SAVE RUN REPLAY ↓</button></div></div>
+          <div id="countdown" class="countdown" hidden></div><div id="toast" class="toast" role="status" aria-live="polite"></div><div class="power-status" id="power-status" hidden>CHAD MODE <b>7.0</b></div>
+        </div>
+        <nav class="touch-controls" aria-label="Touch controls"><div class="dpad"><button data-dir="0" aria-label="Move up">↑</button><button data-dir="3" aria-label="Move left">←</button><span></span><button data-dir="1" aria-label="Move right">→</button><button data-dir="2" aria-label="Move down">↓</button></div><button class="ability-button" id="touch-ability" aria-label="Use ability"><b>↯</b><span>DASH</span><i></i></button></nav>
+      </div>
+      <div class="cabinet-foot"><span><i class="live-dot"></i> <span id="status">EAT. EVADE. REPEAT.</span></span><span class="desktop-ability"><kbd>SPACE</kbd> <b id="ability-status">DASH READY</b></span><span>PERSONAL BEST <b id="best">000000</b></span></div>
+    </section>
+    <section class="how-to"><div><span class="step-no">01</span><h3>FIND YOUR FLOW.</h3><p>Keep eating to build your combo. Every 20 pellets adds a multiplier, up to 5×. Stop collecting for 2.5 seconds and it resets.</p></div><div><span class="step-no">02</span><h3>FLIP THE CHASE.</h3><p>Big glowing pellets give you seven seconds of Chad Mode. Catch ghosts in a row for 200, 400, 800, then 1,600 points.</p></div><div><span class="step-no">03</span><h3>MAKE YOUR MOVE.</h3><p>Your ability recharges in ten seconds. Watch for new shortcuts, clear every pellet, and move into the next maze.</p></div></section>
+    <section class="cast-section" id="cast"><div class="section-head"><div><p class="eyebrow">FOUR FACES. FOUR PROBLEMS.</p><h2>KNOW YOUR CHASERS.</h2></div><p>Learn the look.<br>Anticipate the move.</p></div><div class="cast-grid">
+      <article style="--cast:#4986ff"><div class="portrait"><img src="assets/rook.png" alt="Rook, a full-faced ghost with a broad square jaw, dark goatee, blue asymmetric bob and silver septum ring"></div><div class="cast-copy"><small>01 / THE CHASER</small><h3>ROOK</h3><p>Blue bob. Broad jaw. Goatee.<br>Follows your trail relentlessly.</p></div></article>
+      <article style="--cast:#c570ff"><div class="portrait"><img src="assets/hex.png" alt="Hex, a fuller-faced ghost with light facial stubble, a natural chin, purple bun, round black glasses and blue and pink drag makeup"></div><div class="cast-copy"><small>02 / THE AMBUSHER</small><h3>HEX</h3><p>Round glasses. Dramatic makeup.<br>Already plotting your next turn.</p></div></article>
+      <article style="--cast:#b5ec4f"><div class="portrait"><img src="assets/ivy.png" alt="Ivy, a feminine-presenting male ghost with a soft clean-shaven face, subtle makeup, light cheek acne, green undercut and silver hoops"></div><div class="cast-copy"><small>03 / THE GUARDIAN</small><h3>IVY</h3><p>Green undercut. Silver hoops.<br>Your power pellet has a bodyguard.</p></div></article>
+      <article style="--cast:#62e8bd"><div class="portrait"><img src="assets/riot.png" alt="Riot, a feminine ghost with rainbow-colored space buns, a smooth chin and red cat-eye glasses"></div><div class="cast-copy"><small>04 / THE CHARGER</small><h3>RIOT</h3><p>Rainbow buns. Red frames.<br>See the warning? Leave that lane.</p></div></article>
+    </div></section>
+    <section class="records"><div><p class="eyebrow">YOUR NEXT SCORE TO BEAT.</p><h2>THE PERSONAL BEST BOARD.</h2><p>Best single runs on this device. Unlimited attempts.</p><p class="muted" id="online-board-note">X leaderboards and tournament rankings will live on Gameslop.</p></div><ol id="personal-board"><li>YOUR FIRST RUN GOES HERE.</li></ol></section>
+    <footer><a class="brand" href="../">GAME<span>SLOP</span></a><span>PAC-CHAD / BIG JAW. BIGGER SCORE.</span><a href="#intro">BACK TO TOP ↑</a></footer>
+  </main>
+  <script type="module" src="js/app.mjs"></script>
+</body>
+</html>

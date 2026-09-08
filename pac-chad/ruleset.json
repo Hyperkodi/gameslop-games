@@ -1,0 +1,19 @@
+{
+  "gameId": "pac-chad",
+  "rulesetId": "pac-chad-score-attack-v1",
+  "scoringVersion": "1",
+  "metric": "points",
+  "direction": "higher",
+  "mode": "score-attack",
+  "difficulty": "normal",
+  "simulationHz": 60,
+  "maxTicks": 18000,
+  "startingLives": 3,
+  "abilityOptions": ["dash", "decoy"],
+  "maxMultiplier": 5,
+  "practiceSeed": 5259587,
+  "evidenceEncoding": "two-controller-nibbles-per-byte-base64",
+  "maxEvidenceCharacters": 12000,
+  "ranked": false,
+  "status": "local-replay-validator-awaiting-platform-integration"
+}
