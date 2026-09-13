@@ -1,0 +1,14 @@
+{
+  "file": "Rifle Pop.wav",
+  "title": "Gunshot / Basic Sound Effects",
+  "author": "n4",
+  "license": "CC0-1.0",
+  "page": "https://opengameart.org/content/basic-sound-effects",
+  "source": "https://opengameart.org/sites/default/files/gunshot_0.mp3",
+  "sourceSha256": "8f5c5b8eeeaf074050f0b27bffe9be3dc7661b9cfdea66daedb4ffb521775f58",
+  "processing": "Mono, 100 Hz high-pass, 7 kHz low-pass, leading silence removed, 160 ms single shot, 40 ms tail fade, peak normalized to -3 dBFS.",
+  "duration": 0.16,
+  "peakDb": -2.999999523162842,
+  "rmsDb": -15.768667221069336,
+  "sha256": "d0198d1ae6c06baa2eaf0a5e76b2a5703758a77e8cca6d6b6ed83c5938baa932"
+}

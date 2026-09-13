@@ -39,15 +39,16 @@ In Spillway, hold Down and press Jump to descend one ledge; release Jump before 
 
 | Mode | Lives | Gun supply | Weapon slots | Upgrade memory | Nukes |
 | --- | --- | --- | --- | --- | --- |
-| Easy | 12 | Frequent caches; 10% enemy drop chance | 2 | Retained for the run | Yes |
-| Normal | 3 | Fewer caches; 4.5% enemy drop chance | 2 | Retained for the run | Yes |
-| Hard | 3 | Rare caches; 1.5% enemy drop chance | 1 | Lost when discarded | No |
+| Easy | 9 | Frequent caches; 10% enemy drop chance | 2 | Retained for the run | Yes |
+| Normal | 7 | Fewer caches; 4.5% enemy drop chance | 2 | Retained for the run | Yes |
+| Hard | 5 | Rare caches; 1.5% enemy drop chance | 1 | Lost when discarded | No |
+| Extra Hard | 3 | Rare caches; 1.5% enemy drop chance | 1 | Lost when discarded | No |
 
-Drop probabilities include utility pickups. Hard also adds authored enemies, more frequent reinforcements, and faster enemy fire. All modes start with three continues, checkpoint respawns, brief respawn protection, and an extra life every 15,000 points. Easy and Normal additionally have one collectible life in each level and a continue in levels 3 and 6. Hard has no level life pickups and has one collectible continue in level 4. Each bonus is collectable once per run, even after using a continue. In co-op the collecting player receives the life; continues are shared. Legacy `assist` and `arcade` engine configurations map to Easy and Normal.
+Drop probabilities include utility pickups. Hard and Extra Hard also add authored enemies, more frequent reinforcements, and faster enemy fire. Easy, Normal and Hard start with three continues; Extra Hard starts with one. All modes have checkpoint respawns, brief respawn protection, and an extra life every 15,000 points. Easy and Normal additionally have one collectible life in each level and a continue in levels 3 and 6. Hard and Extra Hard have no level life pickups and each has one collectible continue in level 4. Extra Hard shares Hard's combat pressure and equipment restrictions. Each bonus is collectable once per run, even after using a continue. In co-op the collecting player receives the life; continues are shared. Legacy `assist` and `arcade` engine configurations map to Easy and Normal.
 
 A new gun becomes active and holsters your previous active gun on Easy/Normal. If both slots are occupied, the old holstered gun is discarded. Collecting a duplicate of either carried gun upgrades that gun without switching slots. Swap exchanges the two carried guns.
 
-Every gun has five tiers. Each successive tier increases damage, projectile size, and firing speed; blast weapons also gain splash radius and damage. Tesla gains additional chain targets and cryo gains slow duration. Tier five is the cap. On Easy/Normal, re-acquiring a discarded or lost gun restores its previous tier for the current run, including after death and continues. Starting a new run resets progression. On Hard, replacing or losing a gun erases its upgrades; reacquiring it starts at tier one. Co-op equipment and progression are independent.
+Every gun has five tiers. Each successive tier increases damage, projectile size, and firing speed; blast weapons also gain splash radius and damage. Tesla gains additional chain targets and cryo gains slow duration. Tier five is the cap. On Easy/Normal, re-acquiring a discarded or lost gun restores its previous tier for the current run, including after death and continues. Starting a new run resets progression. On Hard and Extra Hard, replacing or losing a gun erases its upgrades; reacquiring it starts at tier one. Co-op equipment and progression are independent.
 
 ## Arsenal and power-ups
 
@@ -70,7 +71,7 @@ Eleven guns: rifle, machine gun, spread gun, laser rifle, flamethrower, grenade 
 Tesla chains electricity between nearby targets. Cryo slows ordinary enemy movement and attack cadence. Plasma fires heavy explosive bolts. Grenades arc and explode; rockets seek; laser and wave projectiles pierce.
 
 - **Cloak:** breaks enemy pursuit and aimed targeting for eight seconds. Enemies can target a visible co-op partner. Existing shots, contact, hazards, and non-aimed boss patterns remain dangerous.
-- **Screen nuke:** detonates immediately on collection, destroys visible non-boss enemies, and clears visible enemy shots. Offscreen enemies and bosses survive. Disabled on Hard.
+- **Screen nuke:** detonates immediately on collection, destroys visible non-boss enemies, and clears visible enemy shots. Offscreen enemies and bosses survive. Disabled on Hard and Extra Hard.
 - **Barrier:** prevents ordinary damage for twelve seconds.
 - **Rapid fire:** faster firing for twenty seconds.
 
@@ -80,7 +81,7 @@ Pickups and equipped weapons use distinct silhouettes. HUD labels show active ti
 
 The outdoor run stages span 6,600px with biome-specific ledges, gaps, hazards, and encounters. Spillway spans 2,860px vertically. Each stage has a boss and one exclusive new enemy:
 
-Spillway mixes narrow concrete steps, broad steel bridges, and optional side shelves. Its fixed gun caches are deliberately scarcer: five on Easy, three on Normal, and one on Hard. Guns sit in marked side alcoves away from the main ascent, with no fixed grenade launcher cache; enemy drops still use the difficulty's random loot rules.
+Spillway mixes narrow concrete steps, broad steel bridges, and optional side shelves. Its fixed gun caches are deliberately scarcer: five on Easy, three on Normal, and one on Hard or Extra Hard. Guns sit in marked side alcoves away from the main ascent, with no fixed grenade launcher cache; enemy drops still use the difficulty's random loot rules.
 
 | Stage | Route | New enemy |
 | --- | --- | --- |
@@ -95,11 +96,15 @@ Spillway mixes narrow concrete steps, broad steel bridges, and optional side she
 
 Both bunker stages use a consistent overhead floor and low walls. Destroying cores does not pan or replace the background. Chamber changes use a brief fade, retaining the same floor coordinates. Outdoor stages retain seven stitched scrolling scenery panels.
 
+## Stage timer
+
+Every stage starts at 1,000 seconds, with the countdown beside the score. Defeating the boss awards one point per whole second remaining, once, including the final stage. The clear screen lists the time bonus separately from the total score. The clock advances with active gameplay, freezes during pause/background pause, and carries through deaths and bunker chambers. A new stage or a continue retry starts a fresh timer. At zero, gameplay continues without a time bonus.
+
 ## Audio
 
 Each stage uses its own calmer CC0 music loop from `Soundtrack/cc0/`. See `music-credits.html` to listen and view the authors, source pages, and public-domain license. The previous original songs are retained on disk but no longer selected by the game. The eight replacements are normalized to approximately -20 LUFS, with loop seams prepared offline and a quiet background mix.
 
-The recordings in `Sound Effects/` cover machine gun, spread, laser, flame, grenade launcher, rocket launcher, wave cannon, Tesla, cryo, and plasma firing; grenade and rocket detonations; barrier and cloak activation; nuke detonation; and boss destruction. Other actions retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Each recording has its own mix level: lasers and rockets are substantially quieter, along with the loud flame, Tesla and boss effects. Recorded weapon and detonation tails are limited to two per cue, with 16 total effect voices. Approved dialogue keeps its existing gain. Music decodes only the selected level into a looping Web Audio buffer, avoiding media-element gaps between repeats; it does not download the entire soundtrack at startup.
+The recordings in `Sound Effects/` cover rifle, machine gun, spread, laser, flame, grenade launcher, rocket launcher, wave cannon, Tesla, cryo, and plasma firing; grenade and rocket detonations; barrier and cloak activation; nuke detonation; and boss destruction. The rifle uses a short CC0 gunshot by n4, edited to one crisp pop per fired round; holding fire creates the burst rhythm. See `Sound Effects/rifle-credits.json` for its source and processing. The machine gun recording is about 11.5 dB quieter than the previous mix. Other actions retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Each recording has its own mix level: lasers and rockets are substantially quieter, along with the loud flame, Tesla and boss effects. Recorded weapon and detonation tails are limited to two per cue, with 16 total effect voices. Approved dialogue keeps its existing gain. Music decodes only the selected level into a looping Web Audio buffer, avoiding media-element gaps between repeats; it does not download the entire soundtrack at startup.
 
 Nukes begin with a near-white screen flash, then expand as a white-hot explosion and shock rings that race beyond the playfield while visible non-boss enemies are removed.
 
@@ -109,7 +114,7 @@ Audio starts after a player gesture. Pause and backgrounding stop music and effe
 
 ### Jetpack and persistent squad
 
-Collect a twin-tank jetpack on an outdoor ledge. Hold the existing jump action (P1 Z, P2 U, gamepad A, or touch JUMP) to thrust; release to descend. Each pack provides ten seconds of actual thrust, with no regeneration. Fuel survives death, room and stage transitions, and continues. Collected packs remain collected until a new run. Empty packs stop thrusting. In overhead bunkers, held thrust hovers over shots. Quick taps preserve ordinary jump height, and down+jump or DROP still passes through platforms.
+Collect a twin-tank jetpack on an outdoor ledge. Hold the existing jump action (P1 Z, P2 U, gamepad A, or touch JUMP) to thrust; release to descend. Each pack provides ten seconds of actual thrust, with no regeneration. Fuel survives death, room and stage transitions, and continues. Collected packs remain collected until a new run. Empty packs stop thrusting. In overhead bunkers, held thrust hovers over shots. Quick taps give a small hop, and down+jump or DROP still passes through platforms.
 
 Pawns joins on the halfway landing in level 3 with a machine gun. Wojak joins halfway through level 5 with a piercing ray gun. Sloppy joins halfway through level 7 with a short-range flamethrower. Reaching or passing their position recruits them, including when jumping overhead. All recruited allies remain for the rest of the run, through player deaths, room/stage transitions and continues. New runs reset recruitment. They navigate platforms with ballistic jumps, follow living players, independently aim and fight, and cannot hurt the players or one another. Hostile Wojak spawns are replaced by existing Bundle Cat troops.
 

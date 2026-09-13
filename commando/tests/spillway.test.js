@@ -24,12 +24,12 @@ test('down+jump catches a close lower shelf, and holding the combo drops only on
   assert.equal(p.y,385-p.h);assert.equal(p.grounded,true);
   assert.equal(e.drainEvents().filter(event=>event.type==='drop').length,1);
   e.input(0,'jump',false);ticks(e);e.input(0,'jump',true);ticks(e,40);
-  assert.equal(p.y,454-p.h);assert.equal(p.lives,3);
+  assert.equal(p.y,454-p.h);assert.equal(p.lives,7);
 });
 test('down+jump cannot drop through the solid floor',()=>{
   const e=game(0);quiet(e);const floor=e.state.level.platforms.find(p=>p.ground);const p=stand(e,floor,110);
   e.input(0,'down',true);e.input(0,'jump',true);ticks(e);
-  assert.ok(p.y<floor.y-p.h);ticks(e,70);assert.equal(p.y,floor.y-p.h);assert.equal(p.lives,3);
+  assert.ok(p.y<floor.y-p.h);ticks(e,70);assert.equal(p.y,floor.y-p.h);assert.equal(p.lives,7);
 });
 test('the climb camera follows a retreat without losing a life or rewinding the checkpoint',()=>{
   const e=game();quiet(e);

@@ -5,6 +5,7 @@
   const { createGrenadeSystem, grenadeOrder } = typeof module !== 'undefined' ? require('./grenades.js') : root.SlopCommando;
   const {createSupportSystem,JETPACK_FUEL,recruitedCount,reinforcementCount}=typeof module!=='undefined'?require('./support.js'):root.SlopCommando;
   const W = 960, H = 540, STEP = 1 / 60;
+  const STAGE_SECONDS = 1000, STAGE_TICKS = STAGE_SECONDS * 60;
   const COYOTE_TIME = .1, JUMP_BUFFER_TIME = .12;
   const weapons = {
     P: { name: 'RIFLE', delay: .19, speed: 690, damage: 1 },
@@ -20,9 +21,10 @@
     A: { name: 'PLASMA CANNON', delay: .6, speed: 520, damage: 5, splash: 65, splashDamage: 3, width: 20, height: 20 }
   };
   const difficultyRules = {
-    easy: { lives: 12, dropChance: .1, cacheStep: 2, waveInterval: 6, enemyLimit: 14, fireScale: 1.3, holster: true, nukes: true },
-    normal: { lives: 3, dropChance: .045, cacheStep: 4, waveInterval: 4.5, enemyLimit: 16, fireScale: 1, holster: true, nukes: true },
-    hard: { lives: 3, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false }
+    easy: { lives: 9, continues: 3, dropChance: .1, cacheStep: 2, waveInterval: 6, enemyLimit: 14, fireScale: 1.3, holster: true, nukes: true },
+    normal: { lives: 7, continues: 3, dropChance: .045, cacheStep: 4, waveInterval: 4.5, enemyLimit: 16, fireScale: 1, holster: true, nukes: true },
+    hard: { lives: 5, continues: 3, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false },
+    'extra-hard': { lives: 3, continues: 1, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false }
   };
   const stageEnemies = ['vineMantis','securitySpider','riverRay','reactorOrb','iceWolf','slagCrab','caveBat','sporeWasp'];
   const specialEnemies = {
@@ -42,6 +44,7 @@
     const grenades=createGrenadeSystem({state,damage:damageEnemy,event});
     const supportTeam=createSupportSystem({state,event,onRecruit:()=>reinforceRoute(true)});
     const rules = () => difficultyRules[state.difficulty] || difficultyRules.normal;
+    const hardMode = () => state.difficulty === 'hard' || state.difficulty === 'extra-hard';
     function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, dropHeld: false, jumpQueued: false, jumpDownQueued: false, dropQueued: false, jumpBuffer: 0, coyoteTime: 0, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
     function resetMovementInput(p) {
       p.held = {}; p.jumpHeld = false; p.swapHeld = false; p.dropHeld = false;
@@ -73,7 +76,7 @@
       if(l.mode==='climb') {
         // Climbing caches are optional detours authored with the route, never automatic
         // weapon replacements on the next required landing.
-        l.supplies=l.supplies.filter(p=>(!p.modes||p.modes.includes(state.difficulty))&&(p.type!=='N'||rules().nukes));
+        l.supplies=l.supplies.filter(p=>(!p.modes||p.modes.includes(hardMode()?'hard':state.difficulty))&&(p.type!=='N'||rules().nukes));
       } else {
         l.supplies=[];
         ledges.forEach((p,i)=>{
@@ -81,12 +84,12 @@
           if(i===3||i===Math.floor(ledges.length*.65)) l.supplies.push({x:p.x+p.w-70,y:p.y-43,type:i===3?'C':rules().nukes?'N':'B'});
         });
       }
-      const extra=l.spawns.filter((_,i)=>i%(state.difficulty==='hard'?2:4)===0).map(e=>{
+      const extra=l.spawns.filter((_,i)=>i%(hardMode()?2:4)===0).map(e=>{
         const kind=stageEnemies[state.stage];
         const support=l.platforms.filter(p=>p.x<=e.x&&p.x+p.w>=e.x+32&&p.y>=e.y).sort((a,b)=>a.y-b.y)[0];
         return {...e,kind,y:!specialEnemies[kind].flying&&support?support.y-34:e.y};
       });
-      if(state.difficulty==='hard')l.spawns.push(...extra);
+      if(hardMode())l.spawns.push(...extra);
       else extra.forEach(e=>{const old=l.spawns.find(s=>s.x===e.x);Object.assign(old,e);});
       const packLedge=l.mode==='climb'?l.platforms.find(p=>p.x===430&&p.y===1560):ledges.find(p=>p.x>450&&p.y>250);
       if(packLedge)l.supplies.push({x:packLedge.x+packLedge.w/2-12,y:packLedge.y-30,type:'J',packId:'stage-'+state.stage});
@@ -99,7 +102,7 @@
       }
     }
     function bonusTypes(){
-      return state.difficulty==='hard'?(state.stage===3?['CONTINUE']:[]):['LIFE',...((state.stage+1)%3===0?['CONTINUE']:[])];
+      return hardMode()?(state.stage===3?['CONTINUE']:[]):['LIFE',...((state.stage+1)%3===0?['CONTINUE']:[])];
     }
     function addBonus(list,type,x,y){
       const bonusId=state.stage+':'+type;
@@ -114,6 +117,7 @@
       state.camera = { x: 0, y: state.level.mode === 'climb' ? state.level.height - H : 0 };
       state.checkpoint = { x: 110, y: state.level.mode === 'climb' ? state.level.height - 94 : 410 };
       state.spawned = {}; state.stageTime = 0; state.waveTime = 0; state.banner = 3.4; state.roomTransition=0; state.nukeFlash=0;
+      state.stageTicks = 0; state.timeRemaining = STAGE_SECONDS; state.timeBonus = null;
       state.players.forEach((p, i) => { resetMovementInput(p); Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, grounded: false, jumpTime: 0, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
       state.players.forEach(p=>{p.grenadeType||='frag';p.grenadeCooldown=0;});
       if (state.level.mode === 'base') loadRoom();
@@ -146,18 +150,19 @@
       state.waveTime = 0;
       // Each bunker cache introduces a distinct part of the arsenal across both assaults.
       const cacheWeapons = state.stage===1?['T','L','M']:['A','F','I'];
-      const cacheCount=state.difficulty==='easy'?4:state.difficulty==='hard'?(state.room%2===0?1:0):2;
+      const cacheCount=state.difficulty==='easy'?4:hardMode()?(state.room%2===0?1:0):2;
       for(let i=0;i<cacheCount;i++)state.pickups.push({x:260+i*140,y:320+(i%2)*85,w:24,h:24,type:cacheWeapons[(state.room+i)%3],ttl:999});
       state.pickups.push({x:750,y:400,w:24,h:24,type:state.room===1&&rules().nukes?'N':'C',ttl:999});
       for(const type of bonusTypes())if(state.room===(type==='LIFE'?1:2))addBonus(state.pickups,type,580,370);
       spawnEnemy({kind:stageEnemies[state.stage],x:160,y:280});
-      if(state.difficulty==='hard')spawnEnemy({kind:stageEnemies[state.stage],x:770,y:280});
+      if(hardMode())spawnEnemy({kind:stageEnemies[state.stage],x:770,y:280});
       supportTeam.transition();
     }
     function start(config = {}) {
       state.seed = config.seed ?? state.seed; rng = mulberry32(state.seed); id = 0;
       const difficulty=config.difficulty==='assist'?'easy':config.difficulty==='arcade'?'normal':config.difficulty||'normal';
       Object.assign(state, { status: 'playing', tick: 0, elapsed: 0, score: 0, kills: 0, inputLog: [], events: [], difficulty: difficultyRules[difficulty]?difficulty:'normal', continues: 3, creditsUsed: 0, extraLifeAt: 15000 });
+      state.continues = rules().continues;
       state.players = Array.from({ length: config.players === 2 ? 2 : 1 }, (_, i) => makePlayer(i));
       state.claimedBonuses=[];state.bonusNotice='';state.bonusNoticeTime=0;
       state.pawnsRecruited=false;state.wojakRecruited=false;state.sloppyRecruited=false;state.companions=[];state.recruits=[];state.companion=null;state.supportNotice=0;state.supportNoticeName='';state.collectedPacks=[];
@@ -199,7 +204,13 @@
     function awardEnemyKill(e) {
       burst(e.x + e.w / 2, e.y + e.h / 2, '#ff923d', e.kind === 'boss' ? 70 : 20);
       state.kills++; addScore(e.kind === 'boss' ? 5000 : e.kind === 'core' ? 500 : 150); event('explosion', { kind: e.kind });
-      if (e.kind === 'boss') { state.status = 'clear'; state.bullets = []; grenades.reset(); release(); event('clear'); }
+      if (e.kind === 'boss') {
+        if (state.timeBonus === null) {
+          state.timeBonus = Math.floor(state.timeRemaining);
+          addScore(state.timeBonus);
+        }
+        state.status = 'clear'; state.bullets = []; grenades.reset(); release(); event('clear', { timeBonus: state.timeBonus });
+      }
       else if (e.kind !== 'core' && !state.detonating && rng() < rules().dropChance) {
         const types=weaponDropTypes.filter(t=>rules().nukes||t!=='N');
         state.pickups.push({ x: e.x, y: e.y, w: 24, h: 24, type: types[Math.floor(rng() * types.length)], ttl: 18 });
@@ -378,6 +389,10 @@
       if (state.status !== 'playing') return;
       const dt = STEP, l = state.level;
       state.tick++; state.elapsed += dt; state.stageTime += dt; state.banner = Math.max(0, state.banner - dt);
+      // Integer ticks avoid accumulated floating-point errors at second boundaries.
+      // Zero means no speed bonus, not an extra death or a forced restart.
+      state.stageTicks++;
+      state.timeRemaining = Math.max(0, STAGE_TICKS - state.stageTicks) / 60;
       state.bonusNoticeTime=Math.max(0,(state.bonusNoticeTime||0)-dt);
       state.roomTransition=Math.max(0,(state.roomTransition||0)-dt); state.nukeFlash=Math.max(0,(state.nukeFlash||0)-dt);
       state.players.forEach(p => movePlayer(p, dt));

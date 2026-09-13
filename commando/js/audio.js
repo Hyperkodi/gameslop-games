@@ -4,7 +4,7 @@
   const tracks = ['01-stealth-in-the-woods.ogg', '02-espionage.ogg', '03-exploration-theme.ogg', '04-pulse.ogg', '05-safe-space.ogg', '06-airy.ogg', '07-ancient-mysteries.ogg', '08-sector.ogg'];
   const musicLevel = .38;
   const sampleLevels = {
-    'shot:M':.30, 'shot:S':.28, 'shot:L':.10, 'shot:F':.08, 'shot:G':.55,
+    'shot:P':.38, 'shot:M':.08, 'shot:S':.28, 'shot:L':.10, 'shot:F':.08, 'shot:G':.55,
     'shot:H':.14, 'shot:W':.35, 'shot:T':.10, 'shot:I':.16, 'shot:A':.17,
     'impact:H':.20, 'impact:G':.28, 'grenade:frag':.28, 'grenade:incendiary':.25,
     'grenade:electric':.10, bossExplosion:.16, nuke:.40, barrier:.22, cloak:.4
@@ -22,7 +22,7 @@
     ['Artificial Inu', 'Somebody built you to fight? They did a shitty job.']
   ];
   const samples = {
-    'shot:M':'Machine Gun.mp3', 'shot:S':'Spread Gun.mp3', 'shot:L':'Laser Rifle.mp3',
+    'shot:P':'Rifle Pop.wav', 'shot:M':'Machine Gun.mp3', 'shot:S':'Spread Gun.mp3', 'shot:L':'Laser Rifle.mp3',
     'shot:F':'Flame Thrower.mp3', 'shot:G':'Grenade Launcher.mp3',
     'shot:H':'Rocket Launcher.mp3', 'shot:W':'Wave Cannon.mp3',
     'shot:T':'Tesla Carbine.mp3', 'shot:I':'Cryo-Blaster.mp3', 'shot:A':'Plasma Cannon.mp3',

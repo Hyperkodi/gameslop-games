@@ -43,6 +43,20 @@ test('rapid fire cannot stack more than two recorded laser tails',async()=>{
   assert.equal(h.audio.inspect().voices,2);
   assert.equal(h.started.filter(s=>!s.loop&&!s.stopped).length,2);
 });
+
+test('rifle plays a recorded pop per round and machine gun is over 11 dB quieter',async()=>{
+  const h=harness();await h.audio.unlock();
+  h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'P'}]);
+  assert.equal(h.audio.inspect().lastSample,'shot:P');
+  assert.ok(h.requests.some(url=>url.endsWith('Rifle%20Pop.wav')));
+  assert.equal(h.started.at(-1).target.gain.value,.38);
+  const first=h.started.at(-1);
+  h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'P'}]);
+  assert.notEqual(h.started.at(-1),first);
+  h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'M'}]);
+  assert.equal(h.audio.inspect().lastSample,'shot:M');
+  assert.ok(20*Math.log10(h.started.at(-1).target.gain.value/.30)<-11);
+});
 test('music uses one looping buffer and resumes its position after pause and mute',async()=>{
   const h=harness();h.audio.update({stage:0,status:'playing'});
   assert.equal(h.requests.length,0);await h.audio.unlock();

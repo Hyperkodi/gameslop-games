@@ -34,9 +34,9 @@ function bonuses(e){
   return found;
 }
 test('Easy/Normal get one life per stage and continues at 3/6; Hard only gets a level-4 continue',()=>{
-  for(const difficulty of ['easy','normal','hard'])for(let stage=0;stage<8;stage++){
+  for(const difficulty of ['easy','normal','hard','extra-hard'])for(let stage=0;stage<8;stage++){
     const e=game(stage,difficulty),items=bonuses(e),types=items.map(x=>x.type).sort();
-    const expected=difficulty==='hard'?(stage===3?['CONTINUE']:[]):['LIFE',...([2,5].includes(stage)?['CONTINUE']:[])].sort();
+    const expected=['hard','extra-hard'].includes(difficulty)?(stage===3?['CONTINUE']:[]):['LIFE',...([2,5].includes(stage)?['CONTINUE']:[])].sort();
     assert.deepEqual(types,expected,`${difficulty} stage ${stage+1}`);
     for(const p of items){
       if(e.state.level.mode==='base')assert.ok(p.x>=100&&p.x<=830&&p.y>=260&&p.y<=478);
@@ -45,7 +45,7 @@ test('Easy/Normal get one life per stage and continues at 3/6; Hard only gets a 
   }
 });
 test('bonus collection awards once, survives continue/revisit, and a new run restores it',()=>{
-  for(const [stage,difficulty,type]of [[0,'easy','LIFE'],[2,'normal','CONTINUE'],[3,'hard','CONTINUE']]){
+  for(const [stage,difficulty,type]of [[0,'easy','LIFE'],[2,'normal','CONTINUE'],[3,'hard','CONTINUE'],[3,'extra-hard','CONTINUE']]){
     const e=game(stage,difficulty),item=bonuses(e).find(p=>p.type===type),s=e.state,p=s.players[0];
     s.boss=null;s.waveTime=-999;s.level.spawns=[];s.level.supplies=[];s.pickups=[{...item}];p.x=item.x;p.y=item.y;p.vy=0;
     const before=type==='LIFE'?p.lives:s.continues;tick(e);

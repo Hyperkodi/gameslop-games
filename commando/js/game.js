@@ -5,6 +5,7 @@
   const params = new URLSearchParams(location.search);
   const engine = G.createEngine({ seed: GameSlopKit.parseSeed(params.get('seed')) });
   const renderer = G.createRenderer({ canvas: $('game') });
+  const stageTimer=document.createElement('small');stageTimer.id='stage-timer';document.querySelector('.hud-score').append(stageTimer);
   const p2Power=document.createElement('small');$('p2-hud').append(p2Power);
   const supportHud=document.createElement('small');supportHud.id='support-hud';$('p1-power').after(supportHud);
   const grenadeHud=document.createElement('small');grenadeHud.id='grenade-hud';$('p1-power').after(grenadeHud);
@@ -89,6 +90,8 @@
     $('mission').textContent=String(s.stage+1).padStart(2,'0');$('mission-name').textContent=s.level.name.toUpperCase();
     $('stage-progress').innerHTML='CAMPAIGN <b>'+String(s.stage+1).padStart(2,'0')+' / 08</b>';
     $('score').textContent=String(s.score).padStart(6,'0');
+    stageTimer.textContent='TIME '+(s.timeBonus??Math.ceil(s.timeRemaining??1000)).toLocaleString()+'s';
+    stageTimer.classList.toggle('time-low',(s.timeRemaining??1000)<=60);
     const p=s.players[0];$('p1-lives').textContent=p.lives>5?'♥ × '+p.lives:'♥ '.repeat(Math.max(0,p.lives))||'OUT';
     const grenade=G.grenadeTypes[p.grenadeType||'frag'],cooldown=p.grenadeCooldown||0;
     grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · B / N';
@@ -104,7 +107,7 @@
     grenadeButton.setAttribute('aria-label',cooldown>0?'Grenade ready in '+Math.ceil(cooldown)+' seconds':'Throw '+grenade.name+' grenade');
     $('p1-weapon').textContent=G.weapons[p.weapon].name+' '+G.weaponTier(p)+'/5';
     $('p1-power').textContent=[p.cloak>0?'CLOAK '+Math.ceil(p.cloak)+'s':'',p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':'',p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'',p.holstered?'HOLSTER: '+G.weapons[p.holstered].name+' '+(p.weaponLevels[p.holstered]||1)+'/5':''].filter(Boolean).join(' · ');
-    const swapButton=document.querySelector('[data-action="swap"]');swapButton.disabled=s.difficulty==='hard'||!p.holstered;swapButton.textContent=s.difficulty==='hard'?'1 GUN':'SWAP';
+    const swapButton=document.querySelector('[data-action="swap"]');swapButton.disabled=!G.difficultyRules[s.difficulty]?.holster||!p.holstered;swapButton.textContent=!G.difficultyRules[s.difficulty]?.holster?'1 GUN':'SWAP';
     document.querySelector('[data-action="drop"]').disabled=s.level.mode==='base';
     if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
     else{p2Power.textContent='';$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
@@ -117,7 +120,7 @@
     $('status-line').textContent=title?'READY WHEN YOU ARE.':active?(s.boss?'BOSS CONTACT · '+(window.SlopCommandoSkin.cast.bosses[s.boss.variant||0]?.name||s.boss.name).toUpperCase():progress):s.status.toUpperCase();
     if(lastStatus!==s.status){
       if(isOverlay){
-        const data={paused:['TAKE A BREATHER','PAUSED','The mission can wait.\nYour progress is right here.','BACK TO THE ACTION →'],clear:['SECTOR SECURED',s.stage===7?'SOURCE DESTROYED':'STAGE CLEAR',s.level.name+' complete.\n'+s.score.toLocaleString()+' points · '+s.kills+' targets down',s.stage===7?'FINISH THE MISSION →':'NEXT MISSION →'],gameover:['YOU MADE A MESS','GAME OVER',s.score.toLocaleString()+' points · Stage '+(s.stage+1)+' / 8\n'+s.continues+' continues remaining',s.continues?'CONTINUE MISSION →':'TRY AGAIN →'],victory:['OPERATION COMPLETE','SLOP TRIUMPHS','All eight sectors liberated.\n'+s.score.toLocaleString()+' points · '+Math.floor(s.elapsed/60)+'m '+Math.floor(s.elapsed%60)+'s\n'+s.difficulty.toUpperCase()+' · '+s.creditsUsed+' continues used','RUN IT BACK →']}[s.status];
+        const data={paused:['TAKE A BREATHER','PAUSED','The mission can wait.\nYour progress is right here.','BACK TO THE ACTION →'],clear:['SECTOR SECURED',s.stage===7?'SOURCE DESTROYED':'STAGE CLEAR',s.level.name+' complete.\nTIME BONUS +'+(s.timeBonus??0).toLocaleString()+' points\n'+s.score.toLocaleString()+' points · '+s.kills+' targets down',s.stage===7?'FINISH THE MISSION →':'NEXT MISSION →'],gameover:['YOU MADE A MESS','GAME OVER',s.score.toLocaleString()+' points · Stage '+(s.stage+1)+' / 8\n'+s.continues+' continues remaining',s.continues?'CONTINUE MISSION →':'TRY AGAIN →'],victory:['OPERATION COMPLETE','SLOP TRIUMPHS','All eight sectors liberated.\n'+s.score.toLocaleString()+' points · '+Math.floor(s.elapsed/60)+'m '+Math.floor(s.elapsed%60)+'s\n'+s.difficulty.toUpperCase()+' · '+s.creditsUsed+' continues used','RUN IT BACK →']}[s.status];
         $('overlay-kicker').textContent=data[0];$('overlay-title').textContent=data[1];$('overlay-body').textContent=data[2];$('overlay-action').textContent=data[3];$('overlay-action').focus({preventScroll:true});
       }
       if(['clear','gameover','victory'].includes(s.status)&&s.score>best){best=s.score;storage.set(bestKey(),best);}

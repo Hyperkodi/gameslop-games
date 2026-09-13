@@ -85,3 +85,6 @@
 }
 /* Control gestures belong to the game, including on Safari touch-event paths. */
 .joystick,.action-buttons{overscroll-behavior:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+
+.hud #stage-timer{font-size:clamp(10px,1.2vw,14px);font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;color:#fff1bf;line-height:1.2;text-shadow:0 1px 3px #000}
+.hud #stage-timer.time-low{color:#ffb08e}
