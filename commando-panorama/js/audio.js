@@ -76,6 +76,7 @@
     let stage = -1, status = 'ready', playingMusic = false, loading = Promise.resolve();
     let musicFailed = false, lastCue = null, lastSample = null, musicAttempt = 0;
     let dialogueAttempt = 0, lastDialogue = null;
+    let bossSource=null;
     try { muted = env.localStorage?.getItem('gameslop:muted') === '1'; } catch (_) { /* Private mode. */ }
     const path = (folder, file) => folder + '/' + encodeURIComponent(file);
     function stopVoice(voice) {
@@ -84,7 +85,7 @@
       try { voice.source.stop(); } catch (_) { /* Already ended. */ }
       voice.source.disconnect(); voice.gain.disconnect();
     }
-    function stopEffects() { [...voices].forEach(stopVoice); }
+    function stopEffects() { [...voices].forEach(stopVoice);bossSource=null; }
     function interrupt() { dialogueAttempt++; stopEffects(); stopMusic(); }
     function victoryLine() {
       if (muted || !unlocked || !ctx || !victoryDialogue[stage]) return;
@@ -212,6 +213,19 @@
       if (changed || restart) selectTrack();
       if (status === 'ready') { musicAttempt++; musicPending = false; stopMusic(true); }
       syncMusic();
+      if(status==='boss-defeat'){
+        const defeat=state.bossDefeat,sample=buffers.get('bossExplosion');
+        if(!bossSource&&!muted&&unlocked&&ctx&&sample&&defeat&&defeat.elapsed<defeat.duration){
+          const source=ctx.createBufferSource(),gain=ctx.createGain();source.buffer=sample.buffer;
+          // Keep the full recording (including its decay), aligned to the visual clock.
+          const rate=sample.buffer.duration/defeat.duration;
+          if(source.playbackRate)source.playbackRate.value=rate;
+          gain.gain.value=sampleLevel('bossExplosion');addVoice(source,gain,'bossExplosion');
+          bossSource=source;source.start(0,defeat.elapsed*rate);
+          lastCue='bossExplosion';lastSample='bossExplosion';
+        }
+        return;
+      }
       const heard = new Set();
       const nuke = events.some(event => event.type === 'nuke');
       for (const event of events) {

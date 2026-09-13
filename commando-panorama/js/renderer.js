@@ -15,6 +15,7 @@
     const cast = root.SlopCommando.createCastRenderer(c, root.SlopCommandoSkin);
     let targets=[];
     const animationClock=root.SlopCommando.createAnimationClock();
+    let frozenDefeat=null,frozenScene=null;
     const grenadeArt=root.SlopCommando.createGrenadeArt(c);
     const companionArt=root.SlopCommando.createCompanionArt(c,root.SlopCommandoSkin);
     const arsenal = root.SlopCommando.createWeaponArt(c, root.SlopCommandoSkin.weapons);
@@ -362,6 +363,17 @@
       drawSoldier(e,time,theme,flash);
     }
     function draw(s,{time=0,attract=false}={}) {
+      const defeat=s.bossDefeat;
+      if(defeat&&(s.status==='boss-defeat'||(s.status==='paused'&&s.pausedFrom==='boss-defeat'))){
+        if(frozenDefeat!==defeat){
+          // Render a single clean battlefield snapshot, then animate only the blast.
+          draw({...s,status:'boss-defeat',bossDefeat:null,suppressBossDefeat:true,boss:null,effects:[],bullets:s.bullets.filter(b=>b.ttl>0)},{time});
+          frozenScene=document.createElement('canvas');frozenScene.width=960;frozenScene.height=540;
+          frozenScene.getContext('2d').drawImage(canvas,0,0);frozenDefeat=defeat;
+        }
+        c.drawImage(frozenScene,0,0);bossDefeatAnimation(defeat,s.camera);return;
+      }
+      frozenDefeat=null;frozenScene=null;
       time=animationClock(time,s.status==='paused'||s.status==='gameover');
       targets=s.players.filter(p=>p.lives>0&&!p.cloak);
       const t=themes[s.level.theme];
@@ -456,6 +468,58 @@
       }
       if(s.banner>0&&s.status==='playing'&&!s.boss) {rect(300,72,360,46,'#081c23ce');text(s.level.mode==='base'?'BREACH CHAMBER '+(s.room+1):s.level.name.toUpperCase(),480,94,17,'#f6ebd2','center');text(s.level.mode==='base'?'DESTROY THE SECURITY CONSOLES':s.level.mode==='climb'?'JUMP TO CLIMB · ↓ + JUMP TO DESCEND':'MOVE OUT  →',480,110,10,t.glow,'center');}
       if(s.level.mode==='run'&&s.status==='playing'&&!s.boss)text('→',922,282,24,'#e1cf9a','center');
+    }
+    function bossDefeatAnimation(d,camera){
+      const t=d.elapsed,progress=t/d.duration,x=d.x-camera.x,y=d.y-camera.y;
+      const scale=Math.max(1,Math.min(1.6,Math.max(d.w,d.h)/120));
+      c.save();
+      // A single soft impact flash, then localized fireballs, embers and cooling smoke.
+      c.fillStyle='rgba(255,212,145,'+Math.max(0,.24*(1-t/.18))+')';c.fillRect(0,0,960,540);
+      const haze=c.createRadialGradient(x,y,0,x,y,280*scale);
+      haze.addColorStop(0,'rgba(255,102,22,'+Math.max(0,.44*(1-t/3))+')');haze.addColorStop(1,'#ff661600');
+      c.fillStyle=haze;c.fillRect(0,0,960,540);
+      for(let i=0;i<20;i++){
+        const age=t-i*.085;if(age<0)continue;
+        const angle=i*2.39996,drift=18+age*13,r=(22+age*14)*scale;
+        const px=x+Math.cos(angle)*drift*scale,py=y+Math.sin(angle)*drift*.6-age*15;
+        c.globalAlpha=Math.max(0,Math.min(.55,age*.8))*(1-Math.pow(progress,3));
+        const smoke=c.createRadialGradient(px-r*.2,py-r*.2,2,px,py,r);
+        smoke.addColorStop(0,'#716b61');smoke.addColorStop(.65,'#353737');smoke.addColorStop(1,'#22262600');
+        c.fillStyle=smoke;c.beginPath();c.arc(px,py,r,0,Math.PI*2);c.fill();
+      }
+      c.globalAlpha=1;
+      for(let i=0;i<12;i++){
+        const birth=i===0?0:.12+i*.14,age=t-birth;if(age<0||age>1.6)continue;
+        const angle=i*2.39996,spread=i===0?0:Math.sqrt(i)*22*scale;
+        const px=x+Math.cos(angle)*spread,py=y+Math.sin(angle)*spread*.65-age*17;
+        const radius=(i===0?105:55)*scale*Math.min(1,.25+age*5),fade=Math.pow(Math.max(0,1-age/1.6),1.4);
+        // Lobed, layered silhouettes give the blast an arcade fire-cloud shape.
+        c.globalAlpha=fade;
+        for(const [size,color] of [[1,'#a33116'],[.84,'#ef651b'],[.6,'#ffb52d'],[.32,'#fff0a3']]){
+          c.fillStyle=color;c.beginPath();
+          for(let k=0;k<32;k++){
+            const a=k*Math.PI/16,edge=radius*size*(.88+.08*Math.sin(a*5+i+age*3)+.04*Math.sin(a*9+i));
+            const bx=px+Math.cos(a)*edge,by=py+Math.sin(a)*edge*.86;
+            if(k)c.lineTo(bx,by);else c.moveTo(bx,by);
+          }
+          c.closePath();c.fill();
+        }
+        c.globalAlpha=1;
+        const fire=c.createRadialGradient(px,py,0,px,py,radius);
+        fire.addColorStop(0,'rgba(255,252,205,'+fade+')');fire.addColorStop(.3,'rgba(255,210,76,'+fade+')');
+        fire.addColorStop(.65,'rgba(255,98,19,'+fade*.9+')');fire.addColorStop(1,'rgba(165,29,4,0)');
+        c.fillStyle=fire;c.beginPath();c.arc(px,py,radius,0,Math.PI*2);c.fill();
+      }
+      for(let i=0;i<65;i++){
+        const angle=i*2.39996,speed=35+(i*73%150),age=Math.max(0,t-.08),life=1.5+(i%9)*.43;
+        if(age>life)continue;
+        const px=x+Math.cos(angle)*speed*age,py=y+Math.sin(angle)*speed*age*.7+age*age*18;
+        c.globalAlpha=Math.max(0,1-age/life);c.fillStyle=i%3?'#ffad3a':'#fff1b0';
+        c.fillRect(px,py,i%3?3:5,i%3?3:2);
+      }
+      c.globalAlpha=1;
+      if(t<.8){c.strokeStyle='rgba(255,213,121,'+(1-t/.8)*.75+')';c.lineWidth=4*(1-t/.8)+1;c.beginPath();c.arc(x,y,20+t*330,0,Math.PI*2);c.stroke();}
+      c.restore();
     }
     return { draw, themes, mascot: hero, environment, cast, companionArt };
   }

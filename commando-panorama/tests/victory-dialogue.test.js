@@ -43,6 +43,9 @@ test('all eight actual boss deaths play their corresponding approved line exactl
     // Later bosses move before collision; freeze their animation at the hit location.
     if(stage>=6){e.state.boss.originY=300;}
     e.drainEvents();h.audio.update(e.state);e.tick();
+    assert.equal(e.state.status,'boss-defeat');h.audio.update(e.state,e.drainEvents());
+    assert.equal(h.timers.length,0,'no victory line during the explosion');
+    for(let tick=0;tick<394;tick++)e.tick();
     assert.equal(e.state.status,'clear');
     const events=e.drainEvents();assert.ok(events.some(ev=>ev.type==='clear'));
     h.audio.update(e.state,events);const before=h.started.length;

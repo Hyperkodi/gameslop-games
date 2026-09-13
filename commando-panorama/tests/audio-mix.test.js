@@ -11,7 +11,7 @@ function harness({deferMusic=false,failMusic=false,failEffects=false}={}){
     constructor(){ctx=this;this.state='running';this.currentTime=0;this.destination={};}
     createGain(){return node();} createDynamicsCompressor(){return node();}
     decodeAudioData(){return Promise.resolve({duration:120,length:4,numberOfChannels:1,sampleRate:2,getChannelData:()=>new Float32Array([.2,.3,.2,.1])});}
-    createBufferSource(){const s={...node(),start(when,offset){s.offset=offset;started.push(s);},stop(){s.stopped=true;}};return s;}
+    createBufferSource(){const s={...node(),playbackRate:param(),start(when,offset){s.offset=offset;started.push(s);},stop(){s.stopped=true;}};return s;}
     createOscillator(){const s={...node(),frequency:param(),start(){oscillators.push(s);},stop(){}};return s;}
   }
   const audio=createAudio({env:{AudioContext:Context,fetch(url){
@@ -41,6 +41,20 @@ test('rapid fire cannot stack more than two recorded laser tails',async()=>{
   for(let i=0;i<100;i++)h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'L'},{type:'shot',weapon:'L'}]);
   assert.equal(h.audio.inspect().voices,2);
   assert.equal(h.started.filter(s=>!s.loop&&!s.stopped).length,2);
+});
+
+test('boss explosion audio fills the cinematic, plays once and resumes at the matching paused offset',async()=>{
+ const h=harness();await h.audio.unlock();h.audio.update({stage:0,status:'playing'});await h.flush();
+ const state={stage:0,status:'boss-defeat',bossDefeat:{elapsed:0,duration:6.56}};
+ h.audio.update(state,[{type:'explosion',kind:'boss'}]);const blast=h.started.at(-1),count=h.started.length;
+ assert.equal(blast.offset,0);assert.equal(blast.loop,undefined);assert.equal(blast.buffer.duration/blast.playbackRate.value,6.56);
+ assert.ok(h.started.find(s=>s.loop).stopped);assert.equal(blast.target.target.gain.value,.28);
+ for(let i=0;i<20;i++)h.audio.update(state);assert.equal(h.started.length,count);
+ state.bossDefeat.elapsed=2;state.status='paused';h.audio.update(state);assert.equal(blast.stopped,true);
+ state.status='boss-defeat';h.audio.update(state);assert.equal(h.started.at(-1).offset,2*120/6.56);
+ h.audio.toggle();assert.equal(h.started.at(-1).stopped,true);const mutedCount=h.started.length;h.audio.update(state);assert.equal(h.started.length,mutedCount);
+ h.audio.toggle();state.bossDefeat.elapsed=3;h.audio.update(state);assert.ok(Math.abs(h.started.at(-1).offset-3*120/6.56)<1e-9);
+ state.status='clear';h.audio.update(state);assert.equal(h.started.filter(s=>!s.stopped&&s.buffer===blast.buffer).length,0);
 });
 
 test('recorded and synthesized effects are reduced by 9 dB while dialogue and music retain their mix',async()=>{

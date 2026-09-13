@@ -126,6 +126,7 @@ test('grenade kills score once and boss defeat clears all active zones',()=>{
  assert.equal(s.kills,1);ticks(e,100);assert.equal(s.kills,1);
  s.boss={...foe('boss',320,320,.1),variant:0,w:130,h:144,attack:0};
  s.grenades.push({id:2,type:'electric',x:335,y:430,vx:0,vy:0,fuse:.001,age:1,base:false});e.tick();
+ assert.equal(s.status,'boss-defeat');ticks(e,394);
  assert.equal(s.status,'clear');assert.equal(s.kills,2);assert.equal(s.grenadeZones.length,0);assert.equal(s.grenades.length,0);
 });
 test('grenade input replays deterministically and has distinct sound cues',()=>{

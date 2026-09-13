@@ -18,7 +18,7 @@ function finish(e){
   s.boss=boss;
   // Wide enough to cover the authored bunker boss sway during this tick.
   const shot={x:100,y:220,w:800,h:240,vx:0,vy:0,ttl:1,team:'player',damage:100,weapon:'P',hits:[]};
-  s.bullets=[{...shot,hits:[]},{...shot,hits:[]}];ticks(e);assert.equal(s.status,'clear');
+  s.bullets=[{...shot,hits:[]},{...shot,hits:[]}];ticks(e);assert.equal(s.status,'boss-defeat');ticks(e,394);assert.equal(s.status,'clear');
 }
 
 test('each difficulty starts and continues with its own lives; co-op shares a finite credit pool',()=>{

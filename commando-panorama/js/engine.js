@@ -125,6 +125,7 @@
       populateRoute();
       state.routeBaseSpawns=state.level.spawns.map(e=>({...e}));state.reinforcementsAdded=0;state.squadWaveCredit=0;
       state.enemies = []; state.bullets = []; state.pickups = []; state.effects = []; state.boss = null;
+      state.bossDefeat=null;state.pausedFrom=null;
       grenades.reset();
       state.camera = { x: 0, y: state.level.mode === 'climb' ? state.level.height - H : 0 };
       state.checkpoint = { x: 110, y: state.level.mode === 'climb' ? state.level.height - 94 : 410 };
@@ -194,7 +195,10 @@
       if (action === 'grenadeNext' && down) p.grenadeNextQueued = true;
     }
     function release() { state.players.forEach(resetMovementInput); }
-    function pause() { if (state.status === 'playing') { state.status = 'paused'; release(); } else if (state.status === 'paused') state.status = 'playing'; }
+    function pause() {
+      if (state.status === 'playing'||state.status==='boss-defeat') { state.pausedFrom=state.status;state.status = 'paused'; release(); }
+      else if (state.status === 'paused') {state.status=state.pausedFrom||'playing';state.pausedFrom=null;}
+    }
     function advance() {
       if (state.status !== 'clear') return;
       if (state.stage === levels.length - 1) { state.status = 'victory'; event('victory'); }
@@ -221,7 +225,8 @@
           state.timeBonus = Math.floor(state.timeRemaining);
           addScore(state.timeBonus);
         }
-        state.status = 'clear'; state.bullets = []; grenades.reset(); release(); event('clear', { timeBonus: state.timeBonus });
+        state.bossDefeat={x:e.x+e.w/2,y:e.y+e.h/2,w:e.w,h:e.h,elapsed:0,duration:6.56};
+        state.status = 'boss-defeat'; release();
       }
       else if (e.kind !== 'core' && !state.detonating && rng() < rules().dropChance) {
         const types=weaponDropTypes.filter(t=>rules().nukes||t!=='N');
@@ -229,6 +234,7 @@
       }
     }
     function damageEnemy(e, damage, impact) {
+      if(state.status!=='playing')return false;
       if (e.hp <= 0) return false;
       e.hp -= damage; e.flash = .07;
       burst(impact.x, impact.y, '#ffcf73', 3);
@@ -430,6 +436,14 @@
       if(throwing)grenades.launch(p);
     }
     function tick() {
+      if(state.status==='boss-defeat'){
+        const defeat=state.bossDefeat;defeat.elapsed=Math.min(defeat.duration,defeat.elapsed+STEP);
+        if(defeat.elapsed>=defeat.duration-1e-9){
+          state.status='clear';state.boss=null;state.bullets=[];state.effects=[];grenades.reset();release();
+          event('clear',{timeBonus:state.timeBonus});
+        }
+        return;
+      }
       if (state.status !== 'playing') return;
       const dt = STEP, l = state.level;
       state.tick++; state.elapsed += dt; state.stageTime += dt; state.banner = Math.max(0, state.banner - dt);
@@ -602,6 +616,7 @@
       state.enemies = state.enemies.filter(e => e.hp > 0 && e.x > state.camera.x - 150 && e.y < state.camera.y + H + 150);
       state.enemies.forEach(e => e.flash = Math.max(0, (e.flash || 0) - dt));
       if (boss) boss.flash = Math.max(0, (boss.flash || 0) - dt);
+      if(state.status!=='playing')return;
       state.bullets = state.bullets.filter(b => b.ttl > 0 && b.x > state.camera.x - 100 && b.x < state.camera.x + W + 100 && b.y > state.camera.y - 80 && b.y < state.camera.y + H + 100);
       for (const p of state.pickups) {
         p.ttl -= dt;
