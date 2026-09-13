@@ -3,6 +3,7 @@
   const { buildLevel, levels } = typeof module !== 'undefined' ? require('./levels.js') : root.SlopCommando;
   const { mulberry32, fnv1a } = typeof module !== 'undefined' ? require('../../_kit/rng.js') : root.GameSlopKit;
   const { createGrenadeSystem, grenadeOrder } = typeof module !== 'undefined' ? require('./grenades.js') : root.SlopCommando;
+  const {createSupportSystem,JETPACK_FUEL}=typeof module!=='undefined'?require('./support.js'):root.SlopCommando;
   const W = 960, H = 540, STEP = 1 / 60;
   const COYOTE_TIME = .1, JUMP_BUFFER_TIME = .12;
   const weapons = {
@@ -39,6 +40,7 @@
     const state = { status: 'ready', seed: options.seed ?? 1978, tick: 0, elapsed: 0, score: 0, stage: 0, players: [], enemies: [], bullets: [], effects: [], pickups: [], inputLog: [], events: [], camera: { x: 0, y: 0 }, continues: 3, room: 0, boss: null, kills: 0 };
     function event(type, data = {}) { state.events.push({ type, ...data }); }
     const grenades=createGrenadeSystem({state,damage:damageEnemy,event});
+    const supportTeam=createSupportSystem({state,event});
     const rules = () => difficultyRules[state.difficulty] || difficultyRules.normal;
     function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, dropHeld: false, jumpQueued: false, jumpDownQueued: false, dropQueued: false, jumpBuffer: 0, coyoteTime: 0, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
     function resetMovementInput(p) {
@@ -46,6 +48,7 @@
       p.jumpQueued = false; p.jumpDownQueued = false; p.dropQueued = false;
       p.jumpBuffer = 0; p.coyoteTime = 0;
       p.grenadeQueued=false;p.grenadeNextQueued=false;
+      p.jetpackActive=false;p.jetpackBlocked=false;
     }
     function equip(p, type) {
       p.weaponLevels ||= {P:1};
@@ -85,6 +88,9 @@
       });
       if(state.difficulty==='hard')l.spawns.push(...extra);
       else extra.forEach(e=>{const old=l.spawns.find(s=>s.x===e.x);Object.assign(old,e);});
+      const packLedge=l.mode==='climb'?l.platforms.find(p=>p.x===430&&p.y===1560):ledges.find(p=>p.x>450&&p.y>250);
+      if(packLedge)l.supplies.push({x:packLedge.x+packLedge.w/2-12,y:packLedge.y-30,type:'J',packId:'stage-'+state.stage});
+      l.supplies=l.supplies.filter(p=>!p.packId||!state.collectedPacks?.includes(p.packId));
     }
     function loadStage(index) {
       state.stage = index; state.level = buildLevel(index); state.room = 0;
@@ -97,6 +103,7 @@
       state.players.forEach((p, i) => { resetMovementInput(p); Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, grounded: false, jumpTime: 0, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
       state.players.forEach(p=>{p.grenadeType||='frag';p.grenadeCooldown=0;});
       if (state.level.mode === 'base') loadRoom();
+      supportTeam.transition();
       event('stage', { stage: index });
     }
     function loadRoom() {
@@ -112,12 +119,15 @@
       state.pickups.push({x:750,y:400,w:24,h:24,type:state.room===1&&rules().nukes?'N':'C',ttl:999});
       spawnEnemy({kind:stageEnemies[state.stage],x:160,y:280});
       if(state.difficulty==='hard')spawnEnemy({kind:stageEnemies[state.stage],x:770,y:280});
+      supportTeam.transition();
     }
     function start(config = {}) {
       state.seed = config.seed ?? state.seed; rng = mulberry32(state.seed); id = 0;
       const difficulty=config.difficulty==='assist'?'easy':config.difficulty==='arcade'?'normal':config.difficulty||'normal';
       Object.assign(state, { status: 'playing', tick: 0, elapsed: 0, score: 0, kills: 0, inputLog: [], events: [], difficulty: difficultyRules[difficulty]?difficulty:'normal', continues: 3, creditsUsed: 0, extraLifeAt: 15000 });
       state.players = Array.from({ length: config.players === 2 ? 2 : 1 }, (_, i) => makePlayer(i));
+      state.pawnsRecruited=false;state.companion=null;state.supportNotice=0;state.collectedPacks=[];
+      state.players.forEach(p=>{p.jetpackFuel=0;p.jetpackOwned=false;});
       loadStage(0);
     }
     function input(player, action, down) {
@@ -127,6 +137,7 @@
       // Capture presses here as well as held state so a quick tap can finish
       // between physics ticks without losing its jump or changing a drop intent.
       if (action === 'jump' && down) { p.jumpQueued = true; p.jumpDownQueued = !!p.held.down; }
+      if(action==='jump'&&!down)p.jetpackBlocked=false;
       if (action === 'drop' && down) p.dropQueued = true;
       if (action === 'grenade' && down) p.grenadeQueued = true;
       if (action === 'grenadeNext' && down) p.grenadeNextQueued = true;
@@ -254,6 +265,14 @@
       const dropping = p.dropQueued || (p.held.drop && !p.dropHeld);
       p.jumpQueued = false; p.jumpDownQueued = false; p.dropQueued = false;
       p.jumpHeld = !!p.held.jump; p.dropHeld = !!p.held.drop;
+      if(!p.held.jump)p.jetpackBlocked=false;
+      if(dropping||(!base&&downJump))p.jetpackBlocked=true;
+      p.jetpackActive=!!p.held.jump&&!p.jetpackBlocked&&(p.jetpackFuel||0)>1e-9;
+      if(p.jetpackActive){
+        p.jetpackFuel=Math.max(0,p.jetpackFuel-dt);
+        if(state.tick%12===0)event('jetpackThrust');
+        if(p.jetpackFuel<=1e-9){p.jetpackFuel=0;event('jetpackEmpty');}
+      }
       p.jumpBuffer = Math.max(0, (p.jumpBuffer || 0) - dt);
       p.coyoteTime = Math.max(0, (p.coyoteTime || 0) - dt);
       p.prone = !base && p.grounded && !!p.held.down && !jumping;
@@ -264,6 +283,8 @@
         p.x = clamp(p.x + p.vx * dt * scale, 100, 830); p.y = clamp(p.y + dy * 205 * dt * scale, 260, 478);
         p.jumpBuffer = 0; p.coyoteTime = 0;
         if (jumping && !dropping && p.jumpTime <= 0) { p.jumpTime = .6; event('jump'); }
+        // Held thrust hovers over bunker fire; it consumes the same finite tank.
+        if(p.jetpackActive)p.jumpTime=.3;
       } else {
         const wasGrounded = p.grounded;
         let leftByAction = false;
@@ -283,7 +304,12 @@
         const launch = () => { p.vy = -510; p.grounded = false; p.jumpBuffer = 0; p.coyoteTime = 0; leftByAction = true; event('jump'); };
         if (p.jumpBuffer > 1e-9 && (p.grounded || p.coyoteTime > 1e-9)) launch();
         p.x = clamp(p.x + p.vx * dt, state.camera.x, l.width - p.w);
-        const feet = p.y + p.h; p.vy += 1150 * dt; p.y += p.vy * dt; p.grounded = false;
+        const feet = p.y + p.h;
+        // A quick tap keeps the full normal jump; sustained thrust settles at cruise speed.
+        p.vy=p.jetpackActive?(p.vy<-310?Math.min(-310,p.vy+1150*dt):Math.max(-310,p.vy-1800*dt)):p.vy+1150*dt;
+        if(p.jetpackActive){p.jumpBuffer=0;p.coyoteTime=0;leftByAction=true;p.prone=false;}
+        p.y += p.vy * dt; p.grounded = false;
+        if(p.y<20){p.y=20;p.vy=Math.max(0,p.vy);}
         if (p.vy >= 0) {
           let landing=null;
           for (const platform of l.platforms) {
@@ -414,6 +440,7 @@
         alive.forEach(p => { if (hit(boss, playerBox(p))) damagePlayer(p); });
       }
       if (state.status !== 'playing') return;
+      supportTeam.tick(dt);
       for (const b of state.bullets) {
         if (state.status !== 'playing') break;
         const targets = b.team === 'player' ? [...state.enemies, ...(boss ? [boss] : [])] : [];
@@ -458,6 +485,11 @@
           else if (p.type === 'B') player.shield = 12;
           else if (p.type === 'R') player.rapid = 20;
           else if (p.type === 'C') player.cloak = 8;
+          else if(p.type==='J'){
+            player.jetpackFuel=JETPACK_FUEL;player.jetpackOwned=true;
+            if(p.packId){state.collectedPacks||=[];state.collectedPacks.push(p.packId);}
+            event('jetpackPickup');
+          }
           else if (p.type === 'N' && rules().nukes) {
             state.detonating=true;
             const screen={x:state.camera.x,y:state.camera.y,w:W,h:H};

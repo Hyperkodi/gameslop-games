@@ -10,7 +10,7 @@ test('approved cast covers all spawning types and all eight bosses',()=>{
 });
 test('every source rectangle and foot anchor is inside its actual sprite atlas',()=>{
  const dimensions=file=>{const p=fs.readFileSync(path.join(__dirname,'../skin/gameslop',file));return[p.readUInt32BE(16),p.readUInt32BE(20)];};
- const all=[{atlas:skin.mascot.atlas,frames:Object.entries(skin.mascot.frames).map(([key,rect])=>({rect,anchor:skin.mascot.anchors[key]}))},...Object.values(skin.cast.enemies),...skin.cast.bosses];
+ const all=[{atlas:skin.mascot.atlas,frames:Object.entries(skin.mascot.frames).map(([key,rect])=>({rect,anchor:skin.mascot.anchors[key]}))},skin.companion,...Object.values(skin.cast.enemies),...skin.cast.bosses];
  for(const meta of all){for(const f of meta.frames){const[width,height]=dimensions(f.atlas||meta.atlas),[x,y,w,h]=f.rect;assert.ok(x>=0&&y>=0&&x+w<=width&&y+h<=height);assert.ok(f.anchor[0]>=0&&f.anchor[0]<=w&&f.anchor[1]>=0&&f.anchor[1]<=h);}}
 });
 test('keying removes magenta while preserving glass, purple armor, and pink skin',()=>{

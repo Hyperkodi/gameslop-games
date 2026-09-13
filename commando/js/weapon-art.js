@@ -150,6 +150,11 @@
     }
     function draw(type, {time=0} = {}) {
       c.save();
+      if(type==='J'){
+        round(18,-18,35,37,5,'#34423d');
+        for(const x of [18,42]){round(x,-21,12,39,5,'#8d9b8d');rect(x,13,12,7,'#27343d');rect(x+2,-13,8,3,'#d3b470');}
+        round(31,-9,10,19,2,'#24313a');rect(33,-5,6,10,'#65dedb');c.restore();return;
+      }
       ({P:rifle,M:machine,S:spread,L:laser,F:()=>flame(time),G:grenade,H:homing,W:()=>wave(time),T:()=>tesla(time),I:cryo,A:()=>plasma(time),C:cloak,N:nuke,B:barrier,R:rapid}[type]||rifle)();
       c.restore();
     }
@@ -168,5 +173,6 @@
     return {draw,pickup,names};
   }
   G.createWeaponArt=createWeaponArt;
+  names.J='JETPACK · HOLD JUMP · 10s FUEL';
   G.pickupNames=names;
 })(window);

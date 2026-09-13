@@ -101,6 +101,14 @@ Audio starts after a player gesture. Pause and backgrounding stop music and effe
 
 ## Implementation
 
+### Jetpack and Pawns
+
+Collect a twin-tank jetpack on an outdoor ledge. Hold the existing jump action (P1 Z, P2 G, gamepad A, or touch JUMP) to thrust; release to descend. Each pack provides ten seconds of actual thrust, with no regeneration. Fuel survives death, room and stage transitions, and continues. Collected packs remain collected until a new run. Empty packs stop thrusting. In overhead bunkers, held thrust hovers over shots. Quick taps preserve ordinary jump height, and down+jump or DROP still passes through platforms.
+
+Pawns waits on the broad halfway landing in level 3, Spillway Ascent. Approach him to recruit autonomous machine-gun support for the rest of the run. He navigates reachable platforms with ballistic jumps, follows the closest living player, and independently positions and aims at enemies. His five-shot bursts damage enemies without friendly fire. He is a permanent, invulnerable support character and rejoins on room/stage transitions. New runs reset recruitment.
+
+His twelve-pose camo sprite sheet preserves the reference glasses and roof-shaped head, with the corrected roof orientation and chimney on the opposite slope. `js/support.js` owns navigation and targeting; `js/companion-art.js` draws the animated character and aimed gun.
+
 - `js/engine.js`: deterministic 60 Hz simulation, difficulty, arsenal, upgrades, cloak/nuke effects, enemy behavior, and input replay.
 - `js/levels.js`: campaign geometry and authored encounters; the engine populates difficulty-specific caches and themed enemies.
 - `js/environment.js`: scrolling outdoor scenery and fixed overhead bunker rooms.

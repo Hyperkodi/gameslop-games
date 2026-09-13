@@ -6,6 +6,7 @@
   const engine = G.createEngine({ seed: GameSlopKit.parseSeed(params.get('seed')) });
   const renderer = G.createRenderer({ canvas: $('game') });
   const p2Power=document.createElement('small');$('p2-hud').append(p2Power);
+  const supportHud=document.createElement('small');supportHud.id='support-hud';$('p1-power').after(supportHud);
   const grenadeHud=document.createElement('small');grenadeHud.id='grenade-hud';$('p1-power').after(grenadeHud);
   const grenadeTypeButton=document.createElement('button');grenadeTypeButton.id='grenade-type';grenadeTypeButton.type='button';
   grenadeTypeButton.textContent='TYPE: FRAG';grenadeTypeButton.setAttribute('aria-label','Change grenade type');
@@ -15,10 +16,14 @@
   const grenadeGuide=document.createElement('p');grenadeGuide.className='grenade-guide';
   grenadeGuide.textContent='GRENADES: B throws, N changes type. P2: K throws, L changes type. Gamepad: LB throws, RB changes type. Touch: TYPE selects, THROW launches. Shared 6-second recharge. Frag: immediate blast. Incendiary: 4 seconds of fire; strong against Wojak, FRONG and Bundle Cat. Electric stun: 3.5-second pulsing field; strong against Microduck, Thinking Cat, ASTRO and CATGPT. Bosses resist full stun.';
   $('dossier').append(grenadeGuide);
+  const supportGuide=document.createElement('p');supportGuide.className='grenade-guide';
+  supportGuide.textContent='JETPACK: collect the twin-tank pack, then hold JUMP to fly (Z / P2 G / gamepad A / touch JUMP). Release to descend. Ten seconds of thrust per pack; fuel never recharges. In bunkers, hold to hover over shots. PAWNS: find him on the broad halfway landing in level 3, Spillway Ascent. Approach to recruit him. He follows, jumps between platforms and targets enemies with his own machine gun for the rest of the run.';
+  $('dossier').append(supportGuide);
   const grenadeKeys=document.createElement('small');grenadeKeys.textContent='B: throw grenade · N: change type · 6s recharge';document.querySelector('.guide-controls').append(grenadeKeys);
   // The guide mirrors the actual loot table. Stronger weapons are rare in play,
   // but every silhouette is visible here before the player finds one.
   const guideWeapons = [
+    ['J','Jetpack — hold jump to fly'],
     ['S','Spread gun'],['M','Machine gun'],['G','Grenade launcher'],
     ['L','Laser rifle'],['H','Homing rocket'],['F','Flamethrower'],
     ['W','Wave cannon'],['T','Tesla carbine'],['I','Cryo blaster'],['A','Plasma cannon'],['B','Barrier'],['R','Rapid fire'],['C','Invisibility cloak'],['N','Screen nuke']
@@ -82,6 +87,8 @@
     const p=s.players[0];$('p1-lives').textContent=p.lives>5?'♥ × '+p.lives:'♥ '.repeat(Math.max(0,p.lives))||'OUT';
     const grenade=G.grenadeTypes[p.grenadeType||'frag'],cooldown=p.grenadeCooldown||0;
     grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · B / N';
+    const fuelLabel=q=>q.jetpackOwned?'P'+(q.id+1)+' JET '+((q.jetpackFuel||0)>0?q.jetpackFuel.toFixed(1)+'s · HOLD JUMP':'EMPTY'):'';
+    supportHud.textContent=[...s.players.map(fuelLabel),s.supportNotice>0?'PAWNS JOINED — MACHINE-GUN SUPPORT':s.pawnsRecruited?'PAWNS: WITH YOU':''].filter(Boolean).join(' · ');
     grenadeTypeButton.textContent='TYPE: '+(p.grenadeType==='electric'?'STUN':grenade.name);
     grenadeTypeButton.setAttribute('aria-label','Selected '+grenade.name+'. Tap to change grenade type.');
     grenadeButton.textContent=cooldown>0?Math.ceil(cooldown)+'s':'THROW';

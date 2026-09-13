@@ -16,6 +16,7 @@
     let targets=[];
     const animationClock=root.SlopCommando.createAnimationClock();
     const grenadeArt=root.SlopCommando.createGrenadeArt(c);
+    const companionArt=root.SlopCommando.createCompanionArt(c,root.SlopCommandoSkin);
     const arsenal = root.SlopCommando.createWeaponArt(c, root.SlopCommandoSkin.weapons);
     const environment = root.SlopCommando.createEnvironmentRenderer(c, root.SlopCommandoSkin, themes);
     const rect = (x,y,w,h,color) => { c.fillStyle = color; c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h)); };
@@ -375,6 +376,8 @@
         for(const actor of [...s.enemies,...s.players,...(s.boss?[s.boss]:[])]){c.fillStyle='#00000055';c.beginPath();c.ellipse(actor.x+actor.w/2,actor.y+actor.h-2,actor.w*.6,8,0,0,Math.PI*2);c.fill();}
       }
       s.enemies.forEach(e=>enemy(e,time,s.level.theme));if(s.boss)enemy(s.boss,time,s.level.theme);
+      companionArt.draw(s.pawnsRecruit,time,{recruit:true,elapsed:s.elapsed});
+      companionArt.draw(s.companion,time,{elapsed:s.elapsed});
       s.players.forEach(p=>hero.draw(p,time,{victory:s.status==='clear'||s.status==='victory',mode:s.level.mode}));
       grenadeArt.projectiles(s.grenades);
       for(const b of s.bullets) {
@@ -446,7 +449,7 @@
       if(s.banner>0&&s.status==='playing'&&!s.boss) {rect(300,72,360,46,'#081c23ce');text(s.level.mode==='base'?'BREACH CHAMBER '+(s.room+1):s.level.name.toUpperCase(),480,94,17,'#f6ebd2','center');text(s.level.mode==='base'?'DESTROY THE SECURITY CONSOLES':s.level.mode==='climb'?'JUMP TO CLIMB · ↓ + JUMP TO DESCEND':'MOVE OUT  →',480,110,10,t.glow,'center');}
       if(s.level.mode==='run'&&s.status==='playing'&&!s.boss)text('→',922,282,24,'#e1cf9a','center');
     }
-    return { draw, themes, mascot: hero, environment, cast };
+    return { draw, themes, mascot: hero, environment, cast, companionArt };
   }
   root.SlopCommando.createRenderer=createRenderer;
 })(window);

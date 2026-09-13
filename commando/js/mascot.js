@@ -156,6 +156,11 @@
       if (!large && p.invincible > 0 && Math.floor(time * 12) % 2 === 0) ctx.globalAlpha = .5;
       if(!large&&p.cloak>0){ctx.globalAlpha=.28;ctx.shadowColor='#93dfff';ctx.shadowBlur=8;}
       if(!large&&p.holstered){ctx.save();ctx.translate(p.x+3,p.y+26);ctx.rotate(-1.1);ctx.scale(.4,.4);arsenal.draw(p.holstered,{time});ctx.restore();}
+      if(!large&&(p.jetpackFuel||0)>0){
+        const lift=p.jumpTime>0?Math.sin(p.jumpTime/.6*Math.PI)*25:0;
+        ctx.save();ctx.translate(p.x+15-(p.face||1)*16,p.y+19-lift);ctx.scale(.55,.55);ctx.translate(-35,0);arsenal.draw('J',{time});
+        if(p.jetpackActive){for(const x of [24,48]){ctx.fillStyle='#ffa553';ctx.beginPath();ctx.moveTo(x-5,20);ctx.lineTo(x,37+Math.sin(time*43)*7);ctx.lineTo(x+5,20);ctx.fill();ctx.fillStyle='#bdfaff';ctx.fillRect(x-2,19,4,9);}}ctx.restore();
+      }
       body(p, time, large, victory, mode);
       if (!large && !victory) weapon(p, time);
       if (!large && p.shield > 0) {
