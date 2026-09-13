@@ -72,12 +72,15 @@ test('advancing, returning to title, muting and background interruption cancel d
 test('mute stops an active line and unmute does not replay it',async()=>{
   const h=harness();await h.audio.unlock();h.audio.update({stage:0,status:'clear'});await h.flush();
   const spoken=h.started.at(-1);assert.ok(spoken);h.audio.toggle();assert.equal(spoken.stopped,true);
-  const count=h.started.length;h.audio.toggle();h.audio.update({stage:0,status:'clear'});await h.flush();assert.equal(h.started.length,count);
+  h.audio.toggle();h.audio.update({stage:0,status:'clear'});await h.flush();
+  assert.equal(h.started.filter(source=>source.buffer===spoken.buffer).length,1);
+  assert.equal(h.audio.inspect().musicPlaying,true,'victory music resumes without repeating speech');
 });
 
 test('missing dialogue downloads never synthesize speech or break stage clear',async()=>{
   const h=harness(true);await h.audio.unlock();h.audio.update({stage:7,status:'clear'},[{type:'clear'}]);
-  await h.flush();assert.equal(h.audio.inspect().lastDialogue,null);assert.equal(h.started.length,0);
+  await h.flush();assert.equal(h.audio.inspect().lastDialogue,null);assert.equal(h.started.length,1);
+  assert.equal(h.audio.inspect().track,'Level Victory.mp3');
 });
 
 test('late downloads cannot play after a stage change',async()=>{

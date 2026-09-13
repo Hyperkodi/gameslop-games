@@ -3,6 +3,7 @@
   'use strict';
   const tracks = ['1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3', '6.mp3', '7.mp3', '8.mp3'];
   const musicLevel = .38;
+  const victoryTrack = 'Level Victory.mp3';
   const sampleLevels = {
     'shot:P':.38, 'shot:M':.08, 'shot:S':.28, 'shot:L':.10, 'shot:F':.08, 'shot:G':.55,
     'shot:H':.14, 'shot:W':.35, 'shot:T':.10, 'shot:I':.16, 'shot:A':.17,
@@ -77,6 +78,7 @@
     let musicFailed = false, lastCue = null, lastSample = null, musicAttempt = 0;
     let dialogueAttempt = 0, lastDialogue = null;
     let bossSource=null;
+    let victoryBuffer = null, victoryLoading = null, musicTrack = null;
     try { muted = env.localStorage?.getItem('gameslop:muted') === '1'; } catch (_) { /* Private mode. */ }
     const path = (folder, file) => folder + '/' + encodeURIComponent(file);
     function stopVoice(voice) {
@@ -90,7 +92,7 @@
     function victoryLine() {
       if (muted || !unlocked || !ctx || !victoryDialogue[stage]) return;
       const attempt = ++dialogueAttempt, clearedStage = stage, cue = 'victory:' + stage;
-      // Let the defeat blast and clear sting land before the spoken line.
+      // Give the victory music a short lead before the spoken line.
       Promise.all([loadSample(cue), new Promise(resolve => (env.setTimeout || setTimeout)(resolve, 900))]).then(() => {
         if (attempt !== dialogueAttempt || status !== 'clear' || stage !== clearedStage || muted || !buffers.has(cue)) return;
         stopEffects(); lastDialogue = clearedStage; play(cue);
@@ -110,6 +112,7 @@
           effectsGain = ctx.createGain(); effectsGain.gain.value = .28; effectsGain.connect(master);
           dialogueGain = ctx.createGain(); dialogueGain.gain.value = .8; dialogueGain.connect(master);
           loading = Promise.all(Object.keys(samples).map(loadSample));
+          preloadVictory();
         } catch (_) { return; }
       }
       if (ctx.state === 'suspended') Promise.resolve(ctx.resume()).catch(() => {});
@@ -163,11 +166,14 @@
       addVoice(source, gain, cue); source.start(0, sample.offset, sample.duration);
     }
     function musicPosition() {
-      return musicBuffer ? (musicOffset + (musicSource ? Math.max(0, ctx.currentTime - musicStartedAt) : 0)) % musicBuffer.duration : 0;
+      if (!musicBuffer) return 0;
+      const position = musicOffset + (musicSource ? Math.max(0, ctx.currentTime - musicStartedAt) : 0);
+      return musicTrack === victoryTrack ? Math.min(position, musicBuffer.duration) : position % musicBuffer.duration;
     }
     function stopMusic(reset = false) {
       if (musicSource) {
         musicOffset = musicPosition();
+        musicSource.onended = null;
         try { musicSource.stop(); } catch (_) { /* Already stopped. */ }
         musicSource.disconnect(); musicSource = null;
       }
@@ -175,30 +181,50 @@
       if (reset) { musicOffset = 0; musicBuffer = null; }
     }
     function selectTrack() {
-      const attempt = ++musicAttempt, file = tracks[stage];
+      const attempt = ++musicAttempt, file = ['clear','victory'].includes(status) ? victoryTrack : tracks[stage];
       stopMusic(true); musicFailed = false; musicPending = false;
+      musicTrack = file;
       if (!ctx || !unlocked || !file || status === 'ready') return;
       musicPending = true;
-      // Keep only the current track in memory. A stale download can never replace it.
-      musicLoading = env.fetch(path('Soundtrack', file))
+      // Keep one stage track plus the short, preloaded victory track in memory.
+      const download = file === victoryTrack ? preloadVictory() : env.fetch(path('Soundtrack', file))
         .then(response => { if (!response.ok) throw new Error('Music unavailable'); return response.arrayBuffer(); })
-        .then(bytes => attempt === musicAttempt ? ctx.decodeAudioData(bytes) : null)
-        .then(buffer => {
+        .then(bytes => attempt === musicAttempt ? ctx.decodeAudioData(bytes) : null);
+      if (file === victoryTrack && victoryBuffer) {
+        musicPending = false; musicBuffer = victoryBuffer; syncMusic(); return;
+      }
+      musicLoading = download.then(buffer => {
           if (attempt !== musicAttempt) return;
+          if (!buffer) throw new Error('Music unavailable');
           musicPending = false; musicBuffer = buffer; syncMusic();
         })
         .catch(() => { if (attempt === musicAttempt) { musicPending = false; musicFailed = true; } });
     }
+    function preloadVictory() {
+      if (!victoryLoading) victoryLoading = env.fetch(path('Soundtrack', victoryTrack))
+        .then(response => { if (!response.ok) throw new Error('Victory music unavailable'); return response.arrayBuffer(); })
+        .then(bytes => ctx.decodeAudioData(bytes))
+        .then(buffer => (victoryBuffer = buffer))
+        .catch(() => { victoryLoading = null; return null; });
+      return victoryLoading;
+    }
     function syncMusic() {
-      const shouldPlay = ctx && unlocked && !muted && status === 'playing' && musicBuffer && !musicFailed;
+      const shouldPlay = ctx && unlocked && !muted && ['playing','clear','victory'].includes(status) && musicBuffer && !musicFailed;
       if (!shouldPlay) { stopMusic(); return; }
       if (musicSource) return;
+      if (musicTrack === victoryTrack && musicOffset >= musicBuffer.duration) return;
       playingMusic = true;
       musicGain.gain.cancelScheduledValues(ctx.currentTime);
-      musicGain.gain.setValueAtTime(0, ctx.currentTime);
-      musicGain.gain.linearRampToValueAtTime(musicLevel, ctx.currentTime + .6);
+      musicGain.gain.setValueAtTime(musicTrack === victoryTrack ? musicLevel : 0, ctx.currentTime);
+      if (musicTrack !== victoryTrack) musicGain.gain.linearRampToValueAtTime(musicLevel, ctx.currentTime + .6);
       musicSource = ctx.createBufferSource(); musicSource.buffer = musicBuffer;
-      musicSource.loop = true; musicSource.connect(musicGain);
+      musicSource.loop = musicTrack !== victoryTrack; musicSource.connect(musicGain);
+      const source = musicSource;
+      if (!source.loop) source.onended = () => {
+        if (musicSource !== source) return;
+        musicOffset = musicBuffer.duration; playingMusic = false;
+        source.disconnect(); musicSource = null;
+      };
       musicStartedAt = ctx.currentTime;
       musicSource.start(0, musicOffset % musicBuffer.duration);
     }
@@ -210,7 +236,7 @@
         if (state.status !== 'playing' || changed || restart) interrupt();
       }
       status = state.status; stage = state.stage;
-      if (changed || restart) selectTrack();
+      if (changed || restart || cleared) selectTrack();
       if (status === 'ready') { musicAttempt++; musicPending = false; stopMusic(true); }
       syncMusic();
       if(status==='boss-defeat'){
@@ -229,6 +255,7 @@
       const heard = new Set();
       const nuke = events.some(event => event.type === 'nuke');
       for (const event of events) {
+        if (event.type === 'clear' && victoryBuffer) continue;
         if (nuke && event.type === 'explosion' && event.kind !== 'boss') continue;
         const cue = cueFor(event);
         // One cue per type per frame keeps co-op salvos and mass explosions balanced.
@@ -239,7 +266,7 @@
     }
     function unlock() {
       unlocked = true; ensure();
-      if (ctx && status === 'playing' && !musicBuffer && !musicPending) selectTrack();
+      if (ctx && ['playing','clear','victory'].includes(status) && !musicBuffer && !musicPending) selectTrack();
       syncMusic(); return Promise.all([loading, musicLoading]);
     }
     function toggle() {
@@ -250,11 +277,11 @@
       return muted;
     }
     return {update, unlock, toggle, interrupt, get muted() { return muted; },
-      inspect: () => ({stage, status, muted, unlocked, context:ctx?.state || 'locked', track:tracks[stage] || null,
+      inspect: () => ({stage, status, muted, unlocked, context:ctx?.state || 'locked', track:musicTrack || tracks[stage] || null,
         musicPlaying:playingMusic, musicTime:musicPosition(), musicFailed, musicPending,
         loaded:[...buffers.keys()], failed:[...failures], voices:voices.length, lastCue, lastSample, lastDialogue})};
   }
-  const api = {createAudio, audioTracks:tracks, audioSamples:samples, audioCueFor:cueFor, victoryDialogue};
+  const api = {createAudio, audioTracks:tracks, victoryTrack, audioSamples:samples, audioCueFor:cueFor, victoryDialogue};
   root.SlopCommando = Object.assign(root.SlopCommando || {}, api);
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
