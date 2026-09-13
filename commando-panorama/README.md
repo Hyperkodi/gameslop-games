@@ -1,0 +1,150 @@
+# Pepontra
+
+The title screen features Pepons confronting GreenHood in an illustrated jungle battle, with blood-red brush lettering, drifting embers and a separate launch menu. Portrait phones show both combatants above the menu; landscape uses the full artwork. Reduced-motion preferences disable the drift and embers. The existing `/commando/` address and save keys remain compatible.
+
+An original eight-stage GameSlop run-and-gun campaign starring the supplied red D-pad mascot. Play solo or local co-op in a landscape browser canvas, with keyboard, gamepad, or mobile touch controls.
+
+## Play
+
+Live: https://hyperkodi.github.io/gameslop-games/commando/
+
+Open `index.html` directly, or run `python -m http.server 8765 --directory games` from the repository root and visit `http://localhost:8765/commando/`. All runtime assets are local; no install or build is needed.
+
+Hold a phone in landscape for the largest playfield. **Expand** requests browser fullscreen and landscape orientation where supported. An in-page expanded view supports browsers without element fullscreen; rotate the phone manually if orientation locking is unavailable.
+
+Landscape touch play uses nearly the entire safe viewport height, with compact menu buttons and touch controls overlaying the playfield. Typical phone viewport calculations give approximately 30% more game area than the previous layout without cropping the 16:9 scene. The page is fixed against scrolling in landscape, and the joystick is inset from the phone's edges. Non-passive native touch handlers prevent control drags from scrolling Safari, while menu taps remain available. Browser/OS-owned edge gestures may still take precedence; physical iPhone verification is required. Portrait keeps its scrollable page layout.
+
+## Controls
+
+| Action | Player 1 | Player 2 | Gamepad |
+| --- | --- | --- | --- |
+| Move / aim | Arrow keys | IJKL | D-pad / left stick |
+| Jump | Z / Space | U | A |
+| Fire (hold) | D | O | X / B / RT |
+| Swap holstered gun | V | H | Y |
+| Throw grenade | A | Y | LB |
+| Cycle grenade | N | T | RB |
+| Pause | Escape / P | Shared | Start |
+| Sound | M | Shared | Onscreen button |
+
+On mobile, drag anywhere on the circular thumbstick to move or aim. **AUTO FIRE** starts enabled for touch play, so you can move with one thumb and use the larger **JUMP** button with the other. Use the remembered auto-fire toggle to start or stop shooting; there is no separate touch Fire button. Player 1 keyboard and gamepad input turn off touch auto-fire until you touch the game again; Player 2 can keep playing alongside your touch controls.
+
+**SWAP** exchanges carried guns, and **DROP** descends one ledge per tap without needing a down + jump combination. Drop is disabled in overhead bunker stages and does nothing on solid ground. Down crouches in side-scrolling stages; down + jump still drops through a ledge. In bunker stages, move on the overhead floor, fire upward toward cores, and jump to dodge shots.
+
+Tap Jump for a small hop; hold it to reach the full peak. Releasing during ascent shortens the jump, while the full held arc keeps existing platforms reachable. Bunker dodge height also responds to the hold. A fueled jetpack still uses held Jump for flight. Jump accepts a press up to 100ms after stepping off a ledge or 120ms before landing. Quick taps register even between simulation ticks. Rotation, pause, and backgrounding release held controls.
+
+In Spillway, hold Down and press Jump to descend one ledge; release Jump before dropping again. The camera follows your retreat. The boss crest has safe landing shelves directly below its full width, and you can jump back up.
+
+## Difficulty and equipment
+
+| Mode | Lives | Gun supply | Weapon slots | Upgrade memory | Nukes |
+| --- | --- | --- | --- | --- | --- |
+| Easy | 9 | Frequent caches; 10% enemy drop chance | 2 | Retained for the run | Yes |
+| Normal | 7 | Fewer caches; 4.5% enemy drop chance | 2 | Retained for the run | Yes |
+| Hard | 5 | Rare caches; 1.5% enemy drop chance | 1 | Lost when discarded | No |
+| Extra Hard | 3 | Rare caches; 1.5% enemy drop chance | 1 | Lost when discarded | No |
+
+Drop probabilities include utility pickups. Hard and Extra Hard also add authored enemies, more frequent reinforcements, and faster enemy fire. Easy, Normal and Hard start with three continues; Extra Hard starts with one. All modes have checkpoint respawns, brief respawn protection, and an extra life every 15,000 points. Easy and Normal additionally have one collectible life in each level and a continue in levels 3 and 6. Hard and Extra Hard have no level life pickups and each has one collectible continue in level 4. Extra Hard shares Hard's combat pressure and equipment restrictions. Each bonus is collectable once per run, even after using a continue. In co-op the collecting player receives the life; continues are shared. Legacy `assist` and `arcade` engine configurations map to Easy and Normal.
+
+A new gun becomes active and holsters your previous active gun on Easy/Normal. If both slots are occupied, the old holstered gun is discarded. Collecting a duplicate of either carried gun upgrades that gun without switching slots. Swap exchanges the two carried guns.
+
+Every gun has five tiers. Each successive tier increases damage, projectile size, and firing speed; blast weapons also gain splash radius and damage. Tesla gains additional chain targets and cryo gains slow duration. Tier five is the cap. On Easy/Normal, re-acquiring a discarded or lost gun restores its previous tier for the current run, including after death and continues. Starting a new run resets progression. On Hard and Extra Hard, replacing or losing a gun erases its upgrades; reacquiring it starts at tier one. Co-op equipment and progression are independent.
+
+## Arsenal and power-ups
+
+### Throwable grenades
+
+Throw a grenade alongside any equipped gun. **A** throws and **N** cycles types; player two uses **Y / T**. On a gamepad use **LB / RB**. On touch, use **TYPE** and **THROW** beside the existing joystick and jump button. All three types share a six-second recharge, shown in the HUD. Switching type does not reset it. Grenades do not hurt either player.
+
+| Type | Effect | Best targets |
+| --- | --- | --- |
+| Frag | Immediate 145px blast; 7 base damage | General groups |
+| Incendiary | Initial blast, then 4 seconds of ground fire; 84px radius | FRONG and Bundle Cat take 1.8× damage; machines take 0.6× |
+| Electric stun | A 108px electrical field pulses for 3.5 seconds | Microduck, Thinking Cat's turret, ASTRO and CATGPT take 2× damage and longer stuns |
+
+Ordinary machines stop moving and firing while stunned. Organic enemies receive a brief interruption. Bosses take 1.25× electrical damage and a temporary 30% slowdown, rather than full stun. Fire settles onto platforms; its lingering damage does not reach flyers above the flames. Frag detonates on enemy contact, on landing, or at the end of its fuse; and the other two have visible area effects. The grenade launcher remains a separate gun.
+
+Tests: `node --test tests/grenades.test.js` checks matchups, lingering damage, stun recovery, boss resistance, friendly safety, input/recharge, co-op, pause, stage cleanup and deterministic replay.
+
+Eleven guns: rifle, machine gun, spread gun, laser rifle, flamethrower, grenade launcher, homing rocket, wave cannon, Tesla carbine, cryo blaster, and plasma cannon.
+
+Tesla chains electricity between nearby targets. Cryo slows ordinary enemy movement and attack cadence. Plasma fires heavy explosive bolts. Launcher grenades start with a slight upward arc and detonate on enemies, solid ground, or descending contact with a ledge. Swept collision catches fast projectiles and thin platforms. In overhead bunkers, the launcher follows aim without downward gravity. Launcher blasts have a 120px radius; homing rockets have a 110px radius and also explode on terrain. Each deals 4 splash damage at tier one, with no duplicate splash to the directly struck enemy and no friendly fire. Their expanding blast rings show their reach. Laser and wave projectiles pierce.
+
+Flamethrowers, including Sloppy's, ignite enemies for three seconds. Fire deals 0.1 damage every quarter-second before the existing fire-resistance multiplier. Further hits refresh the duration without stacking burn damage or delaying its next pulse. Flames remain attached to moving enemies, pause with gameplay, and can finish a target or boss for the normal score. This lingering burn is separate from incendiary grenades' existing ground-fire zones.
+
+- **Cloak:** breaks enemy pursuit and aimed targeting for eight seconds. Enemies can target a visible co-op partner. Existing shots, contact, hazards, and non-aimed boss patterns remain dangerous.
+- **Screen nuke:** detonates immediately on collection, destroys visible non-boss enemies, and clears visible enemy shots. Offscreen enemies and bosses survive. Disabled on Hard and Extra Hard.
+- **Barrier:** prevents ordinary damage for twelve seconds.
+- **Rapid fire:** faster firing for twenty seconds.
+
+Pickups and equipped weapons use distinct silhouettes. HUD labels show active tier, holstered gun/tier, and timed effects.
+
+## Campaign
+
+The outdoor run stages span 6,600px with biome-specific ledges, gaps, hazards, and encounters. Spillway spans 2,860px vertically. Each stage has a boss and one exclusive new enemy:
+
+Spillway mixes narrow concrete steps, broad steel bridges, and optional side shelves. Its fixed gun caches are deliberately scarcer: five on Easy, three on Normal, and one on Hard or Extra Hard. Guns sit in marked side alcoves away from the main ascent, with no fixed grenade launcher cache; enemy drops still use the difficulty's random loot rules.
+
+| Stage | Route | New enemy |
+| --- | --- | --- |
+| 1. Verdant Outpost | Jungle canopy and ravines | Vine mantis with scythe forelegs |
+| 2. Signal Bunker | Three overhead security chambers | Mobile security spider |
+| 3. Spillway Ascent | Switchback spillway climb to the dam crest | Flying river ray |
+| 4. Furnace Network | Three overhead reactor chambers | Reactor orb with a three-shot salvo |
+| 5. Whiteout Relay | Ice shelves and relay towers | Charging ice wolf |
+| 6. Cinder Foundry | Furnace decks and flame vents | Armored slag crab |
+| 7. The Underflow | Flooded caves and broken shelves | Fast cave bat |
+| 8. Heart of the Slop | Living alien fortress | Spore wasp |
+
+Both bunker stages use a consistent overhead floor and low walls. Destroying cores does not pan or replace the background. Chamber changes use a brief fade, retaining the same floor coordinates. Outdoor stages retain seven stitched scrolling scenery panels.
+
+## Stage timer
+
+Every stage starts at 1,000 seconds, with the countdown beside the score. Defeating the boss awards one point per whole second remaining, once, including the final stage. The clear screen lists the time bonus separately from the total score. The clock advances with active gameplay, freezes during pause/background pause, and carries through deaths and bunker chambers. A new stage or a continue retry starts a fresh timer. At zero, gameplay continues without a time bonus.
+
+## Audio
+
+The original user-provided soundtrack is restored from `Soundtrack/`: Jungle, Bunker, Foundry, Reactor, Snow, Foundry, Cave, and Alien across stages 1–8. These are the seven original files with their original assignments, looped through one decoded Web Audio source at a time. `music-credits.html` previews the active originals. Downloaded replacement songs are not selected. The quieter effects mix remains in place.
+
+The recordings in `Sound Effects/` cover rifle, machine gun, spread, laser, flame, grenade launcher, rocket launcher, wave cannon, Tesla, cryo, and plasma firing; grenade and rocket detonations; barrier and cloak activation; nuke detonation; and boss destruction. The rifle uses a short CC0 gunshot by n4, edited to one crisp pop per fired round; holding fire creates the burst rhythm. See `Sound Effects/rifle-credits.json` for its source and processing. The machine gun recording is about 11.5 dB quieter than the previous mix. Other actions retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Each recording has its own mix level: lasers and rockets are substantially quieter, along with the loud flame, Tesla and boss effects. Recorded weapon and detonation tails are limited to two per cue, with 16 total effect voices. Approved dialogue keeps its existing gain. Music decodes only the selected level into a looping Web Audio buffer, avoiding media-element gaps between repeats; it does not download the entire soundtrack at startup.
+
+Nukes begin with a near-white screen flash, then expand as a white-hot explosion and shock rings that race beyond the playfield while visible non-boss enemies are removed.
+
+Audio starts after a player gesture. Pause and backgrounding stop music and effect tails; resume continues the track. Sound Off mutes both channels and remembers the preference. New runs and stage changes restart the appropriate track, while bunker room changes leave it playing. If an effect fails to load, a synthesized cue keeps that action audible.
+
+## Implementation
+
+### Jetpack and persistent squad
+
+Collect a twin-tank jetpack on an outdoor ledge. Hold the existing jump action (P1 Z, P2 U, gamepad A, or touch JUMP) to thrust; release to descend. Each pack provides ten seconds of actual thrust, with no regeneration. Fuel survives death, room and stage transitions, and continues. Collected packs remain collected until a new run. Empty packs stop thrusting. In overhead bunkers, held thrust hovers over shots. Quick taps give a small hop, and down+jump or DROP still passes through platforms.
+
+Pawns joins on the halfway landing in level 3 with a machine gun. Wojak joins halfway through level 5 with a piercing ray gun. Sloppy joins halfway through level 7 with a short-range flamethrower. Reaching or passing their position recruits them, including when jumping overhead. All recruited allies remain for the rest of the run, through player deaths, room/stage transitions and continues. New runs reset recruitment. They navigate platforms with ballistic jumps, follow living players, independently aim and fight, and cannot hurt the players or one another. Hostile Wojak spawns are replaced by existing Bundle Cat troops.
+
+Each ally adds 20% of the original authored enemy count: +20%, +40%, then +60% (fractional totals round down). A 20-enemy route becomes 24 with Pawns. At recruitment, the new extras are distributed ahead along the remaining route; future stages start with the existing squad's increase. Recurring waves add one extra enemy per five waves per recruited ally. Enemy capacity rises by the same percentage. Boss counts, boss health and bunker objectives are unchanged.
+
+His twelve-pose camo sprite sheet preserves the reference glasses and roof-shaped head, with the corrected roof orientation and chimney on the opposite slope. `js/support.js` owns navigation and targeting; `js/companion-art.js` draws the animated character and aimed gun.
+
+- `js/engine.js`: deterministic 60 Hz simulation, difficulty, arsenal, upgrades, cloak/nuke effects, enemy behavior, and input replay.
+- `js/levels.js`: campaign geometry and authored encounters; the engine populates difficulty-specific caches and themed enemies.
+- `js/environment.js`: scrolling outdoor scenery and fixed overhead bunker rooms.
+- `js/renderer.js`: enemies, projectiles, explosions, room fades, and scene composition.
+- `js/weapon-art.js`: shared weapon, pickup, and guide illustrations.
+- `js/mascot.js`: mascot poses, held/holstered weapons, cloak translucency, and co-op tint.
+- `js/game.js`: HUD, keyboard/gamepad/touch input, fullscreen, audio, and local scores.
+- `js/touch.js`: full-area thumbstick, direction dead zones, touch contacts, and remembered auto-fire preference.
+- `js/audio.js`: individually mixed weapon/effect routing, gapless level music, mute/pause lifecycle, and synthesized fallback cues.
+- `skin/gameslop/`: branding and bundled image assets. Keep `skin.json` and its browser copy `skin.js` synchronized.
+
+`?seed=42` selects a replay seed. `?debug=1` exposes `window.__gameslop.{engine,renderer}`. The existing optional game-over bridge and local best-score storage remain supported.
+
+## Validation
+
+Run `node --test` inside `games/commando`. The suite covers weapons at all five tiers, holster behavior, progression across loss and continues, co-op isolation, cloak tracking and expiry, nuke screen bounds/boss immunity, mode-specific loot/enemies, safe routes, campaign victory, and scenery coverage.
+
+The repository's `tools/cdp-drivers/commando-qa.js` tests desktop/mobile, touch, pause, fullscreen and fallback. `tools/cdp-drivers/commando-v4-qa.js` checks all eight themed enemies, stationary bunker floors during core destruction, tier-preserving keyboard swaps, mobile swaps and non-overlapping controls, and Hard's disabled holster. Chrome device emulation is automated; physical device testing remains manual.
+
+`tools/cdp-drivers/commando-audio-qa.js` verifies actual MP3 decoding and playback, weapon/impact routing, all supplied level tracks, mute/pause/resume, mobile restart, and bounded effect voices.
+
+`tools/cdp-drivers/commando-spillway-qa.js` checks reduced optional gun caches, keyboard and mobile down+jump, safe boss-platform retreat and return, and downward camera movement.
+
+`tools/cdp-drivers/commando-touch-qa.js` exercises the thumbstick, auto-fire, simultaneous touch actions, dedicated Drop, input cancellation, rotation, fullscreen, and control sizing across phone viewports.

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Pepontra — animated cast</title>
+<style>*{box-sizing:border-box}body{margin:0;background:#10212a;color:#edf5f0;font:16px/1.5 system-ui,sans-serif}main{max-width:1120px;margin:auto;padding:28px}h1{margin:0 0 8px}a{color:#b8e28d}nav{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin:18px 0}button,select{font:inherit;background:#273e4b;color:white;border:1px solid #567481;border-radius:6px;padding:10px 14px}canvas{display:block;width:100%;height:auto;border:1px solid #435c69;border-radius:8px}small{color:#bdcbd1}#error{color:#ffc582}</style></head>
+<body><main><h1>Pepons and the meme army</h1><p>The approved cast, animated by the game's actual sprite renderer.</p><nav><a href="index.html">Play Pepontra</a><button id="pause">Pause animation</button><label>Pepons pose <select id="pose"><option value="run">Running</option><option value="idle">Idle</option><option value="jump">Jump</option><option value="crouch">Crouch</option><option value="victory">Victory</option></select></label><label>Backdrop <select id="backdrop"><option value="#243e4c">Dark blue</option><option value="#d8e4e8">Snow light</option><option value="#172a1f">Jungle dark</option></select></label></nav><p id="error" role="status">Loading character sheets…</p><canvas id="cast" width="1080" height="1110" aria-label="Animated Pepons, twelve enemies and objectives, and eight bosses"></canvas><p><small>Boss wind-up, recoil and damaged poses cycle here for review. During gameplay they follow attack cooldowns and damage. The backgrounds and controls in the game are unchanged.</small></p></main>
+<script src="skin/gameslop/skin.js?v=squad-20260913"></script><script src="skin/gameslop/meme-atlases-v1.js?v=pawns-20260913"></script><script src="js/weapon-art.js?v=pawns-20260913"></script><script src="js/sprite-art.js?v=pepons-20260912"></script><script src="js/mascot.js?v=pepons-20260912"></script>
+<script>
+(()=>{'use strict';const G=window.SlopCommando,skin=window.SlopCommandoSkin,c=document.getElementById('cast').getContext('2d'),hero=G.createMascotRenderer(c,skin),cast=G.createCastRenderer(c,skin);let paused=false,time=0,last=performance.now();
+ const actionLabel=document.createElement('label');actionLabel.textContent='Enemy animation ';
+ const action=document.createElement('select');action.id='enemy-action';
+ for(const [value,name] of [['cycle','Full sequence'],['idle','Idle'],['move','Movement'],['windup','Wind-up'],['attack','Attack / charge'],['hurt','Hit reaction'],['defeat','Defeat']]){
+  const option=document.createElement('option');option.value=value;option.textContent=name;action.appendChild(option);
+ }
+ actionLabel.appendChild(action);document.querySelector('nav').appendChild(actionLabel);
+ document.querySelector('main > p:last-child small').textContent='Review movement, wind-up, attacks, hit reactions and defeat poses. In the game, attacks follow emitted shots and walking follows distance traveled. YOLO and Robin use contact charges; CATGPT is a stationary security console.';
+ const stateLabel=document.createElement('p');document.getElementById('cast').before(stateLabel);
+ function reviewState(e){
+  const t=time%7;let state=action.value;
+  if(state==='cycle')state=t<.8?'idle':t<3?'move':t<3.4?'windup':t<3.8?'attack':t<4.6?'idle':t<5?'hurt':'defeat';
+  if(G.profileFor(e).contact){if(state==='attack')state='charge';if(state==='windup')state='idle';}
+  if(e.kind==='core'&&state==='move')state='alert';
+  if(e.kind==='turret'&&state==='move')state='idle';
+  return {state,stride:time*(e.kind==='slagCrab'?.7:1.6)};
+ }
+ const p={id:0,x:-15,y:-42,w:30,h:42,lives:3,vx:210,grounded:true,face:1,invincible:0,held:{fire:true},aimX:1,aimY:0,weapon:'P',cooldown:0};
+ const enemies=Object.entries(skin.cast.enemies).map(([kind,m])=>({kind,name:m.name,x:-16,y:-34,w:32,h:34,hp:8,maxHp:8,cooldown:1,phase:0,vx:1}));
+ const bosses=skin.cast.bosses.map((m,variant)=>({kind:'boss',variant,name:m.name,x:-65,y:-144,w:130,h:144,hp:95,maxHp:95,cooldown:1.5,phase:0}));
+ const label=(s,x,y)=>{c.fillStyle=document.getElementById('backdrop').value==='#d8e4e8'?'#172e37':'#edf5f0';c.font='16px system-ui';c.textAlign='center';c.fillText(s,x,y);};
+ document.getElementById('pause').onclick=()=>{paused=!paused;document.getElementById('pause').textContent=paused?'Resume animation':'Pause animation';};
+ Promise.all([hero.ready,cast.ready]).then(([h,a])=>{document.getElementById('error').textContent=h&&a.every(Boolean)?'All 21 character designs loaded.':'A sprite sheet could not load. Refresh this page.';});
+ function tick(now){const delta=Math.min(.05,(now-last)/1000);last=now;if(!paused)time+=delta;c.fillStyle=document.getElementById('backdrop').value;c.fillRect(0,0,1080,1110);
+ const pose=document.getElementById('pose').value;p.vx=pose==='run'?210:0;p.grounded=pose!=='jump';p.prone=pose==='crouch';p.cooldown=(time%1)<.12?.1:0;
+ c.save();c.translate(540,160);c.scale(1.8,1.8);hero.draw(p,time,{victory:pose==='victory'});c.restore();label('Pepons',540,193);
+ stateLabel.textContent='Showing: '+reviewState(enemies[0]).state;
+ enemies.forEach((e,i)=>{const x=90+(i%6)*180,y=300+Math.floor(i/6)*165;c.save();c.translate(x,y);c.scale(1.7,1.7);cast.draw(e,time,1000,reviewState(e));c.restore();label(e.name,x,y+30);});
+ bosses.forEach((e,i)=>{const x=135+(i%4)*270,y=760+Math.floor(i/4)*275;c.save();c.translate(x,y);cast.draw(e,time,1000,reviewState(e));c.restore();label(e.name,x,y+30);});requestAnimationFrame(tick);}
+ requestAnimationFrame(tick);
+})();
+</script></body></html>
