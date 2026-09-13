@@ -12,6 +12,9 @@
   function createRenderer({ canvas }) {
     const c = canvas.getContext('2d', { alpha: false }); canvas.width = 960; canvas.height = 540; c.imageSmoothingEnabled = false;
     const hero = root.SlopCommando.createMascotRenderer(c, root.SlopCommandoSkin);
+    const cast = root.SlopCommando.createCastRenderer(c, root.SlopCommandoSkin);
+    let targets=[];
+    const animationClock=root.SlopCommando.createAnimationClock();
     const arsenal = root.SlopCommando.createWeaponArt(c, root.SlopCommandoSkin.weapons);
     const environment = root.SlopCommando.createEnvironmentRenderer(c, root.SlopCommandoSkin, themes);
     const rect = (x,y,w,h,color) => { c.fillStyle = color; c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h)); };
@@ -344,6 +347,9 @@
       c.restore();
     }
     function enemy(e,time,theme) {
+      const target=e.kind==='boss'?targets[0]:targets.reduce((a,b)=>!a||Math.hypot(b.x-e.x,b.y-e.y)<Math.hypot(a.x-e.x,a.y-e.y)?b:a,null);
+      const targetX=target?.x;
+      if(cast.draw(e,time,targetX))return;
       const flash=e.flash>0;
       if(root.SlopCommando.specialEnemies[e.kind]){themedEnemy(e,time);return;}
       if(e.kind==='boss') {drawBoss(e,time,theme,flash);return;}
@@ -354,10 +360,13 @@
       drawSoldier(e,time,theme,flash);
     }
     function draw(s,{time=0,attract=false}={}) {
+      time=animationClock(time,s.status==='paused'||s.status==='gameover');
+      targets=s.players.filter(p=>p.lives>0&&!p.cloak);
       const t=themes[s.level.theme];
       if(!environment.draw(s,time)){if(s.level.mode==='base')baseRoom(s,time);else background(s,time);}
       c.save();c.translate(-Math.round(s.camera.x),-Math.round(s.camera.y));
       terrain(s);
+      cast.drawDefeats(s,time);
       if(attract){enemy({kind:'turret',x:680,y:420},time,'jungle');enemy({kind:'soldier',x:520,y:420},time,'jungle');}
       for(const p of s.pickups) arsenal.pickup(p,time,s.players.some(hero=>hero.lives>0&&Math.abs(hero.x-p.x)<140&&Math.abs(hero.y-p.y)<100));
       if(s.level.mode==='base'){
@@ -429,12 +438,12 @@
         text('NO ORDERS. JUST SLOP.',714,448,12,'#f8e6bd','center');
       }
       if(s.boss&&s.status==='playing') {
-        rect(244,23,472,35,'#0b1a24db');text(s.boss.name.toUpperCase(),480,38,11,'#f0d9b4','center');rect(260,45,440,5,'#49343a');rect(260,45,440*Math.max(0,s.boss.hp/s.boss.maxHp),5,'#ff6250');
+        rect(244,23,472,35,'#0b1a24db');text((root.SlopCommandoSkin.cast.bosses[s.boss.variant||0]?.name||s.boss.name).toUpperCase(),480,38,11,'#f0d9b4','center');rect(260,45,440,5,'#49343a');rect(260,45,440*Math.max(0,s.boss.hp/s.boss.maxHp),5,'#ff6250');
       }
-      if(s.banner>0&&s.status==='playing'&&!s.boss) {rect(300,72,360,46,'#081c23ce');text(s.level.mode==='base'?'BREACH CHAMBER '+(s.room+1):s.level.name.toUpperCase(),480,94,17,'#f6ebd2','center');text(s.level.mode==='base'?'DESTROY THE RED CORES':s.level.mode==='climb'?'JUMP TO CLIMB · ↓ + JUMP TO DESCEND':'MOVE OUT  →',480,110,10,t.glow,'center');}
+      if(s.banner>0&&s.status==='playing'&&!s.boss) {rect(300,72,360,46,'#081c23ce');text(s.level.mode==='base'?'BREACH CHAMBER '+(s.room+1):s.level.name.toUpperCase(),480,94,17,'#f6ebd2','center');text(s.level.mode==='base'?'DESTROY THE SECURITY CONSOLES':s.level.mode==='climb'?'JUMP TO CLIMB · ↓ + JUMP TO DESCEND':'MOVE OUT  →',480,110,10,t.glow,'center');}
       if(s.level.mode==='run'&&s.status==='playing'&&!s.boss)text('→',922,282,24,'#e1cf9a','center');
     }
-    return { draw, themes, mascot: hero, environment };
+    return { draw, themes, mascot: hero, environment, cast };
   }
   root.SlopCommando.createRenderer=createRenderer;
 })(window);

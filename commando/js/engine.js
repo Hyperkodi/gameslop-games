@@ -219,6 +219,7 @@
       const x = e.x + e.w / 2, y = e.y + e.h / 2;
       const a = Math.atan2(target.y + 20 - y, target.x + 15 - x) + offset;
       state.bullets.push({ x, y, w: 9, h: 9, vx: Math.cos(a) * speed, vy: Math.sin(a) * speed, team: 'enemy', ttl: 5 });
+      e.attackTick = state.tick; // Presentation cue: only an emitted shot starts recoil.
     }
     function spawnEnemy(spec) {
       const hp = specialEnemies[spec.kind]?.hp || (spec.kind === 'turret' ? 5 : 2);
@@ -385,6 +386,7 @@
           if ((state.stage === 2 || state.stage === 6) && boss.attack % 3 === 0 && state.enemies.length < 10) spawnEnemy({ kind: 'drone', x: boss.x - 40, y: boss.y + 30 });
           if ((state.stage === 4 || state.stage === 5) && boss.attack % 2 === 0) {
             state.bullets.push({ x: boss.x - 15, y: 436, w: 22, h: 16, vx: -210, vy: 0, team: 'enemy', ttl: 5 });
+            boss.attackTick = state.tick;
           }
           boss.cooldown = (rage ? .95 : 1.5) + (state.stage === 7 ? .15 : 0);
           event('cannon');

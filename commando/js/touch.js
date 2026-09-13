@@ -17,7 +17,7 @@
     return out;
   }
   function createTouchControls({element,cabinet=element,getState,onChange,storage,unlock}) {
-    const stick=element.querySelector('.dpad'),auto=element.querySelector('#auto-fire');
+    const stick=element.querySelector('.joystick'),auto=element.querySelector('#auto-fire');
     const hint=element.querySelector('.touch-hint');
     const contacts=new Map();let stickPointer=null,directions=[],usingTouch=false;
     let autoFire=storage.get('gameslop:commando:auto-fire','1')!=='0';
@@ -35,7 +35,6 @@
       directions=stickDirections(dx,dy,directions,getState().level.mode==='base');
       stick.style.setProperty('--stick-x',clamp(dx,-1,1)*rect.width*.26+'px');
       stick.style.setProperty('--stick-y',clamp(dy,-1,1)*rect.height*.26+'px');
-      stick.querySelectorAll('[data-action]').forEach(button=>button.classList.toggle('pressed',directions.includes(button.dataset.action)));
       onChange(event.pointerId,directions.map(action=>'0:'+action));
     }
     function release(id) {
@@ -44,7 +43,6 @@
       if(id===stickPointer){
         stickPointer=null;directions=[];
         stick.style.setProperty('--stick-x','0px');stick.style.setProperty('--stick-y','0px');
-        stick.querySelectorAll('[data-action]').forEach(button=>button.classList.remove('pressed'));
       }
       onChange(id,null);
       if(node.hasPointerCapture?.(id)){try{node.releasePointerCapture(id);}catch(_){/* Already released by the browser. */}}

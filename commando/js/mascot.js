@@ -9,6 +9,7 @@
     const atlas = new Image();
     let spriteSurface = atlas;
     let loaded = false;
+    const animation = new WeakMap();
     const ready = new Promise(resolve => {
       atlas.onload = () => {
         try {
@@ -20,7 +21,7 @@
       atlas.onerror = () => resolve(false);
     });
     // The embedded source works with file:// without tainting the canvas.
-    atlas.src = root.SlopCommandoMascotAtlas || 'skin/' + skin.name + '/' + art.atlas;
+    atlas.src = root.SlopCommandoActorAtlases?.[art.atlas] || root.SlopCommandoMascotAtlas || 'skin/' + skin.name + '/' + art.atlas;
 
     function prepareAtlas(image) {
       const surface = document.createElement('canvas');
@@ -29,6 +30,7 @@
       paint.drawImage(image, 0, 0);
       const pixels = paint.getImageData(0, 0, surface.width, surface.height);
       const data = pixels.data, width = surface.width, height = surface.height;
+      if(art.chromaKey)G.removeMatte(pixels);
       // Generated sheets sometimes carry a pale matte. Key only neutral pixels
       // connected to the outside: the enclosed eye whites and highlights stay.
       if (art.keyMatte) {
@@ -63,24 +65,23 @@
     // A likeness-preserving fallback for an unavailable image, including eyes,
     // droplet, gloved hands and boots. It is also usable with file://.
     function fallback(pose, time, player) {
-      const red = player ? art.coop : '#ed1917', dark = player ? '#116c7b' : '#900c14';
-      const stride = pose === 'runA' ? -1 : pose === 'runB' ? 1 : 0;
+      const red = player ? art.coop : art.body, dark = art.shadow;
+      const stride = pose.startsWith('run') ? Math.sin(time*12) : 0;
       const low = pose === 'crouch' ? 11 : 0;
       const body = ctx.createRadialGradient(-8, -35 + low, 2, 1, -25 + low, 28);
-      body.addColorStop(0, player ? '#6ceae1' : '#ff7464'); body.addColorStop(.45, red); body.addColorStop(1, dark);
+      body.addColorStop(0, '#f1fffa'); body.addColorStop(.45, red); body.addColorStop(1, dark);
       ellipse(-11 - stride * 5, -5 - Math.max(0, stride) * 5, 9, 5, red, dark);
       ellipse(11 - stride * 5, -5 + Math.min(0, stride) * 5, 9, 5, red, dark);
       ellipse(-21, -24 + low, 6, 10, red, dark);
       ellipse(21, pose === 'victory' ? -47 : -24 + low, 6, 10, red, dark);
       ellipse(0, -29 + low, 19, 24 - low * .2, body, dark);
-      ctx.save(); ctx.translate(1, -54 + low); ctx.rotate(.35);
-      ellipse(0, -3, 4, 8, red, dark); ellipse(-1, -7, 1.5, 3, '#ffdfb8'); ctx.restore();
+      ellipse(2,-42+low,23,15,red,dark);
       for (const x of [-8, 8]) {
-        ellipse(x, -37 + low, 6, 8, '#fff0c6', '#5b1115');
-        ellipse(x + 1.2, -37 + low, 3.6, 6, '#111413');
+        ellipse(x, -44 + low, 8, 5, '#f2f9f5', dark);
+        ellipse(x + 2, -43 + low, 3.6, 4, '#111413');
         ellipse(x, -40 + low, 1.5, 2, '#fff8e5');
       }
-      ctx.strokeStyle = '#4b0e15'; ctx.lineWidth = 1.7;
+      ctx.strokeStyle = dark; ctx.lineWidth = 1.7;
       ctx.beginPath(); ctx.moveTo(-13, -48 + low); ctx.lineTo(-3, -44 + low);
       ctx.moveTo(3, -44 + low); ctx.lineTo(13, -48 + low); ctx.stroke();
       ctx.fillStyle = '#141619';
@@ -90,16 +91,23 @@
       ellipse(-11, -45 + low, 2, 5, '#ffded0');
     }
 
-    function poseFor(p, large, victory, mode) {
+    function poseFor(p, large, victory, mode, time) {
+      let a=animation.get(p);
+      if(!a||time<a.time)a={grounded:p.grounded,lives:p.lives,landUntil:-1,hurtUntil:-1,time};
+      if(!a.grounded&&p.grounded)a.landUntil=time+.10;
+      if(p.lives<a.lives)a.hurtUntil=time+.16;
+      a.grounded=p.grounded;a.lives=p.lives;a.time=time;animation.set(p,a);
       if (large || victory) return 'victory';
+      if(time<a.hurtUntil)return 'hurt';
       if (p.prone) return 'crouch';
-      if ((mode !== 'base' && !p.grounded) || p.jumpTime > 0) return 'jump';
-      return Math.abs(p.vx || 0) > 1 || (mode === 'base' && (p.held?.up || p.held?.down)) ? 'run' : 'idle';
+      if ((mode !== 'base' && !p.grounded) || p.jumpTime > 0) return p.vy < -390 ? 'takeoff' : 'jump';
+      if(time<a.landUntil)return 'landing';
+      return Math.abs(p.vx || 0) > 1 || (mode === 'base' && (p.held?.up || p.held?.down)) ? 'run' : Math.floor(time*2)%2?'idleB':'idle';
     }
 
     function body(p, time, large, victory, mode) {
-      let pose = poseFor(p, large, victory, mode);
-      if (pose === 'run') pose = ['runA', 'idle', 'runB', 'idle'][Math.floor(time * 14) % 4];
+      let pose = poseFor(p, large, victory, mode, time);
+      if (pose === 'run') pose = art.runFrames[Math.floor(time * 12) % art.runFrames.length];
       const bounds = art.frames[pose];
       const targetHeight = large ? 300 : art.renderHeight;
       // Every pose uses the same source-to-world scale, including the crouch.
@@ -112,12 +120,13 @@
       if (!large && (p.face || 1) !== art.sourceFacing) ctx.scale(-1, 1);
       if (loaded && bounds) {
         const [sx, sy, sw, sh] = bounds;
+        const [ax,ay]=art.anchors?.[pose]||[sw/2,sh];
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = 'high';
-        if (p.id === 1) ctx.filter = 'hue-rotate(165deg)';
-        // A slight outline keeps the red silhouette legible in dark missions.
+        if (p.id === 1) ctx.filter = 'sepia(.25) hue-rotate(120deg) saturate(1.5)';
+        // A dark edge keeps the silver silhouette legible against snow and water.
         ctx.shadowColor = '#080d14'; ctx.shadowBlur = large ? 5 : 1.5;
-        ctx.drawImage(spriteSurface, sx, sy, sw, sh, -sw * scale / 2, -sh * scale, sw * scale, sh * scale);
+        ctx.drawImage(spriteSurface, sx, sy, sw, sh, -ax * scale, -ay * scale, sw * scale, sh * scale);
       } else {
         const s = targetHeight / 64; ctx.scale(s, s); fallback(pose, time, p.id);
       }
@@ -132,7 +141,7 @@
       ctx.translate(-recoil, 0);
       ctx.save();ctx.translate(1,0);ctx.scale(.54,.54);arsenal.draw(p.weapon || 'P',{time});ctx.restore();
       // A visible gloved hand attaches the gun to the supplied character.
-      ellipse(12, 3, 4, 3.5, p.id ? art.coop : '#ee2821', p.id ? '#147f85' : '#8c161a');
+      ellipse(12, 3, 4, 3.5, p.id ? art.coop : art.body, art.shadow);
       if (recoil) {
         ctx.fillStyle = '#ffe1a0'; ctx.beginPath(); ctx.moveTo(38, -6);
         ctx.lineTo(49, 1); ctx.lineTo(38, 7); ctx.lineTo(41, 1); ctx.fill();
