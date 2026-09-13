@@ -1,6 +1,6 @@
 # Pepons and the meme army
 
-The user approved the cast on 12 September 2026. All approved sprites and their expanded animations are integrated into the local game. It has not been deployed.
+The user approved the cast on 12 September 2026. All approved sprites and their expanded animations are integrated into the game and published at https://hyperkodi.github.io/gameslop-games/commando/.
 
 Open `index.html` to play, or `cast-preview.html` to inspect all 21 designs in motion. The preview offers light/dark backgrounds, player poses, and a full enemy sequence or individual movement, wind-up, attack, hit and defeat states.
 
@@ -21,7 +21,7 @@ Open `index.html` to play, or `cast-preview.html` to inspect all 21 designs in m
 
 `node --test games/commando/tests/*.test.js tools/mobile-joystick-policy.test.mjs`
 
-Result: **98 passing tests**, zero failures. Covers gameplay regression checks, source rectangles and anchors, cast coverage, keying/despill, actual engine shot cues, movement and pause timing, contact attackers and retained-boss defeat lifecycle.
+Result: **113 passing tests**, zero failures. Covers gameplay regression checks, source rectangles and anchors, cast coverage, keying/despill, actual engine shot cues, movement and pause timing, contact attackers, retained-boss defeat lifecycle, and the new frag/incendiary/electrical grenade mechanics.
 
 `node artifacts/slop-commando/pepons-prototype/render-qa.cjs`
 

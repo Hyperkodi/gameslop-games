@@ -6,6 +6,16 @@
   const engine = G.createEngine({ seed: GameSlopKit.parseSeed(params.get('seed')) });
   const renderer = G.createRenderer({ canvas: $('game') });
   const p2Power=document.createElement('small');$('p2-hud').append(p2Power);
+  const grenadeHud=document.createElement('small');grenadeHud.id='grenade-hud';$('p1-power').after(grenadeHud);
+  const grenadeTypeButton=document.createElement('button');grenadeTypeButton.id='grenade-type';grenadeTypeButton.type='button';
+  grenadeTypeButton.textContent='TYPE: FRAG';grenadeTypeButton.setAttribute('aria-label','Change grenade type');
+  document.querySelector('.touch-hint').replaceWith(grenadeTypeButton);
+  const grenadeButton=document.createElement('button');grenadeButton.type='button';grenadeButton.dataset.action='grenade';grenadeButton.textContent='THROW';
+  grenadeButton.setAttribute('aria-label','Throw selected grenade');document.querySelector('.action-buttons').append(grenadeButton);
+  const grenadeGuide=document.createElement('p');grenadeGuide.className='grenade-guide';
+  grenadeGuide.textContent='GRENADES: B throws, N changes type. P2: K throws, L changes type. Gamepad: LB throws, RB changes type. Touch: TYPE selects, THROW launches. Shared 6-second recharge. Frag: immediate blast. Incendiary: 4 seconds of fire; strong against Wojak, FRONG and Bundle Cat. Electric stun: 3.5-second pulsing field; strong against Microduck, Thinking Cat, ASTRO and CATGPT. Bosses resist full stun.';
+  $('dossier').append(grenadeGuide);
+  const grenadeKeys=document.createElement('small');grenadeKeys.textContent='B: throw grenade · N: change type · 6s recharge';document.querySelector('.guide-controls').append(grenadeKeys);
   // The guide mirrors the actual loot table. Stronger weapons are rare in play,
   // but every silhouette is visible here before the player finds one.
   const guideWeapons = [
@@ -30,6 +40,7 @@
   cabinet.append(document.querySelector('.touch-controls'));
   const sources = { keyboard: new Set(), touch: new Map(), pad: new Set() };
   const keymap = { ArrowLeft:[0,'left'],ArrowRight:[0,'right'],ArrowUp:[0,'up'],ArrowDown:[0,'down'],KeyZ:[0,'jump'],Space:[0,'jump'],KeyX:[0,'fire'],KeyC:[0,'fire'],KeyV:[0,'swap'],KeyJ:[1,'swap'],KeyA:[1,'left'],KeyD:[1,'right'],KeyW:[1,'up'],KeyS:[1,'down'],KeyG:[1,'jump'],KeyH:[1,'fire'] };
+  Object.assign(keymap,{KeyB:[0,'grenade'],KeyN:[0,'grenadeNext'],KeyK:[1,'grenade'],KeyL:[1,'grenadeNext']});
   const storage = { get(k,f) { try { return localStorage.getItem(k) ?? f; } catch (_) { return f; } }, set(k,v) { try { localStorage.setItem(k,String(v)); } catch (_) { /* Offline/private browsing remains playable. */ } } };
   const touch=G.createTouchControls({element:document.querySelector('.touch-controls'),cabinet,getState:()=>engine.state,storage,unlock:()=>audio.unlock(),
     onChange(id,actions){if(actions)sources.touch.set(id,actions);else sources.touch.delete(id);syncInputs();}});
@@ -39,7 +50,7 @@
   function syncInputs() {
     const held = new Set([...[...sources.keyboard].map(code=>keymap[code].join(':')),...[...sources.touch.values()].flat(),...sources.pad]);
     if(touch.shouldAutoFire())held.add('0:fire');
-    engine.state.players.forEach((p,i) => ['left','right','up','down','jump','fire','swap','drop'].forEach(action=>engine.input(i,action,held.has(i+':'+action))));
+    engine.state.players.forEach((p,i) => ['left','right','up','down','jump','fire','swap','drop','grenade','grenadeNext'].forEach(action=>engine.input(i,action,held.has(i+':'+action))));
   }
   function start() {
     clearInput();audio.unlock();engine.start({ players, difficulty: $('difficulty').value });
@@ -48,6 +59,7 @@
   function setTitle() {
     clearInput(); engine.state.status='ready'; engine.state.level=G.buildLevel(0);engine.state.stage=0;engine.state.camera={x:0,y:0};engine.state.boss=null;
     engine.state.enemies=[];engine.state.bullets=[];engine.state.pickups=[];engine.state.effects=[];
+    engine.state.grenades=[];engine.state.grenadeZones=[];
     updateUI();$('start').focus({preventScroll:true});
   }
   function togglePause() { audio.unlock(); if (engine.state.status==='playing'||engine.state.status==='paused') { clearInput();engine.pause();updateUI(); } }
@@ -68,12 +80,23 @@
     $('stage-progress').innerHTML='CAMPAIGN <b>'+String(s.stage+1).padStart(2,'0')+' / 08</b>';
     $('score').textContent=String(s.score).padStart(6,'0');
     const p=s.players[0];$('p1-lives').textContent=p.lives>5?'♥ × '+p.lives:'♥ '.repeat(Math.max(0,p.lives))||'OUT';
+    const grenade=G.grenadeTypes[p.grenadeType||'frag'],cooldown=p.grenadeCooldown||0;
+    grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · B / N';
+    grenadeTypeButton.textContent='TYPE: '+(p.grenadeType==='electric'?'STUN':grenade.name);
+    grenadeTypeButton.setAttribute('aria-label','Selected '+grenade.name+'. Tap to change grenade type.');
+    grenadeButton.textContent=cooldown>0?Math.ceil(cooldown)+'s':'THROW';
+    // Keep a captured touch button enabled until release; native disabling can
+    // swallow pointerup on phones. The engine rejects throws during recharge.
+    grenadeButton.disabled=p.lives<=0;grenadeButton.classList.toggle('cooling',cooldown>0);
+    grenadeButton.style.setProperty('--grenade-color',grenade.color);
+    grenadeButton.setAttribute('aria-label',cooldown>0?'Grenade ready in '+Math.ceil(cooldown)+' seconds':'Throw '+grenade.name+' grenade');
     $('p1-weapon').textContent=G.weapons[p.weapon].name+' '+G.weaponTier(p)+'/5';
     $('p1-power').textContent=[p.cloak>0?'CLOAK '+Math.ceil(p.cloak)+'s':'',p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':'',p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'',p.holstered?'HOLSTER: '+G.weapons[p.holstered].name+' '+(p.weaponLevels[p.holstered]||1)+'/5':''].filter(Boolean).join(' · ');
     const swapButton=document.querySelector('[data-action="swap"]');swapButton.disabled=s.difficulty==='hard'||!p.holstered;swapButton.textContent=s.difficulty==='hard'?'1 GUN':'SWAP';
     document.querySelector('[data-action="drop"]').disabled=s.level.mode==='base';
     if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
     else{p2Power.textContent='';$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
+    if(s.players.length===2){const q=s.players[1];p2Power.textContent+=' · '+G.grenadeTypes[q.grenadeType||'frag'].name+' '+(q.grenadeCooldown>0?Math.ceil(q.grenadeCooldown)+'s':'READY')+' · K / L';}
     $('pause').disabled=title||!['playing','paused'].includes(s.status);
     const pauseLabel=s.status==='paused'?'▶ <span>RESUME</span>':'Ⅱ <span>PAUSE</span>';
     if($('pause').innerHTML!==pauseLabel)$('pause').innerHTML=pauseLabel;
@@ -99,6 +122,7 @@
     const pads=navigator.getGamepads?Array.from(navigator.getGamepads()).filter(Boolean).slice(0,2):[];
     pads.forEach((pad,i)=>{
       const button=n=>!!pad.buttons[n]?.pressed,actions={left:button(14)||pad.axes[0]<-.3,right:button(15)||pad.axes[0]>.3,up:button(12)||pad.axes[1]<-.3,down:button(13)||pad.axes[1]>.3,jump:button(0),fire:button(2)||button(7)||button(1),swap:button(3)};
+      actions.grenade=button(4);actions.grenadeNext=button(5);
       if(i===0&&(Object.values(actions).some(Boolean)||button(9)))touch.usePhysicalControls();
       Object.entries(actions).forEach(([a,down])=>{if(down)sources.pad.add(i+':'+a);});if(button(9))startDown=true;
     });
@@ -114,6 +138,7 @@
   }
   document.querySelectorAll('[data-players]').forEach(btn=>btn.addEventListener('click',()=>{players=Number(btn.dataset.players);document.querySelectorAll('[data-players]').forEach(b=>{b.classList.toggle('selected',b===btn);b.setAttribute('aria-pressed',String(b===btn));});}));
   $('start').addEventListener('click',start);$('pause').addEventListener('click',togglePause);$('sound').addEventListener('click',toggleMute);$('overlay-action').addEventListener('click',overlayAction);$('restart').addEventListener('click',setTitle);
+  grenadeTypeButton.addEventListener('click',()=>{audio.unlock();engine.input(0,'grenadeNext',true);engine.input(0,'grenadeNext',false);});
   function editable(target){return ['SELECT','INPUT','TEXTAREA'].includes(target.tagName);}
   document.addEventListener('keydown',e=>{
     if(showingDossier||editable(e.target)||e.ctrlKey||e.metaKey||e.altKey)return;

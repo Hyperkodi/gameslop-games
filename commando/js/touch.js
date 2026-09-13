@@ -68,7 +68,7 @@
     // Browsers can omit a click when a second finger taps a menu button while
     // the movement thumb stays down. Activate that tap on release instead.
     const secondaryTaps=new WeakMap();
-    const menuButton=event=>event.target.closest?.('#pause,#sound,#fullscreen,#auto-fire');
+    const menuButton=event=>event.target.closest?.('#pause,#sound,#fullscreen,#auto-fire,#grenade-type');
     cabinet.addEventListener('pointerdown',event=>{
       const button=menuButton(event);if(button)secondaryTaps.delete(button);
     },true);

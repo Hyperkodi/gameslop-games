@@ -86,6 +86,7 @@
   }
   function enemyState(e,meta,time,sample={}){
     if(e.hp<=0)return 'defeat';
+    if((e.stunned||0)>0)return 'stun';
     if(e.flash>0||sample.hurtUntil>time)return 'hurt';
     if(e.kind==='core'){
       if(sample.shotUntil>time)return 'attack';
@@ -106,7 +107,7 @@
     const extra=meta.frames?.length>=8;
     if(e.kind==='boss')return state==='defeat'?(meta.defeatFrame??3):state==='hurt'?3:state==='attack'?2:state==='windup'?1:0;
     if(state==='defeat')return extra?7:e.kind==='core'?3:0;
-    if(state==='hurt')return extra?6:0;
+    if(state==='hurt'||state==='stun')return extra?6:0;
     if(state==='windup')return extra?4:0;
     if(state==='charge'&&e.kind==='iceWolf')return [extra?5:3,1,extra?5:3,2][Math.floor((sample.stride||0)*4)%4];
     if(state==='attack'||state==='charge')return extra?5:3;
@@ -169,8 +170,15 @@
       ctx.translate(motion.x,0);ctx.rotate(motion.angle);ctx.scale(motion.sx,motion.sy);
       ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
       ctx.shadowColor='#071219';ctx.shadowBlur=1.2;
+      if(e.electrified>0){ctx.shadowColor='#79e5ff';ctx.shadowBlur=6;}
+      else if(e.burning>0){ctx.shadowColor='#ff823b';ctx.shadowBlur=5;}
       if(e.flash>0&&state!=='defeat')ctx.filter='brightness(1.35)';
       ctx.drawImage(surface,sx,sy,sw,sh,-ax*scale,-ay*scale,sw*scale,sh*scale);
+      if(e.electrified>0){
+        ctx.shadowBlur=0;ctx.strokeStyle='#a0edff';ctx.lineWidth=1.2;ctx.beginPath();
+        const y=-meta.height*.6,shift=Math.sin(time*19)*3;
+        ctx.moveTo(-18,y-7);ctx.lineTo(-23+shift,y);ctx.lineTo(-17,y+4);ctx.lineTo(-22,y+10);ctx.stroke();
+      }
       ctx.restore();return true;
     }
     function drawDefeats(state,time){

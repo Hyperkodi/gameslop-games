@@ -8,6 +8,7 @@
     'shot:H':'Rocket Launcher.mp3', 'shot:W':'Wave Cannon.mp3',
     'shot:T':'Tesla Carbine.mp3', 'shot:I':'Cryo-Blaster.mp3', 'shot:A':'Plasma Cannon.mp3',
     'impact:G':'Grenade Explosion.mp3', 'impact:H':'Rocket Explosion.mp3',
+    'grenade:frag':'Grenade Explosion.mp3', 'grenade:incendiary':'Grenade Explosion.mp3', 'grenade:electric':'Tesla Carbine.mp3',
     barrier:'Barrier.mp3', cloak:'Invisibility Cloak.mp3', nuke:'Nuke.mp3', bossExplosion:'Boss Explosion.mp3'
   };
   // Keep distinct synthesized cues for actions without a supplied recording.
@@ -17,6 +18,11 @@
     'shot:I':[[1400,.14,'triangle',.04,0,400]],
     'shot:A':[[95,.22,'sawtooth',.04,0,32]],
     jump:[[160,.11,'square',.025,0,480]],
+    grenadeThrow:[[280,.06,'triangle',.022,0,160]],
+    grenadePulse:[[420,.075,'sawtooth',.012,0,190],[900,.04,'triangle',.008,.025,500]],
+    'grenade:frag':[[75,.22,'sawtooth',.05,0,25]],
+    'grenade:incendiary':[[100,.4,'sawtooth',.035,0,38]],
+    'grenade:electric':[[1100,.22,'sawtooth',.025,0,120]],
     explosion:[[75,.17,'sawtooth',.05,0,25],[130,.12,'triangle',.035,0,30]],
     death:[[240,.22,'sawtooth',.04,0,35]],
     pickup:[[440,.07,'square',.04],[660,.08,'square',.04,.07],[880,.1,'square',.04,.14]],
@@ -29,6 +35,7 @@
     life:[[660,.12,'triangle',.05],[880,.18,'triangle',.05,.12]]
   };
   function cueFor(event) {
+    if(event.type==='grenadeImpact')return 'grenade:'+event.grenade;
     if (event.type === 'shot') return 'shot:' + (event.weapon || 'P');
     if (event.type === 'impact') return 'impact:' + event.weapon;
     if (event.type === 'explosion' && event.kind === 'boss') return 'bossExplosion';

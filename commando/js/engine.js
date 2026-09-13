@@ -2,6 +2,7 @@
   'use strict';
   const { buildLevel, levels } = typeof module !== 'undefined' ? require('./levels.js') : root.SlopCommando;
   const { mulberry32, fnv1a } = typeof module !== 'undefined' ? require('../../_kit/rng.js') : root.GameSlopKit;
+  const { createGrenadeSystem, grenadeOrder } = typeof module !== 'undefined' ? require('./grenades.js') : root.SlopCommando;
   const W = 960, H = 540, STEP = 1 / 60;
   const COYOTE_TIME = .1, JUMP_BUFFER_TIME = .12;
   const weapons = {
@@ -37,12 +38,14 @@
     let rng, id = 0;
     const state = { status: 'ready', seed: options.seed ?? 1978, tick: 0, elapsed: 0, score: 0, stage: 0, players: [], enemies: [], bullets: [], effects: [], pickups: [], inputLog: [], events: [], camera: { x: 0, y: 0 }, continues: 3, room: 0, boss: null, kills: 0 };
     function event(type, data = {}) { state.events.push({ type, ...data }); }
+    const grenades=createGrenadeSystem({state,damage:damageEnemy,event});
     const rules = () => difficultyRules[state.difficulty] || difficultyRules.normal;
     function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, dropHeld: false, jumpQueued: false, jumpDownQueued: false, dropQueued: false, jumpBuffer: 0, coyoteTime: 0, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
     function resetMovementInput(p) {
       p.held = {}; p.jumpHeld = false; p.swapHeld = false; p.dropHeld = false;
       p.jumpQueued = false; p.jumpDownQueued = false; p.dropQueued = false;
       p.jumpBuffer = 0; p.coyoteTime = 0;
+      p.grenadeQueued=false;p.grenadeNextQueued=false;
     }
     function equip(p, type) {
       p.weaponLevels ||= {P:1};
@@ -87,15 +90,18 @@
       state.stage = index; state.level = buildLevel(index); state.room = 0;
       populateRoute();
       state.enemies = []; state.bullets = []; state.pickups = []; state.effects = []; state.boss = null;
+      grenades.reset();
       state.camera = { x: 0, y: state.level.mode === 'climb' ? state.level.height - H : 0 };
       state.checkpoint = { x: 110, y: state.level.mode === 'climb' ? state.level.height - 94 : 410 };
       state.spawned = {}; state.stageTime = 0; state.waveTime = 0; state.banner = 3.4; state.roomTransition=0; state.nukeFlash=0;
       state.players.forEach((p, i) => { resetMovementInput(p); Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, grounded: false, jumpTime: 0, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
+      state.players.forEach(p=>{p.grenadeType||='frag';p.grenadeCooldown=0;});
       if (state.level.mode === 'base') loadRoom();
       event('stage', { stage: index });
     }
     function loadRoom() {
       state.enemies = []; state.bullets = []; state.pickups = [];
+      grenades.reset();
       for (let i = 0; i < 3; i++) state.enemies.push({ id: id++, kind: 'core', x: 220 + i * 250, y: 125, w: 42, h: 50, hp: 7 + state.stage, maxHp: 7 + state.stage, cooldown: 1.3 + i * .5 });
       state.players.forEach((p, i) => { resetMovementInput(p); p.jumpTime = 0; p.x = 390 + i * 80; p.y = 420; p.aimX = 0; p.aimY = -1; p.invincible = 2; });
       state.waveTime = 0;
@@ -116,12 +122,14 @@
     }
     function input(player, action, down) {
       const p = state.players[player]; if (!p || state.status !== 'playing') return;
-      if (!['left', 'right', 'up', 'down', 'fire', 'jump', 'swap', 'drop'].includes(action) || p.held[action] === down) return;
+      if (!['left', 'right', 'up', 'down', 'fire', 'jump', 'swap', 'drop', 'grenade', 'grenadeNext'].includes(action) || p.held[action] === down) return;
       p.held[action] = down; state.inputLog.push({ tick: state.tick, player, action, down });
       // Capture presses here as well as held state so a quick tap can finish
       // between physics ticks without losing its jump or changing a drop intent.
       if (action === 'jump' && down) { p.jumpQueued = true; p.jumpDownQueued = !!p.held.down; }
       if (action === 'drop' && down) p.dropQueued = true;
+      if (action === 'grenade' && down) p.grenadeQueued = true;
+      if (action === 'grenadeNext' && down) p.grenadeNextQueued = true;
     }
     function release() { state.players.forEach(resetMovementInput); }
     function pause() { if (state.status === 'playing') { state.status = 'paused'; release(); } else if (state.status === 'paused') state.status = 'playing'; }
@@ -146,7 +154,7 @@
     function awardEnemyKill(e) {
       burst(e.x + e.w / 2, e.y + e.h / 2, '#ff923d', e.kind === 'boss' ? 70 : 20);
       state.kills++; addScore(e.kind === 'boss' ? 5000 : e.kind === 'core' ? 500 : 150); event('explosion', { kind: e.kind });
-      if (e.kind === 'boss') { state.status = 'clear'; state.bullets = []; release(); event('clear'); }
+      if (e.kind === 'boss') { state.status = 'clear'; state.bullets = []; grenades.reset(); release(); event('clear'); }
       else if (e.kind !== 'core' && !state.detonating && rng() < rules().dropChance) {
         const types=weaponDropTypes.filter(t=>rules().nukes||t!=='N');
         state.pickups.push({ x: e.x, y: e.y, w: 24, h: 24, type: types[Math.floor(rng() * types.length)], ttl: 18 });
@@ -235,6 +243,9 @@
       if (p.lives <= 0) return;
       const l = state.level, base = l.mode === 'base';
       p.cooldown -= dt; p.invincible -= dt; p.shield -= dt; p.rapid -= dt; p.cloak=Math.max(0,(p.cloak||0)-dt); p.jumpTime = Math.max(0, p.jumpTime - dt);
+      p.grenadeCooldown=Math.max(0,(p.grenadeCooldown||0)-dt);
+      if(p.grenadeNextQueued){p.grenadeType=grenadeOrder[(grenadeOrder.indexOf(p.grenadeType)+1)%grenadeOrder.length];event('swap');}
+      const throwing=p.grenadeQueued;p.grenadeQueued=false;p.grenadeNextQueued=false;
       if(p.held.swap&&!p.swapHeld&&rules().holster&&p.holstered){[p.weapon,p.holstered]=[p.holstered,p.weapon];event('swap');}
       p.swapHeld=!!p.held.swap;
       const dx = Number(!!p.held.right) - Number(!!p.held.left), dy = Number(!!p.held.down) - Number(!!p.held.up);
@@ -288,6 +299,7 @@
         if (p.y > l.height + 40 || (l.mode === 'climb' && p.y > state.camera.y + H + 70)) damagePlayer(p, true);
       }
       if (p.held.fire && p.cooldown <= 0) fire(p);
+      if(throwing)grenades.launch(p);
       if (!base && dx) { p.aimX = dx; p.aimY = p.held.up ? -1 : 0; }
     }
     function tick() {
@@ -329,7 +341,12 @@
           if(flying||ground)spawnEnemy({kind,x:state.camera.x+W-65,y:flying?state.camera.y+130+rng()*110:ground.y-34});
         }
       }
+      grenades.tick(dt);
+      if(state.status!=='playing')return;
       for (const e of state.enemies) {
+        e.burning=Math.max(0,(e.burning||0)-dt);e.electrified=Math.max(0,(e.electrified||0)-dt);
+        const stunned=(e.stunned||0)>0;e.stunned=Math.max(0,(e.stunned||0)-dt);
+        if(e.hp<=0||stunned)continue;
         e.cooldown -= dt; e.phase = (e.phase || 0) + dt;
         e.slow=Math.max(0,(e.slow||0)-dt);const speedScale=e.slow>0?.35:1;
         const target = alive.filter(p=>!p.cloak).reduce((a,b) => !a||Math.hypot(b.x-e.x,b.y-e.y)<Math.hypot(a.x-e.x,a.y-e.y)?b:a,null);
@@ -363,7 +380,10 @@
       const boss = state.boss;
       if (state.status !== 'playing') return;
       if (boss) {
-        boss.phase += dt; boss.cooldown -= dt;
+        boss.burning=Math.max(0,(boss.burning||0)-dt);boss.electrified=Math.max(0,(boss.electrified||0)-dt);
+        const bossStep=dt*((boss.disrupted||0)>0?.7:1);
+        boss.disrupted=Math.max(0,(boss.disrupted||0)-dt);
+        boss.phase += bossStep; boss.cooldown -= bossStep;
         if (l.mode === 'base') boss.x = 410 + Math.sin(boss.phase * .7) * 230;
         if (state.stage === 2) boss.x = boss.originX - (1 + Math.sin(boss.phase * .7)) * 160;
         if (state.stage === 4) boss.x = boss.originX - (1 + Math.sin(boss.phase * .8)) * 80;

@@ -15,6 +15,7 @@
     const cast = root.SlopCommando.createCastRenderer(c, root.SlopCommandoSkin);
     let targets=[];
     const animationClock=root.SlopCommando.createAnimationClock();
+    const grenadeArt=root.SlopCommando.createGrenadeArt(c);
     const arsenal = root.SlopCommando.createWeaponArt(c, root.SlopCommandoSkin.weapons);
     const environment = root.SlopCommando.createEnvironmentRenderer(c, root.SlopCommandoSkin, themes);
     const rect = (x,y,w,h,color) => { c.fillStyle = color; c.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h)); };
@@ -366,6 +367,7 @@
       if(!environment.draw(s,time)){if(s.level.mode==='base')baseRoom(s,time);else background(s,time);}
       c.save();c.translate(-Math.round(s.camera.x),-Math.round(s.camera.y));
       terrain(s);
+      grenadeArt.zones(s.grenadeZones,time);
       cast.drawDefeats(s,time);
       if(attract){enemy({kind:'turret',x:680,y:420},time,'jungle');enemy({kind:'soldier',x:520,y:420},time,'jungle');}
       for(const p of s.pickups) arsenal.pickup(p,time,s.players.some(hero=>hero.lives>0&&Math.abs(hero.x-p.x)<140&&Math.abs(hero.y-p.y)<100));
@@ -374,6 +376,7 @@
       }
       s.enemies.forEach(e=>enemy(e,time,s.level.theme));if(s.boss)enemy(s.boss,time,s.level.theme);
       s.players.forEach(p=>hero.draw(p,time,{victory:s.status==='clear'||s.status==='victory',mode:s.level.mode}));
+      grenadeArt.projectiles(s.grenades);
       for(const b of s.bullets) {
         const color=b.team==='enemy'?'#ff7850':b.weapon==='L'?'#a8faff':b.weapon==='F'?'#ff9f3b':'#ffe5a5';
         if(b.weapon==='F'){

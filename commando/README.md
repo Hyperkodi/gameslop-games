@@ -45,6 +45,20 @@ Every gun has five tiers. Each successive tier increases damage, projectile size
 
 ## Arsenal and power-ups
 
+### Throwable grenades
+
+Throw a grenade alongside any equipped gun. **B** throws and **N** cycles types; player two uses **K / L**. On a gamepad use **LB / RB**. On touch, use **TYPE** and **THROW** beside the existing joystick and jump button. All three types share a six-second recharge, shown in the HUD. Switching type does not reset it. Grenades do not hurt either player.
+
+| Type | Effect | Best targets |
+| --- | --- | --- |
+| Frag | Immediate 92px blast; 7 base damage | General groups |
+| Incendiary | Initial blast, then 4 seconds of ground fire; 84px radius | Wojak, FRONG and Bundle Cat take 1.8× damage; machines take 0.6× |
+| Electric stun | A 108px electrical field pulses for 3.5 seconds | Microduck, Thinking Cat's turret, ASTRO and CATGPT take 2× damage and longer stuns |
+
+Ordinary machines stop moving and firing while stunned. Organic enemies receive a brief interruption. Bosses take 1.25× electrical damage and a temporary 30% slowdown, rather than full stun. Fire settles onto platforms; its lingering damage does not reach flyers above the flames. Frag is an immediate blast, and the other two have visible area effects. The grenade launcher remains a separate gun.
+
+Tests: `node --test tests/grenades.test.js` checks matchups, lingering damage, stun recovery, boss resistance, friendly safety, input/recharge, co-op, pause, stage cleanup and deterministic replay.
+
 Eleven guns: rifle, machine gun, spread gun, laser rifle, flamethrower, grenade launcher, homing rocket, wave cannon, Tesla carbine, cryo blaster, and plasma cannon.
 
 Tesla chains electricity between nearby targets. Cryo slows ordinary enemy movement and attack cadence. Plasma fires heavy explosive bolts. Grenades arc and explode; rockets seek; laser and wave projectiles pierce.
