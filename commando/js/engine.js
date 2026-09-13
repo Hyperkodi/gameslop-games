@@ -522,7 +522,8 @@
       });
       state.waveTime += dt;
       const squadCount=recruitedCount(state),squadLimit=Math.ceil(rules().enemyLimit*(l.enemyLimitScale??1)*(1+squadCount/5));
-      if (state.waveTime > rules().waveInterval*(l.waveIntervalScale??(l.mode==='base'?.65:1)) && state.enemies.length < squadLimit) {
+      const bossReinforcementDelay=state.stage===1&&state.boss?.hp>0?2:1;
+      if (state.waveTime > rules().waveInterval*(l.waveIntervalScale??(l.mode==='base'?.65:1))*bossReinforcementDelay && state.enemies.length < squadLimit) {
         state.waveTime = 0;
         const kind=rng()<.55?stageEnemies[state.stage]:'drone';
         let waveSpec=null;

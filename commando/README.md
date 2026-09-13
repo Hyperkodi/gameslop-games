@@ -100,6 +100,10 @@ Both bunker stages use a consistent overhead floor and low walls. Destroying cor
 
 ## Health and weapon upgrades
 
+Each of the five projectile tiers has progressively larger artwork, a brighter weapon-colored glow and a longer trail. These visual effects preserve weapon silhouettes without changing damage, collision bounds, projectile speed or enemy bullets.
+
+During the level 2 boss encounter, reinforcement intervals are doubled to halve the arrival rate. Earlier rooms, other boss fights, enemy caps and boss attack patterns retain their existing behavior.
+
 Easy has 3 hit points per life; Normal has 2; Hard and Extra Hard have 1. The HUD labels HP and lives separately. Surviving damage keeps position and equipment and grants 1.2 seconds of protection. Losing a life or using a continue restores full health. Remaining health carries between stages and bunker rooms; pits still cost one life. Existing lives, continues, pickups and other difficulty settings are unchanged.
 
 Weapon duplicates advance the equipped or holstered gun one level, capped at 5. Damage and splash damage are 100%, 110%, 120%, 130% and 140% of base; firing delays are 100%, 98%, 96%, 94% and 92%. Blast radius and Cryo slow duration increase by 2.5% of base per tier, and Tesla keeps its base chain count. Gun pickups have larger silhouettes, bright outlined cards and always-visible names. Collection displays the resulting weapon level, including upgrades to a holstered weapon and the level-five cap.
