@@ -70,7 +70,7 @@
   function createAudio(options = {}) {
     const env = options.env || root;
     const buffers = new Map(), voices = [], pending = new Map(), failures = new Set();
-    let ctx, master, musicGain, effectsGain, unlocked = false, muted = false;
+    let ctx, master, musicGain, effectsGain, dialogueGain, unlocked = false, muted = false;
     let musicBuffer = null, musicSource = null, musicOffset = 0, musicStartedAt = 0;
     let musicPending = false, musicLoading = Promise.resolve();
     let stage = -1, status = 'ready', playingMusic = false, loading = Promise.resolve();
@@ -105,7 +105,9 @@
           const compressor = ctx.createDynamicsCompressor();
           master.connect(compressor); compressor.connect(ctx.destination);
           musicGain = ctx.createGain(); musicGain.gain.value = musicLevel; musicGain.connect(master);
-          effectsGain = ctx.createGain(); effectsGain.gain.value = .8; effectsGain.connect(master);
+          // Lower all combat and synthesized effects about 9 dB without losing speech.
+          effectsGain = ctx.createGain(); effectsGain.gain.value = .28; effectsGain.connect(master);
+          dialogueGain = ctx.createGain(); dialogueGain.gain.value = .8; dialogueGain.connect(master);
           loading = Promise.all(Object.keys(samples).map(loadSample));
         } catch (_) { return; }
       }
@@ -136,7 +138,7 @@
       while (voices.length >= 16) stopVoice(voices[0]);
       const voice = {source, gain, cue}; voices.push(voice);
       source.onended = () => stopVoice(voice);
-      source.connect(gain); gain.connect(effectsGain);
+      source.connect(gain); gain.connect(cue.startsWith('victory:') ? dialogueGain : effectsGain);
     }
     function synth(cue) {
       const fallback = cue.startsWith('shot:') ? 'shot' : cue.startsWith('impact:') || cue === 'bossExplosion' ? 'explosion' : cue === 'barrier' ? 'pickup' : cue;

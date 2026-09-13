@@ -43,6 +43,19 @@ test('rapid fire cannot stack more than two recorded laser tails',async()=>{
   assert.equal(h.started.filter(s=>!s.loop&&!s.stopped).length,2);
 });
 
+test('recorded and synthesized effects are reduced by 9 dB while dialogue and music retain their mix',async()=>{
+  const h=harness();await h.audio.unlock();h.audio.update({stage:0,status:'playing'});await h.flush();
+  h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'G'}]);
+  const effectsBus=h.started.at(-1).target.target;
+  assert.ok(20*Math.log10(effectsBus.gain.value/.8)<-9);
+  h.audio.update({stage:0,status:'playing'},[{type:'jump'}]);
+  assert.equal(h.oscillators.at(-1).target.target,effectsBus);
+  h.audio.update({stage:0,status:'playing'},[{type:'victory:0'}]);
+  assert.equal(h.started.at(-1).target.target.gain.value,.8);
+  assert.notEqual(h.started.at(-1).target.target,effectsBus);
+  assert.equal(h.started.find(s=>s.loop).target.gain.value,.38);
+});
+
 test('rifle plays a recorded pop per round and machine gun is over 11 dB quieter',async()=>{
   const h=harness();await h.audio.unlock();
   h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'P'}]);
