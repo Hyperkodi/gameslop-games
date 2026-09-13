@@ -1,7 +1,16 @@
-/* Stream one stage soundtrack; decode and reuse the short user-supplied effects. */
+/* One decoded, gapless stage loop; reusable effects with individual mix levels. */
 (function (root) {
   'use strict';
-  const tracks = ['Jungle.mp3', 'Bunker.mp3', 'Foundry.mp3', 'Reactor.mp3', 'Snow.mp3', 'Foundry.mp3', 'Cave.mp3', 'Alien.mp3'];
+  const tracks = ['01-stealth-in-the-woods.ogg', '02-espionage.ogg', '03-exploration-theme.ogg', '04-pulse.ogg', '05-safe-space.ogg', '06-airy.ogg', '07-ancient-mysteries.ogg', '08-sector.ogg'];
+  const musicLevel = .38;
+  const sampleLevels = {
+    'shot:M':.30, 'shot:S':.28, 'shot:L':.10, 'shot:F':.08, 'shot:G':.55,
+    'shot:H':.14, 'shot:W':.35, 'shot:T':.10, 'shot:I':.16, 'shot:A':.17,
+    'impact:H':.20, 'impact:G':.28, 'grenade:frag':.28, 'grenade:incendiary':.25,
+    'grenade:electric':.10, bossExplosion:.16, nuke:.40, barrier:.22, cloak:.4
+  };
+  const sampleLevel = cue => cue.startsWith('victory:') ? .8 : sampleLevels[cue] ?? .5;
+  const voiceLimit = cue => cue.startsWith('victory:') ? 1 : cue.startsWith('shot:') || cue.startsWith('impact:') || cue.startsWith('grenade:') ? 2 : 3;
   const victoryDialogue = [
     ['Chump', "Yeah, fuck you, I'm the shit."],
     ['GreenHood', "You brought all that firepower and still couldn't hit me?"],
@@ -61,7 +70,9 @@
   function createAudio(options = {}) {
     const env = options.env || root;
     const buffers = new Map(), voices = [], pending = new Map(), failures = new Set();
-    let ctx, master, musicGain, effectsGain, music, unlocked = false, muted = false;
+    let ctx, master, musicGain, effectsGain, unlocked = false, muted = false;
+    let musicBuffer = null, musicSource = null, musicOffset = 0, musicStartedAt = 0;
+    let musicPending = false, musicLoading = Promise.resolve();
     let stage = -1, status = 'ready', playingMusic = false, loading = Promise.resolve();
     let musicFailed = false, lastCue = null, lastSample = null, musicAttempt = 0;
     let dialogueAttempt = 0, lastDialogue = null;
@@ -74,7 +85,7 @@
       voice.source.disconnect(); voice.gain.disconnect();
     }
     function stopEffects() { [...voices].forEach(stopVoice); }
-    function interrupt() { dialogueAttempt++; stopEffects(); }
+    function interrupt() { dialogueAttempt++; stopEffects(); stopMusic(); }
     function victoryLine() {
       if (muted || !unlocked || !ctx || !victoryDialogue[stage]) return;
       const attempt = ++dialogueAttempt, clearedStage = stage, cue = 'victory:' + stage;
@@ -93,12 +104,8 @@
           ctx = new AC(); master = ctx.createGain(); master.gain.value = muted ? 0 : .8;
           const compressor = ctx.createDynamicsCompressor();
           master.connect(compressor); compressor.connect(ctx.destination);
-          musicGain = ctx.createGain(); musicGain.gain.value = .32; musicGain.connect(master);
+          musicGain = ctx.createGain(); musicGain.gain.value = musicLevel; musicGain.connect(master);
           effectsGain = ctx.createGain(); effectsGain.gain.value = .8; effectsGain.connect(master);
-          music = new env.Audio(); music.preload = 'none'; music.loop = true;
-          music.setAttribute('playsinline', '');
-          ctx.createMediaElementSource(music).connect(musicGain);
-          music.addEventListener('error', () => { musicFailed = true; playingMusic = false; });
           loading = Promise.all(Object.keys(samples).map(loadSample));
         } catch (_) { return; }
       }
@@ -125,8 +132,8 @@
     }
     function addVoice(source, gain, cue) {
       const same = voices.filter(v => v.cue === cue);
-      if (same.length >= 3) stopVoice(same[0]);
-      while (voices.length >= 24) stopVoice(voices[0]);
+      if (same.length >= voiceLimit(cue)) stopVoice(same[0]);
+      while (voices.length >= 16) stopVoice(voices[0]);
       const voice = {source, gain, cue}; voices.push(voice);
       source.onended = () => stopVoice(voice);
       source.connect(gain); gain.connect(effectsGain);
@@ -137,7 +144,8 @@
         const source = ctx.createOscillator(), gain = ctx.createGain(), time = ctx.currentTime + delay;
         source.type = type; source.frequency.setValueAtTime(freq, time);
         if (slide) source.frequency.exponentialRampToValueAtTime(slide, time + duration);
-        gain.gain.setValueAtTime(volume, time); gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
+        const mix = sampleLevels[cue] !== undefined ? sampleLevels[cue] / (cue.startsWith('shot:') ? .55 : .8) : .7;
+        gain.gain.setValueAtTime(volume * mix, time); gain.gain.exponentialRampToValueAtTime(.0001, time + duration);
         addVoice(source, gain, cue); source.start(time); source.stop(time + duration + .02);
       }
     }
@@ -148,30 +156,48 @@
       lastSample = sample ? cue : null;
       if (!sample) { synth(cue); return; }
       const source = ctx.createBufferSource(), gain = ctx.createGain(); source.buffer = sample.buffer;
-      gain.gain.value = cue.startsWith('shot:') ? .55 : .8;
+      gain.gain.value = sampleLevel(cue);
       addVoice(source, gain, cue); source.start(0, sample.offset, sample.duration);
     }
-    function selectTrack(force = false) {
-      if (!music) return;
-      const file = tracks[stage], desired = file ? path('Soundtrack', file) : '';
-      if (!force && music.getAttribute('src') === desired) return;
-      musicAttempt++; music.pause(); playingMusic = false; musicFailed = false;
-      if (desired) music.setAttribute('src', desired);
-      else music.removeAttribute('src');
-      music.load();
+    function musicPosition() {
+      return musicBuffer ? (musicOffset + (musicSource ? Math.max(0, ctx.currentTime - musicStartedAt) : 0)) % musicBuffer.duration : 0;
+    }
+    function stopMusic(reset = false) {
+      if (musicSource) {
+        musicOffset = musicPosition();
+        try { musicSource.stop(); } catch (_) { /* Already stopped. */ }
+        musicSource.disconnect(); musicSource = null;
+      }
+      playingMusic = false;
+      if (reset) { musicOffset = 0; musicBuffer = null; }
+    }
+    function selectTrack() {
+      const attempt = ++musicAttempt, file = tracks[stage];
+      stopMusic(true); musicFailed = false; musicPending = false;
+      if (!ctx || !unlocked || !file || status === 'ready') return;
+      musicPending = true;
+      // Keep only the current track in memory. A stale download can never replace it.
+      musicLoading = env.fetch(path('Soundtrack/cc0', file))
+        .then(response => { if (!response.ok) throw new Error('Music unavailable'); return response.arrayBuffer(); })
+        .then(bytes => attempt === musicAttempt ? ctx.decodeAudioData(bytes) : null)
+        .then(buffer => {
+          if (attempt !== musicAttempt) return;
+          musicPending = false; musicBuffer = buffer; syncMusic();
+        })
+        .catch(() => { if (attempt === musicAttempt) { musicPending = false; musicFailed = true; } });
     }
     function syncMusic() {
-      if (!music) return;
-      const shouldPlay = unlocked && !muted && status === 'playing' && !!tracks[stage] && !musicFailed;
-      if (!shouldPlay) { if (playingMusic) musicAttempt++; music.pause(); playingMusic = false; return; }
-      if (playingMusic) return;
+      const shouldPlay = ctx && unlocked && !muted && status === 'playing' && musicBuffer && !musicFailed;
+      if (!shouldPlay) { stopMusic(); return; }
+      if (musicSource) return;
       playingMusic = true;
       musicGain.gain.cancelScheduledValues(ctx.currentTime);
       musicGain.gain.setValueAtTime(0, ctx.currentTime);
-      musicGain.gain.linearRampToValueAtTime(.32, ctx.currentTime + .6);
-      // Rejections are retried on the next user gesture, never every animation frame.
-      const attempt = ++musicAttempt;
-      Promise.resolve(music.play()).catch(() => { if (attempt === musicAttempt) { musicFailed = true; playingMusic = false; } });
+      musicGain.gain.linearRampToValueAtTime(musicLevel, ctx.currentTime + .6);
+      musicSource = ctx.createBufferSource(); musicSource.buffer = musicBuffer;
+      musicSource.loop = true; musicSource.connect(musicGain);
+      musicStartedAt = ctx.currentTime;
+      musicSource.start(0, musicOffset % musicBuffer.duration);
     }
     function update(state, events = []) {
       const changed = stage !== state.stage;
@@ -181,8 +207,8 @@
         if (state.status !== 'playing' || changed || restart) interrupt();
       }
       status = state.status; stage = state.stage;
-      if (changed || restart) selectTrack(true);
-      if (status === 'ready' && music?.getAttribute('src')) { music.pause(); music.removeAttribute('src'); music.load(); playingMusic = false; }
+      if (changed || restart) selectTrack();
+      if (status === 'ready') { musicAttempt++; musicPending = false; stopMusic(true); }
       syncMusic();
       const heard = new Set();
       const nuke = events.some(event => event.type === 'nuke');
@@ -196,9 +222,9 @@
       if (cleared) victoryLine();
     }
     function unlock() {
-      unlocked = true; ensure(); musicFailed = false;
-      if (music && status === 'playing' && !music.getAttribute('src')) selectTrack();
-      syncMusic(); return loading;
+      unlocked = true; ensure();
+      if (ctx && status === 'playing' && !musicBuffer && !musicPending) selectTrack();
+      syncMusic(); return Promise.all([loading, musicLoading]);
     }
     function toggle() {
       muted = !muted;
@@ -209,7 +235,7 @@
     }
     return {update, unlock, toggle, interrupt, get muted() { return muted; },
       inspect: () => ({stage, status, muted, unlocked, context:ctx?.state || 'locked', track:tracks[stage] || null,
-        musicPlaying:!!music && !music.paused, musicTime:music?.currentTime || 0, musicFailed,
+        musicPlaying:playingMusic, musicTime:musicPosition(), musicFailed, musicPending,
         loaded:[...buffers.keys()], failed:[...failures], voices:voices.length, lastCue, lastSample, lastDialogue})};
   }
   const api = {createAudio, audioTracks:tracks, audioSamples:samples, audioCueFor:cueFor, victoryDialogue};

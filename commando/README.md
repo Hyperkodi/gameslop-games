@@ -95,9 +95,9 @@ Both bunker stages use a consistent overhead floor and low walls. Destroying cor
 
 ## Audio
 
-The supplied MP3s in `Soundtrack/` play and loop for their matching stages: Jungle, Bunker, Foundry (also used by Spillway), Reactor, Snow, Cave, and Alien.
+Each stage uses its own calmer CC0 music loop from `Soundtrack/cc0/`. See `music-credits.html` to listen and view the authors, source pages, and public-domain license. The previous original songs are retained on disk but no longer selected by the game. The eight replacements are normalized to approximately -20 LUFS, with loop seams prepared offline and a quiet background mix.
 
-The recordings in `Sound Effects/` cover machine gun, spread, laser, flame, grenade launcher, rocket launcher, wave cannon, Tesla, cryo, and plasma firing; grenade and rocket detonations; barrier and cloak activation; nuke detonation; and boss destruction. Other actions retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Short effects are cached and concurrent voices are capped for rapid fire and co-op. Music streams one level at a time instead of downloading the entire soundtrack at startup.
+The recordings in `Sound Effects/` cover machine gun, spread, laser, flame, grenade launcher, rocket launcher, wave cannon, Tesla, cryo, and plasma firing; grenade and rocket detonations; barrier and cloak activation; nuke detonation; and boss destruction. Other actions retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Each recording has its own mix level: lasers and rockets are substantially quieter, along with the loud flame, Tesla and boss effects. Recorded weapon and detonation tails are limited to two per cue, with 16 total effect voices. Approved dialogue keeps its existing gain. Music decodes only the selected level into a looping Web Audio buffer, avoiding media-element gaps between repeats; it does not download the entire soundtrack at startup.
 
 Nukes begin with a near-white screen flash, then expand as a white-hot explosion and shock rings that race beyond the playfield while visible non-boss enemies are removed.
 
@@ -123,7 +123,7 @@ His twelve-pose camo sprite sheet preserves the reference glasses and roof-shape
 - `js/mascot.js`: mascot poses, held/holstered weapons, cloak translucency, and co-op tint.
 - `js/game.js`: HUD, keyboard/gamepad/touch input, fullscreen, audio, and local scores.
 - `js/touch.js`: full-area thumbstick, direction dead zones, touch contacts, and remembered auto-fire preference.
-- `js/audio.js`: recorded weapon/effect routing, streamed level music, mute/pause lifecycle, and synthesized fallback cues.
+- `js/audio.js`: individually mixed weapon/effect routing, gapless level music, mute/pause lifecycle, and synthesized fallback cues.
 - `skin/gameslop/`: branding and bundled image assets. Keep `skin.json` and its browser copy `skin.js` synchronized.
 
 `?seed=42` selects a replay seed. `?debug=1` exposes `window.__gameslop.{engine,renderer}`. The existing optional game-over bridge and local best-score storage remain supported.
