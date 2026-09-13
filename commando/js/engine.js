@@ -234,11 +234,8 @@
     }
     function fire(p) {
       const tier=weaponTier(p),rank=tier-1;
-      const w = weapons[p.weapon], base = state.level.mode === 'base';
-      let dx = Number(!!p.held.right) - Number(!!p.held.left), dy = Number(!!p.held.down) - Number(!!p.held.up);
-      if (!base && p.grounded && dy > 0) dy = 0;
-      if (!dx && !dy) { dx = base ? 0 : p.face; dy = base ? -1 : 0; }
-      const angle = Math.atan2(dy, dx); p.aimX = Math.cos(angle); p.aimY = Math.sin(angle);
+      const w = weapons[p.weapon];
+      const angle = Math.atan2(p.aimY, p.aimX);
       const angles = p.weapon === 'S' ? [-.25, -.125, 0, .125, .25] : [0];
       for (const spread of angles) {
         const a = angle + spread;
@@ -345,9 +342,13 @@
         if (wasGrounded && !p.grounded && !leftByAction) p.coyoteTime = COYOTE_TIME;
         if (p.y > l.height + 40 || (l.mode === 'climb' && p.y > state.camera.y + H + 70)) damagePlayer(p, true);
       }
+      // Direction is a persistent aim, not a default that changes when the
+      // stick returns to neutral. Update it even between shots or without fire.
+      let aimDx=dx, aimDy=dy;
+      if(!base&&p.grounded&&aimDy>0){aimDy=0;if(!aimDx)aimDx=p.face;}
+      if(aimDx||aimDy){const length=Math.hypot(aimDx,aimDy);p.aimX=aimDx/length;p.aimY=aimDy/length;}
       if (p.held.fire && p.cooldown <= 0) fire(p);
       if(throwing)grenades.launch(p);
-      if (!base && dx) { p.aimX = dx; p.aimY = p.held.up ? -1 : 0; }
     }
     function tick() {
       if (state.status !== 'playing') return;
@@ -378,8 +379,8 @@
         if (!state.spawned['p' + i] && p.x < state.camera.x + W && p.y > state.camera.y - 100 && p.y < state.camera.y + H) { state.spawned['p' + i] = true; state.pickups.push({ ...p, w: 24, h: 24, ttl: 999 }); }
       });
       state.waveTime += dt;
-      const squadCount=recruitedCount(state),squadLimit=Math.ceil(rules().enemyLimit*(1+squadCount/5));
-      if (state.waveTime > rules().waveInterval*(l.mode==='base'?.65:1) && state.enemies.length < squadLimit) {
+      const squadCount=recruitedCount(state),squadLimit=Math.ceil(rules().enemyLimit*(l.enemyLimitScale??1)*(1+squadCount/5));
+      if (state.waveTime > rules().waveInterval*(l.waveIntervalScale??(l.mode==='base'?.65:1)) && state.enemies.length < squadLimit) {
         state.waveTime = 0;
         const kind=rng()<.55?stageEnemies[state.stage]:'drone';
         let waveSpec=null;

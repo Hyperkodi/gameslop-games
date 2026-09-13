@@ -3,7 +3,7 @@
   'use strict';
   const levels = [
     { name: 'Verdant Outpost', tag: 'JUNGLE INFILTRATION', mode: 'run', theme: 'jungle', width: 6600, boss: 'Bastion', briefing: 'Follow the river through the canopy, ravines, and perimeter cannon.', gaps: [[1290, 1405], [2430, 2550], [3615, 3740], [4890, 5005], [5310, 5430]] },
-    { name: 'Signal Bunker', tag: 'SECURITY BREACH', mode: 'base', theme: 'base', width: 960, boss: 'Watchtower', briefing: 'Destroy the security consoles in all three chambers. Keep moving.' },
+    { name: 'Signal Bunker', tag: 'SECURITY BREACH', mode: 'base', theme: 'base', width: 960, boss: 'Watchtower', waveIntervalScale: .9, enemyLimitScale: .75, briefing: 'Destroy the security consoles in all three chambers. Keep moving.' },
     { name: 'Spillway Ascent', tag: 'FORWARD ASCENT', mode: 'climb', theme: 'water', width: 960, height: 2860, boss: 'Undertow', briefing: 'Climb the spillway bridges and take side shelves for guns. Down + jump drops to a lower ledge, including beneath the boss.' },
     { name: 'Furnace Network', tag: 'REACTOR BREACH', mode: 'base', theme: 'foundry', width: 960, boss: 'Overseer', briefing: 'Breach three reactor chambers. Jump to evade incoming fire.' },
     { name: 'Whiteout Relay', tag: 'FROZEN FRONT', mode: 'run', theme: 'snow', width: 6600, boss: 'Frostbite', briefing: 'Cross ice shelves, relay towers, and a whiteout pass to reach the siege walker.', gaps: [[1220, 1330], [2550, 2675], [3895, 4025], [4800, 4920], [5560, 5685]] },
