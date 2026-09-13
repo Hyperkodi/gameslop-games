@@ -1,7 +1,7 @@
 /* One decoded, gapless stage loop; reusable effects with individual mix levels. */
 (function (root) {
   'use strict';
-  const tracks = ['Jungle.mp3', 'Bunker.mp3', 'Foundry.mp3', 'Reactor.mp3', 'Snow.mp3', 'Foundry.mp3', 'Cave.mp3', 'Alien.mp3'];
+  const tracks = ['1.mp3', '2.mp3', '3.mp3', '4.mp3', '5.mp3', '6.mp3', '7.mp3', '8.mp3'];
   const musicLevel = .38;
   const sampleLevels = {
     'shot:P':.38, 'shot:M':.08, 'shot:S':.28, 'shot:L':.10, 'shot:F':.08, 'shot:G':.55,

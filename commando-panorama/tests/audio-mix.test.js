@@ -111,8 +111,8 @@ test('fallback laser cues stay quieter when a recording fails',async()=>{
   const h=harness({failEffects:true});await h.audio.unlock();h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'L'}]);
   assert.ok(h.oscillators[0].target.gain.value<.004);
 });
-test('all stages restore the original songs and fetch them from the original folder',async()=>{
-  assert.deepEqual(audioTracks,['Jungle.mp3','Bunker.mp3','Foundry.mp3','Reactor.mp3','Snow.mp3','Foundry.mp3','Cave.mp3','Alien.mp3']);
+test('each stage fetches its corresponding numbered soundtrack and loops it',async()=>{
+  assert.deepEqual(audioTracks,['1.mp3','2.mp3','3.mp3','4.mp3','5.mp3','6.mp3','7.mp3','8.mp3']);
   const h=harness();await h.audio.unlock();
   for(let stage=0;stage<8;stage++){
     h.audio.update({stage,status:'playing'});await h.flush();

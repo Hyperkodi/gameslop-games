@@ -11,7 +11,7 @@ function game() {
   e.state.enemies = []; e.drainEvents(); return e;
 }
 test('every mapped soundtrack and effect recording exists', () => {
-  assert.equal(audioTracks.length, 8); assert.equal(new Set(audioTracks).size, 7);
+  assert.equal(audioTracks.length, 8); assert.equal(new Set(audioTracks).size, 8);
   for (const file of audioTracks.filter(Boolean)) assert.ok(fs.statSync(path.join(__dirname,'../Soundtrack',file)).size > 0);
   for (const file of Object.values(audioSamples)) assert.ok(fs.statSync(path.join(__dirname,'../Sound Effects',file)).size > 0);
 });
