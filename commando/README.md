@@ -102,7 +102,9 @@ Both bunker stages use a consistent overhead floor and low walls. Destroying cor
 
 Each of the five projectile tiers has progressively larger artwork, a brighter weapon-colored glow and a longer trail. These visual effects preserve weapon silhouettes without changing damage, collision bounds, projectile speed or enemy bullets.
 
-During the level 2 boss encounter, reinforcement intervals are doubled to halve the arrival rate. Earlier rooms, other boss fights, enemy caps and boss attack patterns retain their existing behavior.
+During the level 2 and level 4 boss encounters, reinforcement intervals are doubled to halve the arrival rate. Earlier rooms, other boss fights, enemy caps and boss attack patterns retain their existing behavior.
+
+Allies have recorded recruitment dialogue: Pons in level 3 says "All right, I'm with you. Let's murder these assholes." in a friendly teddy-bear voice; Wojak in level 5 says "Fine, if I must." in a subdued, weary voice; Sloppy in level 7 says "You're all fired." in a raspy mascot voice. Each line plays once on first recruitment per run. Music and combat effects briefly lower while an ally speaks. Pausing, muting, changing stages or leaving the tab cancels speech without replaying it on return.
 
 Easy has 3 hit points per life; Normal has 2; Hard and Extra Hard have 1. The HUD labels HP and lives separately. Surviving damage keeps position and equipment and grants 1.2 seconds of protection. Losing a life or using a continue restores full health. Remaining health carries between stages and bunker rooms; pits still cost one life. Existing lives, continues, pickups and other difficulty settings are unchanged.
 

@@ -22,8 +22,11 @@ test('level 2 boss reinforcements arrive at half the earlier-room rate in every 
   assert.ok(Math.abs(boss-ordinary/2)<=1,`${mode}: ${boss} boss arrivals vs ${ordinary} ordinary arrivals`);
  }
 });
-test('level 4 boss reinforcement rate remains the same as its ordinary rooms',()=>{
- for(const mode of ['easy','normal','hard','extra-hard'])assert.equal(arrivals(encounter(3,mode,true),3600),arrivals(encounter(3,mode,false),3600));
+test('level 4 boss reinforcements also arrive at half the ordinary-room rate',()=>{
+ for(const mode of ['easy','normal','hard','extra-hard']){
+  const ordinary=arrivals(encounter(3,mode,false),10800),boss=arrivals(encounter(3,mode,true),10800);
+  assert.ok(Math.abs(boss-ordinary/2)<=1,`${mode}: ${boss} vs ${ordinary}`);
+ }
 });
 test('pausing freezes the level 2 boss reinforcement timer and player protection',()=>{
  const e=encounter(1,'normal',true),s=e.state;e.tick();const before=s.waveTime;

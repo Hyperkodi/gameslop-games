@@ -10,8 +10,14 @@
     'impact:H':.20, 'impact:G':.28, 'grenade:frag':.28, 'grenade:incendiary':.25,
     'grenade:electric':.10, bossExplosion:.16, nuke:.40, barrier:.22, cloak:.4
   };
-  const sampleLevel = cue => cue.startsWith('victory:') ? .8 : sampleLevels[cue] ?? .5;
-  const voiceLimit = cue => cue.startsWith('victory:') ? 1 : cue.startsWith('shot:') || cue.startsWith('impact:') || cue.startsWith('grenade:') ? 2 : 3;
+  const isDialogue = cue => cue.startsWith('victory:') || cue.startsWith('ally:');
+  const sampleLevel = cue => isDialogue(cue) ? .8 : sampleLevels[cue] ?? .5;
+  const voiceLimit = cue => isDialogue(cue) ? 1 : cue.startsWith('shot:') || cue.startsWith('impact:') || cue.startsWith('grenade:') ? 2 : 3;
+  const allyDialogue = {
+    pawns: {name:'Pons',line:"All right, I'm with you. Let's murder these assholes.",file:'ally-pawns-v1.mp3'},
+    wojak: {name:'Wojak',line:'Fine, if I must.',file:'ally-wojak-v1.mp3'},
+    sloppy: {name:'Sloppy',line:"You're all fired.",file:'ally-sloppy-v1.mp3'}
+  };
   const victoryDialogue = [
     ['Chump', "Yeah, fuck you, I'm the shit."],
     ['GreenHood', "You brought all that firepower and still couldn't hit me?"],
@@ -32,6 +38,7 @@
     barrier:'Barrier.mp3', cloak:'Invisibility Cloak.mp3', nuke:'Nuke.mp3', bossExplosion:'Boss Explosion.mp3'
   };
   victoryDialogue.forEach((_, i) => { samples['victory:' + i] = 'victory-' + String(i + 1).padStart(2, '0') + '-american-v6.mp3'; });
+  Object.entries(allyDialogue).forEach(([id,line])=>{samples['ally:'+id]=line.file;});
   // Keep distinct synthesized cues for actions without a supplied recording.
   const recipes = {
     shot:[[180,.045,'square',.018,0,70]],
@@ -78,6 +85,7 @@
     let stage = -1, status = 'ready', playingMusic = false, loading = Promise.resolve();
     let musicFailed = false, lastCue = null, lastSample = null, musicAttempt = 0;
     let dialogueAttempt = 0, lastDialogue = null;
+    const heardAllies=new Set();let lastAllyDialogue=null;
     let bossSource=null;
     let victoryBuffer = null, victoryLoading = null, musicTrack = null;
     try { muted = env.localStorage?.getItem('gameslop:muted') === '1'; } catch (_) { /* Private mode. */ }
@@ -87,6 +95,27 @@
       voices.splice(index, 1); voice.source.onended = null;
       try { voice.source.stop(); } catch (_) { /* Already ended. */ }
       voice.source.disconnect(); voice.gain.disconnect();
+      if(voice.cue.startsWith('ally:')) duckForAlly();
+    }
+    function duckForAlly(){
+      if(!ctx||!musicGain||!effectsGain)return;
+      const speaking=voices.some(v=>v.cue.startsWith('ally:'));
+      for(const [gain,value]of [[musicGain,musicLevel*(speaking ? .45 : 1)],[effectsGain,.28*(speaking ? .5 : 1)]]){
+        gain.gain.cancelScheduledValues(ctx.currentTime);
+        gain.gain.setValueAtTime(gain.gain.value,ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(value,ctx.currentTime+.12);
+      }
+    }
+    function allyLine(id){
+      if(!allyDialogue[id]||heardAllies.has(id))return;
+      heardAllies.add(id);
+      if(muted||!unlocked||!ctx||status!=='playing')return;
+      const attempt=++dialogueAttempt,joinedStage=stage,deadline=ctx.currentTime+5,cue='ally:'+id;
+      loadSample(cue).then(()=>{
+        if(attempt!==dialogueAttempt||stage!==joinedStage||status!=='playing'||muted||ctx.currentTime>deadline||!buffers.has(cue))return;
+        voices.filter(v=>isDialogue(v.cue)).forEach(stopVoice);
+        lastAllyDialogue=id;play(cue);
+      });
     }
     function stopEffects() { [...voices].forEach(stopVoice);bossSource=null; }
     function interrupt() { dialogueAttempt++; stopEffects(); stopMusic(); }
@@ -140,10 +169,11 @@
     function addVoice(source, gain, cue) {
       const same = voices.filter(v => v.cue === cue);
       if (same.length >= voiceLimit(cue)) stopVoice(same[0]);
-      while (voices.length >= 16) stopVoice(voices[0]);
+      while (voices.length >= 16) stopVoice(voices.find(v=>!isDialogue(v.cue))||voices[0]);
       const voice = {source, gain, cue}; voices.push(voice);
       source.onended = () => stopVoice(voice);
-      source.connect(gain); gain.connect(cue.startsWith('victory:') ? dialogueGain : effectsGain);
+      source.connect(gain); gain.connect(isDialogue(cue) ? dialogueGain : effectsGain);
+      if(cue.startsWith('ally:'))duckForAlly();
     }
     function synth(cue) {
       const fallback = cue.startsWith('shot:') ? 'shot' : cue.startsWith('impact:') || cue === 'bossExplosion' ? 'explosion' : cue === 'barrier' ? 'pickup' : cue;
@@ -232,6 +262,7 @@
     function update(state, events = []) {
       const changed = stage !== state.stage;
       const restart = events.some(event => event.type === 'stage');
+      if(restart&&state.stage===0&&state.tick===0){heardAllies.clear();lastAllyDialogue=null;}
       const cleared = state.status === 'clear' && (status !== 'clear' || changed);
       if (status !== state.status || changed || restart) {
         if (state.status !== 'playing' || changed || restart) interrupt();
@@ -256,6 +287,7 @@
       const heard = new Set();
       const nuke = events.some(event => event.type === 'nuke');
       for (const event of events) {
+        if(event.type==='companionJoined'){allyLine(event.ally);continue;}
         if (event.type === 'clear' && victoryBuffer) continue;
         if (nuke && event.type === 'explosion' && event.kind !== 'boss') continue;
         const cue = cueFor(event);
@@ -280,9 +312,9 @@
     return {update, unlock, toggle, interrupt, get muted() { return muted; },
       inspect: () => ({stage, status, muted, unlocked, context:ctx?.state || 'locked', track:musicTrack || tracks[stage] || null,
         musicPlaying:playingMusic, musicTime:musicPosition(), musicFailed, musicPending,
-        loaded:[...buffers.keys()], failed:[...failures], voices:voices.length, lastCue, lastSample, lastDialogue})};
+        loaded:[...buffers.keys()], failed:[...failures], voices:voices.length, lastCue, lastSample, lastDialogue, lastAllyDialogue})};
   }
-  const api = {createAudio, audioTracks:tracks, victoryTrack, audioSamples:samples, audioCueFor:cueFor, victoryDialogue};
+  const api = {createAudio, audioTracks:tracks, victoryTrack, audioSamples:samples, audioCueFor:cueFor, victoryDialogue, allyDialogue};
   root.SlopCommando = Object.assign(root.SlopCommando || {}, api);
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
