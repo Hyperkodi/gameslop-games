@@ -37,6 +37,37 @@
   const weaponDropTypes = ['P', 'S', 'M', 'L', 'F', 'G', 'H', 'W', 'T', 'I', 'A', 'B', 'R', 'C', 'N'];
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  function safeRespawnPoint(level, camera, checkpoint, player) {
+    if (level.mode === 'base') return {x:390 + player.id * 80,y:420,grounded:false};
+    const targetX = level.mode === 'run' ? Math.max(checkpoint.x, camera.x + 80) + player.id * 35 : checkpoint.x + player.id * 35;
+    const candidates = [];
+    for (const floor of level.platforms) {
+      if (level.mode === 'run' && !floor.ground) continue;
+      if (floor.w < player.w || floor.y < player.h || floor.y > level.height) continue;
+      const margin = Math.min(24, (floor.w - player.w) / 2);
+      let spans = [[Math.max(0, floor.x + margin), Math.min(level.width - player.w, floor.x + floor.w - player.w - margin)]];
+      // Avoid timed vents even during their inactive half-cycle.
+      for (const hazard of level.hazards) {
+        if (hazard.y >= floor.y || hazard.y + hazard.h <= floor.y - player.h) continue;
+        const low = hazard.x - player.w - 24, high = hazard.x + hazard.w + 24;
+        spans = spans.flatMap(([a,b]) => high <= a || low >= b ? [[a,b]] : [[a,Math.min(b,low)],[Math.max(a,high),b]].filter(([x,z])=>x<=z));
+      }
+      for (let [a,b] of spans) {
+        if (a > b) continue;
+        if (level.mode === 'run') {
+          // Prefer visible footing; never restore a stale point behind the clamp.
+          const visibleA = Math.max(a,camera.x + 16), visibleB = Math.min(b,camera.x + W - player.w - 16);
+          if (visibleA <= visibleB) { a=visibleA;b=visibleB; }
+        }
+        const x=clamp(targetX,a,b), y=floor.y-player.h;
+        const offscreen=level.mode==='run'&&(x<camera.x||x+player.w>camera.x+W);
+        const score=Math.abs(x-targetX)+(level.mode==='climb'?Math.abs(y-checkpoint.y)*4:0)+(offscreen?level.width*2:0);
+        candidates.push({x,y,grounded:true,onGround:!!floor.ground,score});
+      }
+    }
+    candidates.sort((a,b)=>a.score-b.score);
+    return candidates[0] || null;
+  }
   // Sweep a projectile box through a target: fast shots cannot skip a thin ledge.
   function sweepBox(b,from,target){
     let enter=0,leave=1;
@@ -302,9 +333,13 @@
       p.lives--; burst(p.x + 15, p.y + 20, '#ff433c', 22); event('death');
       resetEquipment(p); resetMovementInput(p); p.jumpTime = 0;
       if (p.lives > 0) {
-        const c = state.checkpoint;
-        p.x = c.x + p.id * 35; p.y = c.y; p.vy = 0; p.invincible = 3; p.grounded = false;
-        if (state.level.mode === 'base') { p.x = 390 + p.id * 80; p.y = 420; }
+        const c = safeRespawnPoint(state.level,state.camera,state.checkpoint,p);
+        if (!c) throw new Error('Level has no safe respawn surface: '+state.level.name);
+        Object.assign(p,{x:c.x,y:c.y,vx:0,vy:0,invincible:3,grounded:c.grounded,onGround:!!c.onGround,prone:false,dodgeLift:0,dodgeVelocity:0});
+        if (state.level.mode === 'run') {
+          // Only move the view if no safe surface was available on this screen.
+          if (p.x < state.camera.x || p.x+p.w > state.camera.x+W) state.camera.x=clamp(p.x-80,0,state.level.width-W);
+        }
       }
       if (state.players.every(q => q.lives <= 0)) { state.status = 'gameover'; release(); event('gameover'); }
     }
@@ -664,7 +699,7 @@
     state.difficulty = 'normal'; rng = mulberry32(state.seed); state.players = [makePlayer(0)]; loadStage(0); state.events = [];
     return { state, start, input, tick, pause, release, advance, continueRun, drainEvents, hash: () => fnv1a(JSON.stringify(state.inputLog)) };
   }
-  const api = { createEngine, weapons, weaponTier, difficultyRules, stageEnemies, specialEnemies, W, H, STEP, hit };
+  const api = { createEngine, safeRespawnPoint, weapons, weaponTier, difficultyRules, stageEnemies, specialEnemies, W, H, STEP, hit };
   root.SlopCommando = Object.assign(root.SlopCommando || {}, api);
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
