@@ -16,10 +16,12 @@ Hold a phone in landscape for the largest playfield. **Expand** requests browser
 
 | Action | Player 1 | Player 2 | Gamepad |
 | --- | --- | --- | --- |
-| Move / aim | Arrow keys | WASD | D-pad / left stick |
-| Jump | Z / Space | G | A |
-| Fire (hold) | X / C | H | X / B / RT |
-| Swap holstered gun | V | J | Y |
+| Move / aim | Arrow keys | IJKL | D-pad / left stick |
+| Jump | Z / Space | U | A |
+| Fire (hold) | D | O | X / B / RT |
+| Swap holstered gun | V | H | Y |
+| Throw grenade | A | Y | LB |
+| Cycle grenade | N | T | RB |
 | Pause | Escape / P | Shared | Start |
 | Sound | M | Shared | Onscreen button |
 
@@ -49,7 +51,7 @@ Every gun has five tiers. Each successive tier increases damage, projectile size
 
 ### Throwable grenades
 
-Throw a grenade alongside any equipped gun. **B** throws and **N** cycles types; player two uses **K / L**. On a gamepad use **LB / RB**. On touch, use **TYPE** and **THROW** beside the existing joystick and jump button. All three types share a six-second recharge, shown in the HUD. Switching type does not reset it. Grenades do not hurt either player.
+Throw a grenade alongside any equipped gun. **A** throws and **N** cycles types; player two uses **Y / T**. On a gamepad use **LB / RB**. On touch, use **TYPE** and **THROW** beside the existing joystick and jump button. All three types share a six-second recharge, shown in the HUD. Switching type does not reset it. Grenades do not hurt either player.
 
 | Type | Effect | Best targets |
 | --- | --- | --- |
@@ -105,7 +107,7 @@ Audio starts after a player gesture. Pause and backgrounding stop music and effe
 
 ### Jetpack and Pawns
 
-Collect a twin-tank jetpack on an outdoor ledge. Hold the existing jump action (P1 Z, P2 G, gamepad A, or touch JUMP) to thrust; release to descend. Each pack provides ten seconds of actual thrust, with no regeneration. Fuel survives death, room and stage transitions, and continues. Collected packs remain collected until a new run. Empty packs stop thrusting. In overhead bunkers, held thrust hovers over shots. Quick taps preserve ordinary jump height, and down+jump or DROP still passes through platforms.
+Collect a twin-tank jetpack on an outdoor ledge. Hold the existing jump action (P1 Z, P2 U, gamepad A, or touch JUMP) to thrust; release to descend. Each pack provides ten seconds of actual thrust, with no regeneration. Fuel survives death, room and stage transitions, and continues. Collected packs remain collected until a new run. Empty packs stop thrusting. In overhead bunkers, held thrust hovers over shots. Quick taps preserve ordinary jump height, and down+jump or DROP still passes through platforms.
 
 Pawns waits on the broad halfway landing in level 3, Spillway Ascent. Approach him to recruit autonomous machine-gun support for the rest of the run. He navigates reachable platforms with ballistic jumps, follows the closest living player, and independently positions and aims at enemies. His five-shot bursts damage enemies without friendly fire. He is a permanent, invulnerable support character and rejoins on room/stage transitions. New runs reset recruitment.
 
