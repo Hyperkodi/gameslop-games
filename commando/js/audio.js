@@ -1,7 +1,7 @@
 /* One decoded, gapless stage loop; reusable effects with individual mix levels. */
 (function (root) {
   'use strict';
-  const tracks = ['01-stealth-in-the-woods.ogg', '02-espionage.ogg', '03-exploration-theme.ogg', '04-pulse.ogg', '05-safe-space.ogg', '06-airy.ogg', '07-ancient-mysteries.ogg', '08-sector.ogg'];
+  const tracks = ['Jungle.mp3', 'Bunker.mp3', 'Foundry.mp3', 'Reactor.mp3', 'Snow.mp3', 'Foundry.mp3', 'Cave.mp3', 'Alien.mp3'];
   const musicLevel = .38;
   const sampleLevels = {
     'shot:P':.38, 'shot:M':.08, 'shot:S':.28, 'shot:L':.10, 'shot:F':.08, 'shot:G':.55,
@@ -177,7 +177,7 @@
       if (!ctx || !unlocked || !file || status === 'ready') return;
       musicPending = true;
       // Keep only the current track in memory. A stale download can never replace it.
-      musicLoading = env.fetch(path('Soundtrack/cc0', file))
+      musicLoading = env.fetch(path('Soundtrack', file))
         .then(response => { if (!response.ok) throw new Error('Music unavailable'); return response.arrayBuffer(); })
         .then(bytes => attempt === musicAttempt ? ctx.decodeAudioData(bytes) : null)
         .then(buffer => {

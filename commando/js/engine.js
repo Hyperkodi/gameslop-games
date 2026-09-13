@@ -2,7 +2,7 @@
   'use strict';
   const { buildLevel, levels } = typeof module !== 'undefined' ? require('./levels.js') : root.SlopCommando;
   const { mulberry32, fnv1a } = typeof module !== 'undefined' ? require('../../_kit/rng.js') : root.GameSlopKit;
-  const { createGrenadeSystem, grenadeOrder } = typeof module !== 'undefined' ? require('./grenades.js') : root.SlopCommando;
+  const { createGrenadeSystem, grenadeOrder, grenadeAffinity } = typeof module !== 'undefined' ? require('./grenades.js') : root.SlopCommando;
   const {createSupportSystem,JETPACK_FUEL,recruitedCount,reinforcementCount}=typeof module!=='undefined'?require('./support.js'):root.SlopCommando;
   const W = 960, H = 540, STEP = 1 / 60;
   const STAGE_SECONDS = 1000, STAGE_TICKS = STAGE_SECONDS * 60;
@@ -13,8 +13,8 @@
     S: { name: 'SPREAD GUN', delay: .22, speed: 640, damage: 1 },
     L: { name: 'LASER RIFLE', delay: .31, speed: 1150, damage: 3, pierce: true, width: 18 },
     F: { name: 'FLAMETHROWER', delay: .1, speed: 400, damage: 2, ttl: .6, height: 14 },
-    G: { name: 'GRENADE LAUNCHER', delay: .52, speed: 480, damage: 3, ttl: 1.35, gravity: 430, splash: 52, splashDamage: 3, width: 12, height: 12 },
-    H: { name: 'HOMING ROCKET', delay: .46, speed: 430, damage: 4, ttl: 1.4, homing: 5.25, splash: 42, splashDamage: 2, width: 16, height: 8 },
+    G: { name: 'GRENADE LAUNCHER', delay: .52, speed: 540, damage: 4, ttl: 2, gravity: 430, launchLift: 180, splash: 120, splashDamage: 4, width: 12, height: 12 },
+    H: { name: 'HOMING ROCKET', delay: .46, speed: 430, damage: 5, ttl: 1.4, homing: 5.25, splash: 110, splashDamage: 4, width: 16, height: 8 },
     W: { name: 'WAVE CANNON', delay: .34, speed: 840, damage: 2, ttl: 1.15, pierce: true, width: 30, height: 16 },
     T: { name: 'TESLA CARBINE', delay: .38, speed: 760, damage: 2, chain: 2, width: 12, height: 10 },
     I: { name: 'CRYO BLASTER', delay: .23, speed: 620, damage: 1, slow: 2.5, width: 14, height: 12 },
@@ -37,6 +37,18 @@
   const weaponDropTypes = ['P', 'S', 'M', 'L', 'F', 'G', 'H', 'W', 'T', 'I', 'A', 'B', 'R', 'C', 'N'];
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  // Sweep a projectile box through a target: fast shots cannot skip a thin ledge.
+  function sweepBox(b,from,target){
+    let enter=0,leave=1;
+    for(const [axis,size]of [['x','w'],['y','h']]){
+      const delta=b[axis]-from[axis],low=target[axis]-b[size],high=target[axis]+target[size];
+      if(Math.abs(delta)<1e-9){if(from[axis]<low||from[axis]>high)return null;continue;}
+      let a=(low-from[axis])/delta,z=(high-from[axis])/delta;
+      if(a>z)[a,z]=[z,a];enter=Math.max(enter,a);leave=Math.min(leave,z);
+      if(enter>leave)return null;
+    }
+    return enter;
+  }
   function createEngine(options = {}) {
     let rng, id = 0;
     const state = { status: 'ready', seed: options.seed ?? 1978, tick: 0, elapsed: 0, score: 0, stage: 0, players: [], enemies: [], bullets: [], effects: [], pickups: [], inputLog: [], events: [], camera: { x: 0, y: 0 }, continues: 3, room: 0, boss: null, kills: 0 };
@@ -223,6 +235,35 @@
       if (e.hp <= 0) awardEnemyKill(e);
       return true;
     }
+    function ignite(e){
+      if(e.hp<=0)return;
+      if(!(e.burnTime>0))e.burnPulse=.25;
+      e.burnTime=3;e.burning=Math.max(e.burning||0,3);
+    }
+    function tickBurn(e,dt){
+      if(e.hp<=0||!(e.burnTime>0))return;
+      const active=Math.min(dt,e.burnTime);e.burnTime=Math.max(0,e.burnTime-dt);
+      if(e.burnTime<1e-9)e.burnTime=0;
+      e.burnPulse-=active;
+      if(e.burnPulse<=1e-9){
+        e.burnPulse+=.25;
+        damageEnemy(e,.1*grenadeAffinity(e,'incendiary'),{x:e.x+e.w/2,y:e.y+e.h/2});
+      }
+      e.burning=Math.max(e.burning||0,e.burnTime);
+    }
+    function explosiveContact(b,from,targets){
+      let first=null;
+      const consider=(time,enemy=null)=>{if(time!==null&&(!first||time<first.time))first={time,enemy};};
+      if(state.level.mode!=='base')for(const floor of state.level.platforms){
+        if(floor.ground)consider(sweepBox(b,from,floor));
+        else if(b.y>from.y&&from.y+b.h<=floor.y&&b.y+b.h>=floor.y){
+          const t=(floor.y-from.y-b.h)/(b.y-from.y),x=from.x+(b.x-from.x)*t;
+          if(x+b.w>=floor.x&&x<=floor.x+floor.w)consider(t);
+        }
+      }
+      for(const e of targets)if(e.hp>0)consider(sweepBox(b,from,e),e);
+      return first;
+    }
     function steerHomingProjectile(b, targets, dt) {
       const target = targets.filter(e => e.hp > 0).reduce((nearest, e) => {
         const distance = Math.hypot(e.x + e.w / 2 - b.x, e.y + e.h / 2 - b.y);
@@ -240,11 +281,14 @@
       if (b.exploded || !b.splash) return;
       b.exploded = true;
       event('impact', { weapon: b.weapon });
-      burst(b.x, b.y, b.weapon === 'G' ? '#ff9b42' : '#ff5c45', 16);
+      const center={x:b.x+b.w/2,y:b.y+b.h/2};
+      burst(center.x, center.y, b.weapon === 'G' ? '#ff9b42' : '#ff5c45', 22);
+      state.effects.push({...center,vx:0,vy:0,ttl:.32,duration:.32,radius:b.splash,blast:true,color:'#ffbc64'});
       for (const e of targets) {
+        if(state.status!=='playing')break;
         if (e === directTarget || e.hp <= 0) continue;
-        const distance = Math.hypot(e.x + e.w / 2 - b.x, e.y + e.h / 2 - b.y);
-        if (distance <= b.splash) damageEnemy(e, b.splashDamage, b);
+        const distance = Math.hypot(clamp(center.x,e.x,e.x+e.w)-center.x,clamp(center.y,e.y,e.y+e.h)-center.y);
+        if (distance <= b.splash) damageEnemy(e, b.splashDamage, center);
       }
     }
     function damagePlayer(p, falling = false) {
@@ -267,9 +311,9 @@
         const a = angle + spread;
         state.bullets.push({
           id: id++, x: p.x + 15 + Math.cos(a) * 19, y: p.y + (p.prone ? 30 : 19) + Math.sin(a) * 13,
-          vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed, speed: w.speed,
+          vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed-(state.level.mode==='base'?0:(w.launchLift||0)*Math.abs(Math.cos(a))), speed: w.speed,
           w: (w.width || 8)*(1+rank*.08), h: (w.height || 5)*(1+rank*.08), team: 'player', damage: w.damage*(1+rank*.3), weapon: p.weapon, tier,
-          ttl: w.ttl || 1.5, gravity: w.gravity || 0, homing: w.homing || 0,
+          ttl: w.ttl || 1.5, gravity: state.level.mode==='base'?0:w.gravity || 0, homing: w.homing || 0,
           splash: (w.splash || 0)*(1+rank*.12), splashDamage: (w.splashDamage || 0)*(1+rank*.3), pierce: !!w.pierce, hits: [], chain:(w.chain||0)+(w.chain?rank:0), slow:(w.slow||0)*(1+rank*.2)
         });
       }
@@ -439,6 +483,9 @@
       }
       grenades.tick(dt);
       if(state.status!=='playing')return;
+      for(const e of [...state.enemies,...(state.boss?[state.boss]:[])]){
+        tickBurn(e,dt);if(state.status!=='playing')return;
+      }
       for (const e of state.enemies) {
         e.burning=Math.max(0,(e.burning||0)-dt);e.electrified=Math.max(0,(e.electrified||0)-dt);
         const stunned=(e.stunned||0)>0;e.stunned=Math.max(0,(e.stunned||0)-dt);
@@ -514,14 +561,24 @@
       for (const b of state.bullets) {
         if (state.status !== 'playing') break;
         const targets = b.team === 'player' ? [...state.enemies, ...(boss ? [boss] : [])] : [];
+        const from={x:b.x,y:b.y};
         if (b.team === 'player' && b.homing) steerHomingProjectile(b, targets, dt);
         b.vy += (b.gravity || 0) * dt;
         b.x += b.vx * dt; b.y += b.vy * dt; b.ttl -= dt;
         if (b.team === 'player') {
+          if(b.weapon==='G'||b.weapon==='H'){
+            const contact=explosiveContact(b,from,targets);
+            if(contact){
+              b.x=from.x+(b.x-from.x)*contact.time;b.y=from.y+(b.y-from.y)*contact.time;
+              if(contact.enemy)damageEnemy(contact.enemy,b.damage,b);
+              explodeProjectile(b,targets,contact.enemy);b.ttl=0;continue;
+            }
+          }
           b.hits = b.hits || [];
           for (const e of targets) {
             if (e.hp <= 0 || b.ttl <= 0 || b.hits.includes(e.id) || !hit(b, e)) continue;
             b.hits.push(e.id); damageEnemy(e, b.damage, b);
+            if(b.weapon==='F')ignite(e);
             if(b.slow)e.slow=b.slow;
             if(b.chain){
               let source=e;
@@ -579,7 +636,7 @@
       }
       state.pickups = state.pickups.filter(p => p.ttl > 0);
       for (const h of l.hazards) if ((state.tick + h.phase) % 240 > 120) alive.forEach(p => { if (hit(playerBox(p), h)) damagePlayer(p); });
-      for (const e of state.effects) { e.x += e.vx * dt; e.y += e.vy * dt; e.vy += 250 * dt; e.ttl -= dt; }
+      for (const e of state.effects) { e.x += e.vx * dt; e.y += e.vy * dt; if(!e.blast)e.vy += 250 * dt; e.ttl -= dt; }
       state.effects = state.effects.filter(e => e.ttl > 0);
       if (l.mode === 'base' && !state.boss && state.enemies.every(e => e.kind !== 'core')) {
         if (state.room < 2) { state.room++; loadRoom(); state.roomTransition=.65; state.banner = 2; event('room'); }

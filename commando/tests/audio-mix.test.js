@@ -2,7 +2,6 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {createAudio,audioTracks}=require('../js/audio.js');
-const manifest=require('../Soundtrack/cc0/manifest.json');
 function harness({deferMusic=false,failMusic=false,failEffects=false}={}){
   const started=[],oscillators=[],requests=[],waiters=[];
   const param=()=>({value:1,setValueAtTime(v){this.value=v;},linearRampToValueAtTime(v){this.value=v;},exponentialRampToValueAtTime(){},cancelScheduledValues(){}});
@@ -99,11 +98,14 @@ test('fallback laser cues stay quieter when a recording fails',async()=>{
   const h=harness({failEffects:true});await h.audio.unlock();h.audio.update({stage:0,status:'playing'},[{type:'shot',weapon:'L'}]);
   assert.ok(h.oscillators[0].target.gain.value<.004);
 });
-test('every level has a documented CC0 loop with consistent loudness and headroom',()=>{
-  assert.deepEqual(manifest.map(x=>x.file),audioTracks);
-  for(const track of manifest){
-    assert.equal(track.license,'CC0-1.0');assert.ok(track.page.startsWith('https://opengameart.org/'));
-    assert.ok(track.lufs>=-22&&track.lufs<=-19.5);assert.ok(track.truePeakDb<-2.5);
-    assert.ok(track.duration>45);assert.ok(track.boundaryStep<.02);
+test('all stages restore the original songs and fetch them from the original folder',async()=>{
+  assert.deepEqual(audioTracks,['Jungle.mp3','Bunker.mp3','Foundry.mp3','Reactor.mp3','Snow.mp3','Foundry.mp3','Cave.mp3','Alien.mp3']);
+  const h=harness();await h.audio.unlock();
+  for(let stage=0;stage<8;stage++){
+    h.audio.update({stage,status:'playing'});await h.flush();
+    assert.equal(h.audio.inspect().track,audioTracks[stage]);
+    assert.ok(h.requests.includes('Soundtrack/'+audioTracks[stage]));
+    assert.equal(h.started.at(-1).loop,true);
   }
+  assert.ok(h.requests.every(url=>!url.includes('/cc0/')));
 });

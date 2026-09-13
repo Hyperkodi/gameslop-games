@@ -415,7 +415,15 @@
         else if(b.weapon==='L'){c.strokeStyle=color;c.lineWidth=4;c.beginPath();c.moveTo(b.x,b.y);c.lineTo(b.x-b.vx*.035,b.y-b.vy*.035);c.stroke();}
         else {rect(b.x-2,b.y-2,b.w+4,b.h+4,b.team==='enemy'?'#a73c3544':'#fff5ce22');rect(b.x,b.y,b.w,b.h,color);rect(b.x+2,b.y+2,3,2,'#fff4c6');}
       }
-      for(const e of s.effects){c.globalAlpha=Math.min(1,e.ttl*5);if(e.arc){c.strokeStyle=e.color;c.lineWidth=2;c.beginPath();c.moveTo(e.x,e.y);c.lineTo((e.x+e.x2)/2+5,(e.y+e.y2)/2-8);c.lineTo(e.x2,e.y2);c.stroke();}else rect(e.x,e.y,4,4,e.color);}c.globalAlpha=1;
+      for(const e of s.effects){
+        c.globalAlpha=Math.min(1,e.ttl*5);
+        if(e.blast){
+          const radius=e.radius*Math.min(1,(e.duration-e.ttl)/.2);
+          c.strokeStyle=e.color;c.lineWidth=3;c.beginPath();c.arc(e.x,e.y,radius,0,Math.PI*2);c.stroke();
+          c.globalAlpha*=.18;c.fillStyle='#ff9e38';c.fill();
+        }else if(e.arc){c.strokeStyle=e.color;c.lineWidth=2;c.beginPath();c.moveTo(e.x,e.y);c.lineTo((e.x+e.x2)/2+5,(e.y+e.y2)/2-8);c.lineTo(e.x2,e.y2);c.stroke();}
+        else rect(e.x,e.y,4,4,e.color);
+      }c.globalAlpha=1;
       c.restore();
       if(s.roomTransition>0){c.fillStyle='rgba(4,12,19,'+Math.min(.85,s.roomTransition/.65)+')';c.fillRect(0,0,960,540);}
       if(s.nukeFlash>0){

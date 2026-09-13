@@ -174,6 +174,19 @@
       else if(e.burning>0){ctx.shadowColor='#ff823b';ctx.shadowBlur=5;}
       if(e.flash>0&&state!=='defeat')ctx.filter='brightness(1.35)';
       ctx.drawImage(surface,sx,sy,sw,sh,-ax*scale,-ay*scale,sw*scale,sh*scale);
+      if(e.burning>0&&e.hp>0){
+        ctx.shadowBlur=0;
+        const width=Math.min(44,meta.height*.4),fade=Math.min(1,e.burning/.35);
+        for(let i=0;i<5;i++){
+          const x=(i/4-.5)*width,y=-meta.height*(.12+(i%2)*.2);
+          const h=10+(Math.sin(time*13+i*2)+1)*5;
+          ctx.globalAlpha=fade*.8;ctx.fillStyle='#ff7328';ctx.beginPath();
+          ctx.moveTo(x-5,y);ctx.quadraticCurveTo(x-8,y-h*.4,x+Math.sin(time*9+i)*4,y-h);
+          ctx.quadraticCurveTo(x+8,y-h*.3,x+5,y);ctx.fill();
+          ctx.fillStyle='#ffe49a';ctx.beginPath();ctx.ellipse(x,y-4,2.5,5,0,0,Math.PI*2);ctx.fill();
+        }
+        ctx.globalAlpha=1;
+      }
       if(e.electrified>0){
         ctx.shadowBlur=0;ctx.strokeStyle='#a0edff';ctx.lineWidth=1.2;ctx.beginPath();
         const y=-meta.height*.6,shift=Math.sin(time*19)*3;

@@ -15,7 +15,7 @@
   const grenadeButton=document.createElement('button');grenadeButton.type='button';grenadeButton.dataset.action='grenade';grenadeButton.textContent='THROW';
   grenadeButton.setAttribute('aria-label','Throw selected grenade');document.querySelector('.action-buttons').append(grenadeButton);
   const grenadeGuide=document.createElement('p');grenadeGuide.className='grenade-guide';
-  grenadeGuide.textContent='GRENADES: A throws, N changes type. P2: Y throws, T changes type. Gamepad: LB throws, RB changes type. Touch: TYPE selects, THROW launches. Shared 6-second recharge. Frag: immediate blast. Incendiary: 4 seconds of fire; strong against FRONG and Bundle Cat. Electric stun: 3.5-second pulsing field; strong against Microduck, Thinking Cat, ASTRO and CATGPT. Bosses resist full stun.';
+  grenadeGuide.textContent='GRENADES: A throws, N changes type. P2: Y throws, T changes type. Gamepad: LB throws, RB changes type. Touch: TYPE selects, THROW launches. Shared 6-second recharge. Frag: wide blast on impact or fuse expiry. Incendiary: 4 seconds of fire; strong against FRONG and Bundle Cat. Electric stun: 3.5-second pulsing field; strong against Microduck, Thinking Cat, ASTRO and CATGPT. Bosses resist full stun.';
   $('dossier').append(grenadeGuide);
   const supportGuide=document.createElement('p');supportGuide.className='grenade-guide';
   supportGuide.textContent='JETPACK: collect the twin-tank pack, then hold JUMP to fly (Z / P2 U / gamepad A / touch JUMP). Release to descend. Ten seconds of thrust per pack; fuel never recharges. In bunkers, hold to hover over shots. SQUAD: Pawns joins halfway through level 3 with a machine gun. Wojak joins halfway through level 5 with a ray gun. Sloppy joins halfway through level 7 with a flamethrower. Reach their position to recruit them. All allies follow and fight for the rest of the run, including deaths and continues. Each recruit adds 20% of the base enemy count: +20%, +40%, then +60%; the new reinforcements arrive after recruitment.';
@@ -94,7 +94,7 @@
     stageTimer.classList.toggle('time-low',(s.timeRemaining??1000)<=60);
     const p=s.players[0];$('p1-lives').textContent=p.lives>5?'♥ × '+p.lives:'♥ '.repeat(Math.max(0,p.lives))||'OUT';
     const grenade=G.grenadeTypes[p.grenadeType||'frag'],cooldown=p.grenadeCooldown||0;
-    grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · B / N';
+    grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · A / N';
     const fuelLabel=q=>q.jetpackOwned?'P'+(q.id+1)+' JET '+((q.jetpackFuel||0)>0?q.jetpackFuel.toFixed(1)+'s · HOLD JUMP':'EMPTY'):'';
     supportHud.textContent=[s.bonusNoticeTime>0?s.bonusNotice:'',...s.players.map(fuelLabel),s.supportNotice>0?s.supportNoticeName.toUpperCase()+' JOINED':G.recruitedCount(s)?'SQUAD: '+G.allySpecs.filter(a=>s[a.id+'Recruited']).map(a=>a.name.toUpperCase()).join(' / '):''].filter(Boolean).join(' · ');
     grenadeTypeButton.textContent='TYPE: '+(p.grenadeType==='electric'?'STUN':grenade.name);
@@ -111,7 +111,7 @@
     document.querySelector('[data-action="drop"]').disabled=s.level.mode==='base';
     if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
     else{p2Power.textContent='';$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
-    if(s.players.length===2){const q=s.players[1];p2Power.textContent+=' · '+G.grenadeTypes[q.grenadeType||'frag'].name+' '+(q.grenadeCooldown>0?Math.ceil(q.grenadeCooldown)+'s':'READY')+' · K / L';}
+    if(s.players.length===2){const q=s.players[1];p2Power.textContent+=' · '+G.grenadeTypes[q.grenadeType||'frag'].name+' '+(q.grenadeCooldown>0?Math.ceil(q.grenadeCooldown)+'s':'READY')+' · Y / T';}
     $('pause').disabled=title||!['playing','paused'].includes(s.status);
     const pauseLabel=s.status==='paused'?'▶ <span>RESUME</span>':'Ⅱ <span>PAUSE</span>';
     if($('pause').innerHTML!==pauseLabel)$('pause').innerHTML=pauseLabel;

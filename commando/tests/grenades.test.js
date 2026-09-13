@@ -49,6 +49,17 @@ test('fire has the requested organic vulnerabilities and reduced machine damage'
   assert.equal(grenadeAffinity(organic,'incendiary'),1.8);
  }
 });
+
+test('thrown frags detonate on floor or enemy contact and reach enemies beyond the old blast radius',()=>{
+ for(const floor of [true,false]){
+  const a=foe('turret',420),h=harness([a]);
+  h.state.grenades.push({id:1,type:'frag',x:floor?300:425,y:floor?450:425,vx:0,vy:floor?600:0,fuse:1,age:.1,base:false});
+  h.sys.tick(STEP);
+  assert.equal(a.hp,93);assert.equal(h.state.grenades.length,0);
+  assert.equal(h.events.filter(e=>e.type==='grenadeImpact').length,1);
+  assert.equal(h.state.grenadeZones[0].radius,145);
+ }
+});
 test('fire persists for four seconds, settles on the floor, then stops damaging',()=>{
  const target=foe('soldier'),h=harness([target]);h.detonate('incendiary',335,440);
  const initial=target.hp;for(let i=0;i<60;i++)h.sys.tick(STEP);

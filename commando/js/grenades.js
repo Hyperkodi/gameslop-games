@@ -2,7 +2,7 @@
 (function(root){
   'use strict';
   const types={
-    frag:{name:'FRAG',color:'#d4d29a',radius:92,damage:7,duration:0},
+    frag:{name:'FRAG',color:'#d4d29a',radius:145,damage:7,duration:0},
     incendiary:{name:'INCENDIARY',color:'#ff9a42',radius:84,damage:1.3,duration:4,pulse:.5,pulseDamage:.7},
     electric:{name:'ELECTRIC STUN',color:'#79dfff',radius:108,damage:.65,duration:3.5,pulse:.45,pulseDamage:.35}
   };
@@ -72,9 +72,14 @@
         }else{
           g.vy+=780*dt;g.y+=g.vy*dt;
           const landing=state.level.platforms.filter(p=>g.x>=p.x&&g.x<=p.x+p.w&&lastY<=p.y&&g.y>=p.y).sort((a,b)=>a.y-b.y)[0];
-          if(landing&&g.vy>=0){g.y=landing.y-1;g.vy=Math.abs(g.vy)>90?-g.vy*.25:0;g.vx*=.6;}
+          if(landing&&g.vy>=0){
+            g.y=landing.y-1;
+            if(g.type==='frag')detonate(g);
+            else {g.vy=Math.abs(g.vy)>90?-g.vy*.25:0;g.vx*=.6;}
+          }
           if(g.x<0||g.x>state.level.width){g.vx*=-.4;g.x=Math.max(0,Math.min(g.x,state.level.width));}
         }
+        if(!g.exploded&&g.type==='frag'&&targets().some(e=>inRadius(e,g.x,g.y,5)))detonate(g);
         if(g.fuse<=1e-9)detonate(g);
         if(state.status!=='playing')break;
       }

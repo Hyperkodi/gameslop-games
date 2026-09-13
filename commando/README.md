@@ -58,17 +58,19 @@ Throw a grenade alongside any equipped gun. **A** throws and **N** cycles types;
 
 | Type | Effect | Best targets |
 | --- | --- | --- |
-| Frag | Immediate 92px blast; 7 base damage | General groups |
+| Frag | Immediate 145px blast; 7 base damage | General groups |
 | Incendiary | Initial blast, then 4 seconds of ground fire; 84px radius | FRONG and Bundle Cat take 1.8× damage; machines take 0.6× |
 | Electric stun | A 108px electrical field pulses for 3.5 seconds | Microduck, Thinking Cat's turret, ASTRO and CATGPT take 2× damage and longer stuns |
 
-Ordinary machines stop moving and firing while stunned. Organic enemies receive a brief interruption. Bosses take 1.25× electrical damage and a temporary 30% slowdown, rather than full stun. Fire settles onto platforms; its lingering damage does not reach flyers above the flames. Frag is an immediate blast, and the other two have visible area effects. The grenade launcher remains a separate gun.
+Ordinary machines stop moving and firing while stunned. Organic enemies receive a brief interruption. Bosses take 1.25× electrical damage and a temporary 30% slowdown, rather than full stun. Fire settles onto platforms; its lingering damage does not reach flyers above the flames. Frag detonates on enemy contact, on landing, or at the end of its fuse; and the other two have visible area effects. The grenade launcher remains a separate gun.
 
 Tests: `node --test tests/grenades.test.js` checks matchups, lingering damage, stun recovery, boss resistance, friendly safety, input/recharge, co-op, pause, stage cleanup and deterministic replay.
 
 Eleven guns: rifle, machine gun, spread gun, laser rifle, flamethrower, grenade launcher, homing rocket, wave cannon, Tesla carbine, cryo blaster, and plasma cannon.
 
-Tesla chains electricity between nearby targets. Cryo slows ordinary enemy movement and attack cadence. Plasma fires heavy explosive bolts. Grenades arc and explode; rockets seek; laser and wave projectiles pierce.
+Tesla chains electricity between nearby targets. Cryo slows ordinary enemy movement and attack cadence. Plasma fires heavy explosive bolts. Launcher grenades start with a slight upward arc and detonate on enemies, solid ground, or descending contact with a ledge. Swept collision catches fast projectiles and thin platforms. In overhead bunkers, the launcher follows aim without downward gravity. Launcher blasts have a 120px radius; homing rockets have a 110px radius and also explode on terrain. Each deals 4 splash damage at tier one, with no duplicate splash to the directly struck enemy and no friendly fire. Their expanding blast rings show their reach. Laser and wave projectiles pierce.
+
+Flamethrowers, including Sloppy's, ignite enemies for three seconds. Fire deals 0.1 damage every quarter-second before the existing fire-resistance multiplier. Further hits refresh the duration without stacking burn damage or delaying its next pulse. Flames remain attached to moving enemies, pause with gameplay, and can finish a target or boss for the normal score. This lingering burn is separate from incendiary grenades' existing ground-fire zones.
 
 - **Cloak:** breaks enemy pursuit and aimed targeting for eight seconds. Enemies can target a visible co-op partner. Existing shots, contact, hazards, and non-aimed boss patterns remain dangerous.
 - **Screen nuke:** detonates immediately on collection, destroys visible non-boss enemies, and clears visible enemy shots. Offscreen enemies and bosses survive. Disabled on Hard and Extra Hard.
@@ -102,7 +104,7 @@ Every stage starts at 1,000 seconds, with the countdown beside the score. Defeat
 
 ## Audio
 
-Each stage uses its own calmer CC0 music loop from `Soundtrack/cc0/`. See `music-credits.html` to listen and view the authors, source pages, and public-domain license. The previous original songs are retained on disk but no longer selected by the game. The eight replacements are normalized to approximately -20 LUFS, with loop seams prepared offline and a quiet background mix.
+The original user-provided soundtrack is restored from `Soundtrack/`: Jungle, Bunker, Foundry, Reactor, Snow, Foundry, Cave, and Alien across stages 1–8. These are the seven original files with their original assignments, looped through one decoded Web Audio source at a time. `music-credits.html` previews the active originals. Downloaded replacement songs are not selected. The quieter effects mix remains in place.
 
 The recordings in `Sound Effects/` cover rifle, machine gun, spread, laser, flame, grenade launcher, rocket launcher, wave cannon, Tesla, cryo, and plasma firing; grenade and rocket detonations; barrier and cloak activation; nuke detonation; and boss destruction. The rifle uses a short CC0 gunshot by n4, edited to one crisp pop per fired round; holding fire creates the burst rhythm. See `Sound Effects/rifle-credits.json` for its source and processing. The machine gun recording is about 11.5 dB quieter than the previous mix. Other actions retain distinct synthesized cues. Leading silence is trimmed during decoding so weapon sounds start with the shot. Each recording has its own mix level: lasers and rockets are substantially quieter, along with the loud flame, Tesla and boss effects. Recorded weapon and detonation tails are limited to two per cue, with 16 total effect voices. Approved dialogue keeps its existing gain. Music decodes only the selected level into a looping Web Audio buffer, avoiding media-element gaps between repeats; it does not download the entire soundtrack at startup.
 
