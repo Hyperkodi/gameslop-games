@@ -71,9 +71,10 @@
     engine.state.grenades=[];engine.state.grenadeZones=[];engine.state.companions=[];engine.state.recruits=[];
     updateUI();$('start').focus({preventScroll:true});
   }
-  function togglePause() { audio.unlock(); if (engine.state.status==='playing'||engine.state.status==='paused') { clearInput();engine.pause();updateUI(); } }
+  function togglePause() { audio.unlock(); if (['playing','paused','boss-defeat'].includes(engine.state.status)) { clearInput();engine.pause();updateUI(); } }
   function toggleMute() { audio.toggle();$('sound').textContent=audio.muted?'SOUND OFF':'SOUND ON';$('sound').setAttribute('aria-pressed',String(audio.muted)); }
   function overlayAction() {
+    if(engine.state.status==='boss-defeat')return;
     const s=engine.state;audio.unlock();clearInput();
     if(s.status==='paused')engine.pause();
     else if(s.status==='clear')engine.advance();
@@ -112,12 +113,12 @@
     if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
     else{p2Power.textContent='';$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
     if(s.players.length===2){const q=s.players[1];p2Power.textContent+=' · '+G.grenadeTypes[q.grenadeType||'frag'].name+' '+(q.grenadeCooldown>0?Math.ceil(q.grenadeCooldown)+'s':'READY')+' · Y / T';}
-    $('pause').disabled=title||!['playing','paused'].includes(s.status);
+    $('pause').disabled=title||!['playing','paused','boss-defeat'].includes(s.status);
     const pauseLabel=s.status==='paused'?'▶ <span>RESUME</span>':'Ⅱ <span>PAUSE</span>';
     if($('pause').innerHTML!==pauseLabel)$('pause').innerHTML=pauseLabel;
     $('pause').setAttribute('aria-label',s.status==='paused'?'Resume game':'Pause game');
     const progress=s.level.mode==='base'?'CHAMBER '+(s.room+1)+'/3':s.level.mode==='climb'?'CLIMB TO THE SUMMIT':s.level.tag;
-    $('status-line').textContent=title?'READY WHEN YOU ARE.':active?(s.boss?'BOSS CONTACT · '+(window.SlopCommandoSkin.cast.bosses[s.boss.variant||0]?.name||s.boss.name).toUpperCase():progress):s.status.toUpperCase();
+    $('status-line').textContent=title?'READY WHEN YOU ARE.':s.status==='boss-defeat'?'BOSS DESTROYED':active?(s.boss?'BOSS CONTACT · '+(window.SlopCommandoSkin.cast.bosses[s.boss.variant||0]?.name||s.boss.name).toUpperCase():progress):s.status.toUpperCase();
     if(lastStatus!==s.status){
       if(isOverlay){
         const data={paused:['TAKE A BREATHER','PAUSED','The mission can wait.\nYour progress is right here.','BACK TO THE ACTION →'],clear:['SECTOR SECURED',s.stage===7?'SOURCE DESTROYED':'STAGE CLEAR',s.level.name+' complete.\nTIME BONUS +'+(s.timeBonus??0).toLocaleString()+' points\n'+s.score.toLocaleString()+' points · '+s.kills+' targets down',s.stage===7?'FINISH THE MISSION →':'NEXT MISSION →'],gameover:['YOU MADE A MESS','GAME OVER',s.score.toLocaleString()+' points · Stage '+(s.stage+1)+' / 8\n'+s.continues+' continues remaining',s.continues?'CONTINUE MISSION →':'TRY AGAIN →'],victory:['OPERATION COMPLETE','SLOP TRIUMPHS','All eight sectors liberated.\n'+s.score.toLocaleString()+' points · '+Math.floor(s.elapsed/60)+'m '+Math.floor(s.elapsed%60)+'s\n'+s.difficulty.toUpperCase()+' · '+s.creditsUsed+' continues used','RUN IT BACK →']}[s.status];
@@ -146,7 +147,7 @@
   function frame(now) {
     const elapsed=Math.min(.1,(now-last)/1000||0);last=now;
     if(!showingDossier)gamepads();syncInputs();
-    if(engine.state.status==='playing') {
+    if(!document.hidden&&['playing','boss-defeat'].includes(engine.state.status)) {
       accumulator+=elapsed;while(accumulator>=G.STEP){engine.tick();accumulator-=G.STEP;}
     } else accumulator=0;
     updateUI();renderer.draw(engine.state,{time:now/1000,attract:engine.state.status==='ready'});requestAnimationFrame(frame);
@@ -166,7 +167,7 @@
     if(e.code==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();if(engine.state.status==='ready')start();else if(engine.state.status!=='playing')overlayAction();}
   });
   document.addEventListener('keyup',e=>{const mapped=keymap[e.code];if(mapped){e.preventDefault();sources.keyboard.delete(e.code);syncInputs();}});
-  function backgroundPause(){audio.interrupt();clearInput();if(engine.state.status==='playing'){engine.pause();updateUI();}}
+  function backgroundPause(){audio.interrupt();clearInput();if(['playing','boss-defeat'].includes(engine.state.status)){engine.pause();updateUI();}}
   window.addEventListener('blur',backgroundPause);document.addEventListener('visibilitychange',()=>{if(document.hidden)backgroundPause();});
   // Rotation/fullscreen can move controls away from the fingers holding them.
   window.addEventListener('resize',clearInput);

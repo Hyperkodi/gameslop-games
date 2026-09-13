@@ -36,7 +36,7 @@ test('pause freezes burns; lingering fire kills and scores only once',()=>{
 
 test('a boss can die from a burn, awards its clear once, and clears old ordnance',()=>{
   const e=game(),s=e.state,b={...foe(1,600,310,2.07),kind:'boss',originX:600,originY:310,attack:0};
-  s.boss=b;light(e,b);ticks(e,15);assert.equal(s.status,'clear');assert.equal(s.kills,1);
+  s.boss=b;light(e,b);ticks(e,15);assert.equal(s.status,'boss-defeat');ticks(e,394);assert.equal(s.status,'clear');assert.equal(s.kills,1);
   assert.equal(s.events.filter(x=>x.type==='clear').length,1);assert.equal(s.grenades.length,0);
   const score=s.score;ticks(e,60);assert.equal(s.score,score);
 });

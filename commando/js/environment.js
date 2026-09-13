@@ -25,14 +25,25 @@
       if(G.levels?.[stage]?.mode==='base')return Promise.resolve(true);
       if(!config.stages[stage])return Promise.resolve(false);
       if(atlases.has(stage))return atlases.get(stage).ready;
-      const entry={image:new Image(),loaded:false};
-      entry.ready=new Promise(resolve=>{
-        entry.image.onload=()=>{entry.loaded=true;resolve(true);};
-        entry.image.onerror=()=>resolve(false);
-      });
+      const entry={image:null,loaded:false,panorama:null,images:[]};
       atlases.set(stage,entry);
-      const source=config.stages[stage];
-      entry.image.src='skin/'+skin.name+'/'+(source.atlas||source);
+      const originalOnly=config.preferOriginal||/(?:\?|&)scenery=original(?:&|$)/.test(root.location?.search||'');
+      const panorama=originalOnly?null:config.panoramas?.[stage];
+      function imageFile(file) {
+        return new Promise(resolve=>{
+          const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>resolve(null);
+          image.src='skin/'+skin.name+'/'+file;
+        });
+      }
+      entry.ready=(async()=>{
+        if(panorama){
+          const images=await Promise.all(panorama.tiles.map(tile=>imageFile(tile.file)));
+          // Use one complete rendition: a failed tile must not leave a hole or mix crops.
+          if(images.every(Boolean)){entry.panorama=panorama;entry.images=images;entry.loaded=true;return true;}
+        }
+        const source=config.stages[stage];entry.image=await imageFile(source.atlas||source);
+        entry.loaded=!!entry.image;return entry.loaded;
+      })();
       return entry.ready;
     }
     const ready=loadStage(0);
@@ -79,12 +90,15 @@
       }
       if(!atlases.get(currentStage)?.loaded)return false;
       const level=state.level;
+      const entry=atlases.get(currentStage);
       const count=config.stages[currentStage].frames?.length||config.sections;
-      const layout=sceneryLayout(state,0,count);lastLayout=layout;
+      const layout=entry.panorama?panoramaLayout(state,entry.panorama):sceneryLayout(state,0,count);lastLayout=layout;
       c.save();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
       c.fillStyle=themes[level.theme].sky;c.fillRect(0,0,960,540);
       // Cache only intersecting sections: up to three sideways or five vertically.
-      for(const section of layout.visible)c.drawImage(frame(section.index,layout),section.x,section.y);
+      // These tiles were sliced from one master. Their overlap contains identical
+      // pixels, so draw at authored world coordinates without cropping or fading.
+      for(const section of layout.visible)c.drawImage(entry.panorama?entry.images[section.index]:frame(section.index,layout),section.x,section.y);
       for(const key of frames.keys())if(!layout.visible.some(s=>s.index===key))frames.delete(key);
       // A restrained wash behind the action separates bright sprites from scenery.
       const shade=c.createLinearGradient(0,0,0,540);
@@ -320,6 +334,13 @@
     }
     return {draw,platform,ready,loadStage,get loaded(){return G.levels?.[currentStage]?.mode==='base'||!!atlases.get(currentStage)?.loaded;},get layout(){return lastLayout;},get cacheSize(){return frames.size;}};
   }
+  function panoramaLayout(state,panorama) {
+    const x=clamp(state.camera.x,0,Math.max(0,panorama.width-960));
+    const y=clamp(state.camera.y,0,Math.max(0,panorama.height-540));
+    const visible=panorama.tiles.map((tile,index)=>({index,x:tile.x-x,y:tile.y-y,w:tile.w,h:tile.h}))
+      .filter(t=>t.x<960&&t.x+t.w>0&&t.y<540&&t.y+t.h>0);
+    return {vertical:panorama.vertical,position:panorama.vertical?y:x,travel:panorama.vertical?panorama.height-540:panorama.width-960,visible};
+  }
   G.createEnvironmentRenderer=createEnvironmentRenderer;
-  if(typeof module!=='undefined')module.exports={sceneryLayout};
+  if(typeof module!=='undefined')module.exports={sceneryLayout,panoramaLayout};
 })(typeof window!=='undefined'?window:globalThis);

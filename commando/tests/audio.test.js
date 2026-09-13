@@ -4,14 +4,15 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const {createEngine, weapons} = require('../js/engine.js');
-const {audioTracks, audioSamples, audioCueFor, createAudio} = require('../js/audio.js');
+const {audioTracks, victoryTrack, audioSamples, audioCueFor, createAudio} = require('../js/audio.js');
 function game() {
   const e = createEngine({seed:42}); e.start({difficulty:'easy',players:2});
   e.state.level.spawns = []; e.state.level.supplies = []; e.state.waveTime = -999;
   e.state.enemies = []; e.drainEvents(); return e;
 }
 test('every mapped soundtrack and effect recording exists', () => {
-  assert.equal(audioTracks.length, 8); assert.equal(new Set(audioTracks).size, 7);
+  assert.equal(audioTracks.length, 8); assert.equal(new Set(audioTracks).size, 8);
+  assert.ok(fs.statSync(path.join(__dirname,'../Soundtrack',victoryTrack)).size > 0);
   for (const file of audioTracks.filter(Boolean)) assert.ok(fs.statSync(path.join(__dirname,'../Soundtrack',file)).size > 0);
   for (const file of Object.values(audioSamples)) assert.ok(fs.statSync(path.join(__dirname,'../Sound Effects',file)).size > 0);
 });

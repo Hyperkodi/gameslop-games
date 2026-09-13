@@ -300,7 +300,324 @@ window.SlopCommandoSkin = {
       },
       "environment-cave-v2.png",
       "environment-alien-v2.png"
-    ]
+    ],
+    "panoramas": {
+      "0": {
+        "width": 6600,
+        "height": 540,
+        "vertical": false,
+        "tiles": [
+          {
+            "file": "panoramas-v1/jungle-0.png",
+            "x": 0,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/jungle-1.png",
+            "x": 972,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/jungle-2.png",
+            "x": 1944,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/jungle-3.png",
+            "x": 2916,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/jungle-4.png",
+            "x": 3888,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/jungle-5.png",
+            "x": 4860,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/jungle-6.png",
+            "x": 5832,
+            "y": 0,
+            "w": 768,
+            "h": 540
+          }
+        ]
+      },
+      "2": {
+        "width": 960,
+        "height": 2860,
+        "vertical": true,
+        "tiles": [
+          {
+            "file": "panoramas-v1/spillway-0.png",
+            "x": 0,
+            "y": 0,
+            "w": 960,
+            "h": 864
+          },
+          {
+            "file": "panoramas-v1/spillway-1.png",
+            "x": 0,
+            "y": 768,
+            "w": 960,
+            "h": 864
+          },
+          {
+            "file": "panoramas-v1/spillway-2.png",
+            "x": 0,
+            "y": 1536,
+            "w": 960,
+            "h": 864
+          },
+          {
+            "file": "panoramas-v1/spillway-3.png",
+            "x": 0,
+            "y": 2304,
+            "w": 960,
+            "h": 556
+          }
+        ]
+      },
+      "4": {
+        "width": 6600,
+        "height": 540,
+        "vertical": false,
+        "tiles": [
+          {
+            "file": "panoramas-v1/snow-0.png",
+            "x": 0,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/snow-1.png",
+            "x": 972,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/snow-2.png",
+            "x": 1944,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/snow-3.png",
+            "x": 2916,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/snow-4.png",
+            "x": 3888,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/snow-5.png",
+            "x": 4860,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/snow-6.png",
+            "x": 5832,
+            "y": 0,
+            "w": 768,
+            "h": 540
+          }
+        ]
+      },
+      "5": {
+        "width": 6600,
+        "height": 540,
+        "vertical": false,
+        "tiles": [
+          {
+            "file": "panoramas-v1/foundry-0.png",
+            "x": 0,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/foundry-1.png",
+            "x": 972,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/foundry-2.png",
+            "x": 1944,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/foundry-3.png",
+            "x": 2916,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/foundry-4.png",
+            "x": 3888,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/foundry-5.png",
+            "x": 4860,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/foundry-6.png",
+            "x": 5832,
+            "y": 0,
+            "w": 768,
+            "h": 540
+          }
+        ]
+      },
+      "6": {
+        "width": 6600,
+        "height": 540,
+        "vertical": false,
+        "tiles": [
+          {
+            "file": "panoramas-v1/cave-0.png",
+            "x": 0,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/cave-1.png",
+            "x": 972,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/cave-2.png",
+            "x": 1944,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/cave-3.png",
+            "x": 2916,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/cave-4.png",
+            "x": 3888,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/cave-5.png",
+            "x": 4860,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/cave-6.png",
+            "x": 5832,
+            "y": 0,
+            "w": 768,
+            "h": 540
+          }
+        ]
+      },
+      "7": {
+        "width": 6600,
+        "height": 540,
+        "vertical": false,
+        "tiles": [
+          {
+            "file": "panoramas-v1/alien-0.png",
+            "x": 0,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/alien-1.png",
+            "x": 972,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/alien-2.png",
+            "x": 1944,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/alien-3.png",
+            "x": 2916,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/alien-4.png",
+            "x": 3888,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/alien-5.png",
+            "x": 4860,
+            "y": 0,
+            "w": 1080,
+            "h": 540
+          },
+          {
+            "file": "panoramas-v1/alien-6.png",
+            "x": 5832,
+            "y": 0,
+            "w": 768,
+            "h": 540
+          }
+        ]
+      }
+    }
   },
   "mascot": {
     "body": "#d3e0dc",
@@ -513,7 +830,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               223
             ],
             "content": [
@@ -531,7 +848,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               222
             ],
             "content": [
@@ -549,7 +866,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               222
             ],
             "content": [
@@ -567,7 +884,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              138.0,
+              138,
               225
             ],
             "content": [
@@ -585,7 +902,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               230
             ],
             "content": [
@@ -604,7 +921,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               229
             ],
             "content": [
@@ -623,7 +940,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              114.0,
+              114,
               229
             ],
             "content": [
@@ -642,7 +959,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              149.0,
+              149,
               233
             ],
             "content": [
@@ -671,7 +988,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               218
             ],
             "content": [
@@ -689,7 +1006,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               219
             ],
             "content": [
@@ -707,7 +1024,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               220
             ],
             "content": [
@@ -725,7 +1042,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               219
             ],
             "content": [
@@ -743,7 +1060,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              128.0,
+              128,
               220
             ],
             "content": [
@@ -762,7 +1079,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              128.0,
+              128,
               221
             ],
             "content": [
@@ -781,7 +1098,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              128.0,
+              128,
               221
             ],
             "content": [
@@ -800,7 +1117,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              143.0,
+              143,
               219
             ],
             "content": [
@@ -829,7 +1146,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               214
             ],
             "content": [
@@ -847,7 +1164,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               211
             ],
             "content": [
@@ -865,7 +1182,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               207
             ],
             "content": [
@@ -883,7 +1200,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              138.0,
+              138,
               203
             ],
             "content": [
@@ -901,7 +1218,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              128.0,
+              128,
               202
             ],
             "content": [
@@ -920,7 +1237,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              128.0,
+              128,
               211
             ],
             "content": [
@@ -939,7 +1256,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              128.0,
+              128,
               215
             ],
             "content": [
@@ -958,7 +1275,7 @@ window.SlopCommandoSkin = {
               244
             ],
             "anchor": [
-              128.0,
+              128,
               204
             ],
             "content": [
@@ -987,7 +1304,7 @@ window.SlopCommandoSkin = {
               181
             ],
             "anchor": [
-              128.0,
+              128,
               160
             ],
             "content": [
@@ -1005,7 +1322,7 @@ window.SlopCommandoSkin = {
               181
             ],
             "anchor": [
-              128.0,
+              128,
               158
             ],
             "content": [
@@ -1023,7 +1340,7 @@ window.SlopCommandoSkin = {
               181
             ],
             "anchor": [
-              128.0,
+              128,
               161
             ],
             "content": [
@@ -1041,7 +1358,7 @@ window.SlopCommandoSkin = {
               181
             ],
             "anchor": [
-              170.0,
+              170,
               162
             ],
             "content": [
@@ -1059,7 +1376,7 @@ window.SlopCommandoSkin = {
               178
             ],
             "anchor": [
-              128.0,
+              128,
               163
             ],
             "content": [
@@ -1078,7 +1395,7 @@ window.SlopCommandoSkin = {
               178
             ],
             "anchor": [
-              128.0,
+              128,
               165
             ],
             "content": [
@@ -1097,7 +1414,7 @@ window.SlopCommandoSkin = {
               178
             ],
             "anchor": [
-              128.0,
+              128,
               165
             ],
             "content": [
@@ -1116,7 +1433,7 @@ window.SlopCommandoSkin = {
               178
             ],
             "anchor": [
-              151.0,
+              151,
               165
             ],
             "content": [
@@ -1145,7 +1462,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               223
             ],
             "content": [
@@ -1163,7 +1480,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               222
             ],
             "content": [
@@ -1181,7 +1498,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               222
             ],
             "content": [
@@ -1199,7 +1516,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              138.0,
+              138,
               225
             ],
             "content": [
@@ -1217,7 +1534,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               230
             ],
             "content": [
@@ -1236,7 +1553,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              128.0,
+              128,
               229
             ],
             "content": [
@@ -1255,7 +1572,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              114.0,
+              114,
               229
             ],
             "content": [
@@ -1274,7 +1591,7 @@ window.SlopCommandoSkin = {
               245
             ],
             "anchor": [
-              149.0,
+              149,
               233
             ],
             "content": [
@@ -1303,7 +1620,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              128.0,
+              128,
               269
             ],
             "content": [
@@ -1321,7 +1638,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              128.0,
+              128,
               265
             ],
             "content": [
@@ -1339,7 +1656,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              128.0,
+              128,
               270
             ],
             "content": [
@@ -1357,7 +1674,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              157.0,
+              157,
               267
             ],
             "content": [
@@ -1375,7 +1692,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              128.0,
+              128,
               273
             ],
             "content": [
@@ -1394,7 +1711,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              128.0,
+              128,
               267
             ],
             "content": [
@@ -1413,7 +1730,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              128.0,
+              128,
               268
             ],
             "content": [
@@ -1432,7 +1749,7 @@ window.SlopCommandoSkin = {
               361
             ],
             "anchor": [
-              128.0,
+              128,
               250
             ],
             "content": [
@@ -1461,7 +1778,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               231
             ],
             "content": [
@@ -1479,7 +1796,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               228
             ],
             "content": [
@@ -1497,7 +1814,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               229
             ],
             "content": [
@@ -1515,7 +1832,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               229
             ],
             "content": [
@@ -1533,7 +1850,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               232
             ],
             "content": [
@@ -1552,7 +1869,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               233
             ],
             "content": [
@@ -1571,7 +1888,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               234
             ],
             "content": [
@@ -1590,7 +1907,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              131.0,
+              131,
               226
             ],
             "content": [
@@ -1619,7 +1936,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               227
             ],
             "content": [
@@ -1637,7 +1954,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               224
             ],
             "content": [
@@ -1655,7 +1972,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               226
             ],
             "content": [
@@ -1673,7 +1990,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               224
             ],
             "content": [
@@ -1691,7 +2008,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               210
             ],
             "content": [
@@ -1710,7 +2027,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               213
             ],
             "content": [
@@ -1729,7 +2046,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               215
             ],
             "content": [
@@ -1748,7 +2065,7 @@ window.SlopCommandoSkin = {
               242
             ],
             "anchor": [
-              128.0,
+              128,
               204
             ],
             "content": [
@@ -1777,7 +2094,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               237
             ],
             "content": [
@@ -1795,7 +2112,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               237
             ],
             "content": [
@@ -1813,7 +2130,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               237
             ],
             "content": [
@@ -1831,7 +2148,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               238
             ],
             "content": [
@@ -1849,7 +2166,7 @@ window.SlopCommandoSkin = {
               270
             ],
             "anchor": [
-              128.0,
+              128,
               223
             ],
             "content": [
@@ -1868,7 +2185,7 @@ window.SlopCommandoSkin = {
               270
             ],
             "anchor": [
-              128.0,
+              128,
               225
             ],
             "content": [
@@ -1887,7 +2204,7 @@ window.SlopCommandoSkin = {
               270
             ],
             "anchor": [
-              128.0,
+              128,
               224
             ],
             "content": [
@@ -1906,7 +2223,7 @@ window.SlopCommandoSkin = {
               270
             ],
             "anchor": [
-              128.0,
+              128,
               222
             ],
             "content": [
@@ -1935,7 +2252,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               231
             ],
             "content": [
@@ -1953,7 +2270,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               232
             ],
             "content": [
@@ -1971,7 +2288,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               239
             ],
             "content": [
@@ -1989,7 +2306,7 @@ window.SlopCommandoSkin = {
               256
             ],
             "anchor": [
-              128.0,
+              128,
               230
             ],
             "content": [
@@ -2007,7 +2324,7 @@ window.SlopCommandoSkin = {
               216
             ],
             "anchor": [
-              128.0,
+              128,
               189
             ],
             "content": [
@@ -2026,7 +2343,7 @@ window.SlopCommandoSkin = {
               216
             ],
             "anchor": [
-              128.0,
+              128,
               160
             ],
             "content": [
@@ -2045,7 +2362,7 @@ window.SlopCommandoSkin = {
               216
             ],
             "anchor": [
-              128.0,
+              128,
               189
             ],
             "content": [
@@ -2064,7 +2381,7 @@ window.SlopCommandoSkin = {
               216
             ],
             "anchor": [
-              129.0,
+              129,
               174
             ],
             "content": [
@@ -2093,7 +2410,7 @@ window.SlopCommandoSkin = {
               241
             ],
             "anchor": [
-              128.0,
+              128,
               215
             ],
             "content": [
@@ -2111,7 +2428,7 @@ window.SlopCommandoSkin = {
               241
             ],
             "anchor": [
-              128.0,
+              128,
               205
             ],
             "content": [
@@ -2129,7 +2446,7 @@ window.SlopCommandoSkin = {
               241
             ],
             "anchor": [
-              128.0,
+              128,
               207
             ],
             "content": [
@@ -2147,7 +2464,7 @@ window.SlopCommandoSkin = {
               241
             ],
             "anchor": [
-              128.0,
+              128,
               203
             ],
             "content": [
@@ -2165,7 +2482,7 @@ window.SlopCommandoSkin = {
               252
             ],
             "anchor": [
-              128.0,
+              128,
               204
             ],
             "content": [
@@ -2184,7 +2501,7 @@ window.SlopCommandoSkin = {
               252
             ],
             "anchor": [
-              128.0,
+              128,
               201
             ],
             "content": [
@@ -2203,7 +2520,7 @@ window.SlopCommandoSkin = {
               252
             ],
             "anchor": [
-              128.0,
+              128,
               204
             ],
             "content": [
@@ -2222,7 +2539,7 @@ window.SlopCommandoSkin = {
               252
             ],
             "anchor": [
-              128.0,
+              128,
               202
             ],
             "content": [
@@ -2251,7 +2568,7 @@ window.SlopCommandoSkin = {
               271
             ],
             "anchor": [
-              128.0,
+              128,
               228
             ],
             "content": [
@@ -2269,7 +2586,7 @@ window.SlopCommandoSkin = {
               271
             ],
             "anchor": [
-              128.0,
+              128,
               228
             ],
             "content": [
@@ -2287,7 +2604,7 @@ window.SlopCommandoSkin = {
               271
             ],
             "anchor": [
-              128.0,
+              128,
               228
             ],
             "content": [
@@ -2305,7 +2622,7 @@ window.SlopCommandoSkin = {
               271
             ],
             "anchor": [
-              128.0,
+              128,
               228
             ],
             "content": [
@@ -2323,7 +2640,7 @@ window.SlopCommandoSkin = {
               300
             ],
             "anchor": [
-              128.0,
+              128,
               226
             ],
             "content": [
@@ -2342,7 +2659,7 @@ window.SlopCommandoSkin = {
               300
             ],
             "anchor": [
-              128.0,
+              128,
               226
             ],
             "content": [
@@ -2361,7 +2678,7 @@ window.SlopCommandoSkin = {
               300
             ],
             "anchor": [
-              128.0,
+              128,
               226
             ],
             "content": [
@@ -2380,7 +2697,7 @@ window.SlopCommandoSkin = {
               300
             ],
             "anchor": [
-              128.0,
+              128,
               226
             ],
             "content": [
@@ -2483,7 +2800,7 @@ window.SlopCommandoSkin = {
               512
             ],
             "anchor": [
-              208.0,
+              208,
               452
             ],
             "content": [
@@ -2789,7 +3106,7 @@ window.SlopCommandoSkin = {
               512
             ],
             "anchor": [
-              181.0,
+              181,
               466
             ],
             "content": [
@@ -2891,7 +3208,7 @@ window.SlopCommandoSkin = {
               512
             ],
             "anchor": [
-              212.0,
+              212,
               413
             ],
             "content": [
@@ -2993,7 +3310,7 @@ window.SlopCommandoSkin = {
               512
             ],
             "anchor": [
-              176.0,
+              176,
               410
             ],
             "content": [
@@ -3095,7 +3412,7 @@ window.SlopCommandoSkin = {
               512
             ],
             "anchor": [
-              203.0,
+              203,
               409
             ],
             "content": [
@@ -3197,7 +3514,7 @@ window.SlopCommandoSkin = {
               512
             ],
             "anchor": [
-              186.0,
+              186,
               433
             ],
             "content": [
@@ -3229,7 +3546,7 @@ window.SlopCommandoSkin = {
           362
         ],
         "anchor": [
-          181.0,
+          181,
           350
         ],
         "content": [
@@ -3247,7 +3564,7 @@ window.SlopCommandoSkin = {
           362
         ],
         "anchor": [
-          181.0,
+          181,
           349
         ],
         "content": [
@@ -3265,7 +3582,7 @@ window.SlopCommandoSkin = {
           362
         ],
         "anchor": [
-          181.0,
+          181,
           350
         ],
         "content": [
@@ -3283,7 +3600,7 @@ window.SlopCommandoSkin = {
           362
         ],
         "anchor": [
-          181.0,
+          181,
           353
         ],
         "content": [
@@ -3301,7 +3618,7 @@ window.SlopCommandoSkin = {
           351
         ],
         "anchor": [
-          181.0,
+          181,
           344
         ],
         "content": [
@@ -3319,7 +3636,7 @@ window.SlopCommandoSkin = {
           351
         ],
         "anchor": [
-          181.0,
+          181,
           341
         ],
         "content": [
@@ -3337,7 +3654,7 @@ window.SlopCommandoSkin = {
           351
         ],
         "anchor": [
-          181.0,
+          181,
           344
         ],
         "content": [
@@ -3355,7 +3672,7 @@ window.SlopCommandoSkin = {
           351
         ],
         "anchor": [
-          181.0,
+          181,
           344
         ],
         "content": [
@@ -3373,7 +3690,7 @@ window.SlopCommandoSkin = {
           373
         ],
         "anchor": [
-          181.0,
+          181,
           347
         ],
         "content": [
@@ -3391,7 +3708,7 @@ window.SlopCommandoSkin = {
           373
         ],
         "anchor": [
-          181.0,
+          181,
           315
         ],
         "content": [
@@ -3409,7 +3726,7 @@ window.SlopCommandoSkin = {
           373
         ],
         "anchor": [
-          181.0,
+          181,
           346
         ],
         "content": [
@@ -3427,7 +3744,7 @@ window.SlopCommandoSkin = {
           373
         ],
         "anchor": [
-          181.0,
+          181,
           346
         ],
         "content": [
@@ -3462,7 +3779,7 @@ window.SlopCommandoSkin = {
             362
           ],
           "anchor": [
-            181.0,
+            181,
             350
           ],
           "content": [
@@ -3480,7 +3797,7 @@ window.SlopCommandoSkin = {
             362
           ],
           "anchor": [
-            181.0,
+            181,
             349
           ],
           "content": [
@@ -3498,7 +3815,7 @@ window.SlopCommandoSkin = {
             362
           ],
           "anchor": [
-            181.0,
+            181,
             350
           ],
           "content": [
@@ -3516,7 +3833,7 @@ window.SlopCommandoSkin = {
             362
           ],
           "anchor": [
-            181.0,
+            181,
             353
           ],
           "content": [
@@ -3534,7 +3851,7 @@ window.SlopCommandoSkin = {
             351
           ],
           "anchor": [
-            181.0,
+            181,
             344
           ],
           "content": [
@@ -3552,7 +3869,7 @@ window.SlopCommandoSkin = {
             351
           ],
           "anchor": [
-            181.0,
+            181,
             341
           ],
           "content": [
@@ -3570,7 +3887,7 @@ window.SlopCommandoSkin = {
             351
           ],
           "anchor": [
-            181.0,
+            181,
             344
           ],
           "content": [
@@ -3588,7 +3905,7 @@ window.SlopCommandoSkin = {
             351
           ],
           "anchor": [
-            181.0,
+            181,
             344
           ],
           "content": [
@@ -3606,7 +3923,7 @@ window.SlopCommandoSkin = {
             373
           ],
           "anchor": [
-            181.0,
+            181,
             347
           ],
           "content": [
@@ -3624,7 +3941,7 @@ window.SlopCommandoSkin = {
             373
           ],
           "anchor": [
-            181.0,
+            181,
             315
           ],
           "content": [
@@ -3642,7 +3959,7 @@ window.SlopCommandoSkin = {
             373
           ],
           "anchor": [
-            181.0,
+            181,
             346
           ],
           "content": [
@@ -3660,7 +3977,7 @@ window.SlopCommandoSkin = {
             373
           ],
           "anchor": [
-            181.0,
+            181,
             346
           ],
           "content": [
@@ -3738,7 +4055,7 @@ window.SlopCommandoSkin = {
             314
           ],
           "anchor": [
-            141.0,
+            141,
             308
           ],
           "content": [
@@ -3804,7 +4121,7 @@ window.SlopCommandoSkin = {
             313
           ],
           "anchor": [
-            161.0,
+            161,
             303
           ],
           "content": [
@@ -3954,7 +4271,7 @@ window.SlopCommandoSkin = {
             313
           ],
           "anchor": [
-            177.0,
+            177,
             302
           ],
           "content": [
@@ -3976,7 +4293,7 @@ window.SlopCommandoSkin = {
             314
           ],
           "anchor": [
-            162.0,
+            162,
             293
           ],
           "content": [
@@ -3998,7 +4315,7 @@ window.SlopCommandoSkin = {
             314
           ],
           "anchor": [
-            171.0,
+            171,
             293
           ],
           "content": [
@@ -4020,7 +4337,7 @@ window.SlopCommandoSkin = {
             314
           ],
           "anchor": [
-            182.0,
+            182,
             291
           ],
           "content": [

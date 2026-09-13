@@ -43,6 +43,9 @@ test('all eight actual boss deaths play their corresponding approved line exactl
     // Later bosses move before collision; freeze their animation at the hit location.
     if(stage>=6){e.state.boss.originY=300;}
     e.drainEvents();h.audio.update(e.state);e.tick();
+    assert.equal(e.state.status,'boss-defeat');h.audio.update(e.state,e.drainEvents());
+    assert.equal(h.timers.length,0,'no victory line during the explosion');
+    for(let tick=0;tick<394;tick++)e.tick();
     assert.equal(e.state.status,'clear');
     const events=e.drainEvents();assert.ok(events.some(ev=>ev.type==='clear'));
     h.audio.update(e.state,events);const before=h.started.length;
@@ -69,12 +72,15 @@ test('advancing, returning to title, muting and background interruption cancel d
 test('mute stops an active line and unmute does not replay it',async()=>{
   const h=harness();await h.audio.unlock();h.audio.update({stage:0,status:'clear'});await h.flush();
   const spoken=h.started.at(-1);assert.ok(spoken);h.audio.toggle();assert.equal(spoken.stopped,true);
-  const count=h.started.length;h.audio.toggle();h.audio.update({stage:0,status:'clear'});await h.flush();assert.equal(h.started.length,count);
+  h.audio.toggle();h.audio.update({stage:0,status:'clear'});await h.flush();
+  assert.equal(h.started.filter(source=>source.buffer===spoken.buffer).length,1);
+  assert.equal(h.audio.inspect().musicPlaying,true,'victory music resumes without repeating speech');
 });
 
 test('missing dialogue downloads never synthesize speech or break stage clear',async()=>{
   const h=harness(true);await h.audio.unlock();h.audio.update({stage:7,status:'clear'},[{type:'clear'}]);
-  await h.flush();assert.equal(h.audio.inspect().lastDialogue,null);assert.equal(h.started.length,0);
+  await h.flush();assert.equal(h.audio.inspect().lastDialogue,null);assert.equal(h.started.length,1);
+  assert.equal(h.audio.inspect().track,'Level Victory.mp3');
 });
 
 test('late downloads cannot play after a stage change',async()=>{

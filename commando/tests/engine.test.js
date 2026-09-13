@@ -47,7 +47,8 @@ test('all eight bosses and all six bunker rooms lead to the victory ending',()=>
     }else if(s.level.mode==='climb'){p.y=280;ticks(e,1);}
     else {p.x=s.level.width-770;ticks(e,1);}
     assert.ok(s.boss,'boss should appear in '+s.level.name);s.bullets.push(shot(s.boss.x+30,s.boss.y+30));ticks(e,1);
-    assert.equal(s.status,'clear','boss should end '+s.level.name);e.advance();
+    assert.equal(s.status,'boss-defeat','boss should explode in '+s.level.name);ticks(e,394);
+    assert.equal(s.status,'clear');e.advance();
   }
   assert.equal(rooms,6);assert.equal(e.state.status,'victory');assert.ok(e.state.score>=40000);
 });

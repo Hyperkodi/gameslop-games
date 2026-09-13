@@ -137,7 +137,7 @@
         previous.clear();seen=new WeakSet();ghosts=[];
       }
       const current=new Set([...state.enemies,...(state.boss?[state.boss]:[])]);
-      // The engine retains a defeated boss after clear, but removes normal foes.
+      // Track defeated actors even when the engine removes them from the scene.
       for(const e of new Set([...previous,...current]))if(e.hp<=0&&!seen.has(e)){
         seen.add(e);ghosts.push({source:e,actor:{...e,flash:0},start:time,duration:e.kind==='boss'?.95:.6});
       }
@@ -198,6 +198,7 @@
       tick=state.tick;
       for(const ghost of defeats(state,time)){
         const t=(time-ghost.start)/ghost.duration,e=ghost.actor;
+        if(e.kind==='boss'&&(state.bossDefeat||state.suppressBossDefeat))continue;
         ctx.save();ctx.globalAlpha=Math.min(1,(1-t)*2);
         ctx.translate(0,t*t*(e.kind==='boss'?12:5));
         const facing=history.get(ghost.source)?.facing||-1;

@@ -37,6 +37,37 @@
   const weaponDropTypes = ['P', 'S', 'M', 'L', 'F', 'G', 'H', 'W', 'T', 'I', 'A', 'B', 'R', 'C', 'N'];
   const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
   const hit = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+  function safeRespawnPoint(level, camera, checkpoint, player) {
+    if (level.mode === 'base') return {x:390 + player.id * 80,y:420,grounded:false};
+    const targetX = level.mode === 'run' ? Math.max(checkpoint.x, camera.x + 80) + player.id * 35 : checkpoint.x + player.id * 35;
+    const candidates = [];
+    for (const floor of level.platforms) {
+      if (level.mode === 'run' && !floor.ground) continue;
+      if (floor.w < player.w || floor.y < player.h || floor.y > level.height) continue;
+      const margin = Math.min(24, (floor.w - player.w) / 2);
+      let spans = [[Math.max(0, floor.x + margin), Math.min(level.width - player.w, floor.x + floor.w - player.w - margin)]];
+      // Avoid timed vents even during their inactive half-cycle.
+      for (const hazard of level.hazards) {
+        if (hazard.y >= floor.y || hazard.y + hazard.h <= floor.y - player.h) continue;
+        const low = hazard.x - player.w - 24, high = hazard.x + hazard.w + 24;
+        spans = spans.flatMap(([a,b]) => high <= a || low >= b ? [[a,b]] : [[a,Math.min(b,low)],[Math.max(a,high),b]].filter(([x,z])=>x<=z));
+      }
+      for (let [a,b] of spans) {
+        if (a > b) continue;
+        if (level.mode === 'run') {
+          // Prefer visible footing; never restore a stale point behind the clamp.
+          const visibleA = Math.max(a,camera.x + 16), visibleB = Math.min(b,camera.x + W - player.w - 16);
+          if (visibleA <= visibleB) { a=visibleA;b=visibleB; }
+        }
+        const x=clamp(targetX,a,b), y=floor.y-player.h;
+        const offscreen=level.mode==='run'&&(x<camera.x||x+player.w>camera.x+W);
+        const score=Math.abs(x-targetX)+(level.mode==='climb'?Math.abs(y-checkpoint.y)*4:0)+(offscreen?level.width*2:0);
+        candidates.push({x,y,grounded:true,onGround:!!floor.ground,score});
+      }
+    }
+    candidates.sort((a,b)=>a.score-b.score);
+    return candidates[0] || null;
+  }
   // Sweep a projectile box through a target: fast shots cannot skip a thin ledge.
   function sweepBox(b,from,target){
     let enter=0,leave=1;
@@ -125,6 +156,7 @@
       populateRoute();
       state.routeBaseSpawns=state.level.spawns.map(e=>({...e}));state.reinforcementsAdded=0;state.squadWaveCredit=0;
       state.enemies = []; state.bullets = []; state.pickups = []; state.effects = []; state.boss = null;
+      state.bossDefeat=null;state.pausedFrom=null;
       grenades.reset();
       state.camera = { x: 0, y: state.level.mode === 'climb' ? state.level.height - H : 0 };
       state.checkpoint = { x: 110, y: state.level.mode === 'climb' ? state.level.height - 94 : 410 };
@@ -194,7 +226,10 @@
       if (action === 'grenadeNext' && down) p.grenadeNextQueued = true;
     }
     function release() { state.players.forEach(resetMovementInput); }
-    function pause() { if (state.status === 'playing') { state.status = 'paused'; release(); } else if (state.status === 'paused') state.status = 'playing'; }
+    function pause() {
+      if (state.status === 'playing'||state.status==='boss-defeat') { state.pausedFrom=state.status;state.status = 'paused'; release(); }
+      else if (state.status === 'paused') {state.status=state.pausedFrom||'playing';state.pausedFrom=null;}
+    }
     function advance() {
       if (state.status !== 'clear') return;
       if (state.stage === levels.length - 1) { state.status = 'victory'; event('victory'); }
@@ -221,7 +256,8 @@
           state.timeBonus = Math.floor(state.timeRemaining);
           addScore(state.timeBonus);
         }
-        state.status = 'clear'; state.bullets = []; grenades.reset(); release(); event('clear', { timeBonus: state.timeBonus });
+        state.bossDefeat={x:e.x+e.w/2,y:e.y+e.h/2,w:e.w,h:e.h,elapsed:0,duration:6.56};
+        state.status = 'boss-defeat'; release();
       }
       else if (e.kind !== 'core' && !state.detonating && rng() < rules().dropChance) {
         const types=weaponDropTypes.filter(t=>rules().nukes||t!=='N');
@@ -229,6 +265,7 @@
       }
     }
     function damageEnemy(e, damage, impact) {
+      if(state.status!=='playing')return false;
       if (e.hp <= 0) return false;
       e.hp -= damage; e.flash = .07;
       burst(impact.x, impact.y, '#ffcf73', 3);
@@ -296,9 +333,13 @@
       p.lives--; burst(p.x + 15, p.y + 20, '#ff433c', 22); event('death');
       resetEquipment(p); resetMovementInput(p); p.jumpTime = 0;
       if (p.lives > 0) {
-        const c = state.checkpoint;
-        p.x = c.x + p.id * 35; p.y = c.y; p.vy = 0; p.invincible = 3; p.grounded = false;
-        if (state.level.mode === 'base') { p.x = 390 + p.id * 80; p.y = 420; }
+        const c = safeRespawnPoint(state.level,state.camera,state.checkpoint,p);
+        if (!c) throw new Error('Level has no safe respawn surface: '+state.level.name);
+        Object.assign(p,{x:c.x,y:c.y,vx:0,vy:0,invincible:3,grounded:c.grounded,onGround:!!c.onGround,prone:false,dodgeLift:0,dodgeVelocity:0});
+        if (state.level.mode === 'run') {
+          // Only move the view if no safe surface was available on this screen.
+          if (p.x < state.camera.x || p.x+p.w > state.camera.x+W) state.camera.x=clamp(p.x-80,0,state.level.width-W);
+        }
       }
       if (state.players.every(q => q.lives <= 0)) { state.status = 'gameover'; release(); event('gameover'); }
     }
@@ -430,6 +471,14 @@
       if(throwing)grenades.launch(p);
     }
     function tick() {
+      if(state.status==='boss-defeat'){
+        const defeat=state.bossDefeat;defeat.elapsed=Math.min(defeat.duration,defeat.elapsed+STEP);
+        if(defeat.elapsed>=defeat.duration-1e-9){
+          state.status='clear';state.boss=null;state.bullets=[];state.effects=[];grenades.reset();release();
+          event('clear',{timeBonus:state.timeBonus});
+        }
+        return;
+      }
       if (state.status !== 'playing') return;
       const dt = STEP, l = state.level;
       state.tick++; state.elapsed += dt; state.stageTime += dt; state.banner = Math.max(0, state.banner - dt);
@@ -602,6 +651,7 @@
       state.enemies = state.enemies.filter(e => e.hp > 0 && e.x > state.camera.x - 150 && e.y < state.camera.y + H + 150);
       state.enemies.forEach(e => e.flash = Math.max(0, (e.flash || 0) - dt));
       if (boss) boss.flash = Math.max(0, (boss.flash || 0) - dt);
+      if(state.status!=='playing')return;
       state.bullets = state.bullets.filter(b => b.ttl > 0 && b.x > state.camera.x - 100 && b.x < state.camera.x + W + 100 && b.y > state.camera.y - 80 && b.y < state.camera.y + H + 100);
       for (const p of state.pickups) {
         p.ttl -= dt;
@@ -649,7 +699,7 @@
     state.difficulty = 'normal'; rng = mulberry32(state.seed); state.players = [makePlayer(0)]; loadStage(0); state.events = [];
     return { state, start, input, tick, pause, release, advance, continueRun, drainEvents, hash: () => fnv1a(JSON.stringify(state.inputLog)) };
   }
-  const api = { createEngine, weapons, weaponTier, difficultyRules, stageEnemies, specialEnemies, W, H, STEP, hit };
+  const api = { createEngine, safeRespawnPoint, weapons, weaponTier, difficultyRules, stageEnemies, specialEnemies, W, H, STEP, hit };
   root.SlopCommando = Object.assign(root.SlopCommando || {}, api);
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
