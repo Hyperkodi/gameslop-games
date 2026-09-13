@@ -91,6 +91,19 @@
       const packLedge=l.mode==='climb'?l.platforms.find(p=>p.x===430&&p.y===1560):ledges.find(p=>p.x>450&&p.y>250);
       if(packLedge)l.supplies.push({x:packLedge.x+packLedge.w/2-12,y:packLedge.y-30,type:'J',packId:'stage-'+state.stage});
       l.supplies=l.supplies.filter(p=>!p.packId||!state.collectedPacks?.includes(p.packId));
+      for(const type of bonusTypes()){
+        const fraction=type==='LIFE'?.45:.72;
+        const target=l.mode==='climb'?l.height*(1-fraction):l.width*fraction;
+        const platform=l.platforms.filter(p=>!p.ground&&p.w>=150).sort((a,b)=>Math.abs((l.mode==='climb'?a.y:a.x)-target)-Math.abs((l.mode==='climb'?b.y:b.x)-target))[0];
+        if(platform)addBonus(l.supplies,type,platform.x+platform.w/2-12,platform.y-30);
+      }
+    }
+    function bonusTypes(){
+      return state.difficulty==='hard'?(state.stage===3?['CONTINUE']:[]):['LIFE',...((state.stage+1)%3===0?['CONTINUE']:[])];
+    }
+    function addBonus(list,type,x,y){
+      const bonusId=state.stage+':'+type;
+      if(!state.claimedBonuses?.includes(bonusId))list.push({type,x,y,w:24,h:24,ttl:Number.MAX_SAFE_INTEGER,bonusId});
     }
     function loadStage(index) {
       state.stage = index; state.level = buildLevel(index); state.room = 0;
@@ -136,6 +149,7 @@
       const cacheCount=state.difficulty==='easy'?4:state.difficulty==='hard'?(state.room%2===0?1:0):2;
       for(let i=0;i<cacheCount;i++)state.pickups.push({x:260+i*140,y:320+(i%2)*85,w:24,h:24,type:cacheWeapons[(state.room+i)%3],ttl:999});
       state.pickups.push({x:750,y:400,w:24,h:24,type:state.room===1&&rules().nukes?'N':'C',ttl:999});
+      for(const type of bonusTypes())if(state.room===(type==='LIFE'?1:2))addBonus(state.pickups,type,580,370);
       spawnEnemy({kind:stageEnemies[state.stage],x:160,y:280});
       if(state.difficulty==='hard')spawnEnemy({kind:stageEnemies[state.stage],x:770,y:280});
       supportTeam.transition();
@@ -145,6 +159,7 @@
       const difficulty=config.difficulty==='assist'?'easy':config.difficulty==='arcade'?'normal':config.difficulty||'normal';
       Object.assign(state, { status: 'playing', tick: 0, elapsed: 0, score: 0, kills: 0, inputLog: [], events: [], difficulty: difficultyRules[difficulty]?difficulty:'normal', continues: 3, creditsUsed: 0, extraLifeAt: 15000 });
       state.players = Array.from({ length: config.players === 2 ? 2 : 1 }, (_, i) => makePlayer(i));
+      state.claimedBonuses=[];state.bonusNotice='';state.bonusNoticeTime=0;
       state.pawnsRecruited=false;state.wojakRecruited=false;state.sloppyRecruited=false;state.companions=[];state.recruits=[];state.companion=null;state.supportNotice=0;state.supportNoticeName='';state.collectedPacks=[];
       state.players.forEach(p=>{p.jetpackFuel=0;p.jetpackOwned=false;});
       loadStage(0);
@@ -300,9 +315,16 @@
         const scale = dx && dy ? Math.SQRT1_2 : 1;
         p.x = clamp(p.x + p.vx * dt * scale, 100, 830); p.y = clamp(p.y + dy * 205 * dt * scale, 260, 478);
         p.jumpBuffer = 0; p.coyoteTime = 0;
-        if (jumping && !dropping && p.jumpTime <= 0) { p.jumpTime = .6; event('jump'); }
+        if (jumping && !dropping && p.jumpTime <= 0) { p.jumpTime = .6; p.dodgeLift=0;p.dodgeVelocity=166.667;event('jump'); }
         // Held thrust hovers over bunker fire; it consumes the same finite tank.
-        if(p.jetpackActive)p.jumpTime=.3;
+        if(p.jetpackActive){p.jumpTime=.3;p.dodgeLift=25;p.dodgeVelocity=0;}
+        else if(p.jumpTime>0){
+          if(!p.held.jump&&p.dodgeVelocity>73)p.dodgeVelocity=73;
+          p.dodgeVelocity=(p.dodgeVelocity||0)-555.556*dt;
+          p.dodgeLift=Math.max(0,(p.dodgeLift||0)+p.dodgeVelocity*dt);
+          if(p.dodgeLift<=0&&p.dodgeVelocity<=0)p.jumpTime=0;
+        }
+        else {p.dodgeLift=0;p.dodgeVelocity=0;}
       } else {
         const wasGrounded = p.grounded;
         let leftByAction = false;
@@ -323,7 +345,9 @@
         if (p.jumpBuffer > 1e-9 && (p.grounded || p.coyoteTime > 1e-9)) launch();
         p.x = clamp(p.x + p.vx * dt, state.camera.x, l.width - p.w);
         const feet = p.y + p.h;
-        // A quick tap keeps the full normal jump; sustained thrust settles at cruise speed.
+        // Releasing jump cuts only the ascent. Held jumps retain the authored
+        // -510 launch / 1150 gravity arc; a tap makes a ~20px hop.
+        if(!p.held.jump&&!p.jetpackActive&&p.vy<-220)p.vy=-220;
         p.vy=p.jetpackActive?(p.vy<-310?Math.min(-310,p.vy+1150*dt):Math.max(-310,p.vy-1800*dt)):p.vy+1150*dt;
         if(p.jetpackActive){p.jumpBuffer=0;p.coyoteTime=0;leftByAction=true;p.prone=false;}
         p.y += p.vy * dt; p.grounded = false;
@@ -354,6 +378,7 @@
       if (state.status !== 'playing') return;
       const dt = STEP, l = state.level;
       state.tick++; state.elapsed += dt; state.stageTime += dt; state.banner = Math.max(0, state.banner - dt);
+      state.bonusNoticeTime=Math.max(0,(state.bonusNoticeTime||0)-dt);
       state.roomTransition=Math.max(0,(state.roomTransition||0)-dt); state.nukeFlash=Math.max(0,(state.nukeFlash||0)-dt);
       state.players.forEach(p => movePlayer(p, dt));
       if (state.status !== 'playing') return;
@@ -376,7 +401,7 @@
         if (!state.spawned[i] && state.stageTime >= (e.notBefore||0) && e.x < state.camera.x + W + 80 && e.y > state.camera.y - 100 && e.y < state.camera.y + H + 40) { state.spawned[i] = true; spawnEnemy(e); }
       });
       l.supplies.forEach((p, i) => {
-        if (!state.spawned['p' + i] && p.x < state.camera.x + W && p.y > state.camera.y - 100 && p.y < state.camera.y + H) { state.spawned['p' + i] = true; state.pickups.push({ ...p, w: 24, h: 24, ttl: 999 }); }
+        if (!state.spawned['p' + i] && p.x < state.camera.x + W && p.y > state.camera.y - 100 && p.y < state.camera.y + H) { state.spawned['p' + i] = true; state.pickups.push({ ...p, w: 24, h: 24, ttl: p.bonusId?Number.MAX_SAFE_INTEGER:999 }); }
       });
       state.waveTime += dt;
       const squadCount=recruitedCount(state),squadLimit=Math.ceil(rules().enemyLimit*(l.enemyLimitScale??1)*(1+squadCount/5));
@@ -511,7 +536,14 @@
         // Pickups are now wide weapon silhouettes, so their full visible width collects.
         const pickupBox = { x: p.x - 12, y: p.y - 5, w: p.w + 24, h: p.h + 10 };
         for (const player of alive) if (hit(pickupBox, player)) {
+          if(p.bonusId&&state.claimedBonuses?.includes(p.bonusId)){p.ttl=0;break;}
           if (weapons[p.type]) equip(player,p.type);
+          else if(p.type==='LIFE'||p.type==='CONTINUE'){
+            if(p.type==='LIFE')player.lives++;else state.continues++;
+            if(p.bonusId){state.claimedBonuses||=[];state.claimedBonuses.push(p.bonusId);}
+            state.bonusNotice=p.type==='LIFE'?'P'+(player.id+1)+' +1 LIFE':'+1 CONTINUE';state.bonusNoticeTime=3;
+            event('life');
+          }
           else if (p.type === 'B') player.shield = 12;
           else if (p.type === 'R') player.rapid = 20;
           else if (p.type === 'C') player.cloak = 8;

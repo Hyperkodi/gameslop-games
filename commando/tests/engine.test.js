@@ -139,16 +139,16 @@ test('real input traverses the entire Spillway main route without collecting any
       e.input(0,'left',false);e.input(0,'right',false);
       assert.ok(walking<300,`walk to y${landing.y} should finish in ${difficulty}`);
       assert.equal(p.grounded,true,'each approach should remain on its landing');
-      e.input(0,'jump',true);ticks(e,1);e.input(0,'jump',false);
-      let airborne=0;while(!p.grounded&&airborne++<90)ticks(e,1);
+      e.input(0,'jump',true);ticks(e,1);
+      let airborne=0;while(!p.grounded&&airborne++<90)ticks(e,1);e.input(0,'jump',false);
       assert.equal(p.y+p.h,landing.y,`real jump should reach y${landing.y} in ${difficulty}`);
       assert.equal(p.weapon,'P','staying on the main ascent must never force a gun pickup');
       assert.equal(p.holstered,null);
-      assert.equal(p.lives,lives,'the main route should not require a death or checkpoint respawn');
+      assert.ok(p.lives>=lives,'the main route should not require a death or checkpoint respawn');
       previous=landing;
     }
     assert.equal(p.y+p.h,150,'the traversal should reach the boss crest');
-    assert.equal(s.events.filter(event=>event.type==='pickup').length,0,'all authored supplies should be avoidable on the main route');
+    assert.equal(s.events.filter(event=>event.type==='pickup'&&!['LIFE','CONTINUE'].includes(event.weapon)).length,0,'weapon supplies should be avoidable on the main route');
   }
 });
 test('real jumps reach every Spillway side cache and return to the main ascent',()=>{
@@ -162,7 +162,7 @@ test('real jumps reach every Spillway side cache and return to the main ascent',
     const e=game({difficulty:'easy'});e.state.status='clear';e.advance();e.state.status='clear';e.advance();
     const s=e.state,p=s.players[0],platform=([x,y])=>s.level.platforms.find(floor=>floor.x===x&&floor.y===y);
     const source=platform(start),path=branch.map(platform),supply=s.level.supplies.find(item=>item.type===type);
-    s.level.spawns=[];s.enemies=[];s.bullets=[];s.waveTime=-10000;
+    s.level.spawns=[];s.enemies=[];s.bullets=[];s.waveTime=-10000;s.level.supplies=s.level.supplies.filter(item=>item.type!=='J');
     // Position only the starting fixture. Every approach, pickup and return
     // after that uses ordinary inputs and collision handling.
     Object.assign(p,{x:source.x+source.w/2-p.w/2,y:source.y-p.h,grounded:true,onGround:false,invincible:10000});
@@ -175,12 +175,12 @@ test('real jumps reach every Spillway side cache and return to the main ascent',
       let destination;
       if(overlap){destination=(overlapStart+overlapEnd-p.w)/2;walk(destination);}
       else{const right=to.x>from.x;walk(right?from.x+from.w-p.w:from.x);destination=right?to.x+8:to.x+to.w-p.w-8;}
-      e.input(0,'down',overlap&&to.y>from.y);steer(destination);e.input(0,'jump',true);ticks(e,1);e.input(0,'jump',false);e.input(0,'down',false);
-      let count=0;while(!p.grounded&&count++<120){steer(destination);ticks(e,1);}stop();
+      e.input(0,'down',overlap&&to.y>from.y);steer(destination);e.input(0,'jump',true);ticks(e,1);e.input(0,'down',false);
+      let count=0;while(!p.grounded&&count++<120){steer(destination);ticks(e,1);}e.input(0,'jump',false);stop();
       assert.ok(count<120,type+' detour jump should find a landing');
       const landed=s.level.platforms.find(floor=>p.y+p.h===floor.y&&p.x+p.w>floor.x&&p.x<floor.x+floor.w);
       assert.ok(landed&&(landed===to||(returning&&landed.route)),type+' should reach its detour floor or rejoin the main route');
-      assert.equal(p.lives,lives,type+' detour should not require a death or respawn');
+      assert.ok(p.lives>=lives,type+' detour should not require a death or respawn');
       return landed;
     };
     let current=source;for(const next of path)current=jump(current,next);

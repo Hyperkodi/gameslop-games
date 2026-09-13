@@ -31,7 +31,7 @@ On mobile, drag anywhere on the circular thumbstick to move or aim. **AUTO FIRE*
 
 **SWAP** exchanges carried guns, and **DROP** descends one ledge per tap without needing a down + jump combination. Drop is disabled in overhead bunker stages and does nothing on solid ground. Down crouches in side-scrolling stages; down + jump still drops through a ledge. In bunker stages, move on the overhead floor, fire upward toward cores, and jump to dodge shots.
 
-Jump accepts a press up to 100ms after stepping off a ledge or 120ms before landing. Quick taps register even between simulation ticks. Rotation, pause, and backgrounding release held controls.
+Tap Jump for a small hop; hold it to reach the full peak. Releasing during ascent shortens the jump, while the full held arc keeps existing platforms reachable. Bunker dodge height also responds to the hold. A fueled jetpack still uses held Jump for flight. Jump accepts a press up to 100ms after stepping off a ledge or 120ms before landing. Quick taps register even between simulation ticks. Rotation, pause, and backgrounding release held controls.
 
 In Spillway, hold Down and press Jump to descend one ledge; release Jump before dropping again. The camera follows your retreat. The boss crest has safe landing shelves directly below its full width, and you can jump back up.
 
@@ -43,7 +43,7 @@ In Spillway, hold Down and press Jump to descend one ledge; release Jump before 
 | Normal | 3 | Fewer caches; 4.5% enemy drop chance | 2 | Retained for the run | Yes |
 | Hard | 3 | Rare caches; 1.5% enemy drop chance | 1 | Lost when discarded | No |
 
-Drop probabilities include utility pickups. Hard also adds authored enemies, more frequent reinforcements, and faster enemy fire. All modes have three continues, checkpoint respawns, brief respawn protection, and an extra life every 15,000 points. Legacy `assist` and `arcade` engine configurations map to Easy and Normal.
+Drop probabilities include utility pickups. Hard also adds authored enemies, more frequent reinforcements, and faster enemy fire. All modes start with three continues, checkpoint respawns, brief respawn protection, and an extra life every 15,000 points. Easy and Normal additionally have one collectible life in each level and a continue in levels 3 and 6. Hard has no level life pickups and has one collectible continue in level 4. Each bonus is collectable once per run, even after using a continue. In co-op the collecting player receives the life; continues are shared. Legacy `assist` and `arcade` engine configurations map to Easy and Normal.
 
 A new gun becomes active and holsters your previous active gun on Easy/Normal. If both slots are occupied, the old holstered gun is discarded. Collecting a duplicate of either carried gun upgrades that gun without switching slots. Swap exchanges the two carried guns.
 

@@ -93,7 +93,7 @@
     const grenade=G.grenadeTypes[p.grenadeType||'frag'],cooldown=p.grenadeCooldown||0;
     grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · B / N';
     const fuelLabel=q=>q.jetpackOwned?'P'+(q.id+1)+' JET '+((q.jetpackFuel||0)>0?q.jetpackFuel.toFixed(1)+'s · HOLD JUMP':'EMPTY'):'';
-    supportHud.textContent=[...s.players.map(fuelLabel),s.supportNotice>0?s.supportNoticeName.toUpperCase()+' JOINED':G.recruitedCount(s)?'SQUAD: '+G.allySpecs.filter(a=>s[a.id+'Recruited']).map(a=>a.name.toUpperCase()).join(' / '):''].filter(Boolean).join(' · ');
+    supportHud.textContent=[s.bonusNoticeTime>0?s.bonusNotice:'',...s.players.map(fuelLabel),s.supportNotice>0?s.supportNoticeName.toUpperCase()+' JOINED':G.recruitedCount(s)?'SQUAD: '+G.allySpecs.filter(a=>s[a.id+'Recruited']).map(a=>a.name.toUpperCase()).join(' / '):''].filter(Boolean).join(' · ');
     grenadeTypeButton.textContent='TYPE: '+(p.grenadeType==='electric'?'STUN':grenade.name);
     grenadeTypeButton.setAttribute('aria-label','Selected '+grenade.name+'. Tap to change grenade type.');
     grenadeButton.textContent=cooldown>0?Math.ceil(cooldown)+'s':'THROW';
