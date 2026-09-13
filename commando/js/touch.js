@@ -61,6 +61,15 @@
     });
     for(const type of ['pointerup','pointercancel','lostpointercapture'])element.addEventListener(type,event=>release(event.pointerId));
     element.addEventListener('contextmenu',event=>event.preventDefault());
+    // Safari may still pan its viewport when only pointer events are cancelled.
+    // Cancel native Touch Events too, without cancelling taps on menu/select UI.
+    const isActionTouch=event=>!!event.target.closest?.('.joystick,.action-buttons [data-action]');
+    cabinet.addEventListener('touchstart',event=>{
+      if(isActionTouch(event)&&event.cancelable)event.preventDefault();
+    },{passive:false});
+    cabinet.addEventListener('touchmove',event=>{
+      if((contacts.size>0||isActionTouch(event))&&event.cancelable)event.preventDefault();
+    },{passive:false});
     auto.addEventListener('click',()=>{
       autoFire=!autoFire;usingTouch=true;storage.set('gameslop:commando:auto-fire',autoFire?'1':'0');paintPreference();
       if(autoFire)unlock();onChange('auto',null);

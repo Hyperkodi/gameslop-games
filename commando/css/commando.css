@@ -55,18 +55,19 @@
   #grenade-type{min-width:128px}
 }
 @media(orientation:landscape) and (pointer:coarse){
+  html,body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
   .masthead,.game-heading,.field-guide,footer{display:none}
   main{max-width:none;padding:0}
-  .cabinet,.cabinet:fullscreen,.cabinet.expanded{--play-width:min(calc(100vw - 112px - env(safe-area-inset-left) - env(safe-area-inset-right)),calc((100dvh - 54px - env(safe-area-inset-top) - env(safe-area-inset-bottom))*16/9));position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100dvh;min-height:0;margin:0;border:0;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);background:#070c0b}
+  .cabinet,.cabinet:fullscreen,.cabinet.expanded{--play-width:min(calc(100vw - env(safe-area-inset-left) - env(safe-area-inset-right)),calc((100dvh - 8px - env(safe-area-inset-top) - env(safe-area-inset-bottom))*16/9));position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100dvh;min-height:0;margin:0;border:0;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);background:#070c0b;overflow:hidden;overscroll-behavior:none;touch-action:none}
   .cabinet.expanded{position:fixed}
   .cabinet .screen,.cabinet:fullscreen .screen,.cabinet.expanded .screen{width:var(--play-width);max-height:none;aspect-ratio:16/9;flex-shrink:0}
-  .cabinet .cabinet-top,.cabinet .cabinet-bottom,.cabinet:fullscreen .cabinet-top,.cabinet:fullscreen .cabinet-bottom,.cabinet.expanded .cabinet-top,.cabinet.expanded .cabinet-bottom{width:var(--play-width);flex-shrink:0}
-  .cabinet-top{height:28px;font-size:8px;padding:0 10px}
-  .cabinet-top button{font-size:8px}
-  .cabinet-top>div{gap:12px}
-  .cabinet-bottom{height:26px;font-size:7px;padding:0 10px}
-  .touch-controls,.cabinet:fullscreen .touch-controls,.cabinet.expanded .touch-controls{position:absolute;inset:0;z-index:6;display:flex;justify-content:space-between;align-items:flex-end;gap:0;width:100%;padding:0 max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));pointer-events:none}
-  .touch-settings{position:absolute;left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));justify-content:space-between;bottom:calc(152px + max(12px,env(safe-area-inset-bottom)));pointer-events:none}
+  .cabinet .cabinet-top,.cabinet:fullscreen .cabinet-top,.cabinet.expanded .cabinet-top{position:absolute;top:env(safe-area-inset-top);right:max(24px,calc(env(safe-area-inset-right) + 12px));width:auto;height:44px;z-index:12;padding:0 6px;border-radius:0 0 8px 8px;background:#07130ccc}
+  .cabinet-top>span{display:none}
+  .cabinet-top button{font-size:8px;min-width:44px;min-height:44px;padding:0 6px;touch-action:manipulation}
+  .cabinet-top>div{gap:4px}
+  .cabinet .cabinet-bottom{display:none}
+  .touch-controls,.cabinet:fullscreen .touch-controls,.cabinet.expanded .touch-controls{position:absolute;inset:0;z-index:6;display:flex;justify-content:space-between;align-items:flex-end;gap:0;width:100%;padding:0 max(24px,calc(env(safe-area-inset-right) + 12px)) max(12px,env(safe-area-inset-bottom)) max(24px,calc(env(safe-area-inset-left) + 12px));pointer-events:none}
+  .touch-settings{position:absolute;left:max(24px,calc(env(safe-area-inset-left) + 12px));right:max(24px,calc(env(safe-area-inset-right) + 12px));justify-content:space-between;bottom:calc(152px + max(12px,env(safe-area-inset-bottom)));pointer-events:none}
   .touch-settings button{pointer-events:auto}
   .touch-hint{display:none}
   #auto-fire{min-width:132px;background:#203b32e8}
@@ -79,5 +80,8 @@
   .primary{font-size:8px;min-width:200px;padding:10px}
   .title-bottom{font-size:7px;margin-top:5px}
   .title-bottom select{font-size:7px}
+  .hud{top:48px}
   .hud small{font-size:6px;max-width:150px}
 }
+/* Control gestures belong to the game, including on Safari touch-event paths. */
+.joystick,.action-buttons{overscroll-behavior:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}

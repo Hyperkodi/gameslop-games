@@ -12,6 +12,8 @@ Open `index.html` directly, or run `python -m http.server 8765 --directory games
 
 Hold a phone in landscape for the largest playfield. **Expand** requests browser fullscreen and landscape orientation where supported. An in-page expanded view supports browsers without element fullscreen; rotate the phone manually if orientation locking is unavailable.
 
+Landscape touch play uses nearly the entire safe viewport height, with compact menu buttons and touch controls overlaying the playfield. Typical phone viewport calculations give approximately 30% more game area than the previous layout without cropping the 16:9 scene. The page is fixed against scrolling in landscape, and the joystick is inset from the phone's edges. Non-passive native touch handlers prevent control drags from scrolling Safari, while menu taps remain available. Browser/OS-owned edge gestures may still take precedence; physical iPhone verification is required. Portrait keeps its scrollable page layout.
+
 ## Controls
 
 | Action | Player 1 | Player 2 | Gamepad |
