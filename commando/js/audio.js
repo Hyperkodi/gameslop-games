@@ -48,6 +48,7 @@
     'grenade:incendiary':[[100,.4,'sawtooth',.035,0,38]],
     'grenade:electric':[[1100,.22,'sawtooth',.025,0,120]],
     explosion:[[75,.17,'sawtooth',.05,0,25],[130,.12,'triangle',.035,0,30]],
+    hurt:[[170,.09,'triangle',.025,0,90]],
     death:[[240,.22,'sawtooth',.04,0,35]],
     pickup:[[440,.07,'square',.04],[660,.08,'square',.04,.07],[880,.1,'square',.04,.14]],
     cloak:[[720,.35,'sine',.05,0,120]], swap:[[260,.05,'triangle',.035,0,520]],

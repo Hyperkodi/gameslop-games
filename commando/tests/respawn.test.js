@@ -82,7 +82,7 @@ test('all six bunker rooms retain safe respawns for both players',()=>{
   for(const stage of [1,3]) for(const room of [0,1,2]) for(const id of [0,1]) {
     const e=game(stage,2),s=e.state;
     for(let i=0;i<room;i++){s.enemies=[];quietTick(e);}
-    const p=s.players[id];p.invincible=0;
+    const p=s.players[id];p.hp=1;p.invincible=0;
     // A contact hit uses the same respawn path as enemy bullets.
     s.level.hazards=[{x:p.x,y:p.y,w:p.w,h:p.h,phase:180}];e.tick();s.level.hazards=[];
     assert.equal(p.lives,6);assert.equal(p.x,390+id*80);assert.equal(p.y,420);

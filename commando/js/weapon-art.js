@@ -172,12 +172,18 @@
       const x=item.x+item.w/2,y=item.y+item.h/2+Math.sin(time*3+item.x)*2;
       const color=item.type==='L'||item.type==='W'||item.type==='B'?p.laser:item.type==='F'||item.type==='G'||item.type==='H'?p.flame:p.brass;
       c.save();c.translate(x,y);
+      const gun=!!G.weapons?.[item.type];
+      if(gun){
+        c.fillStyle='#06121ee8';c.fillRect(-36,-22,72,47);
+        c.strokeStyle='#ffe49a';c.lineWidth=2;c.strokeRect(-36,-22,72,47);
+        c.fillStyle='#ffe49a';c.beginPath();c.moveTo(-5,-29);c.lineTo(5,-29);c.lineTo(0,-24);c.fill();
+      }
       const glow=c.createRadialGradient(0,0,2,0,0,34);glow.addColorStop(0,color+'44');glow.addColorStop(1,color+'00');
       c.fillStyle=glow;c.fillRect(-34,-34,68,68);
       c.strokeStyle=color;c.globalAlpha=.45;c.lineWidth=1;c.beginPath();c.ellipse(0,22,22,4,0,0,Math.PI*2);c.stroke();c.globalAlpha=1;
       for(let i=0;i<2;i++){const a=time*1.6+i*Math.PI;c.fillStyle=color;c.fillRect(Math.cos(a)*29,Math.sin(a)*19,2,2);}
-      c.save();c.scale(.68,.68);c.translate(-35,0);c.shadowColor=p.outline;c.shadowBlur=2;draw(item.type,{time});c.restore();
-      if(nearby||item.bonusId){c.font='bold 8px monospace';c.textAlign='center';c.fillStyle='#f8eed7';c.shadowColor='#08151c';c.shadowBlur=3;c.fillText(names[item.type]||'RIFLE',0,-25);}
+      c.save();c.scale(gun ? .92 : .68,gun ? .92 : .68);c.translate(-35,0);c.shadowColor=p.outline;c.shadowBlur=2;draw(item.type,{time});c.restore();
+      if(gun||nearby||item.bonusId){c.font='bold 9px monospace';c.textAlign='center';c.fillStyle='#f8eed7';c.shadowColor='#08151c';c.shadowBlur=3;const label=names[item.type]||'RIFLE';const width=c.measureText(label).width+10;c.fillStyle='#06121eee';c.fillRect(-width/2,-47,width,15);c.fillStyle='#fff3bd';c.fillText(label,0,-36);}
       c.restore();
     }
     return {draw,pickup,names};

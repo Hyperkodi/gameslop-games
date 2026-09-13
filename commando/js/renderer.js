@@ -391,6 +391,12 @@
       (s.recruits||[]).forEach(a=>companionArt.draw(a,time,{recruit:true,elapsed:s.elapsed}));
       (s.companions||[]).forEach(a=>companionArt.draw(a,time,{elapsed:s.elapsed}));
       s.players.forEach(p=>hero.draw(p,time,{victory:s.status==='clear'||s.status==='victory',mode:s.level.mode}));
+      for(const p of s.players)if(p.lives>0&&p.weaponNoticeTime>0){
+        c.save();c.font='bold 11px monospace';const width=c.measureText(p.weaponNotice).width+16;
+        const x=Math.max(s.camera.x+width/2+8,Math.min(s.camera.x+960-width/2-8,p.x+15));
+        const y=Math.max(s.camera.y+55,p.y-34);rect(x-width/2,y-14,width,22,'#06121eef');
+        text(p.weaponNotice,x,y+1,11,'#ffe49a','center');c.restore();
+      }
       grenadeArt.projectiles(s.grenades);
       for(const b of s.bullets) {
         const color=b.team==='enemy'?'#ff7850':b.weapon==='L'?'#a8faff':b.weapon==='F'?'#ff9f3b':'#ffe5a5';

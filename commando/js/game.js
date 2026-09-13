@@ -93,7 +93,7 @@
     $('score').textContent=String(s.score).padStart(6,'0');
     stageTimer.textContent='TIME '+(s.timeBonus??Math.ceil(s.timeRemaining??1000)).toLocaleString()+'s';
     stageTimer.classList.toggle('time-low',(s.timeRemaining??1000)<=60);
-    const p=s.players[0];$('p1-lives').textContent=p.lives>5?'♥ × '+p.lives:'♥ '.repeat(Math.max(0,p.lives))||'OUT';
+    const p=s.players[0];$('p1-lives').textContent=p.lives?'HP '+p.hp+'/'+p.maxHp+' · LIVES '+p.lives:'OUT';
     const grenade=G.grenadeTypes[p.grenadeType||'frag'],cooldown=p.grenadeCooldown||0;
     grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · A / N';
     const fuelLabel=q=>q.jetpackOwned?'P'+(q.id+1)+' JET '+((q.jetpackFuel||0)>0?q.jetpackFuel.toFixed(1)+'s · HOLD JUMP':'EMPTY'):'';
@@ -106,11 +106,11 @@
     grenadeButton.disabled=p.lives<=0;grenadeButton.classList.toggle('cooling',cooldown>0);
     grenadeButton.style.setProperty('--grenade-color',grenade.color);
     grenadeButton.setAttribute('aria-label',cooldown>0?'Grenade ready in '+Math.ceil(cooldown)+' seconds':'Throw '+grenade.name+' grenade');
-    $('p1-weapon').textContent=G.weapons[p.weapon].name+' '+G.weaponTier(p)+'/5';
-    $('p1-power').textContent=[p.cloak>0?'CLOAK '+Math.ceil(p.cloak)+'s':'',p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':'',p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'',p.holstered?'HOLSTER: '+G.weapons[p.holstered].name+' '+(p.weaponLevels[p.holstered]||1)+'/5':''].filter(Boolean).join(' · ');
+    $('p1-weapon').textContent=G.weapons[p.weapon].name+' LV '+G.weaponTier(p)+'/5';
+    $('p1-power').textContent=[p.weaponNoticeTime>0?p.weaponNotice:'',p.cloak>0?'CLOAK '+Math.ceil(p.cloak)+'s':'',p.shield>0?'BARRIER '+Math.ceil(p.shield)+'s':'',p.rapid>0?'RAPID '+Math.ceil(p.rapid)+'s':'',p.holstered?'HOLSTER: '+G.weapons[p.holstered].name+' '+(p.weaponLevels[p.holstered]||1)+'/5':''].filter(Boolean).join(' · ');
     const swapButton=document.querySelector('[data-action="swap"]');swapButton.disabled=!G.difficultyRules[s.difficulty]?.holster||!p.holstered;swapButton.textContent=!G.difficultyRules[s.difficulty]?.holster?'1 GUN':'SWAP';
     document.querySelector('[data-action="drop"]').disabled=s.level.mode==='base';
-    if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P  ♥ × '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
+    if(s.players.length===2){const q=s.players[1];$('p2-label').textContent='2P HP '+q.hp+'/'+q.maxHp+' · LIVES '+q.lives;$('p2-value').textContent=q.lives?G.weapons[q.weapon].name+' LV '+G.weaponTier(q)+'/5':'OUT';p2Power.textContent=[q.weaponNoticeTime>0?q.weaponNotice:'',q.cloak>0?'CLOAK '+Math.ceil(q.cloak)+'s':'',q.holstered?'HOLSTER: '+G.weapons[q.holstered].name+' '+(q.weaponLevels[q.holstered]||1)+'/5':''].filter(Boolean).join(' · ');}
     else{p2Power.textContent='';$('p2-label').textContent='HI-SCORE';$('p2-value').textContent=String(Math.max(best,s.score)).padStart(6,'0');}
     if(s.players.length===2){const q=s.players[1];p2Power.textContent+=' · '+G.grenadeTypes[q.grenadeType||'frag'].name+' '+(q.grenadeCooldown>0?Math.ceil(q.grenadeCooldown)+'s':'READY')+' · Y / T';}
     $('pause').disabled=title||!['playing','paused','boss-defeat'].includes(s.status);

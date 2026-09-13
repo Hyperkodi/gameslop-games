@@ -135,7 +135,7 @@ test('release and pause preserve an active bunker dodge and its remaining protec
     assert.ok(p.jumpTime<remaining&&p.jumpTime>0,'the dodge resumes its countdown');
     ticks(e,40);assert.equal(p.jumpTime,0);assert.equal(events(e,'jump').length,1,'resuming cannot repeat the dodge');
     s.bullets.push({x:p.x,y:p.y,w:30,h:42,vx:0,vy:0,team:'enemy',ttl:1});
-    ticks(e);assert.equal(p.lives,lives-1,'protection expires normally after the dodge');
+    ticks(e);assert.equal(p.lives,lives,'a surviving hit does not cost a life');assert.equal(p.hp,p.maxHp-1,'protection expires normally after the dodge');
   }
 });
 

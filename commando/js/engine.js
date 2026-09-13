@@ -21,10 +21,10 @@
     A: { name: 'PLASMA CANNON', delay: .6, speed: 520, damage: 5, splash: 65, splashDamage: 3, width: 20, height: 20 }
   };
   const difficultyRules = {
-    easy: { lives: 9, continues: 3, dropChance: .1, cacheStep: 2, waveInterval: 6, enemyLimit: 14, fireScale: 1.3, holster: true, nukes: true },
-    normal: { lives: 7, continues: 3, dropChance: .045, cacheStep: 4, waveInterval: 4.5, enemyLimit: 16, fireScale: 1, holster: true, nukes: true },
-    hard: { lives: 5, continues: 3, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false },
-    'extra-hard': { lives: 3, continues: 1, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false }
+    easy: { hitPoints: 3, lives: 9, continues: 3, dropChance: .1, cacheStep: 2, waveInterval: 6, enemyLimit: 14, fireScale: 1.3, holster: true, nukes: true },
+    normal: { hitPoints: 2, lives: 7, continues: 3, dropChance: .045, cacheStep: 4, waveInterval: 4.5, enemyLimit: 16, fireScale: 1, holster: true, nukes: true },
+    hard: { hitPoints: 1, lives: 5, continues: 3, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false },
+    'extra-hard': { hitPoints: 1, lives: 3, continues: 1, dropChance: .015, cacheStep: 9, waveInterval: 2.5, enemyLimit: 22, fireScale: .75, holster: false, nukes: false }
   };
   const stageEnemies = ['vineMantis','securitySpider','riverRay','reactorOrb','iceWolf','slagCrab','caveBat','sporeWasp'];
   const specialEnemies = {
@@ -88,7 +88,7 @@
     const supportTeam=createSupportSystem({state,event,onRecruit:()=>reinforceRoute(true)});
     const rules = () => difficultyRules[state.difficulty] || difficultyRules.normal;
     const hardMode = () => state.difficulty === 'hard' || state.difficulty === 'extra-hard';
-    function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, dropHeld: false, jumpQueued: false, jumpDownQueued: false, dropQueued: false, jumpBuffer: 0, coyoteTime: 0, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
+    function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, hp: rules().hitPoints, maxHp: rules().hitPoints, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, dropHeld: false, jumpQueued: false, jumpDownQueued: false, dropQueued: false, jumpBuffer: 0, coyoteTime: 0, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
     function resetMovementInput(p) {
       p.held = {}; p.jumpHeld = false; p.swapHeld = false; p.dropHeld = false;
       p.jumpQueued = false; p.jumpDownQueued = false; p.dropQueued = false;
@@ -97,6 +97,7 @@
       p.jetpackActive=false;p.jetpackBlocked=false;
     }
     function equip(p, type) {
+      const previousTier = p.weaponLevels?.[type] || 0;
       p.weaponLevels ||= {P:1};
       if (type === p.weapon || (rules().holster && type === p.holstered)) {
         p.weaponLevels[type] = Math.min(5, (p.weaponLevels[type] || 1) + 1);
@@ -105,9 +106,12 @@
         else { p.holstered = null; p.weaponLevels = {}; }
         p.weapon = type; p.weaponLevels[type] ||= 1;
       }
+      const tier=p.weaponLevels[type];
+      p.weaponNotice=(tier>previousTier&&previousTier>0?'UPGRADED: ':tier===5?'MAX POWER: ':'EQUIPPED: ')+weapons[type].name+' LV '+tier+'/5';
+      p.weaponNoticeTime=2.5;
     }
     function resetEquipment(p) {
-      p.weapon='P'; p.holstered=null; p.cloak=0; p.rapid=0; p.shield=0;
+      p.weaponNoticeTime=0;p.weapon='P'; p.holstered=null; p.cloak=0; p.rapid=0; p.shield=0;
       if (!rules().holster) p.weaponLevels={P:1};
     }
     function populateRoute() {
@@ -162,7 +166,7 @@
       state.checkpoint = { x: 110, y: state.level.mode === 'climb' ? state.level.height - 94 : 410 };
       state.spawned = {}; state.stageTime = 0; state.waveTime = 0; state.banner = 3.4; state.roomTransition=0; state.nukeFlash=0;
       state.stageTicks = 0; state.timeRemaining = STAGE_SECONDS; state.timeBonus = null;
-      state.players.forEach((p, i) => { resetMovementInput(p); Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, grounded: false, jumpTime: 0, invincible: 3 }); if (p.lives <= 0) p.lives = 1; });
+      state.players.forEach((p, i) => { resetMovementInput(p); Object.assign(p, { x: 110 + i * 65, y: state.checkpoint.y, vy: 0, vx: 0, grounded: false, jumpTime: 0, invincible: 3 }); if (p.lives <= 0) {p.lives = 1;p.hp=p.maxHp;} });
       state.players.forEach(p=>{p.grenadeType||='frag';p.grenadeCooldown=0;});
       if (state.level.mode === 'base') loadRoom();
       supportTeam.transition();
@@ -238,12 +242,12 @@
     function continueRun() {
       if (state.status !== 'gameover' || state.continues <= 0) return false;
       state.continues--; state.creditsUsed++;
-      state.players.forEach(p => { p.lives = rules().lives; resetEquipment(p); });
+      state.players.forEach(p => { p.lives = rules().lives; p.hp=p.maxHp; resetEquipment(p); });
       state.status = 'playing'; loadStage(state.stage); return true;
     }
     function addScore(points) {
       state.score += points;
-      if (state.score >= state.extraLifeAt) { state.extraLifeAt += 15000; state.players.forEach(p => p.lives++); event('life'); }
+      if (state.score >= state.extraLifeAt) { state.extraLifeAt += 15000; state.players.forEach(p => {if(p.lives===0)p.hp=p.maxHp;p.lives++;}); event('life'); }
     }
     function burst(x, y, color, count = 14) {
       for (let i = 0; i < count; i++) state.effects.push({ x, y, vx: (rng() - .5) * 290, vy: (rng() - .5) * 290, ttl: .25 + rng() * .45, color });
@@ -330,7 +334,11 @@
     }
     function damagePlayer(p, falling = false) {
       if (p.lives <= 0 || (!falling && (p.invincible > 0 || p.shield > 0 || (state.level.mode === 'base' && p.jumpTime > 0)))) return;
-      p.lives--; burst(p.x + 15, p.y + 20, '#ff433c', 22); event('death');
+      p.hp=falling?0:Math.max(0,p.hp-1);
+      if(p.hp>0){
+        p.invincible=1.2;burst(p.x+15,p.y+20,'#ffbe65',8);event('hurt',{player:p.id,hp:p.hp});return;
+      }
+      p.lives--;p.hp=p.lives>0?p.maxHp:0; burst(p.x + 15, p.y + 20, '#ff433c', 22); event('death');
       resetEquipment(p); resetMovementInput(p); p.jumpTime = 0;
       if (p.lives > 0) {
         const c = safeRespawnPoint(state.level,state.camera,state.checkpoint,p);
@@ -353,12 +361,12 @@
         state.bullets.push({
           id: id++, x: p.x + 15 + Math.cos(a) * 19, y: p.y + (p.prone ? 30 : 19) + Math.sin(a) * 13,
           vx: Math.cos(a) * w.speed, vy: Math.sin(a) * w.speed-(state.level.mode==='base'?0:(w.launchLift||0)*Math.abs(Math.cos(a))), speed: w.speed,
-          w: (w.width || 8)*(1+rank*.08), h: (w.height || 5)*(1+rank*.08), team: 'player', damage: w.damage*(1+rank*.3), weapon: p.weapon, tier,
+          w: (w.width || 8)*(1+rank*.08), h: (w.height || 5)*(1+rank*.08), team: 'player', damage: w.damage*(1+rank*.1), weapon: p.weapon, tier,
           ttl: w.ttl || 1.5, gravity: state.level.mode==='base'?0:w.gravity || 0, homing: w.homing || 0,
-          splash: (w.splash || 0)*(1+rank*.12), splashDamage: (w.splashDamage || 0)*(1+rank*.3), pierce: !!w.pierce, hits: [], chain:(w.chain||0)+(w.chain?rank:0), slow:(w.slow||0)*(1+rank*.2)
+          splash: (w.splash || 0)*(1+rank*.025), splashDamage: (w.splashDamage || 0)*(1+rank*.1), pierce: !!w.pierce, hits: [], chain:(w.chain||0), slow:(w.slow||0)*(1+rank*.025)
         });
       }
-      p.cooldown = w.delay * (1-rank*.075) * (p.rapid > 0 ? .65 : 1); event('shot', { weapon: p.weapon, player: p.id });
+      p.cooldown = w.delay * (1-rank*.02) * (p.rapid > 0 ? .65 : 1); event('shot', { weapon: p.weapon, player: p.id });
     }
     function enemyShot(e, target, offset = 0, speed = 180) {
       if(!target || target.cloak>0)return;
@@ -382,6 +390,7 @@
     function movePlayer(p, dt) {
       if (p.lives <= 0) return;
       const l = state.level, base = l.mode === 'base';
+      p.weaponNoticeTime=Math.max(0,(p.weaponNoticeTime||0)-dt);
       p.cooldown -= dt; p.invincible -= dt; p.shield -= dt; p.rapid -= dt; p.cloak=Math.max(0,(p.cloak||0)-dt); p.jumpTime = Math.max(0, p.jumpTime - dt);
       p.grenadeCooldown=Math.max(0,(p.grenadeCooldown||0)-dt);
       if(p.grenadeNextQueued){p.grenadeType=grenadeOrder[(grenadeOrder.indexOf(p.grenadeType)+1)%grenadeOrder.length];event('swap');}

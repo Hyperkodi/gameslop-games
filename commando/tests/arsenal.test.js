@@ -50,7 +50,7 @@ test('cloak breaks pursuit and aimed fire for eight seconds, then tracking resum
 test('enemies choose the visible co-op partner, while cloak does not stop existing bullets',()=>{
   const e=game('normal',2),[p,q]=e.state.players;p.cloak=8;q.x=500;
   e.state.enemies=[{...target(92,700,300),cooldown:0}];ticks(e);const b=e.state.bullets.find(b=>b.team==='enemy');assert.ok(b.vx<0&&b.vy>0);
-  p.invincible=0;e.state.bullets=[{x:p.x+10,y:p.y+10,w:9,h:9,vx:0,vy:0,team:'enemy',ttl:1}];const lives=p.lives;ticks(e);assert.equal(p.lives,lives-1);
+  p.invincible=0;e.state.bullets=[{x:p.x+10,y:p.y+10,w:9,h:9,vx:0,vy:0,team:'enemy',ttl:1}];const lives=p.lives;ticks(e);assert.equal(p.lives,lives);assert.equal(p.hp,1);
 });
 test('nuke kills visible enemies once, preserves offscreen enemies and bosses, clears enemy fire',()=>{
   const e=game();const visible=target(1,300),offscreen=target(2,1100);e.state.enemies=[visible,offscreen];

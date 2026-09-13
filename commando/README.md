@@ -98,7 +98,13 @@ Spillway mixes narrow concrete steps, broad steel bridges, and optional side she
 
 Both bunker stages use a consistent overhead floor and low walls. Destroying cores does not pan or replace the background. Chamber changes use a brief fade, retaining the same floor coordinates. Outdoor stages retain seven stitched scrolling scenery panels.
 
-## Stage timer
+## Health and weapon upgrades
+
+Easy has 3 hit points per life; Normal has 2; Hard and Extra Hard have 1. The HUD labels HP and lives separately. Surviving damage keeps position and equipment and grants 1.2 seconds of protection. Losing a life or using a continue restores full health. Remaining health carries between stages and bunker rooms; pits still cost one life. Existing lives, continues, pickups and other difficulty settings are unchanged.
+
+Weapon duplicates advance the equipped or holstered gun one level, capped at 5. Damage and splash damage are 100%, 110%, 120%, 130% and 140% of base; firing delays are 100%, 98%, 96%, 94% and 92%. Blast radius and Cryo slow duration increase by 2.5% of base per tier, and Tesla keeps its base chain count. Gun pickups have larger silhouettes, bright outlined cards and always-visible names. Collection displays the resulting weapon level, including upgrades to a holstered weapon and the level-five cap.
+
+## Stage timer behavior
 
 Every stage starts at 1,000 seconds, with the countdown beside the score. Defeating the boss awards one point per whole second remaining, once, including the final stage. The clear screen lists the time bonus separately from the total score. The clock advances with active gameplay, freezes during pause/background pause, and carries through deaths and bunker chambers. A new stage or a continue retry starts a fresh timer. At zero, gameplay continues without a time bonus.
 
