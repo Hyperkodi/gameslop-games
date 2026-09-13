@@ -3,7 +3,7 @@
   const { buildLevel, levels } = typeof module !== 'undefined' ? require('./levels.js') : root.SlopCommando;
   const { mulberry32, fnv1a } = typeof module !== 'undefined' ? require('../../_kit/rng.js') : root.GameSlopKit;
   const { createGrenadeSystem, grenadeOrder } = typeof module !== 'undefined' ? require('./grenades.js') : root.SlopCommando;
-  const {createSupportSystem,JETPACK_FUEL}=typeof module!=='undefined'?require('./support.js'):root.SlopCommando;
+  const {createSupportSystem,JETPACK_FUEL,recruitedCount,reinforcementCount}=typeof module!=='undefined'?require('./support.js'):root.SlopCommando;
   const W = 960, H = 540, STEP = 1 / 60;
   const COYOTE_TIME = .1, JUMP_BUFFER_TIME = .12;
   const weapons = {
@@ -40,7 +40,7 @@
     const state = { status: 'ready', seed: options.seed ?? 1978, tick: 0, elapsed: 0, score: 0, stage: 0, players: [], enemies: [], bullets: [], effects: [], pickups: [], inputLog: [], events: [], camera: { x: 0, y: 0 }, continues: 3, room: 0, boss: null, kills: 0 };
     function event(type, data = {}) { state.events.push({ type, ...data }); }
     const grenades=createGrenadeSystem({state,damage:damageEnemy,event});
-    const supportTeam=createSupportSystem({state,event});
+    const supportTeam=createSupportSystem({state,event,onRecruit:()=>reinforceRoute(true)});
     const rules = () => difficultyRules[state.difficulty] || difficultyRules.normal;
     function makePlayer(n) { return { id: n, x: 110 + n * 70, y: 400, w: 30, h: 42, vx: 0, vy: 0, face: 1, lives: rules().lives, weapon: 'P', holstered: null, weaponLevels: {P:1}, cloak: 0, shield: 0, rapid: 0, invincible: 2, cooldown: 0, grounded: false, prone: false, jumpHeld: false, swapHeld: false, dropHeld: false, jumpQueued: false, jumpDownQueued: false, dropQueued: false, jumpBuffer: 0, coyoteTime: 0, jumpTime: 0, held: {}, aimX: 1, aimY: 0, distance: 0 }; }
     function resetMovementInput(p) {
@@ -95,6 +95,7 @@
     function loadStage(index) {
       state.stage = index; state.level = buildLevel(index); state.room = 0;
       populateRoute();
+      state.routeBaseSpawns=state.level.spawns.map(e=>({...e}));state.reinforcementsAdded=0;state.squadWaveCredit=0;
       state.enemies = []; state.bullets = []; state.pickups = []; state.effects = []; state.boss = null;
       grenades.reset();
       state.camera = { x: 0, y: state.level.mode === 'climb' ? state.level.height - H : 0 };
@@ -104,7 +105,25 @@
       state.players.forEach(p=>{p.grenadeType||='frag';p.grenadeCooldown=0;});
       if (state.level.mode === 'base') loadRoom();
       supportTeam.transition();
+      reinforceRoute(false);
       event('stage', { stage: index });
+    }
+    function reinforceRoute(afterRecruit){
+      const l=state.level,base=state.routeBaseSpawns||[];
+      if(l.mode==='base'||!base.length)return;
+      const desired=reinforcementCount(base.length,recruitedCount(state));
+      const amount=desired-(state.reinforcementsAdded||0);if(amount<=0)return;
+      const lead=state.players.filter(p=>p.lives>0).sort((a,b)=>l.mode==='climb'?a.y-b.y:b.x-a.x)[0];
+      const candidates=base.filter(e=>!afterRecruit||(l.mode==='climb'?e.y<lead.y-100:e.x>lead.x+180))
+        .sort((a,b)=>l.mode==='climb'?b.y-a.y:a.x-b.x);
+      if(!candidates.length)return;
+      for(let i=0;i<amount;i++){
+        const e=candidates[Math.min(candidates.length-1,Math.floor((i+.5)*candidates.length/amount))];
+        const floor=l.platforms.filter(p=>e.x>=p.x&&e.x+32<=p.x+p.w&&p.y>=e.y).sort((a,b)=>a.y-b.y)[0];
+        const x=floor?clamp(e.x+30*(1+i%2),floor.x+4,floor.x+floor.w-36):e.x+30;
+        l.spawns.push({...e,x,squadExtra:true,notBefore:state.stageTime+.5+i*.18});
+      }
+      state.reinforcementsAdded=desired;
     }
     function loadRoom() {
       state.enemies = []; state.bullets = []; state.pickups = [];
@@ -126,7 +145,7 @@
       const difficulty=config.difficulty==='assist'?'easy':config.difficulty==='arcade'?'normal':config.difficulty||'normal';
       Object.assign(state, { status: 'playing', tick: 0, elapsed: 0, score: 0, kills: 0, inputLog: [], events: [], difficulty: difficultyRules[difficulty]?difficulty:'normal', continues: 3, creditsUsed: 0, extraLifeAt: 15000 });
       state.players = Array.from({ length: config.players === 2 ? 2 : 1 }, (_, i) => makePlayer(i));
-      state.pawnsRecruited=false;state.companion=null;state.supportNotice=0;state.collectedPacks=[];
+      state.pawnsRecruited=false;state.wojakRecruited=false;state.sloppyRecruited=false;state.companions=[];state.recruits=[];state.companion=null;state.supportNotice=0;state.supportNoticeName='';state.collectedPacks=[];
       state.players.forEach(p=>{p.jetpackFuel=0;p.jetpackOwned=false;});
       loadStage(0);
     }
@@ -241,6 +260,8 @@
       e.attackTick = state.tick; // Presentation cue: only an emitted shot starts recoil.
     }
     function spawnEnemy(spec) {
+      // Wojak is exclusively an ally. Reuse the existing melee Bundle Cat troop.
+      if(spec.kind==='soldier')spec={...spec,kind:'securitySpider'};
       const hp = specialEnemies[spec.kind]?.hp || (spec.kind === 'turret' ? 5 : 2);
       state.enemies.push({ ...spec, id: id++, originX: spec.x, originY: spec.y, w: 32, h: 34, hp, maxHp: hp, cooldown: .8 + rng(), phase: rng() * 6, vx: -35 });
     }
@@ -351,20 +372,28 @@
         if (!state.boss && lead.y < 350) spawnBoss();
       }
       l.spawns.forEach((e, i) => {
-        if (!state.spawned[i] && e.x < state.camera.x + W + 80 && e.y > state.camera.y - 100 && e.y < state.camera.y + H + 40) { state.spawned[i] = true; spawnEnemy(e); }
+        if (!state.spawned[i] && state.stageTime >= (e.notBefore||0) && e.x < state.camera.x + W + 80 && e.y > state.camera.y - 100 && e.y < state.camera.y + H + 40) { state.spawned[i] = true; spawnEnemy(e); }
       });
       l.supplies.forEach((p, i) => {
         if (!state.spawned['p' + i] && p.x < state.camera.x + W && p.y > state.camera.y - 100 && p.y < state.camera.y + H) { state.spawned['p' + i] = true; state.pickups.push({ ...p, w: 24, h: 24, ttl: 999 }); }
       });
       state.waveTime += dt;
-      if (state.waveTime > rules().waveInterval*(l.mode==='base'?.65:1) && state.enemies.length < rules().enemyLimit) {
+      const squadCount=recruitedCount(state),squadLimit=Math.ceil(rules().enemyLimit*(1+squadCount/5));
+      if (state.waveTime > rules().waveInterval*(l.mode==='base'?.65:1) && state.enemies.length < squadLimit) {
         state.waveTime = 0;
         const kind=rng()<.55?stageEnemies[state.stage]:'drone';
-        if (l.mode === 'base') spawnEnemy({ kind, x: rng() > .5 ? 130 : 800, y: 280 });
+        let waveSpec=null;
+        if (l.mode === 'base') waveSpec={ kind, x: rng() > .5 ? 130 : 800, y: 280 };
         else if (!state.boss) {
           const flying=kind==='drone'||specialEnemies[kind]?.flying;
           const ground=l.platforms.find(p=>p.ground&&p.x<=state.camera.x+W-70&&p.x+p.w>=state.camera.x+W-20);
-          if(flying||ground)spawnEnemy({kind,x:state.camera.x+W-65,y:flying?state.camera.y+130+rng()*110:ground.y-34});
+          if(flying||ground)waveSpec={kind,x:state.camera.x+W-65,y:flying?state.camera.y+130+rng()*110:ground.y-34};
+        }
+        if(waveSpec){
+          spawnEnemy(waveSpec);state.squadWaveCredit+=squadCount;
+          while(state.squadWaveCredit>=5&&state.enemies.length<squadLimit){
+            spawnEnemy({...waveSpec,x:l.mode==='base'?(waveSpec.x<400?800:130):waveSpec.x+24});state.squadWaveCredit-=5;
+          }
         }
       }
       grenades.tick(dt);

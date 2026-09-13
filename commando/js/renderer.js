@@ -376,8 +376,8 @@
         for(const actor of [...s.enemies,...s.players,...(s.boss?[s.boss]:[])]){c.fillStyle='#00000055';c.beginPath();c.ellipse(actor.x+actor.w/2,actor.y+actor.h-2,actor.w*.6,8,0,0,Math.PI*2);c.fill();}
       }
       s.enemies.forEach(e=>enemy(e,time,s.level.theme));if(s.boss)enemy(s.boss,time,s.level.theme);
-      companionArt.draw(s.pawnsRecruit,time,{recruit:true,elapsed:s.elapsed});
-      companionArt.draw(s.companion,time,{elapsed:s.elapsed});
+      (s.recruits||[]).forEach(a=>companionArt.draw(a,time,{recruit:true,elapsed:s.elapsed}));
+      (s.companions||[]).forEach(a=>companionArt.draw(a,time,{elapsed:s.elapsed}));
       s.players.forEach(p=>hero.draw(p,time,{victory:s.status==='clear'||s.status==='victory',mode:s.level.mode}));
       grenadeArt.projectiles(s.grenades);
       for(const b of s.bullets) {

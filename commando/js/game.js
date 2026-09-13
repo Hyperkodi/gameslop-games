@@ -14,10 +14,10 @@
   const grenadeButton=document.createElement('button');grenadeButton.type='button';grenadeButton.dataset.action='grenade';grenadeButton.textContent='THROW';
   grenadeButton.setAttribute('aria-label','Throw selected grenade');document.querySelector('.action-buttons').append(grenadeButton);
   const grenadeGuide=document.createElement('p');grenadeGuide.className='grenade-guide';
-  grenadeGuide.textContent='GRENADES: A throws, N changes type. P2: Y throws, T changes type. Gamepad: LB throws, RB changes type. Touch: TYPE selects, THROW launches. Shared 6-second recharge. Frag: immediate blast. Incendiary: 4 seconds of fire; strong against Wojak, FRONG and Bundle Cat. Electric stun: 3.5-second pulsing field; strong against Microduck, Thinking Cat, ASTRO and CATGPT. Bosses resist full stun.';
+  grenadeGuide.textContent='GRENADES: A throws, N changes type. P2: Y throws, T changes type. Gamepad: LB throws, RB changes type. Touch: TYPE selects, THROW launches. Shared 6-second recharge. Frag: immediate blast. Incendiary: 4 seconds of fire; strong against FRONG and Bundle Cat. Electric stun: 3.5-second pulsing field; strong against Microduck, Thinking Cat, ASTRO and CATGPT. Bosses resist full stun.';
   $('dossier').append(grenadeGuide);
   const supportGuide=document.createElement('p');supportGuide.className='grenade-guide';
-  supportGuide.textContent='JETPACK: collect the twin-tank pack, then hold JUMP to fly (Z / P2 U / gamepad A / touch JUMP). Release to descend. Ten seconds of thrust per pack; fuel never recharges. In bunkers, hold to hover over shots. PAWNS: find him on the broad halfway landing in level 3, Spillway Ascent. Approach to recruit him. He follows, jumps between platforms and targets enemies with his own machine gun for the rest of the run.';
+  supportGuide.textContent='JETPACK: collect the twin-tank pack, then hold JUMP to fly (Z / P2 U / gamepad A / touch JUMP). Release to descend. Ten seconds of thrust per pack; fuel never recharges. In bunkers, hold to hover over shots. SQUAD: Pawns joins halfway through level 3 with a machine gun. Wojak joins halfway through level 5 with a ray gun. Sloppy joins halfway through level 7 with a flamethrower. Reach their position to recruit them. All allies follow and fight for the rest of the run, including deaths and continues. Each recruit adds 20% of the base enemy count: +20%, +40%, then +60%; the new reinforcements arrive after recruitment.';
   $('dossier').append(supportGuide);
   const grenadeKeys=document.createElement('small');grenadeKeys.textContent='A: throw grenade · N: change type · 6s recharge';document.querySelector('.guide-controls').append(grenadeKeys);
   // The guide mirrors the actual loot table. Stronger weapons are rare in play,
@@ -67,7 +67,7 @@
   function setTitle() {
     clearInput(); engine.state.status='ready'; engine.state.level=G.buildLevel(0);engine.state.stage=0;engine.state.camera={x:0,y:0};engine.state.boss=null;
     engine.state.enemies=[];engine.state.bullets=[];engine.state.pickups=[];engine.state.effects=[];
-    engine.state.grenades=[];engine.state.grenadeZones=[];
+    engine.state.grenades=[];engine.state.grenadeZones=[];engine.state.companions=[];engine.state.recruits=[];
     updateUI();$('start').focus({preventScroll:true});
   }
   function togglePause() { audio.unlock(); if (engine.state.status==='playing'||engine.state.status==='paused') { clearInput();engine.pause();updateUI(); } }
@@ -93,7 +93,7 @@
     const grenade=G.grenadeTypes[p.grenadeType||'frag'],cooldown=p.grenadeCooldown||0;
     grenadeHud.textContent=grenade.name+' · '+(cooldown>0?Math.ceil(cooldown)+'s':'READY')+' · B / N';
     const fuelLabel=q=>q.jetpackOwned?'P'+(q.id+1)+' JET '+((q.jetpackFuel||0)>0?q.jetpackFuel.toFixed(1)+'s · HOLD JUMP':'EMPTY'):'';
-    supportHud.textContent=[...s.players.map(fuelLabel),s.supportNotice>0?'PAWNS JOINED — MACHINE-GUN SUPPORT':s.pawnsRecruited?'PAWNS: WITH YOU':''].filter(Boolean).join(' · ');
+    supportHud.textContent=[...s.players.map(fuelLabel),s.supportNotice>0?s.supportNoticeName.toUpperCase()+' JOINED':G.recruitedCount(s)?'SQUAD: '+G.allySpecs.filter(a=>s[a.id+'Recruited']).map(a=>a.name.toUpperCase()).join(' / '):''].filter(Boolean).join(' · ');
     grenadeTypeButton.textContent='TYPE: '+(p.grenadeType==='electric'?'STUN':grenade.name);
     grenadeTypeButton.setAttribute('aria-label','Selected '+grenade.name+'. Tap to change grenade type.');
     grenadeButton.textContent=cooldown>0?Math.ceil(cooldown)+'s':'THROW';

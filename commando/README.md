@@ -56,7 +56,7 @@ Throw a grenade alongside any equipped gun. **A** throws and **N** cycles types;
 | Type | Effect | Best targets |
 | --- | --- | --- |
 | Frag | Immediate 92px blast; 7 base damage | General groups |
-| Incendiary | Initial blast, then 4 seconds of ground fire; 84px radius | Wojak, FRONG and Bundle Cat take 1.8× damage; machines take 0.6× |
+| Incendiary | Initial blast, then 4 seconds of ground fire; 84px radius | FRONG and Bundle Cat take 1.8× damage; machines take 0.6× |
 | Electric stun | A 108px electrical field pulses for 3.5 seconds | Microduck, Thinking Cat's turret, ASTRO and CATGPT take 2× damage and longer stuns |
 
 Ordinary machines stop moving and firing while stunned. Organic enemies receive a brief interruption. Bosses take 1.25× electrical damage and a temporary 30% slowdown, rather than full stun. Fire settles onto platforms; its lingering damage does not reach flyers above the flames. Frag is an immediate blast, and the other two have visible area effects. The grenade launcher remains a separate gun.
@@ -105,11 +105,13 @@ Audio starts after a player gesture. Pause and backgrounding stop music and effe
 
 ## Implementation
 
-### Jetpack and Pawns
+### Jetpack and persistent squad
 
 Collect a twin-tank jetpack on an outdoor ledge. Hold the existing jump action (P1 Z, P2 U, gamepad A, or touch JUMP) to thrust; release to descend. Each pack provides ten seconds of actual thrust, with no regeneration. Fuel survives death, room and stage transitions, and continues. Collected packs remain collected until a new run. Empty packs stop thrusting. In overhead bunkers, held thrust hovers over shots. Quick taps preserve ordinary jump height, and down+jump or DROP still passes through platforms.
 
-Pawns waits on the broad halfway landing in level 3, Spillway Ascent. Approach him to recruit autonomous machine-gun support for the rest of the run. He navigates reachable platforms with ballistic jumps, follows the closest living player, and independently positions and aims at enemies. His five-shot bursts damage enemies without friendly fire. He is a permanent, invulnerable support character and rejoins on room/stage transitions. New runs reset recruitment.
+Pawns joins on the halfway landing in level 3 with a machine gun. Wojak joins halfway through level 5 with a piercing ray gun. Sloppy joins halfway through level 7 with a short-range flamethrower. Reaching or passing their position recruits them, including when jumping overhead. All recruited allies remain for the rest of the run, through player deaths, room/stage transitions and continues. New runs reset recruitment. They navigate platforms with ballistic jumps, follow living players, independently aim and fight, and cannot hurt the players or one another. Hostile Wojak spawns are replaced by existing Bundle Cat troops.
+
+Each ally adds 20% of the original authored enemy count: +20%, +40%, then +60% (fractional totals round down). A 20-enemy route becomes 24 with Pawns. At recruitment, the new extras are distributed ahead along the remaining route; future stages start with the existing squad's increase. Recurring waves add one extra enemy per five waves per recruited ally. Enemy capacity rises by the same percentage. Boss counts, boss health and bunker objectives are unchanged.
 
 His twelve-pose camo sprite sheet preserves the reference glasses and roof-shaped head, with the corrected roof orientation and chimney on the opposite slope. `js/support.js` owns navigation and targeting; `js/companion-art.js` draws the animated character and aimed gun.
 
