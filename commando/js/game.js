@@ -39,6 +39,9 @@
     G.createWeaponArt(c,window.SlopCommandoSkin.weapons).draw(canvas.dataset.pickupIcon);
   });
   const audio = G.createAudio();
+  const victoryQuote = document.createElement('p');
+  victoryQuote.id = 'victory-quote'; victoryQuote.hidden = true;
+  $('overlay-body').after(victoryQuote);
   let players = 1, lastStatus = '', last = 0, accumulator = 0, best = 0, lastGamepadStart = false, posted = false, showingDossier = false;
   const cabinet = document.querySelector('.cabinet');
   // Controls must be descendants of the fullscreen element on mobile.
@@ -80,6 +83,8 @@
   function updateUI() {
     audio.update(engine.state, engine.drainEvents());
     const s=engine.state,active=s.status==='playing',title=s.status==='ready',isOverlay=['paused','clear','gameover','victory'].includes(s.status);
+    victoryQuote.hidden = s.status !== 'clear';
+    victoryQuote.textContent = s.status === 'clear' ? 'PEPONS: “' + G.victoryDialogue[s.stage][1] + '”' : '';
     $('title-screen').hidden=!title;$('hud').hidden=title;$('overlay').hidden=!isOverlay;
     $('mission').textContent=String(s.stage+1).padStart(2,'0');$('mission-name').textContent=s.level.name.toUpperCase();
     $('stage-progress').innerHTML='CAMPAIGN <b>'+String(s.stage+1).padStart(2,'0')+' / 08</b>';
@@ -158,7 +163,7 @@
     if(e.code==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();if(engine.state.status==='ready')start();else if(engine.state.status!=='playing')overlayAction();}
   });
   document.addEventListener('keyup',e=>{const mapped=keymap[e.code];if(mapped){e.preventDefault();sources.keyboard.delete(e.code);syncInputs();}});
-  function backgroundPause(){clearInput();if(engine.state.status==='playing'){engine.pause();updateUI();}}
+  function backgroundPause(){audio.interrupt();clearInput();if(engine.state.status==='playing'){engine.pause();updateUI();}}
   window.addEventListener('blur',backgroundPause);document.addEventListener('visibilitychange',()=>{if(document.hidden)backgroundPause();});
   // Rotation/fullscreen can move controls away from the fingers holding them.
   window.addEventListener('resize',clearInput);

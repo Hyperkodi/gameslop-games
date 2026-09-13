@@ -2,6 +2,16 @@
 (function (root) {
   'use strict';
   const tracks = ['Jungle.mp3', 'Bunker.mp3', 'Foundry.mp3', 'Reactor.mp3', 'Snow.mp3', 'Foundry.mp3', 'Cave.mp3', 'Alien.mp3'];
+  const victoryDialogue = [
+    ['Chump', "Yeah, fuck you, I'm the shit."],
+    ['GreenHood', "You brought all that firepower and still couldn't hit me?"],
+    ['ZZZ', "Go back to sleep. You're embarrassing yourself."],
+    ['Boner', "Get that weak shit outta here."],
+    ['Memory Cow Moo', 'Ha, squashed that beef.'],
+    ['Pipedog', 'Where the fuck did you think you were going?'],
+    ['Cash Cat', 'Next time, spend some of that money on backup.'],
+    ['Artificial Inu', 'Somebody built you to fight? They did a shitty job.']
+  ];
   const samples = {
     'shot:M':'Machine Gun.mp3', 'shot:S':'Spread Gun.mp3', 'shot:L':'Laser Rifle.mp3',
     'shot:F':'Flame Thrower.mp3', 'shot:G':'Grenade Launcher.mp3',
@@ -11,6 +21,7 @@
     'grenade:frag':'Grenade Explosion.mp3', 'grenade:incendiary':'Grenade Explosion.mp3', 'grenade:electric':'Tesla Carbine.mp3',
     barrier:'Barrier.mp3', cloak:'Invisibility Cloak.mp3', nuke:'Nuke.mp3', bossExplosion:'Boss Explosion.mp3'
   };
+  victoryDialogue.forEach((_, i) => { samples['victory:' + i] = 'victory-' + String(i + 1).padStart(2, '0') + '-american-v6.mp3'; });
   // Keep distinct synthesized cues for actions without a supplied recording.
   const recipes = {
     shot:[[180,.045,'square',.018,0,70]],
@@ -53,6 +64,7 @@
     let ctx, master, musicGain, effectsGain, music, unlocked = false, muted = false;
     let stage = -1, status = 'ready', playingMusic = false, loading = Promise.resolve();
     let musicFailed = false, lastCue = null, lastSample = null, musicAttempt = 0;
+    let dialogueAttempt = 0, lastDialogue = null;
     try { muted = env.localStorage?.getItem('gameslop:muted') === '1'; } catch (_) { /* Private mode. */ }
     const path = (folder, file) => folder + '/' + encodeURIComponent(file);
     function stopVoice(voice) {
@@ -62,6 +74,16 @@
       voice.source.disconnect(); voice.gain.disconnect();
     }
     function stopEffects() { [...voices].forEach(stopVoice); }
+    function interrupt() { dialogueAttempt++; stopEffects(); }
+    function victoryLine() {
+      if (muted || !unlocked || !ctx || !victoryDialogue[stage]) return;
+      const attempt = ++dialogueAttempt, clearedStage = stage, cue = 'victory:' + stage;
+      // Let the defeat blast and clear sting land before the spoken line.
+      Promise.all([loadSample(cue), new Promise(resolve => (env.setTimeout || setTimeout)(resolve, 900))]).then(() => {
+        if (attempt !== dialogueAttempt || status !== 'clear' || stage !== clearedStage || muted || !buffers.has(cue)) return;
+        stopEffects(); lastDialogue = clearedStage; play(cue);
+      });
+    }
     function ensure() {
       if (!unlocked) return;
       if (!ctx) {
@@ -154,8 +176,9 @@
     function update(state, events = []) {
       const changed = stage !== state.stage;
       const restart = events.some(event => event.type === 'stage');
+      const cleared = state.status === 'clear' && (status !== 'clear' || changed);
       if (status !== state.status || changed || restart) {
-        if (state.status !== 'playing' || changed || restart) stopEffects();
+        if (state.status !== 'playing' || changed || restart) interrupt();
       }
       status = state.status; stage = state.stage;
       if (changed || restart) selectTrack(true);
@@ -170,6 +193,7 @@
         if (!cue || heard.has(cue)) continue;
         heard.add(cue); play(cue);
       }
+      if (cleared) victoryLine();
     }
     function unlock() {
       unlocked = true; ensure(); musicFailed = false;
@@ -180,15 +204,15 @@
       muted = !muted;
       try { env.localStorage?.setItem('gameslop:muted', muted ? '1' : '0'); } catch (_) { /* Private mode. */ }
       if (master) master.gain.value = muted ? 0 : .8;
-      if (muted) { stopEffects(); syncMusic(); } else unlock();
+      if (muted) { interrupt(); syncMusic(); } else unlock();
       return muted;
     }
-    return {update, unlock, toggle, get muted() { return muted; },
+    return {update, unlock, toggle, interrupt, get muted() { return muted; },
       inspect: () => ({stage, status, muted, unlocked, context:ctx?.state || 'locked', track:tracks[stage] || null,
         musicPlaying:!!music && !music.paused, musicTime:music?.currentTime || 0, musicFailed,
-        loaded:[...buffers.keys()], failed:[...failures], voices:voices.length, lastCue, lastSample})};
+        loaded:[...buffers.keys()], failed:[...failures], voices:voices.length, lastCue, lastSample, lastDialogue})};
   }
-  const api = {createAudio, audioTracks:tracks, audioSamples:samples, audioCueFor:cueFor};
+  const api = {createAudio, audioTracks:tracks, audioSamples:samples, audioCueFor:cueFor, victoryDialogue};
   root.SlopCommando = Object.assign(root.SlopCommando || {}, api);
   if (typeof module !== 'undefined') module.exports = api;
 })(typeof window !== 'undefined' ? window : globalThis);
