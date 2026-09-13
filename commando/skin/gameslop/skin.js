@@ -1,7 +1,7 @@
 // Generated from skin.json.
 window.SlopCommandoSkin = {
   "name": "gameslop",
-  "title": "Slop Commando",
+  "title": "Pepontra",
   "wordmark": "GAMESLOP",
   "tagline": "Big guns. Bad odds. Maximum slop.",
   "logo": "logo.jpg",

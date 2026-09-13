@@ -4,10 +4,17 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101312">
-  <meta name="description" content="Slop Commando. An eight-stage GameSlop run-and-gun adventure starring Pepons, the glass frog. Play solo or local co-op.">
-  <title>Slop Commando — GameSlop</title>
+  <meta name="description" content="Pepontra. An eight-stage GameSlop run-and-gun adventure starring Pepons, the glass frog. Play solo or local co-op.">
+  <meta property="og:title" content="Pepontra — GameSlop">
+  <meta property="og:description" content="A crystal commando. A rogue meme army. Eight stages of jungle-to-fortress action. Play free, solo or local co-op.">
+  <meta property="og:image" content="https://hyperkodi.github.io/gameslop-games/commando/skin/gameslop/pepontra-title-jungle-v1.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <title>Pepontra — GameSlop</title>
   <link rel="icon" href="skin/gameslop/icon.jpg">
   <link rel="stylesheet" href="css/commando.css?v=grenades-20260912">
+  <link rel="stylesheet" href="css/title-screen.css?v=pepontra-title-20260913">
+  <link rel="preload" as="image" href="skin/gameslop/pepontra-title-jungle-v1.png" fetchpriority="high">
+  <link rel="preload" as="image" href="skin/gameslop/pepontra-wordmark-red-v1.png" fetchpriority="high">
 </head>
 <body>
   <header class="masthead">
@@ -15,20 +22,23 @@
     <div class="masthead-right"><span class="online-dot"></span><span>THE ARCADE IS OPEN</span><a href="../">ALL GAMES <span aria-hidden="true">↗</span></a></div>
   </header>
   <main>
-    <div class="game-heading"><div><p class="eyebrow">GAMESLOP ORIGINALS <span>/</span> NO. 007</p><h1>SLOP COMMANDO<span class="edition">RUN & GUN</span></h1></div><div class="heading-note">EIGHT STAGES.<br>ONE VERY MESSY MISSION.</div></div>
-    <section class="cabinet" aria-label="Slop Commando arcade game">
+    <div class="game-heading"><div><p class="eyebrow">GAMESLOP ORIGINALS <span>/</span> NO. 007</p><h1>PEPONTRA<span class="edition">RUN & GUN</span></h1></div><div class="heading-note">EIGHT STAGES.<br>ONE VERY MESSY MISSION.</div></div>
+    <section class="cabinet" aria-label="Pepontra arcade game">
       <div class="cabinet-top"><span><i class="live-light"></i> <b id="mission">01</b> <span id="mission-name">VERDANT OUTPOST</span></span><div><button id="sound" aria-label="Toggle sound" aria-pressed="false">SOUND ON</button><button id="pause" aria-label="Pause game">Ⅱ <span>PAUSE</span></button><button id="fullscreen" aria-label="Toggle fullscreen">⛶ <span>EXPAND</span></button></div></div>
       <div class="screen" id="screen">
         <canvas id="game" width="960" height="540" tabindex="0" aria-label="Game area. Player one: arrows to move and aim, Z to jump, X to fire. Enter to start. Escape to pause."></canvas>
         <div class="scanlines" aria-hidden="true"></div>
         <div id="hud" class="hud" hidden><div><span class="hud-label">1P <span id="p1-lives">♥ ♥ ♥</span></span><strong id="p1-weapon">RIFLE</strong><small id="p1-power"></small></div><div class="hud-score"><span class="hud-label">SCORE</span><strong id="score">000000</strong></div><div id="p2-hud"><span class="hud-label" id="p2-label">HI-SCORE</span><strong id="p2-value">000000</strong></div></div>
         <div id="title-screen" class="title-screen">
-          <p class="title-kicker"><span></span> INSERT ABSOLUTELY NOTHING</p>
-          <h2>SLOP<br><span>COMMANDO</span></h2>
-          <p class="title-description">Big guns. Bad odds. Maximum slop.<br>The arcade called. You're up.</p>
-          <div class="mode-options" role="group" aria-label="Number of players"><button class="selected" data-players="1" aria-pressed="true">1 PLAYER</button><button data-players="2" aria-pressed="false">2 PLAYER CO-OP</button></div>
-          <button id="start" class="primary">LET'S MAKE A MESS <span>→</span></button>
-          <div class="title-bottom"><label for="difficulty">MODE</label><select id="difficulty"><option value="easy">EASY · 12 LIVES</option><option value="normal" selected>NORMAL · 3 LIVES</option><option value="hard">HARD · 3 LIVES</option></select><span>OR PRESS ENTER</span></div>
+          <div class="title-art" aria-hidden="true"><img src="skin/gameslop/pepontra-title-jungle-v1.png" width="1672" height="941" alt="" fetchpriority="high" decoding="async"></div>
+          <div class="title-shade" aria-hidden="true"></div>
+          <div class="title-embers" aria-hidden="true"></div>
+          <div class="title-branding"><p class="title-kicker">GAMESLOP PRESENTS</p><h2><img class="title-wordmark" src="skin/gameslop/pepontra-wordmark-red-v1.png" alt="PEPONTRA" width="2020" height="779" fetchpriority="high"></h2></div>
+          <div class="launch-panel">
+            <div class="launch-action"><button id="start" class="primary">DEPLOY <span aria-hidden="true">↗</span></button><small>8 STAGES <span>•</span> SOLO OR LOCAL CO-OP</small></div>
+            <div class="launch-players"><span class="launch-label" id="players-label">YOUR SQUAD</span><div class="mode-options" role="group" aria-labelledby="players-label"><button class="selected" data-players="1" aria-pressed="true">SOLO</button><button data-players="2" aria-pressed="false">2 PLAYERS</button></div></div>
+            <div class="title-bottom"><label class="launch-label" for="difficulty">DIFFICULTY</label><select id="difficulty"><option value="easy">EASY · 12 LIVES</option><option value="normal" selected>NORMAL · 3 LIVES</option><option value="hard">HARD · 3 LIVES</option></select></div>
+          </div>
         </div>
         <div id="overlay" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="overlay-title"><div class="overlay-card"><p class="eyebrow" id="overlay-kicker">TAKE A BREATHER</p><h2 id="overlay-title">PAUSED</h2><p id="overlay-body"></p><button class="primary" id="overlay-action">RESUME →</button><button class="secondary" id="restart">BACK TO TITLE</button></div></div>
       </div>
@@ -45,7 +55,7 @@
   <dialog id="dossier"><div class="dossier-head"><p class="eyebrow">OPERATION: MAXIMUM SLOP</p><button id="close-dossier" aria-label="Close mission dossier">✕</button></div><h2>THE MISSION DOSSIER</h2><p>An automated army has taken over the island. You're Pepons, a glass frog with a very large gun. Fight through a rogue meme army and its eight commanders.</p><ol id="mission-list"></ol><p class="dossier-tip">Easy: 12 lives, frequent guns, two weapon slots. Normal: 3 lives, fewer guns, two slots. Hard: 3 lives, more enemies, rare guns, one slot, no nukes. A duplicate of an equipped or holstered gun upgrades it to tier 5. Easy and Normal remember upgrades for the run; Hard loses them when a gun is discarded. V / J / gamepad Y / SWAP switches slots. Cloak breaks enemy tracking for 8 seconds; bullets and contact remain dangerous. Nukes clear visible non-boss enemies and enemy shots. All modes include three continues.</p></dialog>
   <script src="../_kit/rng.js"></script>
   <script src="js/audio.js?v=pawns-20260913"></script>
-  <script src="skin/gameslop/skin.js?v=pawns-20260913"></script>
+  <script src="skin/gameslop/skin.js?v=pepontra-20260913"></script>
   <script src="skin/gameslop/meme-atlases-v1.js?v=pawns-20260913"></script>
   <script src="js/levels.js?v=pepons-20260912"></script>
   <script src="js/grenades.js?v=grenades-20260912"></script>

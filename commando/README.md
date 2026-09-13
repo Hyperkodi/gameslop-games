@@ -1,4 +1,6 @@
-# Slop Commando
+# Pepontra
+
+The title screen features Pepons confronting GreenHood in an illustrated jungle battle, with blood-red brush lettering, drifting embers and a separate launch menu. Portrait phones show both combatants above the menu; landscape uses the full artwork. Reduced-motion preferences disable the drift and embers. The existing `/commando/` address and save keys remain compatible.
 
 An original eight-stage GameSlop run-and-gun campaign starring the supplied red D-pad mascot. Play solo or local co-op in a landscape browser canvas, with keyboard, gamepad, or mobile touch controls.
 
